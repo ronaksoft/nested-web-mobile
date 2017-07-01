@@ -145,12 +145,15 @@
     "webpack-manifest-plugin": "^1.1.0"
   },
   "dependencies": {
+    "antd": "^2.11.2",
     "chalk": "^1.1.3",
     "compression": "^1.6.2",
+    "cookies-js": "^1.2.3",
     "es6-promise": "^4.0.5",
     "express": "^4.14.0",
     "history": "^4.5.1",
     "isomorphic-fetch": "^2.2.1",
+    "loglevel": "^1.4.1",
     "react": "~15.4.2",
     "react-css-modules": "^4.1.0",
     "react-dom": "~15.4.2",
