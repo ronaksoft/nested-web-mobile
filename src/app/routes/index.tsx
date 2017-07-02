@@ -13,11 +13,15 @@ export default (
       <Router history={browserHistory}>
           <Route component={Private}>
               <IndexRoute component={Posts}/>
-              <Route path="/posts" component={Posts}/>
-              <Route path="/activities" component={Activities}/>
-              <Route path="/files" component={Files}/>
+              <Route path="/feed" component={Posts}/>
+              <Route path="/shared" component={Posts}/>
+              <Route path="/bookmarks" component={Posts}/>
+              <Route path="/place/:placeId/posts" component={Posts}/>
+              <Route path="/place/:placeId/activities" component={Activities}/>
+              <Route path="/place/:placeId/files" component={Files}/>
               <Route path="/notifications" component={Notifications}/>
               <Route path="/compose" component={Compose}/>
+              <Redirect from="/" to="/feed" />
           </Route>
           <Route component={Public}>
               <Route path="/404" component={NotFound}/>
