@@ -1,10 +1,11 @@
 import IRequest from './interfaces/IRequest';
+import IResponse from './interfaces/IResponse';
 import AAA from './../aaa/index';
 import CONFIG from 'config';
 import {Socket, SocketState} from 'services/socket';
 import Client from 'services/client';
 
-export default class Server {
+class Server {
   private static instance: Server;
   private socket: any = null;
   private queue: any;
@@ -100,7 +101,7 @@ export default class Server {
     }
 
     // resole request
-    this.queue[queueItem].resolve(response.data);
+    this.queue[queueItem].resolve(response);
 
     // remove request from queue
     this.queue.splice(queueItem, 1);
@@ -132,3 +133,5 @@ export default class Server {
     return getId();
   }
 }
+
+export {Server, IRequest, IResponse};

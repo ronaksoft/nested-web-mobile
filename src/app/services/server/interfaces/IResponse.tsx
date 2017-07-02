@@ -1,7 +1,7 @@
 interface IResponse {
     _reqid ?: string | number;
-    cmd : string;
     data : {};
+    status: string;
 }
 
 export default IResponse;

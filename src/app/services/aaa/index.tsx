@@ -6,7 +6,7 @@ export default class AAA {
   private nss: string;
   private nsk: string;
   private account: any;
-  private isAthenticated: boolean = false;
+  private isAuthenticated: boolean = false;
 
   public static getInstance() {
     if (!this.instance) {
@@ -33,7 +33,7 @@ export default class AAA {
 
   public setUser(account: any): void {
     this.account = account;
-    this.isAthenticated = true;
+    this.isAuthenticated = true;
     console.log(account, this);
   }
 
@@ -41,8 +41,8 @@ export default class AAA {
     return this.account;
   }
 
-  public setIsUnAthenticated(): void {
-    this.isAthenticated = false;
+  public setIsUnAuthenticated(): void {
+    this.isAuthenticated = false;
     this.nss = null;
     this.nsk = null;
     Cookies.set('nss');

@@ -9,44 +9,49 @@ import IUser from 'api/account/interfaces/IUser';
 import {browserHistory} from 'react-router';
 import AAA from 'services/aaa';
 
-class Private extends React.Component < any, any > {
+interface IPrivateState {
+    isAuthenticated: boolean;
+};
+
+class Private extends React.Component<{}, IPrivateState> {
+  public constructor() {
+    super();
+    this.state = {
+      isAuthenticated: false,
+    };
+  }
   public componentDidMount() {
     const accountApi = new AccountApi();
     const aaa = AAA.getInstance();
     const credential = aaa.getCredentials();
     const user = aaa.getUser();
 
-    console.log('====================================');
-    console.log(credential, user);
-    console.log('====================================');
-
     if (!credential.sk || !credential.ss) {
-      aaa.setIsUnAthenticated();
+      aaa.setIsUnAuthenticated();
       browserHistory.push('/signin');
       return;
     }
 
-    if (!user) {
-      accountApi.recall({
-        _ss: credential.ss,
-        _sk: credential.sk,
-      }).then((account: IUser) => {
-        console.log('====================================');
-        console.log(account);
-        console.log('====================================');
-        aaa.setUser(account);
-        this.setState({
-          isReady: true,
-        });
-      }).catch(() => {
-        aaa.setIsUnAthenticated();
-        browserHistory.push('/signin');
-      });
-    } else {
+    if (user) {
       this.setState({
-        isReady: true,
+        isAuthenticated: true,
       });
+
+      return;
     }
+
+    accountApi.recall({
+      _ss: credential.ss,
+      _sk: credential.sk,
+    }).then((account: IUser) => {
+      aaa.setUser(account);
+      this.setState({
+        isAuthenticated: true,
+      });
+    }).catch(() => {
+      aaa.setIsUnAuthenticated();
+      browserHistory.push('/signin');
+    });
 
   }
 
@@ -54,7 +59,7 @@ class Private extends React.Component < any, any > {
     return (
       <div>
         Private
-        {this.props.children}
+        {this.state.isAuthenticated && this.props.children}
       </div>
     );
   }
