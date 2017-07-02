@@ -5,7 +5,7 @@ class Compose extends React.Component<any, any> {
   public render() {
     return (
       <div>
-        <Suggestion></Suggestion>
+        <Suggestion/>
       </div>
     );
   }

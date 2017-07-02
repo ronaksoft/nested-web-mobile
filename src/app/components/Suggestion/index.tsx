@@ -6,7 +6,7 @@ class Suggestion extends React.Component<any, any> {
   public render() {
     return (
       <div>
-        <Input></Input>
+        <Input/>
       </div>
     );
   }
