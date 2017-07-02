@@ -5,19 +5,18 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require('react');
-var Pdf = (function (_super) {
-    __extends(Pdf, _super);
-    function Pdf() {
+var style = require('./style.css');
+var About = (function (_super) {
+    __extends(About, _super);
+    function About() {
         _super.apply(this, arguments);
     }
-    Pdf.prototype.render = function () {
-        var _a = this.props, id = _a.id, label = _a.label;
-        return (<div>
-        {id}.{label}
+    About.prototype.render = function () {
+        return (<div className={style.About}>
+        <h4>About</h4>
       </div>);
     };
-    return Pdf;
+    return About;
 }(React.Component));
-exports.__esModule = true;
-exports["default"] = Pdf;
+exports.About = About;
 //# sourceMappingURL=index.js.map

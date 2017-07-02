@@ -1,14 +1,13 @@
 import * as React from 'react';
 
-class Pdf extends React.Component {
-  render() {
-   let {id,label} = this.props;
-    return (
-      <div>
-        {id}.{label}
-      </div>
-    );
-  }
+class Pdf extends React.Component<any, any> {
+    public render() {
+        return (
+            <div>
+                Pdf:
+            </div>
+        );
+    }
 }
 
-export default Pdf;
+export { Pdf }
