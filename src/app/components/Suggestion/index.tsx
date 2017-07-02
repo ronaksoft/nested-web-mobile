@@ -1,22 +1,25 @@
 import * as React from 'react';
 import _ from 'lodash';
 import IPlace from '../../api/place/interfaces/IPlace';
-import { Input } from 'antd';
+import {Input} from 'antd';
 import 'antd/dist/antd.css';
+
 const style = require('./suggestion.css');
 
 interface ISuggestProps {
-  suggsts?: Array<IPlace>;
+  suggsts?: IPlace[];
 }
 
 interface ISuggestState {
-  suggsts?: Array<IPlace>;
+  suggsts?: IPlace[];
 }
 
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
+  private debouncedFillSuggests: (val: string) => void;
 
   constructor(props: any) {
     super(props);
+    this.debouncedFillSuggests = _.debounce(this.fillSuggests, 100);
   }
 
   private changeInputVal(event) {
@@ -24,37 +27,41 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     const val = event.currentTarget.value;
     // console.log(val);
     this.debouncedFillSuggests(val);
-    
-  }
-  
-  private debouncedFillSuggests : _.debounce(this.fillSuggests, 100)
-  
-  private fillSuggests(query: String): Promise <any> {
-    return this.getSuggests(query).then( function (items) {
-      this.setState({
-        suggests: items
-      });
-    })
-  } 
 
-  public getSuggests(query: String): Promise <any> {
+  }
+
+  private fillSuggests(query: string): Promise<any> {
+    return Suggestion.getSuggests(query).then((items: IPlace[]) => {
+      this.setState({
+        suggsts: items,
+      });
+    });
+  }
+
+  private static getSuggests(query: string): Promise<any> {
     console.log(query);
     return new Promise((resolve) => {
       resolve(
-        [{
-          name : 'ALi',
-          picture: 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/THU592A9D036D433500013299F7592A9D036D433500013299F8',
-          id: 'ali'
-        },{
-          name : 'MAMAD',
-          picture: 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/THU592A9D036D433500013299F7592A9D036D433500013299F8',
-          id: 'mamad'
-        }]
+        [
+          {
+            name: 'ALi',
+            picture: 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/THU592A9D036D433500013299F759' +
+            '2A9D036D433500013299F8',
+            id: 'ali',
+          },
+          {
+            name: 'MAMAD',
+            picture: 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/THU592A9D036D433500013299F759' +
+            '2A9D036D433500013299F8',
+            id: 'mamad',
+          },
+        ],
       );
-    })
+    });
   }
 
-  public componentWillMount () {}
+  // public componentWillMount() {
+  // }
 
   public render() {
     return (
@@ -75,4 +82,4 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 }
 
-export { Suggestion }
+export {Suggestion}
