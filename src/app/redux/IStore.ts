@@ -1,7 +1,8 @@
-import { ICounter } from 'models/counter';
-import { IStars } from 'models/stars';
+import IUser from '../api/account/interfaces/IUser';
+import IPlace from '../api/place/interfaces/IPlace';
 
 export interface IStore {
-  counter: ICounter;
-  stars: IStars;
-};
+  places: IPlace;
+  accounts: IUser[];
+  user: IUser;
+}
