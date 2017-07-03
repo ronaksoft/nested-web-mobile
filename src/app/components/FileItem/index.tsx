@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Pdf } from './Pdf';
+import {Pdf} from './Pdf';
+import IFile from './IFile';
 import 'antd/dist/antd.css';
 
-class FileItem extends React.Component<any, any> {
+interface IProps {
+  file: IFile;
+}
+class FileItem extends React.Component<IProps, any> {
     public render() {
-        return (
+       return (
             <div>
-                file
-                <Pdf/>
+              <Pdf file={this.props.file}/>
             </div>
         );
     }
 }
 
-export { FileItem }
+export {FileItem}
