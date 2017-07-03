@@ -34,5 +34,28 @@
   border-bottom: 1px solid rgba(50,61,71,.16);
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  color: rgba(50,61,71,.64);
+  /*padding: 0 16px;*/
+}
+.suggests li img{
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  margin: 0 16px;
+}
+.suggests li div{
+  display: flex;
+  flex-direction: column;
+}
+.suggests li p{
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom: 2px;
+}
+.suggests li span{
+  font-size: 12px;
+  line-height: 17px;
+}
+.suggests li b{
+  color: rgba(50,61,71,1)
 }
