@@ -1,0 +1,38 @@
+.suggestionWrpper {
+  display: flex;
+  flex-direction: column;
+  min-height: 48px;
+}
+.input {
+  display: flex;
+  min-height: 48px;
+  border-bottom: 1px solid rgba(50,61,71,.16)
+}
+.input span {
+  color: black;
+  color: #323D47;
+  opacity: .4;
+  padding-left: 16px;
+  padding-right: 8px;
+  line-height: 48px;
+  font-size: 14px;
+}
+.input input {
+  border: none;
+  height: 48px;
+  font-size: 14px;
+}
+.input input:focus {
+  border: none;
+  box-shadow: none;
+}
+.suggests {
+  background-color: #F0F0F0;
+}
+.suggests li{
+  height: 56px;
+  border-bottom: 1px solid rgba(50,61,71,.16);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
