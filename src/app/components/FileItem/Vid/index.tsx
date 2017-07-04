@@ -8,7 +8,7 @@ const style = require('../FileItem.css');
 interface IProps {
   file: IFile;
 }
-class Doc extends React.Component <IProps, any> {
+class Vid extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.fileContainer}>
@@ -35,4 +35,4 @@ class Doc extends React.Component <IProps, any> {
   }
 }
 
-export {Doc}
+export {Vid}
