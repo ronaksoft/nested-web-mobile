@@ -32,14 +32,14 @@
 }
 
 .imgContainer:after {
-   left: 0;
-   top: 0;
-   position: absolute;
-   width: 48px;
-   height: 48px;
-   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-   pointer-events: none;
-   content: "";
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  content: "";
 }
 
 .fileBadge {
@@ -85,14 +85,12 @@
 }
 
 .imageContainer {
-  height: 56px;
   display: flex;
   align-items: center;
-  padding: 0 10px 0 0;
+  padding: 0 16px 0 0;
 }
 
 .fileData {
-  height: 56px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -105,7 +103,7 @@
   color: #000;
 }
 
-style.sizeText{
+style.sizeText {
   font-size: 12px;
   opacity: 0.6;
 }

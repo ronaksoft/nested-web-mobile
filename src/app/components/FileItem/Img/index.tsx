@@ -17,7 +17,7 @@ class Img extends React.Component <IProps, any> {
             <Checkbox/>
           </div>
           <div className={style.imgContainer}>
-            <img className={style.fileThumbnail}/>
+            <img className={style.fileThumbnail} />
           </div>
         </div>
         <div className={style.fileData}>

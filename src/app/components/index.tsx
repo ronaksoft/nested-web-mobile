@@ -1,2 +1,2 @@
-export { Header } from './FileItem/Header';
+export { Header } from './Header';
 export { Suggestion } from './Suggestion';
