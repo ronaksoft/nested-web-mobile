@@ -34,5 +34,61 @@
   border-bottom: 1px solid rgba(50,61,71,.16);
   display: flex;
   align-items: center;
+  color: rgba(50,61,71,.64);
+  /*padding: 0 16px;*/
+}
+.suggests li img{
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  margin: 0 16px;
+}
+.suggests li div{
+  display: flex;
+  flex-direction: column;
+}
+.suggests li p{
+  font-size: 14px;
+  line-height: 19px;
+  margin-bottom: 2px;
+}
+.suggests li span{
+  font-size: 12px;
+  line-height: 17px;
+}
+.suggests li b{
+  color: rgba(50,61,71,1)
+}
+.suggestionWrpper a{
+  height: 24px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(50,61,71,.16);
+  color: rgba(50,61,71,1);
+  overflow: hidden;
+  margin-right: 8px;
+  align-self: center;
+  padding-right: 3px;
+  flex: none;
+}
+.selectedItem {
+  background-color: cyan!important;
+}
+.suggestionWrpper a img{
+  height: 24px;
+  width: 24px;
+  margin-right: 3px;
+}
+.selectItemControl{
+  height: 36px;
+  width: 100%;
+  background-color: rgba(10,10,10,.1);
   padding: 0 16px;
+  display: flex;
+  align-items: center
+}
+.selectItemControl span{
+  display: flex;
+  width: 100%;
 }
