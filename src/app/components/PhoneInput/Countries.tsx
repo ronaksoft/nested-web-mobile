@@ -1,4 +1,5 @@
-const countries =  [
+import ICountry from './ICountry';
+const list =  [
   [
     'Afghanistan (‫افغانستان‬‎)',
     'af',
@@ -1250,4 +1251,16 @@ const countries =  [
   ],
 ];
 
-export default countries;
+function getCountries(): ICountry[] {
+  return list.map((item) => {
+    return {
+      id: item[1],
+      text: item[0],
+      code: item[2],
+    };
+  });
+}
+
+const Countries = getCountries();
+
+export default Countries;
