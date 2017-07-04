@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Signin } from './signin';
+import Signin from './Signin';
 import { Signup } from './signup';
 import { NotFound } from './notfound';
 
