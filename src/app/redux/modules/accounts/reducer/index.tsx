@@ -1,6 +1,6 @@
 import {IAccountAction, IAccountStore} from '../IAccountStore';
 import * as ActionTypes from '../actions/types';
-import IUser from "../../../../api/account/interfaces/IUser";
+import IUser from '../../../../api/account/interfaces/IUser';
 
 /** Initial Places State */
 const initialState: IAccountStore = {
@@ -19,7 +19,8 @@ export default function accountsReducer(state = initialState, action?: IAccountA
       /**
        * Account Add Action
        *
-       * this part check current application state for finding account and then update accounts state if account exist.
+       * this part check current application state for
+       * finding account and then update accounts state if account exist.
        * Otherwise add account to accounts list
        *
        * NOTICE::if this account is exist in state.accounts, this case will bypass to ACCOUNT_UPDATE

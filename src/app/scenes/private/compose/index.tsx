@@ -3,9 +3,13 @@ import { Suggestion } from 'components';
 
 class Compose extends React.Component<any, any> {
   public render() {
+    let unselectItem = 0;
+    if ( true ) {
+      unselectItem++;
+    }
     return (
       <div>
-        <Suggestion/>
+        <Suggestion selectedItems={[]} activeItem={unselectItem}/>
       </div>
     );
   }

@@ -1,6 +1,6 @@
-import {IAccountAction, IAccountStore} from '../IAccountStore';
+import {IAccountAction, IAccountStore} from '../../accounts/IAccountStore';
 import * as ActionTypes from '../actions/types';
-import IUser from "../../../../api/account/interfaces/IUser";
+import IUser from '../../../../api/account/interfaces/IUser';
 
 /** Initial Places State */
 const initialState: IAccountStore = {
