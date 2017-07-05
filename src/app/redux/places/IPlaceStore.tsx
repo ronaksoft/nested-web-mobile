@@ -6,5 +6,5 @@ export interface IPlaceStore {
 
 export interface IPlaceAction {
   type: string;
-  payload: IPlace;
+  payload?: IPlace;
 }

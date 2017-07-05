@@ -6,5 +6,5 @@ export interface IAccountStore {
 
 export interface IAccountAction {
   type: string;
-  payload: IUser;
+  payload?: IUser;
 }

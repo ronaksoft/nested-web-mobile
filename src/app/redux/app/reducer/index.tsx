@@ -1,5 +1,5 @@
 import * as Immutable from 'seamless-immutable';
-import {IAppAction} from '../IAppStore';
+import {IAppAction, IAppStore} from '../IAppStore';
 import * as ActionTypes from '../actions/types';
 
 /** Initial Places State */
