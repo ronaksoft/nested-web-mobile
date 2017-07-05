@@ -41,3 +41,4 @@ typings
 # JetBrains
 .idea
 .awcache
+.vscode

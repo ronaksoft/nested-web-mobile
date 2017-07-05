@@ -25,7 +25,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private attachTypeSelect = () => {
     console.log('click');
     this.setState({
-      attachModal: true,
+      attachModal: !this.state.attachModal,
       unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
     });
   }
@@ -41,6 +41,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
     });
   }
+  private overlayClick = (event) => {
+    event.stopPropagation();
+  }
 
   public render() {
     return (
@@ -49,8 +52,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         <div className={style.subject}>
           <Input onFocus={this.subjectFocus} placeholder="Add a Title…"/>
           <div onClick={this.attachTypeSelect}
-          className={this.state.attachModal ? style.attachActive : style.attachmentBtn}>
+          className={this.state.attachModal ? style.attachmentBtn + ' ' + style.attachActive : style.attachmentBtn}>
             <Icon type="link" />
+            <div onClick={this.overlayClick} className={style.overlay}/>
+            <div className={style.attachActions} onClick={this.overlayClick}>
+              <Icon type="rocket" /><Icon type="car" /><Icon type="close"  onClick={this.attachTypeSelect}/>
+            </div>
           </div>
         </div>
         <textarea onFocus={this.bodyFocus} placeholder="Write something…"/>
