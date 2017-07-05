@@ -2,20 +2,35 @@ import * as React from 'react';
 import {Form, Input, Button} from 'antd';
 import {Link} from 'react-router';
 const style = require('./style.css');
+import {signin} from './actions';
+import {connect} from 'react-redux';
 
 class Signin extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
+    this.state = {
+      isAuthenticated: props.isAuthenticated,
+    };
+
+    console.log('====================================');
+    console.log('props', props);
+    console.log('====================================');
+
     this.submit = this.submit.bind(this);
   }
   private submit() {
+    this.props.onSignin();
     console.log('====================================');
-    console.log('hahah');
+    console.log('hahah', this.props, this.state);
     console.log('====================================');
+
   }
 
   public render() {
+    console.log('====================================');
+    console.log(this.state, this.props);
+    console.log('====================================');
     // const { getFieldDecorator } = this.props.form;
     return (
       <div style={this.props.style}>
@@ -43,4 +58,16 @@ class Signin extends React.Component<any, any> {
 
 }
 
-export default Form.create()(Signin);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.isAuthenticated,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSignin: () => {
+      dispatch(signin());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signin);

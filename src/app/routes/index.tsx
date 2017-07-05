@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Private, Posts, Activities, Files, Notifications, Compose } from 'scenes/private';
 import { Public, Signin, Signup, NotFound } from 'scenes/public';
-// import {Provider} from 'react-redux';
+import {Provider} from 'react-redux';
 import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
-// import {IStore} from '~react-redux~redux';
-// import configureStore from './app/services/store/configureStore';
+import {IStore} from 'redux/IStore';
+import {configureStore} from 'redux/store';
 
-// const store: IStore<any> = configureStore({});
+const store: IStore = configureStore(browserHistory, {});
 
 export default (
-  // <Provider store={store}>
+  <Provider store={store}>
       <Router history={browserHistory}>
           <Route component={Private}>
               <IndexRoute component={Posts}/>
@@ -31,5 +31,5 @@ export default (
           </Route>
           <Redirect from="*" to="/404" />
       </Router>
-  // </Provider>
+  </Provider>
 );
