@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {FileItem} from 'components/FileItem';
-import 'antd/dist/antd.css';
 import IFile from '../../../components/FileItem/IFile';
 
 interface IState {

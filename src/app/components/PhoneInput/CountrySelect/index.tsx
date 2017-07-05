@@ -5,7 +5,6 @@ import './flags.png';
 import './flags@2x.png';
 const style = require('./style.css');
 import * as React from 'react';
-import 'antd/dist/antd.css';
 import ICountry from '../ICountry';
 
 interface IProps {
