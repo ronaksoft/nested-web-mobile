@@ -1,6 +1,7 @@
-/*.compose {
-
-}*/
+.compose {
+  display: flex;
+  flex-direction: column;
+}
 .subject {
   display: flex;
   width: 100%;
@@ -11,7 +12,80 @@
   line-height: 48px;
   display: flex;
   width: 100%;
+  border: none;
+  height: 48px;
+  font-size: 14px;
+  padding-left: 0;
+}
+
+.subject input:focus {
+  border: none;
+  box-shadow: none;
 }
 .compose textarea{
-  padding: 16px 12px 12px 12px;
+  padding: 16px;
+  width: 100%;
+  flex-grow: 1;
+  font-size: 14px;
+  line-height: 20px;
+  border: none;
+}
+.compose textarea:focus{
+  outline: none;
+}
+.attachmentBtn {
+  width: 40px;
+  height: 100%;
+  flex: none;
+}
+.attachActive {
+  color: black;
+}
+textarea::-webkit-input-placeholder  {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+textarea::-moz-placeholder {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+textarea:-moz-placeholder { 
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+textarea::-ms-input-placeholder {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+input::-webkit-input-placeholder  {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+input::-moz-placeholder {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+input:-moz-placeholder { 
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
+}
+input::-ms-input-placeholder {
+  text-overflow: ellipsis!important;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(50,61,71,.40);
 }

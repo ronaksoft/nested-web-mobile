@@ -1,32 +1,59 @@
 import * as React from 'react';
-import {Input} from 'antd';
-import { Suggestion } from 'components';
+import {Input, Icon} from 'antd';
+// import { Suggestion } from 'components';
 const style = require('./compose.css');
+interface IComposeProps {
+  attachModal?: boolean;
+}
 
-class Compose extends React.Component<any, any> {
-  private attachModal = (val) => {
-    return val;
+interface IComposeState {
+  attachModal?: boolean;
+  unselectSelectedRecipient: number;
+}
+class Compose extends React.Component<IComposeProps, IComposeState> {
+
+  constructor(props: any) {
+    super(props);
   }
 
+  public componentWillMount() {
+    this.setState({
+      attachModal: false,
+      unselectSelectedRecipient: 0,
+    });
+  }
   private attachTypeSelect = () => {
-    this.attachModal(true);
+    console.log('click');
+    this.setState({
+      attachModal: true,
+      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
+    });
+  }
+  private subjectFocus = () => {
+    console.log('subjectFocus');
+    this.setState({
+      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
+    });
+  }
+  private bodyFocus = () => {
+    console.log('bodyFocus');
+    this.setState({
+      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
+    });
   }
 
   public render() {
-    const unselectItem = 0;
-    // if ( true ) {
-    //   unselectItem++;
-    // }
     return (
       <div className={style.compose}>
-        <Suggestion selectedItems={[]} activeItem={unselectItem}/>
+        {/*<Suggestion selectedItems={[]} unselectSelectedRecipient={this.state.unselectSelectedRecipient}/>*/}
         <div className={style.subject}>
-          <Input placeholder="Add a Title…"/>
-          <div onClick={this.attachTypeSelect} className={this.attachModal ? 'aa' : 'bbb'}>
-            aaaaali
+          <Input onFocus={this.subjectFocus} placeholder="Add a Title…"/>
+          <div onClick={this.attachTypeSelect}
+          className={this.state.attachModal ? style.attachActive : style.attachmentBtn}>
+            <Icon type="link" />
           </div>
         </div>
-        <textarea placeholder="Write something…"/>
+        <textarea onFocus={this.bodyFocus} placeholder="Write something…"/>
       </div>
     );
   }
