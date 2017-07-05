@@ -39,12 +39,13 @@ class Signin extends React.Component<IProps, IState> {
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
   }
 
-  public componentWillReceiveProps(newProbs: IProps) {
-    if (newProbs.isLogin !== this.state.isLogin) {
-      this.setState({isLogin: newProbs.isLogin});
-    }
-  }
-
+  /**
+   * Authenticate the user with the given username and password
+   *
+   * @private
+   * @returns
+   * @memberof Signin
+   */
   private submit() {
     if (this.state.inProgress) {
       return;
@@ -58,7 +59,6 @@ class Signin extends React.Component<IProps, IState> {
       uid: this.state.username,
       pass: md5(this.state.password),
     }).then((response: ILoginResponse) => {
-      console.log(response.account);
       AAA.getInstance().setCredentials(response);
       this.props.setLogin(response.account);
       browserHistory.push('/');
@@ -70,6 +70,13 @@ class Signin extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * Set username on user input
+   *
+   * @private
+   * @param {*} e
+   * @memberof Signin
+   */
   private handleUsernameChange(e: any) {
     if (this.state.username !== e.target.value) {
       this.setState({
@@ -78,6 +85,13 @@ class Signin extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * Set password on user input
+   *
+   * @private
+   * @param {*} e
+   * @memberof Signin
+   */
   private handlePasswordChange(e: any) {
     if (this.state.password !== e.target.value) {
       this.setState({
@@ -91,7 +105,7 @@ class Signin extends React.Component<IProps, IState> {
     return (
       <div>
         <div>
-          <img src={require('./logo.svg')} className={style.logo} alt="Nested"/>
+          <img src={require('./logo.svg')} className={style.logo} alt="Nested" style={{ width: 48, height: 48 }}/>
         </div>
         <h2>Sign in to Nested</h2>
         <div>
