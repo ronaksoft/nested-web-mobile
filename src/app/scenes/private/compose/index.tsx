@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Input, Icon} from 'antd';
-import { Suggestion } from 'components';
+// import { Suggestion } from 'components';
 const style = require('./compose.css');
 interface IComposeProps {
   attachModal?: boolean;
@@ -48,7 +48,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public render() {
     return (
       <div className={style.compose}>
-        <Suggestion selectedItems={[]} unselectSelectedRecipient={this.state.unselectSelectedRecipient}/>
+        {/*<Suggestion selectedItems={[]} unselectSelectedRecipient={this.state.unselectSelectedRecipient}/>*/}
         <div className={style.subject}>
           <Input onFocus={this.subjectFocus} placeholder="Add a Title…"/>
           <div onClick={this.attachTypeSelect}
