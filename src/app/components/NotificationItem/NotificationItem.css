@@ -1,0 +1,28 @@
+.mention {
+  flex: 1;
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding: 12px 12px 0 12px;
+}
+
+.mention .p {
+  white-space: normal;
+  line-height: 16px;
+  color: #323D47;
+  font-size: 13px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.mention .p .small {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.mention .p .small .span {
+  line-height: 16px;
+  color: #323D47;
+  font-size: 13px;
+  font-weight: 700;
+}
