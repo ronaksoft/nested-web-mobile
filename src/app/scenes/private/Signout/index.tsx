@@ -12,6 +12,11 @@ interface IProps {
 
 class Signout extends React.Component<IProps, {}> {
   private accountApi: AccountApi = new AccountApi();
+  /**
+   * Creates an instance of Signout.
+   * @param {*} props
+   * @memberof Signout
+   */
   constructor(props: any) {
     super(props);
 
@@ -20,13 +25,24 @@ class Signout extends React.Component<IProps, {}> {
     };
   }
 
+  /**
+   * Redirect to /signin the user was logged out successfully
+   *
+   * @param {IProps} newProbs
+   * @memberof Signout
+   */
   public componentWillReceiveProps(newProbs: IProps) {
-    if (newProbs.isLogin) {
+    if (newProbs.isLogin === false) {
       AAA.getInstance().clearCredentials();
       browserHistory.push('/signin');
     }
   }
 
+  /**
+   * Log out the user on mount
+   *
+   * @memberof Signout
+   */
   public componentDidMount() {
     this.accountApi.logout().then(() => {
       this.props.setLogout();
