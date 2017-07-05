@@ -1,5 +1,5 @@
 import * as React from 'react';
-import INotification from '../INotification';
+import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -8,7 +8,7 @@ interface IProps {
   notification: INotification;
 }
 
-class Demoted extends React.Component <IProps, any> {
+class Promoted extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
@@ -20,7 +20,7 @@ class Demoted extends React.Component <IProps, any> {
         {/*<div>*/}
           {/*<div>*/}
             {/*<p>*/}
-              {/*<b></b> demoted you in <b></b>.*/}
+              {/*<b></b> promoted you in <b></b>.*/}
             {/*</p>*/}
           {/*</div>*/}
           {/*<div>*/}
@@ -34,4 +34,4 @@ class Demoted extends React.Component <IProps, any> {
   }
 }
 
-export {Demoted}
+export default Promoted;

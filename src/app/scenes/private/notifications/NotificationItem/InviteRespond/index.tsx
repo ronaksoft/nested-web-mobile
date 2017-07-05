@@ -1,5 +1,5 @@
 import * as React from 'react';
-import INotification from '../INotification';
+import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
 // const style = require('../NotificationItem.css');
@@ -8,14 +8,14 @@ interface IProps {
   notification: INotification;
 }
 
-class Invite extends React.Component <IProps, any> {
+class InviteRespond extends React.Component <IProps, any> {
   public render() {
     return (
       <div>
-        Invite notification
+        Invite Respond notification
       </div>
     );
   }
 }
 
-export {Invite}
+export default InviteRespond;

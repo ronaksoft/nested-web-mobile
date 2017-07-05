@@ -1,6 +1,7 @@
 import * as React from 'react';
-import INotification from '../INotification';
+
 import 'antd/dist/antd.css';
+import INotification from '../../../../../api/notification/interfaces/INotification';
 
 const style = require('../NotificationItem.css');
 
@@ -34,4 +35,4 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
   }
 }
 
-export {PlaceSettingsChanged}
+export default PlaceSettingsChanged;
