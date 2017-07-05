@@ -4,7 +4,6 @@ import { debounce } from 'lodash';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
-import 'antd/dist/antd.css';
 
 const style = require('./suggestion.css');
 

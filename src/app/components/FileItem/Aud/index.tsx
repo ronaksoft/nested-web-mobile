@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Checkbox} from 'antd';
 import IFile from '../IFile';
-import 'antd/dist/antd.css';
 
 const style = require('../FileItem.css');
 

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
-import 'antd/dist/antd.css';
 
 const style = require('./chips.css');
 

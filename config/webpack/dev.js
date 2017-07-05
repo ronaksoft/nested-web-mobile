@@ -7,6 +7,11 @@ var stylelint = require('stylelint');
 var ManifestPlugin = require('webpack-manifest-plugin');
 var CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 
+const lessToJs = require('less-vars-to-js');
+const themeVariables = lessToJs(fs.readFileSync(path.join(path.resolve('./src/app'), 'ant-theme-vars.less'), 'utf8'));
+
+// themeVariables["@icon-url"] = "https://fonts.googleapis.com/css?family=Open+Sans";
+
 var config = {
   // Enable sourcemaps for debugging webpack's output.
   devtool: 'source-map',
@@ -38,6 +43,16 @@ var config = {
         loader: 'tslint-loader'
       },
       {
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        test: /\.js$/,
+        options: {
+          plugins: [
+            ['import', { libraryName: "antd", style: true }]
+          ]
+        },
+      },
+      {
         test: /\.tsx?$/,
         loader: 'react-hot-loader!awesome-typescript-loader'
       },
@@ -66,7 +81,18 @@ var config = {
           'css-loader'
         ]
       },
-
+      {
+        test: /\.less$/,
+        use: [
+          {loader: "style-loader"},
+          {loader: "css-loader"},
+          {loader: "less-loader",
+            options: {
+              modifyVars: themeVariables
+            }
+          }
+        ]
+      },
       {
         test: /\.eot(\?.*)?$/,
         loader: 'file-loader?name=fonts/[hash].[ext]'
