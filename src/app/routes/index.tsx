@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Private, Posts, Activities, Files, Notifications, Compose } from 'scenes/private';
+import { Posts, Activities, Files, Notifications, Compose, Signout } from 'scenes/private';
+import Private from 'scenes/private';
 import { Public, Signin, Signup, NotFound } from 'scenes/public';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
@@ -20,6 +21,7 @@ export default (
               <Route path="/place/:placeId/files" component={Files}/>
               <Route path="/notifications" component={Notifications}/>
               <Route path="/compose" component={Compose}/>
+              <Route path="/signout" component={Signout}/>
               <Redirect from="/" to="/feed" />
           </Route>
           <Route component={Public}>

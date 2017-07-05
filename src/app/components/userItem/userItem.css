@@ -1,0 +1,19 @@
+.UserAvatar {
+  display: inline-block;
+  color: white;
+}
+
+.UserAvatarInner {
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.UserAvatar--light {
+  color: gray;
+}
+
+.UserAvatar--light .UserAvatarInner {
+  border: 1px solid lightgray;
+}

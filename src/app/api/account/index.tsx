@@ -1,7 +1,11 @@
 import Api from 'api';
-import IRecallRequest from './interfaces/IRecallRequest';
-import IRecallResponse from './interfaces/IRecallResponse';
-import IGetRequest from './interfaces/IGetRequest';
+import {
+    IRecallRequest,
+    IRecallResponse,
+    IGetRequest,
+    ILoginRequest,
+    ILoginResponse,
+} from './interfaces';
 import IUser from './interfaces/IUser';
 
 export default class AccountApi {
@@ -11,13 +15,11 @@ export default class AccountApi {
         this.api = Api.getInstance();
     }
 
-    public recall(data: IRecallRequest): Promise<any> {
+    public recall(data: IRecallRequest): Promise<IRecallResponse> {
         return this.api.request({
             cmd: 'session/recall',
             data,
             withoutQueue: true,
-        }).then((res: IRecallResponse) => {
-            return res;
         });
     }
 
@@ -32,24 +34,16 @@ export default class AccountApi {
         });
     }
 
-    public login(data: any): Promise<any> {
-      return this.api.server.request({
+    public login(data: ILoginRequest): Promise<ILoginResponse> {
+      return this.api.request({
         cmd: 'session/register',
         data,
-      }).then((res: any) => {
-        return res;
-      }).catch((err) => {
-        console.log(err);
       });
     }
 
     public logout(): Promise<any> {
-      return this.api.server.request({
+      return this.api.request({
         cmd: 'session/close',
-      }).then((res: any) => {
-        return res;
-      }).catch((err) => {
-        console.log(err);
       });
     }
 }

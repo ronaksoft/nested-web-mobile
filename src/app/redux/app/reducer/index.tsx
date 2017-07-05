@@ -16,11 +16,13 @@ export default function appReducer(state = initialState, action?: IAppAction) {
     case ActionTypes.APP_LOGIN:
       return Immutable.merge(state, {
         isLogin: true,
+        user: action.payload,
       });
 
     case ActionTypes.APP_LOGOUT:
       return Immutable.merge(state, {
         isLogin: false,
+        user: null,
       });
     default :
       return state;

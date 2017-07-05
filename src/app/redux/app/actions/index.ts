@@ -23,14 +23,29 @@ export function userUnset(): IAppAction {
   };
 }
 
-export function login(): IAppAction {
+export function login(user: IUser): IAppAction {
   return {
     type: ActionTypes.APP_LOGIN,
+    payload: user,
   };
 }
 
 export function logout(): IAppAction {
   return {
     type: ActionTypes.APP_LOGOUT,
+  };
+}
+
+export function setNotification(notifications: any[]): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_SET,
+    payload: notifications,
+  };
+}
+
+export function unsetNotification(notifications: any[]): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_SET,
+    payload: notifications,
   };
 }

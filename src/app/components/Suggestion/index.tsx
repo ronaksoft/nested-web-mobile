@@ -1,10 +1,9 @@
 import * as React from 'react';
-import PlaceApi from '../../api/place';
+// import PlaceApi from '../../api/place';
 import { debounce } from 'lodash';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
-import 'antd/dist/antd.css';
 
 const style = require('./suggestion.css');
 
@@ -23,12 +22,12 @@ interface ISuggestState {
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private debouncedFillSuggests: (val: string) => void;
   private inputVal: string;
-  private placeApi: any;
+  // private placeApi: any;
 
   constructor(props: any) {
     super(props);
     this.debouncedFillSuggests = debounce(this.fillSuggests, 100); // Prevents the call stack and wasting resources
-    this.placeApi = new PlaceApi();
+    // this.placeApi = new PlaceApi();
   }
 
   public componentWillMount() {
