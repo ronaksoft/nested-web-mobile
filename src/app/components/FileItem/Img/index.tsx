@@ -16,13 +16,13 @@ class Img extends React.Component <IProps, any> {
           <div>
             <Checkbox/>
           </div>
-          <div className={style.imgContainer}>
+          <div className={style.imgContainer + ' ' + style.filesTypesImages}>
             <img className={style.fileThumbnail} />
           </div>
         </div>
         <div className={style.fileData}>
           <div>
-            <span className={style.fileName}>{this.props.file.id}. {this.props.file.name}</span>
+            <span className={style.fileName}>{this.props.file.name}</span>
           </div>
           <div>
             <span className={style.sizeText}>{this.props.file.size}</span>
