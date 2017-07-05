@@ -10,7 +10,7 @@ const style = require('./suggestion.css');
 
 interface ISuggestProps {
   selectedItems?: IPlace[];
-  activeItem: number;
+  unselectSelectedRecipient: number;
 }
 
 interface ISuggestState {
@@ -22,13 +22,14 @@ interface ISuggestState {
 
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private debouncedFillSuggests: (val: string) => void;
+  private inputVal: string;
   private placeApi: any;
 
   constructor(props: any) {
     super(props);
     this.debouncedFillSuggests = debounce(this.fillSuggests, 100); // Prevents the call stack and wasting resources
     this.placeApi = new PlaceApi();
-}
+  }
 
   public componentWillMount() {
     this.setState({
@@ -49,13 +50,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private changeInputVal(event) {
     event.persist();
     const val = event.currentTarget.value;
+    this.inputVal = val;
+    console.log(this.inputVal);
     this.debouncedFillSuggests(val);
   }
   // Calling on evry input key down
   private keyDownInputVal(event) {
     event.persist();
     const val = event.currentTarget.value;
-    console.log(this.state.input);
     if (event.key === 'Backspace' && val.length === 0) {
       const array = this.state.selectedItems;
       array.splice(this.state.selectedItems.length - 1, 1);
@@ -80,12 +82,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private getSuggests(query: string): Promise<any> {
     return new Promise((resolve) => {
       // TODO get items from serve
-      this.placeApi.placeSuggestCompose({
-        keyword: query,
-        limit: 2,
-      }).then((items) => {
-        console.log(items);
-      });
+      // this.placeApi.placeSuggestCompose({
+      //   keyword: query,
+      //   limit: 2,
+      // }).then((items) => {
+      //   console.log(items);
+      // });
       const items = [
         {
           name: 'ALi',
@@ -134,6 +136,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private handleChipsClick = (item: IPlace) => {
     this.setState({
       activeItem: item,
+      suggests: [],
     });
   }
 
@@ -176,7 +179,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
           </span>
           {recipients}
           <Input onChange={tempFunctionChange} onKeyDown={tempFunctionKeydown}
-          onFocus={tempFunctionFocus} value={this.state.input}/>
+          onFocus={tempFunctionFocus}/>
         </div>
         <ul className={style.suggests}>
           {listItems}
