@@ -59,27 +59,6 @@
 .suggests li b{
   color: rgba(50,61,71,1)
 }
-.suggestionWrpper a{
-  height: 24px;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  background-color: rgba(50,61,71,.16);
-  color: rgba(50,61,71,1);
-  overflow: hidden;
-  margin-right: 8px;
-  align-self: center;
-  padding-right: 3px;
-  flex: none;
-}
-.selectedItem {
-  background-color: cyan!important;
-}
-.suggestionWrpper a img{
-  height: 24px;
-  width: 24px;
-  margin-right: 3px;
-}
 .selectItemControl{
   height: 36px;
   width: 100%;
