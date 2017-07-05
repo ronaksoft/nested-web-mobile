@@ -1,0 +1,36 @@
+import {} from '../IAppStore';
+import * as ActionTypes from './types';
+import IUser from '../../../api/account/interfaces/IUser';
+import {IAppAction} from '../IAppStore';
+
+export function userSet(user: IUser): IAppAction {
+  return {
+    type: ActionTypes.APP_USER_SET,
+    payload: user,
+  };
+}
+
+export function userUpdate(user: IUser): IAppAction {
+  return {
+    type: ActionTypes.APP_USER_UPDATE,
+    payload: user,
+  };
+}
+
+export function userUnset(): IAppAction {
+  return {
+    type: ActionTypes.APP_USER_UNSET,
+  };
+}
+
+export function login(): IAppAction {
+  return {
+    type: ActionTypes.APP_LOGIN,
+  };
+}
+
+export function logout(): IAppAction {
+  return {
+    type: ActionTypes.APP_LOGOUT,
+  };
+}

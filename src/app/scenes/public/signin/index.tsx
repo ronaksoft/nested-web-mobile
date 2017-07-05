@@ -5,7 +5,6 @@ class Signin extends React.Component<any, any> {
     return (
       <div>
         Signin
-        <Files/>
       </div>
     );
   }

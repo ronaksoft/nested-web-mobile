@@ -1,7 +1,11 @@
-import { ICounter } from 'models/counter';
-import { IStars } from 'models/stars';
+import IUser from '../api/account/interfaces/IUser';
+import IPlace from '../api/place/interfaces/IPlace';
+import {IAppStore} from './app/IAppStore';
 
 export interface IStore {
-  counter: ICounter;
-  stars: IStars;
-};
+  places: IPlace;
+  accounts: IUser[];
+  user: IUser;
+  app: IAppStore;
+  reduxAsyncConnect: any;
+}
