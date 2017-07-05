@@ -36,7 +36,3 @@ export const APP_LIMITS_SET: string = 'APP/LIMITS_SET';
 /** DRAFT ACTION */
 export const APP_DRAFT_SET: string = 'APP/DRAFT_SET';
 export const APP_DRAFT_UNSET: string = 'APP/DRAFT_UNSET';
-
-// FIXME
-export const ACCOUNT_ADD: string = 'APP/DRAFT_UNSET';
-export const ACCOUNT_UPDATE: string = 'APP/DRAFT_UNSET';

@@ -1,6 +1,6 @@
 import {IAccountAction} from '../IAccountStore';
 import * as ActionTypes from './types';
-import IUser from '../../../../api/account/interfaces/IUser';
+import IUser from '../../../api/account/interfaces/IUser';
 
 export function userAdd(user: IUser): IAccountAction {
   return {

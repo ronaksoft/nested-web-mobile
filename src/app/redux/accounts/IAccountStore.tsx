@@ -1,4 +1,4 @@
-import IUser from '../../../api/account/interfaces/IUser';
+import IUser from '../../api/account/interfaces/IUser';
 
 export interface IAccountStore {
   accounts: IUser[];

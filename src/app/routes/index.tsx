@@ -3,10 +3,9 @@ import { Private, Posts, Activities, Files, Notifications, Compose } from 'scene
 import { Public, Signin, Signup, NotFound } from 'scenes/public';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
-import {IStore} from 'redux/IStore';
 import {configureStore} from 'redux/store';
 
-const store: IStore = configureStore(browserHistory, {});
+const store = configureStore(browserHistory);
 
 export default (
   <Provider store={store}>
