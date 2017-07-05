@@ -6,7 +6,6 @@ import {Aud} from './Aud';
 import {Vid} from './Vid';
 import {Oth} from './Oth';
 import IFile from './IFile';
-import 'antd/dist/antd.css';
 
 interface IProps {
   file: IFile;

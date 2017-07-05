@@ -25,10 +25,6 @@ class Signin extends React.Component<IProps, IState> {
       isLogin: false,
     };
 
-    console.log('====================================');
-    console.log('props', props);
-    console.log('====================================');
-
     this.submit = this.submit.bind(this);
   }
 
@@ -47,9 +43,6 @@ class Signin extends React.Component<IProps, IState> {
   }
 
   public render() {
-    console.log('====================================');
-    console.log(this.state, this.props);
-    console.log('====================================');
     // const { getFieldDecorator } = this.props.form;
     return (
       <div>
@@ -60,10 +53,10 @@ class Signin extends React.Component<IProps, IState> {
         <div>
           <Form onSubmit={this.submit}>
             <Form.Item>
-              <Input placeholder="Username"/>,
+              <Input placeholder="Username"/>
             </Form.Item>
             <Form.Item>
-              <Input type="password" placeholder="Password"/>,
+              <Input type="password" placeholder="Password"/>
             </Form.Item>
             <Button type="primary" className={style.submit} onClick={this.submit}>
               {this.state.isLogin && <b>Sign ssasssssdsin</b>}

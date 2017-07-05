@@ -11,6 +11,7 @@ const { ReduxAsyncConnect } = require('redux-connect');
 import { configureStore } from './app/redux/store';
 import 'isomorphic-fetch';
 import routes from './app/routes';
+import 'antd/dist/antd.less';
 
 const store = configureStore(
   browserHistory,
