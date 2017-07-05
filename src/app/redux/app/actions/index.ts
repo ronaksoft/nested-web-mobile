@@ -35,3 +35,17 @@ export function logout(): IAppAction {
     type: ActionTypes.APP_LOGOUT,
   };
 }
+
+export function setNotification(notifications: any[]): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_SET,
+    payload: notifications,
+  };
+}
+
+export function unsetNotification(notifications: any[]): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_SET,
+    payload: notifications,
+  };
+}
