@@ -10,4 +10,4 @@ class Signup extends React.Component<any, any> {
   }
 }
 
-export { Signup }
+export default Signup;

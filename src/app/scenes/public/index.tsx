@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Signin from './Signin';
-import { Signup } from './signup';
-import { NotFound } from './notfound';
+import Signin from './signin';
+import Signup from './signup';
+import NotFound from './notfound';
 
 class Public extends React.Component<any, any> {
   public render() {

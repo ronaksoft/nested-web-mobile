@@ -10,4 +10,4 @@ class NotFound extends React.Component<any, any> {
   }
 }
 
-export { NotFound }
+export default NotFound;
