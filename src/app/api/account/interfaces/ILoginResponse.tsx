@@ -1,10 +1,9 @@
 import IUser from './IUser';
-
-interface IRecallResponse {
+interface ILoginResponse {
   account: IUser;
   server_timestamp: number;
   _sk: string;
   _ss: string;
 }
 
-export default IRecallResponse ;
+export default ILoginResponse;

@@ -1,31 +1,42 @@
 import * as React from 'react';
-import {Form, Input, Button} from 'antd';
+import {Input, Button} from 'antd';
 import {Link} from 'react-router';
-
+import {browserHistory} from 'react-router';
 const style = require('./style.css');
 import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
-
+import * as md5 from 'md5';
+import AccountApi from 'api/account';
+import {IUser, ILoginResponse} from 'api/account/interfaces';
+import AAA from 'services/aaa';
 interface IState {
   isLogin: boolean;
+  username: string;
+  password: string;
+  inProgress: boolean;
 }
 
 interface IProps {
   isLogin: boolean;
-  setLogin: () => {};
+  setLogin: (user: IUser) => {};
   setLogout: () => {};
 }
 
 class Signin extends React.Component<IProps, IState> {
-
+  private accountApi: AccountApi = new AccountApi();
   constructor(props: any) {
     super(props);
 
     this.state = {
       isLogin: false,
+      username: '',
+      password: '',
+      inProgress: false,
     };
 
     this.submit = this.submit.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
   }
 
   public componentWillReceiveProps(newProbs: IProps) {
@@ -35,10 +46,43 @@ class Signin extends React.Component<IProps, IState> {
   }
 
   private submit() {
-    if (this.state.isLogin) {
-      this.props.setLogout();
-    } else {
-      this.props.setLogin();
+    if (this.state.inProgress) {
+      return;
+    }
+
+    this.setState({
+      inProgress: true,
+    });
+
+    this.accountApi.login({
+      uid: this.state.username,
+      pass: md5(this.state.password),
+    }).then((response: ILoginResponse) => {
+      console.log(response.account);
+      AAA.getInstance().setCredentials(response);
+      this.props.setLogin(response.account);
+      browserHistory.push('/');
+    }, (error) => {
+      console.log(error);
+      this.setState({
+        inProgress: false,
+      });
+    });
+  }
+
+  private handleUsernameChange(e: any) {
+    if (this.state.username !== e.target.value) {
+      this.setState({
+        username: e.target.value,
+      });
+    }
+  }
+
+  private handlePasswordChange(e: any) {
+    if (this.state.password !== e.target.value) {
+      this.setState({
+        password: e.target.value,
+      });
     }
   }
 
@@ -51,18 +95,18 @@ class Signin extends React.Component<IProps, IState> {
         </div>
         <h2>Sign in to Nested</h2>
         <div>
-          <Form onSubmit={this.submit}>
-            <Form.Item>
-              <Input placeholder="Username"/>
-            </Form.Item>
-            <Form.Item>
-              <Input type="password" placeholder="Password"/>
-            </Form.Item>
+            <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
+            <br />
+            <Input
+                  type="password"
+                  placeholder="Password"
+                  value={this.state.password}
+                  onChange={this.handlePasswordChange}
+            />
+            <br />
             <Button type="primary" className={style.submit} onClick={this.submit}>
-              {this.state.isLogin && <b>Sign ssasssssdsin</b>}
-              {!this.state.isLogin && <b>Sign Out</b>}
+              <b>Sign in</b>
             </Button>
-          </Form>
           <p>Don't have an account? <Link to="/signup">Create a new account</Link></p>
         </div>
       </div>
@@ -77,8 +121,8 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setLogin: () => {
-      dispatch(login());
+    setLogin: (user: IUser) => {
+      dispatch(login(user));
     },
     setLogout: () => {
       dispatch(logout());

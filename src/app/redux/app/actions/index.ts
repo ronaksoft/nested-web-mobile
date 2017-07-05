@@ -23,9 +23,10 @@ export function userUnset(): IAppAction {
   };
 }
 
-export function login(): IAppAction {
+export function login(user: IUser): IAppAction {
   return {
     type: ActionTypes.APP_LOGIN,
+    payload: user,
   };
 }
 

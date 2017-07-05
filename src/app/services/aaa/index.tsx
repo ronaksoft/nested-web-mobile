@@ -2,11 +2,8 @@ import * as Cookies from 'cookies-js';
 
 export default class AAA {
   private static instance: AAA;
-  private hasUserCookie: boolean;
   private nss: string;
   private nsk: string;
-  private account: any;
-  private isAuthenticated: boolean = false;
 
   public static getInstance() {
     if (!this.instance) {
@@ -28,48 +25,18 @@ export default class AAA {
     Cookies.set('nsk', credential._sk);
     this.nss = credential._ss;
     this.nsk = credential._sk;
-    this.hasUserCookie = this.checkUserCookie();
   }
 
-  public setUser(account: any): void {
-    this.account = account;
-    this.isAuthenticated = true;
-    console.log(account, this);
-  }
-
-  public getUser(): any {
-    return this.account;
-  }
-
-  public setIsUnAuthenticated(): void {
-    this.isAuthenticated = false;
+  public clearCredentials(): void {
     this.nss = null;
     this.nsk = null;
     Cookies.set('nss');
     Cookies.set('nsk');
-    this.account = null;
-  }
-
-  public hasUser(): Promise <boolean> {
-    return new Promise((res) => {
-      if (this.checkUserCookie()) {
-        res(false);
-      } else {
-        res(false);
-      }
-    });
   }
 
   private constructor() {
-    this.hasUserCookie = this.checkUserCookie();
     this.nss = Cookies.get('nss');
     this.nsk = Cookies.get('nsk');
   }
-
-  private checkUserCookie(): boolean {
-    const nss = Cookies.get('nss');
-    const nsk = Cookies.get('nsk');
-    return (nss && nsk);
-  };
 
 }
