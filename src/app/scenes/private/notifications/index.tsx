@@ -1,67 +1,86 @@
 import * as React from 'react';
-import {NotificationItem} from 'components/NotificationItem';
-import 'antd/dist/antd.css';
-import INotification from '../../../components/NotificationItem/INotification';
+import {NotificationItem} from './NotificationItem';
+import NotificationApi from '../../../api/notification/index';
+import {INotificationData} from '../../../api/notification/interfaces/INotificationResponse';
+import INotification from 'api/notification/interfaces/INotification';
+import ArrayUntiles from '../../../services/untils/array';
+import {connect} from 'react-redux';
+import {setNotification} from '../../../redux/app/actions/index';
+import {Button} from 'antd';
 
 interface IState {
-  items: any[];
+  notifications: INotification[];
+  skip: number;
+  limit: number;
 }
 
-class Notifications extends React.Component<{}, IState> {
+interface IProps {
+  setNotification: (notifications: INotification[]) => {};
+  notifications: INotification[];
+  notificationsCount: number;
+}
+
+class Notifications extends React.Component<IProps, IState> {
 // setting initial states
-  constructor(props: {}) {
+  constructor(props) {
     super(props);
     this.state = {
-      items: [],
+      notifications: this.props.notifications,
+      limit: 10,
+      skip: 0,
     };
   }
 
+  private getNotification() {
+    const notificationApi = new NotificationApi();
+    notificationApi.get({
+      skip: this.state.skip,
+      limit: this.state.limit,
+    }).then((notificationsResponse: INotificationData) => {
+      if (this.state.skip === 0) {
+        this.props.setNotification(notificationsResponse.notifications);
+      }
+      const notifs =
+        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(this.state.notifications), '_id')
+          .sort((a: INotification, b: INotification) => {
+            return b.timestamp - a.timestamp;
+          });
+
+      this.setState({
+        notifications: notifs,
+        skip: notifs.length,
+      });
+    });
+  }
+
+  public componentDidMount() {
+    this.getNotification();
+  }
+
   public render() {
-    const notificationTypes: INotification[] = [
-      {
-        id: 'COMMENT',
-        type: 'Comment',
-      },
-      {
-        id: 'DEMOTED',
-        type: 'Demoted',
-      },
-      {
-        id: 'INVITE',
-        type: 'Invite',
-      },
-      {
-        id: 'INVITERESPOND',
-        type: 'InviteRespond',
-      },
-      {
-        id: 'YOUJOINED',
-        type: 'YouJoined',
-      },
-      {
-        id: 'MENTION',
-        type: 'Mention',
-      },
-      {
-        id: 'NEWSESSION',
-        type: 'NewSession',
-      },
-      {
-        id: 'PROMOTED',
-        type: 'Promoted',
-      },
-      {
-        id: 'PLACESETTINGSCHANGED',
-        type: 'PlaceSettingsChanged',
-      },
-    ];
     return (
       <div>
-        {notificationTypes.map((notification) =>
-          (<NotificationItem key={notification.id} notification={notification}/>))}
+        {this.state.notifications.length}
+        {this.state.notifications.map((notif) =>
+          (<NotificationItem key={notif._id} notification={notif}/>))
+        }
+        <Button onClick={this.getNotification.bind(this)}>More..</Button>
       </div>
     );
   }
 }
 
-export {Notifications}
+const mapStateToProps = (store) => ({
+  notifications: store.app.notifications,
+  notificationsCount: store.app.notificationsCount,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setNotification: (notifications: INotification[]) => {
+      dispatch(setNotification(notifications));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);

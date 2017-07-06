@@ -1,6 +1,6 @@
 import Api from 'api';
-import INotificationRequest from './interfaces/INotificationResponse';
-import INotificationResponse from './interfaces/INotificationRequest';
+import INotificationResponse from './interfaces/INotificationResponse';
+import INotificationRequest from './interfaces/INotificationRequest';
 import INotificationRemoveRequest from './interfaces/INotificationRemoveRequest';
 import INotificationCountRequest from './interfaces/INotificationCountResponse';
 
@@ -12,13 +12,16 @@ export default class NotificationApi {
   }
 
   public get(params: INotificationRequest = {
-    skip: 0, limit: 10, after: 0, before: null,
+    skip: 0,
+    limit: 10,
+    after: null,
+    before: null,
   }) {
     return this.api.server.request({
       cmd: 'notification/get_all',
       data: params,
-    }).then((res: INotificationResponse[]) => {
-      return res;
+    }).then((res: INotificationResponse) => {
+      return res.data;
     }).catch((err) => {
       console.log(err);
       return err;

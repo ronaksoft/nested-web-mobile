@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Posts, Activities, Files, Notifications, Compose, Signout } from 'scenes/private';
+import { Posts, Activities, Files, Compose, Signout } from 'scenes/private';
 import Private from 'scenes/private';
 import { Public, Signin, Signup, NotFound } from 'scenes/public';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
 import {configureStore} from 'redux/store';
+import Notifications from '../scenes/private/notifications/index';
 
 const store = configureStore(browserHistory);
 

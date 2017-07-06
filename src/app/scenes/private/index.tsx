@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Posts } from './posts';
-import { Activities } from './activities';
-import { Files } from './files';
-import { Notifications } from './notifications';
-import { Compose } from './compose';
+import {Posts} from './posts';
+import {Activities} from './activities';
+import {Files} from './files';
+import Notifications from './notifications';
+import {Compose} from './compose';
 import Signout from './Signout';
 import AccountApi from 'api/account';
 import {IUser, IRecallResponse} from 'api/account/interfaces';
@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
 
 interface IPrivateState {
-    isLogin: boolean;
+  isLogin: boolean;
 };
 
 interface IProps {
@@ -25,6 +25,7 @@ interface IProps {
 
 class Private extends React.Component<IProps, IPrivateState> {
   private accountApi: AccountApi;
+
   public constructor() {
     super();
     this.state = {
@@ -93,4 +94,4 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
-export { Posts, Activities, Files, Notifications, Compose, Signout };
+export {Posts, Activities, Files, Notifications, Compose, Signout};
