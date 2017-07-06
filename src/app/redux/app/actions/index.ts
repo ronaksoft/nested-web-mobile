@@ -2,6 +2,7 @@ import {} from '../IAppStore';
 import * as ActionTypes from './types';
 import IUser from '../../../api/account/interfaces/IUser';
 import {IAppAction} from '../IAppStore';
+import INotificationCountRequest from '../../../api/notification/interfaces/INotificationCountResponse';
 
 export function userSet(user: IUser): IAppAction {
   return {
@@ -33,6 +34,13 @@ export function login(user: IUser): IAppAction {
 export function logout(): IAppAction {
   return {
     type: ActionTypes.APP_LOGOUT,
+  };
+}
+
+export function setNotificationCount(counts: INotificationCountRequest): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_COUNT,
+    payload: counts,
   };
 }
 

@@ -69,7 +69,7 @@ export default class NotificationApi {
     return this.api.server.request({
       cmd: 'notification/get_counter',
     }).then((res: INotificationCountRequest) => {
-      return res;
+      return res.data;
     }).catch((err) => {
       console.log(err);
       return err;

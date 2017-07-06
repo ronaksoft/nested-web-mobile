@@ -1,5 +1,6 @@
 import IUser from '../../api/account/interfaces/IUser';
 import INotificationResponse from '../../api/notification/interfaces/INotificationRequest';
+import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
 
 export interface IAppStore {
   isSocketConnect: boolean;
@@ -8,9 +9,10 @@ export interface IAppStore {
   userPlaces: string[];
   placesUnseenCounters: any[];
   notifications: INotificationResponse[];
+  notificationsCount: INotificationCountRequest;
 }
 
 export interface IAppAction {
   type: string;
-  payload?: INotificationResponse[] | IUser | boolean;
+  payload?: INotificationCountRequest | INotificationResponse[] | IUser | number | boolean;
 }

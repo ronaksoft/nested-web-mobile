@@ -10,6 +10,7 @@ const initialState = Immutable.from<IAppStore>({
   user: null,
   userPlaces: [],
   notifications: [],
+  notificationsCount: 0,
 });
 
 export default function appReducer(state = initialState, action?: IAppAction) {
@@ -34,6 +35,11 @@ export default function appReducer(state = initialState, action?: IAppAction) {
     case ActionTypes.APP_NOTIFICATION_UNSET:
       return Immutable.merge(state, {
         notifications: [],
+      });
+
+    case ActionTypes.APP_NOTIFICATION_COUNT:
+      return Immutable.merge(state, {
+        notificationsCount: action.payload,
       });
 
     default :
