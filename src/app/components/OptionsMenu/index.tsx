@@ -1,15 +1,12 @@
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
-// import {Row, Col} from 'antd';
+import {Icon} from 'antd';
+import {IcoN} from 'components';
 const style = require('./OptionsMenu.css');
 
 interface IOptionsMenuProps {
-  item?: IPlace;
-  filter: string;
-  size: any;
-  avatar: boolean;
-  name: boolean;
-  id: boolean;
+  item?: IPlace | null;
+  filter?: string;
 }
 
 class OptionsMenu extends React.Component<IOptionsMenuProps, any> {
@@ -21,7 +18,15 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, any> {
   public render() {
     return (
     <div className={style.visible}>
-        ass
+        <a>
+          adwdwd
+          <IcoN size={24} name="arrow24"/>
+        </a>
+        <div className={style.filler}/>
+        <div className={style.icons}>
+          <Icon type="link"  />
+          <Icon type="link"  />
+        </div>
     </div>
     );
   }

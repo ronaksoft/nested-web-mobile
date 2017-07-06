@@ -1,6 +1,6 @@
 import * as React from 'react';
 import IUser from '../../api/account/interfaces/IUser';
-declare function unescape(s:string): string;
+declare function unescape(s: string): string;
 const style = require('./userItem.css');
 const settings = {
   textColor: '#ffffff',
@@ -210,7 +210,6 @@ class UserItem extends React.Component<IUserItemProps, any> {
 
         const div = document.createElement('div');
         div.appendChild(svg);
-
 
         const svgHtml = window.btoa(unescape(encodeURIComponent(div.innerHTML)));
 
