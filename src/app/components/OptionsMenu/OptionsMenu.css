@@ -9,12 +9,12 @@
   width: 100%;
   display: flex;
 }
-a {
+.title {
   padding: 0 8px;
   line-height: 40px;
   border-radius: 8px;
-  background-color: rgba(50,61,71,.08);
-  color: rgba(50,61,71,1);
+  background-color: rgba(50,61,71,.08)!important;
+  color: rgba(50,61,71,1)!important;
   font-size: 20px;
   line-height: bold;
   display: flex;
@@ -29,10 +29,14 @@ a i {
 .icons {
   width: 104px;
   padding: 0 8px;
+  flex: none;
   display: flex;
   justify-content: space-between;
 }
-.icons i{
+.icon{
   width: 40px;
   height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
