@@ -1,9 +1,33 @@
+.container {
+  position: relative;
+}
 .visible {
   height: 56px;
   width: 100%;
   display: flex;
   padding: 0 8px;
   align-items: center;
+  z-index: 4;
+  background-color: white;
+  position: relative;
+}
+.invisible {
+  position: absolute;
+  width: 100%;
+  top: 56px;
+  left: 0;
+  background-color: white;
+  z-index: 3;
+  box-shadow: 0 16px 32px rgba(50,61,71,.64);
+}
+.overlay {
+  top: 56px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 56px);
+  position: absolute;
+  z-index: 2;
+  background-color: rgba(50,61,71,.4);
 }
 .filler {
   width: 100%;
@@ -12,14 +36,16 @@
 .title {
   padding: 0 8px;
   line-height: 40px;
-  border-radius: 8px;
-  background-color: rgba(50,61,71,.08)!important;
   color: rgba(50,61,71,1)!important;
   font-size: 20px;
   line-height: bold;
   display: flex;
   white-space: nowrap;
   align-items: center;
+}
+.active {
+  border-radius: 8px;
+  background-color: rgba(50,61,71,.08)!important;
 }
 a i {
   width: 24px;
