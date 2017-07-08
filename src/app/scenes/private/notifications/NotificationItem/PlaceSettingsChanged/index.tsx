@@ -13,7 +13,7 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        <div className={style.mention}>
+        <div>
           <div>
             <div>
               <p>

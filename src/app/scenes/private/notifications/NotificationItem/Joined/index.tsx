@@ -8,7 +8,7 @@ interface IProps {
   notification: INotification;
 }
 
-class Comment extends React.Component <IProps, any> {
+class Joined extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
@@ -16,12 +16,10 @@ class Comment extends React.Component <IProps, any> {
           <div>
             <div>
               <p>
-                <a>
+                <b>
                   {this.props.notification.account_id}
-                </a>
-                <small>
-                  commented on your post
-                </small>
+                </b>
+                added you to
                 <b>
                   {this.props.notification.place_id}
                 </b>.
@@ -34,4 +32,4 @@ class Comment extends React.Component <IProps, any> {
   }
 }
 
-export default Comment;
+export default Joined;
