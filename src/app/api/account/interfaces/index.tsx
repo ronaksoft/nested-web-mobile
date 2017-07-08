@@ -10,6 +10,8 @@ import IRegisterRequest from './IRegisterRequest';
 import IPhoneAvailableRequest from './IPhoneAvailableRequest';
 import IVerifyCodeRequest from './IVerifyCodeRequest';
 import IGetVerificationResponse from './IGetVerificationResponse';
+import ISendTextRequest from './ISendTextRequest';
+import ICallPhoneRequest from './ICallPhoneRequest';
 
 export {
   IGender,
@@ -24,4 +26,6 @@ export {
   IPhoneAvailableRequest,
   IVerifyCodeRequest,
   IGetVerificationResponse,
+  ISendTextRequest,
+  ICallPhoneRequest,
 };

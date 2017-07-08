@@ -10,6 +10,8 @@ import {
   IPhoneAvailableRequest,
   IVerifyCodeRequest,
   IGetVerificationResponse,
+  ISendTextRequest,
+  ICallPhoneRequest,
 } from './interfaces';
 import IUser from './interfaces/IUser';
 
@@ -76,6 +78,20 @@ export default class AccountApi {
   public verifyCode(data: IVerifyCodeRequest): Promise<any> {
     return this.api.request({
       cmd: 'auth/verify_code',
+      data,
+    });
+  }
+
+  public sendText(data: ISendTextRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'auth/send_text',
+      data,
+    });
+  }
+
+  public callPhone(data: ICallPhoneRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'auth/call_phone',
       data,
     });
   }
