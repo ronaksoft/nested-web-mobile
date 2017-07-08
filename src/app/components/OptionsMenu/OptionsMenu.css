@@ -97,7 +97,8 @@ a i {
   display: flex;
   width: 100%;
 }
-.titlePopup .activeItem{
+.titlePopup .activeItem,
+.iconIPopup .activeItem{
   opacity: 1;
 }
 .activeItem span{
@@ -105,4 +106,55 @@ a i {
 }
 .titlePopup .activeItem div:last-child i {
   display: inline-block;
+}
+.iconIPopup {
+  opacity: 1;
+  padding-bottom: 8px;
+}
+.iconIPopup li{
+  height: 40px;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  opacity: .72;
+  padding: 0 16px;
+}
+.iconIPopup li span{
+  padding: 0 8px;
+  font-size: 14px;
+  display: flex;
+  width: 100%;
+}
+.iconIPopup li i{
+  display: none;
+  margin-right: 8px;
+}
+.iconIPopup li.activeItem i{
+  display: inline-block
+}
+.iconIPopup .kindItem span {
+  background-color: rgba(50,61,71,.11);
+  margin-top: 8px;
+  line-height: 24px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold
+}
+.iconIIPopup {
+  opacity: 1;
+  padding-bottom: 12px;
+}
+.iconIIPopup li{
+  height: 48px;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  opacity: .72;
+  padding: 0 16px;
+}
+.iconIIPopup li span{
+  padding-left: 16px;
+  font-size: 14px;
+  display: flex;
+  width: 100%;
 }

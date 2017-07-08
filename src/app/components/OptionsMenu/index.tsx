@@ -67,22 +67,29 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     const rightMenuItemsDOMS = [];
     const rightMenuIconDOMS = [];
     this.props.rightItems.forEach((item) => {
+      const typeStr = item.type + 'Popup';
       const childrens = [];
       item.menu.forEach((menuItem) => {
         childrens.push(
           // Need develops :
           <li key={menuItem.name.replace(' ', '') + item.type}
-          className={menuItem.isChecked ? style.activeItem : null}>
-            {menuItem.name}
+          className={[menuItem.isChecked ? style.activeItem : null,
+          menuItem.type === 'kind' ? style.kindItem : null].join(' ')}>
+            {item.type === 'iconII' &&
+              <IcoN size={16} name={menuItem.icon.name}/>
+            }
+            <span>{menuItem.name}</span>
+            {menuItem.isChecked &&
+              <IcoN size={16} name="heavyCheck16"/>
+            }
           </li>,
         );
       });
       const DOM = (
-        this.state[item.type + 'Popup'] &&
+        this.state[typeStr] &&
         (
           <div className={style.invisible}>
-            // TODO : develops
-            <ul className={style[item.type]}>
+            <ul className={style[typeStr]}>
               {childrens}
             </ul>
           </div>
@@ -90,7 +97,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
       );
       rightMenuItemsDOMS.push(DOM);
       const iconDOM = (
-        <div className={this.state[item.type + 'Popup'] ? style.icon + ' ' + style.active : style.icon}
+        <div className={this.state[typeStr] ? style.icon + ' ' + style.active : style.icon}
              onClick={this.openPopUp.bind(this, item.type)}>
           <IcoN size={24} name={item.name}/>
         </div>
