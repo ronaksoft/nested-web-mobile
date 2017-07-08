@@ -11,6 +11,7 @@ const initialState = Immutable.from<IAppStore>({
   userPlaces: [],
   notifications: [],
   notificationsCount: 0,
+  posts: [],
 });
 
 export default function appReducer(state = initialState, action?: IAppAction) {
@@ -40,6 +41,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
     case ActionTypes.APP_NOTIFICATION_COUNT:
       return Immutable.merge(state, {
         notificationsCount: action.payload,
+      });
+
+    case ActionTypes.APP_POST_SET:
+      return Immutable.merge(state, {
+        posts: action.payload,
+      });
+
+    case ActionTypes.APP_POST_UNSET:
+      return Immutable.merge(state, {
+        posts: [],
       });
 
     default :

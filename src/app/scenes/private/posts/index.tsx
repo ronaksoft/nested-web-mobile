@@ -1,12 +1,81 @@
 import * as React from 'react';
 import {OptionsMenu} from 'components';
 import {connect} from 'react-redux';
-import {setNotification} from '../../../redux/app/actions/index';
-import INotification from '../../../api/notification/interfaces/INotification';
-import {Input} from 'antd';
+import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
+import PostApi from '../../../api/post/index';
+import IPost from '../../../api/post/interfaces/IPost';
+import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
+import {setPosts} from '../../../redux/app/actions/index';
+import ArrayUntiles from '../../../services/untils/array';
+import {Button} from 'antd';
 
-class Posts extends React.Component<any, any> {
-  public sampleF = () => {
+interface IProps {
+  posts: IPost[];
+  setPosts: (posts: IPost[]) => {};
+}
+
+interface IState {
+  posts: IPost[];
+}
+
+class Posts extends React.Component<IProps, IState> {
+  private postApi: PostApi;
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      posts: this.props.posts,
+    };
+  }
+
+  private getPost(fromNow?: boolean, after?: number) {
+
+    let params: IPostsListRequest;
+    if (fromNow === true) {
+      params = {
+        before: Date.now(),
+      };
+    } else if (after) {
+      params = {
+        after,
+      };
+    } else {
+      if (this.state.posts.length === 0) {
+        params = {
+          before: Date.now(),
+        };
+      } else {
+        params = {
+          before: this.state.posts[this.state.posts.length - 1].timestamp,
+        };
+      }
+    }
+    params.limit = 8;
+
+    this.postApi.getFavoritePosts(params)
+      .then((response: IPostsListResponse) => {
+
+        const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
+          .sort((a: IPost, b: IPost) => {
+            return b.timestamp - a.timestamp;
+          });
+
+        if (fromNow === true) {
+          this.props.setPosts(posts);
+        }
+
+        this.setState({
+          posts,
+        });
+      });
+  }
+
+  public componentDidMount() {
+    this.postApi = new PostApi();
+    this.getPost(true);
+  }
+ public sampleF = () => {
     console.log('nothing');
   }
 
@@ -138,21 +207,23 @@ class Posts extends React.Component<any, any> {
     return (
       <div>
         <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
-        <Input/>
+        <Button onClick={this.getPost.bind(this)}>Load More ...</Button>
+        <b>{this.state.posts[0] && this.state.posts[this.state.posts.length - 1].timestamp}
+          => {this.state.posts.length}</b>
+        {this.state.posts.map((post: IPost) => (<div key={post._id}>{post.timestamp} -> {post.subject}</div>))};
       </div>
     );
   }
 }
 
 const mapStateToProps = (store) => ({
-  notifications: store.app.notifications,
-  notificationsCount: store.app.notificationsCount,
+  posts: store.app.posts,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setNotification: (notifications: INotification[]) => {
-      dispatch(setNotification(notifications));
+    setPosts: (posts: IPost[]) => {
+      dispatch(setPosts(posts));
     },
   };
 };

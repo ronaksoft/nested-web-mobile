@@ -36,3 +36,7 @@ export const APP_LIMITS_SET: string = 'APP/LIMITS_SET';
 /** DRAFT ACTION */
 export const APP_DRAFT_SET: string = 'APP/DRAFT_SET';
 export const APP_DRAFT_UNSET: string = 'APP/DRAFT_UNSET';
+
+/** DRAFT ACTION */
+export const APP_POST_SET: string = 'APP/POST_SET';
+export const APP_POST_UNSET: string = 'APP/POST_UNSET';
