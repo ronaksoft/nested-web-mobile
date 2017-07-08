@@ -61,9 +61,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuStat> {
         </div>
       </div>
       { (this.state.titlePopup || this.state.iconIPopup || this.state.iconIIPopup) &&
-        <div className={style.invisible}>
-        a
-        </div>
+        <div className={style.invisible}/>
       }
       { this.state.titlePopup &&
         <div className={style.overlay}/>

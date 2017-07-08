@@ -14,11 +14,6 @@ class NewSession extends React.Component <IProps, any> {
       <div className={style.mention}>
         <div>
           <div>
-            <img/>
-          </div>
-        </div>
-        <div>
-          <div>
             <p>
               <small>You logged in from:</small>
               <b>
@@ -29,7 +24,6 @@ class NewSession extends React.Component <IProps, any> {
           </div>
         </div>
       </div>
-
     );
   }
 }

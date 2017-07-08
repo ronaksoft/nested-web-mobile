@@ -6,7 +6,7 @@
   padding: 12px 12px 0 12px;
 }
 
-.mention .p {
+.mention p {
   white-space: normal;
   line-height: 16px;
   color: #323D47;
@@ -15,12 +15,12 @@
   margin: 0;
 }
 
-.mention .p .small {
+.mention p small {
   font-size: 13px;
   font-weight: 400;
 }
 
-.mention .p .small .span {
+.mention p small span {
   line-height: 16px;
   color: #323D47;
   font-size: 13px;

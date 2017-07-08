@@ -13,23 +13,19 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<img/>*/}
-          {/*</div>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<p>*/}
-              {/*<b></b> changed the settings of <b></b>.*/}
-            {/*</p>*/}
-          {/*</div>*/}
-          {/*<div>*/}
-          {/*</div>*/}
-          {/*<svg>*/}
-            {/*<use></use>*/}
-          {/*</svg>*/}
-        {/*</div>*/}
+        <div>
+          <div>
+            <img/>
+          </div>
+        </div>
+        <div>
+          <div>
+            <p>
+              changed the settings of.
+            </p>
+          </div>
+          <svg/>
+        </div>
       </div>
     );
   }
