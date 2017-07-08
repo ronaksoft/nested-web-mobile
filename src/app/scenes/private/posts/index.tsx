@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { OptionsMenu } from 'components';
+import {OptionsMenu} from 'components';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import INotification from '../../../api/notification/interfaces/INotification';
+import {Input} from 'antd';
 
 class Posts extends React.Component<any, any> {
   public sampleF = () => {
     console.log('nothing');
   }
+
   public render() {
     const leftItem = {
       name: 'feed',
@@ -135,7 +137,7 @@ class Posts extends React.Component<any, any> {
     ];
     return (
       <div>
-        <OptionsMenu leftItem={leftItem} rightItems={RightItem} />
+        <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
         <Input/>
       </div>
     );
