@@ -10,7 +10,7 @@ interface IProps {
   autoLocate?: boolean;
   code?: string;
   phone?: string;
-  onChange?: (code, phone) => void;
+  onChange?: (country: string, code: string, phone: string) => void;
 }
 
 interface IState {
@@ -58,6 +58,7 @@ class PhoneInput extends React.Component<IProps, IState> {
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.handlePhoneChange = this.handlePhoneChange.bind(this);
+    this.handleCountrySelect = this.handleCountrySelect.bind(this);
   }
 
   /**
@@ -78,7 +79,7 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(e.target.value, this.state.phone);
+      this.props.onChange(this.state.country.id, e.target.value, this.state.phone);
     }
   }
 
@@ -99,7 +100,7 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.code, e.target.value);
+      this.props.onChange(this.state.country.id, this.state.code, e.target.value);
     }
   };
 
@@ -129,7 +130,12 @@ class PhoneInput extends React.Component<IProps, IState> {
 
     this.setState({
       code: country.code,
+      country,
     });
+
+    if (this.props.onChange) {
+      this.props.onChange(country.id, country.code, this.state.phone);
+    }
   }
 
   /**
@@ -179,3 +185,4 @@ class PhoneInput extends React.Component<IProps, IState> {
 }
 
 export default PhoneInput;
+export {ICountry}

@@ -29,6 +29,8 @@ export default class CountrySelect extends React.Component<IProps, IState> {
     this.state = {
       selectedId: props.selected ? props.selected.id : null,
     };
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
   /**
@@ -41,6 +43,9 @@ export default class CountrySelect extends React.Component<IProps, IState> {
   private handleChange(id: string) {
     const item = Countries.find((country: ICountry) => country.id === id);
     if (item && this.props.onSelected) {
+      this.setState({
+        selectedId: item.id,
+      });
       this.props.onSelected(item);
     }
   };
