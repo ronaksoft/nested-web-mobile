@@ -154,8 +154,10 @@ class UserAvatar extends React.Component<IUserItemProps, any> {
     }
 
     if (pictureId) {
-      imgDOM = <img className={style.UserAvatarImp} style={imageStyle}
-                    src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${pictureId}`}/>;
+      imgDOM = (
+        <img className={style.UserAvatarImp} style={imageStyle}
+        src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${pictureId}`}/>
+      );
     } else {
       // iTODO Initails
       let abbr;
