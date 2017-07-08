@@ -38,15 +38,15 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
       iconIPopup: false,
       iconIIPopup: false,
     };
-    state[key] = true;
+    state[key] = !this.state[key];
     this.setState(state);
   }
 
-  private renderLeftItems() {
+  private renderLeftItems = () => {
     const LeftItemMenuDOM = [];
     this.props.leftItem.menu.forEach((menuItem) => {
       LeftItemMenuDOM.push(
-        <li className={menuItem.isChecked ? style.activeItem : null}>
+        <li key={menuItem.name + 'bbb'} className={menuItem.isChecked ? style.activeItem : null}>
           <div>
             <IcoN size={16} name={menuItem.icon.name}/>
           </div>
@@ -59,34 +59,45 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
         </li>,
       );
     });
+    return LeftItemMenuDOM;
   }
 
-  private renderRightMenus() {
+  private renderRightMenus = () => {
 
     const rightMenuItemsDOMS = [];
     const rightMenuIconDOMS = [];
     this.props.rightItems.forEach((item) => {
-      const secondItems = [];
+      const typeStr = item.type + 'Popup';
+      const childrens = [];
       item.menu.forEach((menuItem) => {
-        secondItems.push(
+        childrens.push(
           // Need develops :
-          <li className={style.activeItem}>
-            {menuItem.name}
+          <li key={menuItem.name.replace(' ', '') + item.type}
+          className={[menuItem.isChecked ? style.activeItem : null,
+          menuItem.type === 'kind' ? style.kindItem : null].join(' ')}>
+            {item.type === 'iconII' &&
+              <IcoN size={16} name={menuItem.icon.name}/>
+            }
+            <span>{menuItem.name}</span>
+            {menuItem.isChecked &&
+              <IcoN size={16} name="heavyCheck16"/>
+            }
           </li>,
         );
       });
       const DOM = (
-        this.state[item.type + 'Popup'] &&
-        (<div className={style.invisible}>
-          // TODO : develops
-          <ul>
-            {secondItems}
-          </ul>
-        </div>)
+        this.state[typeStr] &&
+        (
+          <div className={style.invisible}>
+            <ul className={style[typeStr]}>
+              {childrens}
+            </ul>
+          </div>
+        )
       );
       rightMenuItemsDOMS.push(DOM);
       const iconDOM = (
-        <div className={this.state[item.type + 'Popup'] ? style.icon + ' ' + style.active : style.icon}
+        <div className={this.state[typeStr] ? style.icon + ' ' + style.active : style.icon}
              onClick={this.openPopUp.bind(this, item.type)}>
           <IcoN size={24} name={item.name}/>
         </div>
@@ -109,7 +120,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     return (
       <div className={style.container}>
         <div className={style.visible}>
-          <a onClick={this.openPopUp.bind(this, 'title')}
+          <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}
              className={this.state.titlePopup ? style.title + ' ' + style.active : style.title}>
             {this.props.leftItem.name}
             {this.props.leftItem.place &&
@@ -122,11 +133,13 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
           </div>
         </div>
         {this.state.titlePopup &&
-        (<div className={style.invisible}>
-          <ul className={style.titlePopup}>
-            {this.renderLeftItems()}
-          </ul>
-        </div>)
+        (
+          <div className={style.invisible}>
+            <ul className={style.titlePopup}>
+              {this.renderLeftItems()}
+            </ul>
+          </div>
+        )
         }
         {rightMenu.rightMenuItemsDOMS}
         {showOverlay &&
