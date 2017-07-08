@@ -29,7 +29,7 @@ export default (
         <Route path="/404" component={NotFound}/>
         <Route path="/signin" component={Signin}/>
         <Route path="/signup" component={Signup}>
-          <Route path="/signup/phone" component={SubmitPhone}/>
+          <Route path="/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>
           <Route path="/signup/verify/:country/:code/:phone/:vid" component={Verify}/>
           <Route path="/signup/register/:country/:code/:phone/:vid" component={Register}/>
         </Route>

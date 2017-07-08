@@ -8,6 +8,7 @@ import CountrySelect from './CountrySelect';
 interface IProps {
   style?: {};
   autoLocate?: boolean;
+  country?: string;
   code?: string;
   phone?: string;
   onChange?: (country: string, code: string, phone: string) => void;
@@ -40,13 +41,19 @@ class PhoneInput extends React.Component<IProps, IState> {
    */
   constructor(props: IProps) {
     super();
+    let country = null;
+
+    if (props.country) {
+      country = this.getCountryById(props.country);
+    }
+
     this.state = {
       code: props.code,
       phone: props.phone,
-      country: null,
+      country,
     };
 
-    if (props.autoLocate) {
+    if (props.autoLocate && !props.country) {
       this.findGeoLocation().then((location: IGeoLocation) => {
         const country = this.getCountryById(location.country);
         this.setState({
