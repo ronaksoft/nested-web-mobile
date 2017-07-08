@@ -12,23 +12,19 @@ class Demoted extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<img/>*/}
-          {/*</div>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<p>*/}
-              {/*<b></b> demoted you in <b></b>.*/}
-            {/*</p>*/}
-          {/*</div>*/}
-          {/*<div>*/}
-          {/*</div>*/}
-          {/*<svg>*/}
-            {/*<use></use>*/}
-          {/*</svg>*/}
-        {/*</div>*/}
+        <div>
+          <div>
+            <p>
+              <b>
+                {this.props.notification.account_id}
+              </b>
+              demoted you in
+              <b>
+                {this.props.notification.place_id}
+              </b>.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

@@ -13,18 +13,20 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        <div>
+        <div className={style.mention}>
           <div>
-            <img/>
+            <div>
+              <p>
+                <b>
+                  {this.props.notification.account_id}
+                </b>
+                changed the settings of
+                <b>
+                  {this.props.notification.place_id}
+                </b>.
+              </p>
+            </div>
           </div>
-        </div>
-        <div>
-          <div>
-            <p>
-              changed the settings of.
-            </p>
-          </div>
-          <svg/>
         </div>
       </div>
     );

@@ -16,11 +16,13 @@ class NewSession extends React.Component <IProps, any> {
           <div>
             <p>
               <small>You logged in from:</small>
-              <b>
-                {this.props.notification._cid.replace(/_/g, ' ')}
-                {new Date(this.props.notification.timestamp).toString()}
-              </b>
             </p>
+            <p>
+              {this.props.notification._cid.replace(/_/g, ' ')}
+            </p>
+          </div>
+          <div>
+            {new Date(this.props.notification.timestamp).toString()}
           </div>
         </div>
       </div>

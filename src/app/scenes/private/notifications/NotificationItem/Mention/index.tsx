@@ -14,22 +14,11 @@ class Mention extends React.Component <IProps, any> {
       <div className={style.mention}>
         <div>
           <div>
-            <img/>
-          </div>
-        </div>
-        <div>
-          <div>
+            <a>
+              {this.props.notification.account_id}
+            </a>
             <p>
-              <a>
-                {this.props.notification.account_id}
-              </a>
-              <br/>
-              <span>
-                {this.props.notification.actor_id}
-                </span>
-            </p>
-            <p>
-              {this.props.notification.comment_id}
+              {this.props.notification.place_id}
             </p>
           </div>
           <div>
