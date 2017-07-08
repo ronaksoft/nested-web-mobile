@@ -14,7 +14,6 @@ class Promoted extends React.Component <IProps, any> {
       <div className={style.mention}>
         <div>
           <div>
-            <div>
               <p>
                 <b>
                   {this.props.notification.account_id}
@@ -24,7 +23,9 @@ class Promoted extends React.Component <IProps, any> {
                   {this.props.notification.place_id}
                 </b>.
               </p>
-            </div>
+          </div>
+          <div>
+            {new Date(this.props.notification.timestamp).toString()}
           </div>
         </div>
       </div>

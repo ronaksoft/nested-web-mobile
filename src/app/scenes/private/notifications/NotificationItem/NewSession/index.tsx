@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import UserAvatar from '../../../../../components/userAvatar';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -13,6 +14,9 @@ class NewSession extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div>
+          <div>
+            {/*<UserAvatar/>*/}
+          </div>
           <div>
             <p>
               <small>You logged in from:</small>

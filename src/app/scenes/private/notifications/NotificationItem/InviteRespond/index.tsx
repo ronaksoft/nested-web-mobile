@@ -24,6 +24,9 @@ class InviteRespond extends React.Component <IProps, any> {
               </b>.
             </p>
           </div>
+          <div>
+            {new Date(this.props.notification.timestamp).toString()}
+          </div>
         </div>
       </div>
     );

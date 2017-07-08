@@ -12,7 +12,6 @@ class Joined extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        <div>
           <div>
             <div>
               <p>
@@ -25,9 +24,11 @@ class Joined extends React.Component <IProps, any> {
                 </b>.
               </p>
             </div>
+            <div>
+              {new Date(this.props.notification.timestamp).toString()}
+            </div>
           </div>
         </div>
-      </div>
     );
   }
 }
