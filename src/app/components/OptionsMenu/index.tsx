@@ -44,9 +44,10 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
   private renderLeftItems = () => {
     const LeftItemMenuDOM = [];
-    this.props.leftItem.menu.forEach((menuItem) => {
+    this.props.leftItem.menu.forEach((menuItem, index) => {
       LeftItemMenuDOM.push(
-        <li key={menuItem.name + 'bbb'} className={menuItem.isChecked ? style.activeItem : null}>
+        <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
+        onClick={menuItem.onClick}>
           <div>
             <IcoN size={16} name={menuItem.icon.name}/>
           </div>
@@ -73,6 +74,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
         childrens.push(
           // Need develops :
           <li key={menuItem.name.replace(' ', '') + item.type}
+          onClick={menuItem.onClick}
           className={[menuItem.isChecked ? style.activeItem : null,
           menuItem.type === 'kind' ? style.kindItem : null].join(' ')}>
             {item.type === 'iconII' &&

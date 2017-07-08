@@ -2,6 +2,6 @@ export {Header} from './Header';
 export {Suggestion} from './Suggestion';
 export {PlaceChips} from './Chips/';
 export {PlaceItem} from './placeItem/';
-export {UserItem} from './userItem/';
+export {UserAvatar} from './userAvatar/';
 export {OptionsMenu} from './OptionsMenu/';
 export {IcoN} from './Icons/';
