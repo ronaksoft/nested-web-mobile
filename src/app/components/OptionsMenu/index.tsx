@@ -77,12 +77,12 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
       });
       const DOM = (
         this.state[item.type + 'Popup'] &&
-        <div className={style.invisible}>
+        (<div className={style.invisible}>
           // TODO : develops
           <ul>
             {secondItems}
           </ul>
-        </div>
+        </div>)
       );
       rightMenuItemsDOMS.push(DOM);
       const iconDOM = (
@@ -122,11 +122,11 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
           </div>
         </div>
         {this.state.titlePopup &&
-        <div className={style.invisible}>
+        (<div className={style.invisible}>
           <ul className={style.titlePopup}>
             {this.renderLeftItems()}
           </ul>
-        </div>
+        </div>)
         }
         {rightMenu.rightMenuItemsDOMS}
         {showOverlay &&
