@@ -207,7 +207,7 @@ class Posts extends React.Component<IProps, IState> {
     return (
       <div>
         <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
-        <Button onClick={this.getPost.bind(this)}>Load More ...</Button>
+        <Button onClick={this.getPost.bind(this, '')}>Load More ...</Button>
         <b>{this.state.posts[0] && this.state.posts[this.state.posts.length - 1].timestamp}
           => {this.state.posts.length}</b>
         {this.state.posts.map((post: IPost) => (<div key={post._id}>{post.timestamp} -> {post.subject}</div>))};
