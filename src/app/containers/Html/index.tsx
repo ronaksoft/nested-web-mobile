@@ -37,11 +37,13 @@ class Html extends React.Component<IHtmlProps, {}> {
       <script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__=${serialize(store.getState(), { isJSON: true })};` }}
               charSet="UTF-8" />
     );
+    console.log('appConfig', appConfig.app.head.meta);
     return (
       <html>
         <head>
           {head.base.toComponent()}
           {head.title.toComponent()}
+          {head.meta.toComponent()}
           {head.link.toComponent()}
           {head.script.toComponent()}
           <Helmet meta={appConfig.app.head.meta} />
