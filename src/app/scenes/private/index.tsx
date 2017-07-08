@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Posts} from './posts';
+import Posts from './posts';
+import Notifications from './notifications';
 import {Activities} from './activities';
 import {Files} from './files';
-import Notifications from './notifications';
 import {Compose} from './compose';
 import Signout from './Signout';
 import AccountApi from 'api/account';
@@ -10,21 +10,26 @@ import {IUser, IRecallResponse} from 'api/account/interfaces';
 import {browserHistory} from 'react-router';
 import AAA from 'services/aaa';
 import {connect} from 'react-redux';
-import {login, logout} from 'redux/app/actions';
+import {login, logout, setNotificationCount} from 'redux/app/actions';
+import NotificationApi from '../../api/notification/index';
+import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
 
-interface IPrivateState {
+interface IState {
   isLogin: boolean;
 };
 
 interface IProps {
   isLogin: boolean;
   user: IUser;
+  setNotificationCount: (counts: INotificationCountRequest) => {};
   setLogin: (user: IUser) => {};
   setLogout: () => {};
 }
 
-class Private extends React.Component<IProps, IPrivateState> {
+class Private extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
+  private notificationApi: NotificationApi;
+  private unListenChangeRoute: any;
 
   public constructor() {
     super();
@@ -33,9 +38,7 @@ class Private extends React.Component<IProps, IPrivateState> {
     };
   }
 
-  public componentDidMount() {
-
-    this.accountApi = new AccountApi();
+  private handleAAA() {
     const aaa = AAA.getInstance();
     const credential = aaa.getCredentials();
 
@@ -63,7 +66,29 @@ class Private extends React.Component<IProps, IPrivateState> {
       aaa.clearCredentials();
       browserHistory.push('/signin');
     });
+  }
 
+  private getNotificationCounts() {
+    this.notificationApi.getCount()
+      .then((counts: INotificationCountRequest) => {
+        this.props.setNotificationCount(counts);
+      });
+  }
+
+  public componentDidMount() {
+    this.accountApi = new AccountApi();
+    this.notificationApi = new NotificationApi();
+
+    this.handleAAA();
+    this.getNotificationCounts();
+
+    this.unListenChangeRoute = browserHistory.listen(() => {
+      this.getNotificationCounts();
+    });
+  }
+
+  public componentWillUnmount() {
+    this.unListenChangeRoute();
   }
 
   public render() {
@@ -88,6 +113,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setLogout: () => {
       dispatch(logout());
+    },
+    setNotificationCount: (counts: INotificationCountRequest) => {
+      dispatch(setNotificationCount(counts));
     },
   };
 };

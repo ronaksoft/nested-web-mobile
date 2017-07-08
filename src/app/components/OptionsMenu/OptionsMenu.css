@@ -52,7 +52,7 @@ a i {
   flex: none;
   margin-left: 8px;   
 }
-.icons {
+.rightItems {
   width: 104px;
   padding: 0 8px;
   flex: none;
@@ -65,4 +65,44 @@ a i {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.titlePopup {
+  opacity: 1;
+}
+.titlePopup li{
+  height: 48px;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  opacity: .72;
+}
+.titlePopup li div:first-child{
+  width: 48px;
+  display: flex;
+  justify-content: center;
+}
+.titlePopup li div:last-child{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border-bottom: 1px solid rgba(50,61,71,.08);
+  padding-right: 16px;
+  align-items: center
+}
+.titlePopup li div:last-child i{
+  display: none
+}
+.titlePopup li span{
+  line-height: 48px;
+  display: flex;
+  width: 100%;
+}
+.titlePopup .activeItem{
+  opacity: 1;
+}
+.activeItem span{
+  font-weight: bold;
+}
+.titlePopup .activeItem div:last-child i {
+  display: inline-block;
 }

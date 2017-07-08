@@ -2,6 +2,8 @@ import {} from '../IAppStore';
 import * as ActionTypes from './types';
 import IUser from '../../../api/account/interfaces/IUser';
 import {IAppAction} from '../IAppStore';
+import INotificationCountRequest from '../../../api/notification/interfaces/INotificationCountResponse';
+import IPost from '../../../api/post/interfaces/IPost';
 
 export function userSet(user: IUser): IAppAction {
   return {
@@ -36,6 +38,13 @@ export function logout(): IAppAction {
   };
 }
 
+export function setNotificationCount(counts: INotificationCountRequest): IAppAction {
+  return {
+    type: ActionTypes.APP_NOTIFICATION_COUNT,
+    payload: counts,
+  };
+}
+
 export function setNotification(notifications: any[]): IAppAction {
   return {
     type: ActionTypes.APP_NOTIFICATION_SET,
@@ -47,5 +56,18 @@ export function unsetNotification(notifications: any[]): IAppAction {
   return {
     type: ActionTypes.APP_NOTIFICATION_SET,
     payload: notifications,
+  };
+}
+
+export function setPosts(posts: IPost[]): IAppAction {
+  return {
+    type: ActionTypes.APP_POST_SET,
+    payload: posts,
+  };
+}
+
+export function unsetPosts(): IAppAction {
+  return {
+    type: ActionTypes.APP_POST_UNSET,
   };
 }
