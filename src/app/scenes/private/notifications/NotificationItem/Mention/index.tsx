@@ -19,10 +19,8 @@ class Mention extends React.Component <IProps, any> {
             </a>
             <p>
               {this.props.notification.place_id}
+              {new Date(this.props.notification.timestamp).toString()}
             </p>
-          </div>
-          <div>
-            {new Date(this.props.notification.timestamp).toString()}
           </div>
         </div>
       </div>

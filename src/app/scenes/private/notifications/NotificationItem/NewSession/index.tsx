@@ -1,5 +1,6 @@
 import * as React from 'react';
-// import UserAvatar from '../../../../../components/userAvatar';
+import {UserAvatar} from '../../../../../components/userAvatar';
+import IUser from '../../../../../api/account/interfaces/IUser';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -7,6 +8,7 @@ const style = require('../NotificationItem.css');
 
 interface IProps {
   notification: INotification;
+  user: IUser;
 }
 
 class NewSession extends React.Component <IProps, any> {
@@ -15,18 +17,14 @@ class NewSession extends React.Component <IProps, any> {
       <div className={style.mention}>
         <div>
           <div>
-            {/*<UserAvatar/>*/}
+            <UserAvatar user={this.props.user} size="48" borderRadius="48"/>
           </div>
           <div>
             <p>
-              <small>You logged in from:</small>
-            </p>
-            <p>
+              <small><b>New login</b> from:</small>
               {this.props.notification._cid.replace(/_/g, ' ')}
+              {new Date(this.props.notification.timestamp).toString()}
             </p>
-          </div>
-          <div>
-            {new Date(this.props.notification.timestamp).toString()}
           </div>
         </div>
       </div>

@@ -22,10 +22,8 @@ class Joined extends React.Component <IProps, any> {
                 <b>
                   {this.props.notification.place_id}
                 </b>.
+                {new Date(this.props.notification.timestamp).toString()}
               </p>
-            </div>
-            <div>
-              {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
         </div>
