@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Signin from './Signin';
-import Signup from './signup';
+import Signup from './Signup';
 import NotFound from './notfound';
 
 class Public extends React.Component<any, any> {

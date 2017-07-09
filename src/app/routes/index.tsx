@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Posts, Notifications, Activities, Files, Compose, Signout} from 'scenes/private';
 import Private from 'scenes/private';
 import {Public, Signin, Signup, NotFound} from 'scenes/public';
+import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
 import {configureStore} from 'redux/store';
@@ -27,7 +28,11 @@ export default (
       <Route component={Public}>
         <Route path="/404" component={NotFound}/>
         <Route path="/signin" component={Signin}/>
-        <Route path="/signup" component={Signup}/>
+        <Route path="/signup" component={Signup}>
+          <Route path="/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>
+          <Route path="/signup/verify/:country/:code/:phone/:vid" component={Verify}/>
+          <Route path="/signup/register/:country/:code/:phone/:vid" component={Register}/>
+        </Route>
         <Route path="*" component={NotFound}/>
       </Route>
       <Redirect from="*" to="/404"/>

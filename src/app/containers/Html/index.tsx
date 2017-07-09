@@ -2,6 +2,7 @@ import { IStore } from 'redux/IStore';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as serialize from 'serialize-javascript';
+const appConfig = require('../../../../config/main');
 
 interface IHtmlProps {
   manifest?: any;
@@ -36,7 +37,6 @@ class Html extends React.Component<IHtmlProps, {}> {
       <script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__=${serialize(store.getState(), { isJSON: true })};` }}
               charSet="UTF-8" />
     );
-
     return (
       <html>
         <head>
@@ -45,7 +45,7 @@ class Html extends React.Component<IHtmlProps, {}> {
           {head.meta.toComponent()}
           {head.link.toComponent()}
           {head.script.toComponent()}
-
+          <Helmet meta={appConfig.app.head.meta} title={appConfig.app.head.title} />
           {renderStyles}
           <link rel="shortcut icon" href="/favicon.ico" />
         </head>
