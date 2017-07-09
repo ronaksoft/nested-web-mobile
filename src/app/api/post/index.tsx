@@ -15,10 +15,10 @@ export default class NotificationApi {
       data: params,
     }).then((res: any) => {
       const data = res.data as IPostsListResponse;
+      console.log(data);
       return data;
     }).catch((err) => {
-      console.log(err);
-      return err;
+      throw err;
     });
   }
 }

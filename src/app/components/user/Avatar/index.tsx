@@ -1,7 +1,10 @@
 import * as React from 'react';
-import IUser from '../../api/account/interfaces/IUser';
-import AAA from '../../services/aaa/index';
-import CONFIG from '../../../app/config';
+import AAA from '../../../services/aaa/index';
+import CONFIG from '../../../config';
+import IUser from '../../../api/account/interfaces/IUser';
+import {accountAdd} from '../../../redux/accounts/actions/index';
+import AccountApi from '../../../api/account/index';
+import {connect} from 'react-redux';
 
 declare function unescape(s: string): string;
 
@@ -49,15 +52,52 @@ const svgAtts = {
   'height': settings.height,
 };
 
-interface IUserItemProps {
-  user?: IUser;
+interface IOwnProps {
+  user_id: string;
   borderRadius: string;
   size: any;
 }
 
-class UserAvatar extends React.Component<IUserItemProps, any> {
+interface IUserItemProps {
+  user_id: string;
+  borderRadius: string;
+  size: any;
+  accounts: IUser[];
+  accountAdd: (user: IUser) => {};
+}
+
+interface IState {
+  user: IUser | null;
+}
+
+class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      user: null,
+    };
+  }
+
+  public componentDidMount() {
+    const user = this.props.accounts.filter((user: IUser) => {
+      return user._id === this.props.user_id;
+    });
+
+    if (user.length > 0) {
+      this.setState({
+        user: user[0],
+      });
+    } else {
+      const accountApi = new AccountApi();
+      accountApi.get({account_id: this.props.user_id})
+        .then((account: IUser) => {
+          this.setState({
+            user: account,
+          });
+          this.props.accountAdd(account);
+        });
+    }
+
   }
 
   private getIndexStr(username: string) {
@@ -88,9 +128,14 @@ class UserAvatar extends React.Component<IUserItemProps, any> {
   public render() {
     const {
       borderRadius = '100%',
-      user,
       size,
     } = this.props;
+
+    const {user} = this.state;
+
+    if (!user) {
+      return null;
+    }
 
     let imageClass;
     switch (size) {
@@ -141,7 +186,7 @@ class UserAvatar extends React.Component<IUserItemProps, any> {
 
     let imgDOM;
     const classes = [style.UserAvatar];
-    const nameOfUser = `${user.name} ${user.family}`;
+    const nameOfUser = `${user.fname} ${user.lname}`;
 
     let pictureId = null;
 
@@ -212,7 +257,7 @@ class UserAvatar extends React.Component<IUserItemProps, any> {
       <div aria-label={name} className={classes.join(' ')} style={style}>
         <div className={style.UserAvatarInner} style={innerStyle}>
           <div className={imageClass} style={ImageHolder}>
-            {this.props.user.picture && imgDOM}
+            {user.picture && imgDOM}
           </div>
         </div>
       </div>
@@ -220,4 +265,17 @@ class UserAvatar extends React.Component<IUserItemProps, any> {
   }
 }
 
-export {UserAvatar}
+const mapStateToProps = (store, ownProps: IOwnProps) => ({
+  accounts: store.accounts.accounts,
+  user_id: ownProps.user_id,
+  borderRadius: ownProps.borderRadius,
+  size: ownProps.size,
+});
+
+const mapDispatchAction = (dispatch) => {
+  return {
+    accountAdd: (account: IUser) => dispatch(accountAdd(account)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchAction)(UserAvatarComponent);
