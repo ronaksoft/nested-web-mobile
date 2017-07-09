@@ -29,6 +29,8 @@ export default class CountrySelect extends React.Component<IProps, IState> {
     this.state = {
       selectedId: props.selected ? props.selected.id : null,
     };
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
   /**
@@ -41,9 +43,18 @@ export default class CountrySelect extends React.Component<IProps, IState> {
   private handleChange(id: string) {
     const item = Countries.find((country: ICountry) => country.id === id);
     if (item && this.props.onSelected) {
+      this.setState({
+        selectedId: item.id,
+      });
       this.props.onSelected(item);
     }
   };
+
+  private filterCountry = (input: string, option: any) => {
+    const name = option.props.children[1].toLowerCase();
+
+    return name.indexOf(input.toLowerCase()) >= 0;
+  }
 
   /**
    * Chose the selected country
@@ -73,10 +84,12 @@ export default class CountrySelect extends React.Component<IProps, IState> {
 
     return (
       <Select
+        showSearch={true}
         style={this.props.style}
         placeholder="Select your country"
         onChange={this.handleChange}
         value={this.state.selectedId}
+        filterOption={this.filterCountry}
       >
         {Countries.map(createCountry)}
       </Select>
