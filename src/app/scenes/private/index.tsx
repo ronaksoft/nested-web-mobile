@@ -90,6 +90,7 @@ class Private extends React.Component<IProps, IState> {
 
   public sampleF = () => {
     console.log('nothing');
+    browserHistory.push('/feed');
   }
 
   public componentWillUnmount() {
@@ -99,7 +100,7 @@ class Private extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Navbar sidebarOpen={this.sampleF} notificationOpen={this.sampleF} composeOpen={this.sampleF}/>
+        <Navbar sidebarOpen={this.sampleF} composeOpen={this.sampleF}/>
         {this.state.isLogin && this.props.children}
       </div>
     );
