@@ -90,7 +90,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
       const DOM = (
         this.state[typeStr] &&
         (
-          <div className={style.invisible}>
+          <div key={item.type + 'ng'} className={style.invisible}>
             <ul className={style[typeStr]}>
               {childrens}
             </ul>
@@ -99,7 +99,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
       );
       rightMenuItemsDOMS.push(DOM);
       const iconDOM = (
-        <div className={this.state[typeStr] ? style.icon + ' ' + style.active : style.icon}
+        <div key={item.type + 'hg'} className={this.state[typeStr] ? style.icon + ' ' + style.active : style.icon}
              onClick={this.openPopUp.bind(this, item.type)}>
           <IcoN size={24} name={item.name}/>
         </div>
