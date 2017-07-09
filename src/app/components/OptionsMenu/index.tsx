@@ -126,7 +126,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
              className={this.state.titlePopup ? style.title + ' ' + style.active : style.title}>
             {this.props.leftItem.name}
             {this.props.leftItem.place &&
-            <IcoN size={24} name="arrowSense24"/>
+            <IcoN size={24} name="arrowSense16"/>
             }
           </a>
           <div className={style.filler}/>
