@@ -7,8 +7,8 @@ import 'antd/dist/antd.css';
 const style = require('../NotificationItem.css');
 
 interface IProps {
-  notification: INotification;
-  user: IUser;
+  notification?: INotification;
+  user?: IUser;
 }
 
 class NewSession extends React.Component <IProps, any> {
@@ -17,7 +17,7 @@ class NewSession extends React.Component <IProps, any> {
       <div className={style.mention}>
         <div>
           <div>
-            <UserAvatar user={this.props.user} size="48" borderRadius="48"/>
+            <UserAvatar user={this.props.user} size={48} borderRadius="48"/>
           </div>
           <div>
             <p>
