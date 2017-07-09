@@ -1,21 +1,23 @@
-import {IAccountAction, IAccountStore} from '../IAccountStore';
+import {IAccountAction} from '../IAccountStore';
+import * as Immutable from 'seamless-immutable';
 import * as ActionTypes from '../actions/types';
 import IUser from '../../../api/account/interfaces/IUser';
 
 /** Initial Places State */
-const initialState: IAccountStore = {
+const initialState = Immutable.from<IAccountStore>({
   accounts: [],
-};
+});
 
 export default function accountsReducer(state = initialState, action?: IAccountAction) {
 
-  // check state for finding place
-  const indexOfAccount: number = state.accounts.findIndex((a: IUser) => {
-    return a._id === action.payload._id;
-  });
-
   switch (action.type) {
     case ActionTypes.ACCOUNT_ADD:
+      // check state for finding place
+      const accounts = Immutable.getIn(state, ['accounts']);
+      const indexOfAccount: number = accounts.findIndex((a: IUser) => {
+        return a._id === action.payload._id;
+      });
+
       /**
        * Account Add Action
        *
@@ -27,15 +29,17 @@ export default function accountsReducer(state = initialState, action?: IAccountA
        *
        */
       if (indexOfAccount === -1) {
-        return Object.assign({}, state, {
-          accounts: state.accounts.concat([action.payload]),
-        });
+        const newState = [action.payload].concat(Immutable(state.accounts));
+        return Immutable({accounts: newState});
+      } else {
+        return state;
       }
 
     case ActionTypes.ACCOUNT_UPDATE:
       let currentAccountList;
-      currentAccountList = Object.assign({}, state, {});
-      currentAccountList.places[indexOfAccount] = action.payload;
+      currentAccountList = Immutable.asMutable(state, ['accounts']);
+      console.log(currentAccountList);
+      currentAccountList.accounts[indexOfAccount] = action.payload;
       return currentAccountList;
 
     default :
