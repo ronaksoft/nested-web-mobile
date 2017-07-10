@@ -13,7 +13,6 @@ import {
   ISendTextRequest,
   ICallPhoneRequest,
 } from './interfaces';
-import IUser from './interfaces/IUser';
 
 export default class AccountApi {
   private api;
@@ -34,11 +33,6 @@ export default class AccountApi {
     return this.api.request({
       cmd: 'account/get',
       data,
-    }).then((res: any) => {
-      const user = res.data as IUser;
-      return user;
-    }).catch((err) => {
-      console.log(err);
     });
   }
 

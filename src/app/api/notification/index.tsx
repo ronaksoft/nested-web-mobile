@@ -1,8 +1,6 @@
 import Api from 'api';
-import INotificationResponse from './interfaces/INotificationResponse';
 import INotificationRequest from './interfaces/INotificationRequest';
 import INotificationRemoveRequest from './interfaces/INotificationRemoveRequest';
-import INotificationCountRequest from './interfaces/INotificationCountResponse';
 
 export default class NotificationApi {
   private api;
@@ -20,11 +18,6 @@ export default class NotificationApi {
     return this.api.request({
       cmd: 'notification/get_all',
       data: params,
-    }).then((res: INotificationResponse) => {
-      return res.data;
-    }).catch((err) => {
-      console.log(err);
-      return err;
     });
   }
 
@@ -32,11 +25,6 @@ export default class NotificationApi {
     return this.api.request({
       cmd: 'notification/remove',
       data: params,
-    }).then((res: any) => {
-      return res;
-    }).catch((err) => {
-      console.log(err);
-      return err;
     });
   }
 
@@ -44,46 +32,25 @@ export default class NotificationApi {
     return this.api.request({
       cmd: 'notification/mark_as_read',
       data: params,
-    }).then((res: any) => {
-      return res;
-    }).catch((err) => {
-      console.log(err);
-      return err;
     });
   }
 
   public markAllRead() {
     return this.api.request({
       cmd: 'notification/mark_as_read',
-      data: {notification_id: 'all'}
-      ,
-    }).then((res: any) => {
-      return res;
-    }).catch((err) => {
-      console.log(err);
-      return err;
+      data: {notification_id: 'all'},
     });
   }
 
   public getCount() {
     return this.api.request({
       cmd: 'notification/get_counter',
-    }).then((res: INotificationCountRequest) => {
-      return res.data;
-    }).catch((err) => {
-      console.log(err);
-      return err;
     });
   }
 
   public resetCounter() {
     return this.api.request({
       cmd: 'notification/reset_counter',
-    }).then((res: any) => {
-      return res;
-    }).catch((err) => {
-      console.log(err);
-      return err;
     });
   }
 

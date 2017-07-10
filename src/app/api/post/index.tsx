@@ -13,12 +13,6 @@ export default class NotificationApi {
     return this.api.request({
       cmd: 'account/get_favorite_posts',
       data: params,
-    }).then((res: any) => {
-      const data = res.data as IPostsListResponse;
-      console.log(data);
-      return data;
-    }).catch((err) => {
-      throw err;
     });
   }
 }
