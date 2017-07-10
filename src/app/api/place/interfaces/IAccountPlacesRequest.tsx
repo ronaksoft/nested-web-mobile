@@ -1,5 +1,5 @@
 interface IAccountPlacesRequest {
-    account_id: string;
+    with_children?: boolean;
 }
 
 export default IAccountPlacesRequest;

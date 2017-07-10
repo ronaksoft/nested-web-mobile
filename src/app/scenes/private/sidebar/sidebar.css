@@ -1,0 +1,93 @@
+.sidebar {
+  width: 100%;
+  background-color: #232629;
+  flex-direction: column;
+  min-height: 100%;
+}
+.sidebarHead {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+}
+.sidebarActions {
+  list-style: none;
+}
+.sidebarActions li{
+  height: 48px;
+  padding: 0 16px;
+  opacity: .4;
+  align-items: center;
+  display: flex;
+  color: white;
+}
+.sidebarActions i{
+  margin-right: 16px;
+  margin-bottom: 4px;
+}
+.hrDark {
+  height: 1px;
+  width: 100%;
+  background-color: rgba(0,0,0,.16);
+  margin: 8px 0 0 0;
+  border: none;
+}
+.hrLight {
+  height: 1px;
+  width: 100%;
+  background-color: rgba(255,255,255,.04);
+  margin: 0 0 8px 0;
+  border: none;
+}
+.places {
+  width: 100%;
+  flex-grow: 1;
+}
+.places li{
+  width: 100%
+}
+.places li ul{
+  padding-left: 16px;
+}
+.place {
+  height: 48px;
+  width: 100%;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+}
+.place img{
+  height: 24px;
+  width: 24px;
+  flex: none;
+  display: flex;
+  margin-right: 20px;
+}
+.place span{
+  color: rgba(255,255,255,.4);
+  font-size: 14px;
+  width: 100%;
+}
+.place b{
+  color: rgb(50, 150, 255, .4);
+  font-size: 14px;
+  margin-right: 8px;
+}
+.place .childArrow{
+  width: 48px;
+  height: 100%;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center
+}
+.place .childArrow i{
+  transform-origin: center center;
+  opacity: .4;
+}
+.place .childArrow.active i{
+  transform: rotateZ('180deg');
+}
+.invitations .place{
+  background-color: rgba(50, 150, 255, .64);
+}
