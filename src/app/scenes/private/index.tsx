@@ -14,9 +14,12 @@ import {login, logout, setNotificationCount} from 'redux/app/actions';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
 import {Navbar} from 'components';
+import {Sidebar} from './sidebar/';
+const style = require('./private.css');
 
 interface IState {
   isLogin: boolean;
+  sidebarOpen: boolean;
 };
 
 interface IProps {
@@ -36,6 +39,7 @@ class Private extends React.Component<IProps, IState> {
     super();
     this.state = {
       isLogin: false,
+      sidebarOpen: false,
     };
   }
 
@@ -93,15 +97,37 @@ class Private extends React.Component<IProps, IState> {
     browserHistory.push('/feed');
   }
 
+  public closeSidebar = () => {
+    this.setState({
+      sidebarOpen: false,
+    });
+  }
+
+  public openSidebar = () => {
+    this.setState({
+      sidebarOpen: true,
+    });
+  }
+
   public componentWillUnmount() {
     this.unListenChangeRoute();
   }
 
   public render() {
+    const layout = (
+      <div className={style.container}>
+        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF}/>
+        {this.props.children}
+      </div>
+    );
     return (
       <div>
-        <Navbar sidebarOpen={this.sampleF} composeOpen={this.sampleF}/>
-        {this.state.isLogin && this.props.children}
+      { this.state.sidebarOpen &&
+          <Sidebar closeSidebar={this.closeSidebar}/>
+        }
+        { !this.state.sidebarOpen &&
+          layout
+        }
       </div>
     );
   }

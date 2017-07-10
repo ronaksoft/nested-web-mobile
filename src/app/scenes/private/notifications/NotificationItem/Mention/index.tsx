@@ -1,6 +1,5 @@
 import * as React from 'react';
-// import {UserAvatar} from '../../../../../components/userAvatar';
-// import IUser from '../../../../../api/account/interfaces/IUser';
+import {IcoN, UserAvatar, FullName} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -8,22 +7,27 @@ const style = require('../NotificationItem.css');
 
 interface IProps {
   notification: INotification;
-  // user: IUser;
 }
 
 class Mention extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        <div>
-          <div>
-            <a>
-              {this.props.notification.account_id}
-            </a>
-            <p>
-              {this.props.notification.place_id}
+        <div className={style.notifWrapper}>
+          <div className={style.notifContainer}>
+            <div>
+              <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            </div>
+            <div>
+              <b>
+              <FullName user_id={this.props.notification.account_id}/>
+              </b>
+              @<b>{this.props.notification.account_id}</b>
               {new Date(this.props.notification.timestamp).toString()}
-            </p>
+            </div>
+          </div>
+          <div>
+            <IcoN size={16} name={'atsign16'}/>
           </div>
         </div>
       </div>
