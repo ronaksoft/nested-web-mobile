@@ -9,6 +9,7 @@ import {setPosts} from '../../../redux/app/actions/index';
 import ArrayUntiles from '../../../services/untils/array';
 import {Button} from 'antd';
 import Post from './components/post/index';
+const style = require('./posts.css');
 
 interface IProps {
   posts: IPost[];
@@ -206,7 +207,7 @@ class Posts extends React.Component<IProps, IState> {
       },
     ];
     return (
-      <div>
+      <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
         <Button onClick={this.getPost.bind(this, '')}>Load More ...</Button>
         <b>{this.state.posts[0] && this.state.posts[this.state.posts.length - 1].timestamp}
