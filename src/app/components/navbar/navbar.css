@@ -7,6 +7,9 @@
   align-items: center;
   overflow: hidden;
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0
 }
 .navbar a {
   width: 40px;
@@ -22,6 +25,10 @@
 }
 .navbar a:last-child {
   margin-left: 16px;
+}
+.active {
+  border-radius: 8px;
+  background-color: rgba(50, 61, 71, .08)!important;
 }
 .navbar svg {
   max-width: 40px;

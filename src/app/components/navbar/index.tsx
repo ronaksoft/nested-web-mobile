@@ -10,9 +10,7 @@ interface INavbarProps {
 }
 
 interface INavbarState {
-  sidebarPopup?: boolean;
-  notificationPopup?: boolean;
-  composePopup?: boolean;
+  notificationOpen?: boolean;
 }
 
 class Navbar extends React.Component<INavbarProps, INavbarState> {
@@ -22,7 +20,21 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   }
 
   private goToNotification() {
-    browserHistory.push('/notifications');
+    console.log('aaaaaa');
+    if (this.state.notificationOpen) {
+      browserHistory.push('/feed');
+    } else {
+      browserHistory.push('/notifications');
+    }
+    this.setState({
+      notificationOpen: !this.state.notificationOpen,
+    });
+  }
+
+  public componentWillMount() {
+    this.setState({
+      notificationOpen: false,
+    });
   }
 
   public render() {
@@ -32,7 +44,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
           <IcoN size={24} name="menu24"/>
         </a>
         <div className={style.filler}/>
-        <a onClick={this.goToNotification.bind(this, '')}>
+        <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>
           <IcoN size={32} name="bell24"/>
         </a>
         <a onClick={this.props.composeOpen}>
