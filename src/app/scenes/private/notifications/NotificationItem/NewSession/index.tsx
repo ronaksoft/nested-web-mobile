@@ -1,6 +1,5 @@
 import * as React from 'react';
-// import {UserAvatar} from '../../../../../components/userAvatar';
-// import IUser from '../../../../../api/account/interfaces/IUser';
+import {IcoN, UserAvatar, FullName} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -8,23 +7,25 @@ const style = require('../NotificationItem.css');
 
 interface IProps {
   notification: INotification;
-  // user: IUser;
 }
-
 class NewSession extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        <div>
-          {/*<div>*/}
-            {/*<UserAvatar user={this.props.user} size={48} borderRadius="48"/>*/}
-          {/*</div>*/}
-          <div>
-            <p>
-              <small><b>New login</b> from: </small>
+        <div className={style.notifWrapper}>
+          <div className={style.notifContainer}>
+            <div>
+              <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            </div>
+            <div>
+              <b><FullName user_id={this.props.notification.account_id}/></b>
+              <b>New login</b> from:
               {this.props.notification._cid.replace(/_/g, ' ')}
               {new Date(this.props.notification.timestamp).toString()}
-            </p>
+            </div>
+          </div>
+          <div>
+            <IcoN size={16} name={'devicePhone16'}/>
           </div>
         </div>
       </div>

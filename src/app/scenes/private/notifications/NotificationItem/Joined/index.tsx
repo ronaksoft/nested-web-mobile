@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {IcoN, UserAvatar, FullName} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -12,21 +13,23 @@ class Joined extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-          <div>
+        <div className={style.notifWrapper}>
+          <div className={style.notifContainer}>
             <div>
-              <p>
-                <b>
-                  {this.props.notification.account_id}
-                </b>
-                added you to
-                <b>
-                  {this.props.notification.place_id}
-                </b>.
-                {new Date(this.props.notification.timestamp).toString()}
-              </p>
+              <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            </div>
+            <div>
+              <b><FullName user_id={this.props.notification.actor_id}/></b>
+              added you to
+              {this.props.notification.place_id}
+              {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
+          <div>
+            <IcoN size={16} name={'devicePhone16'}/>
+          </div>
         </div>
+      </div>
     );
   }
 }

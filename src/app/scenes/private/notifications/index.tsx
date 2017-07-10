@@ -61,8 +61,8 @@ class Notifications extends React.Component<IProps, IState> {
     return (
       <div>
         {this.state.notifications.length}
-        {this.state.notifications.map((notif) =>
-          (<NotificationItem key={notif._id} notification={notif}/>))
+        {this.state.notifications.map((notification) =>
+          (<NotificationItem key={notification._id} notification={notification}/>))
         }
         <Button onClick={this.getNotification.bind(this, '')}>More..</Button>
       </div>
