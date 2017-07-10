@@ -6,7 +6,7 @@ class Api {
   private static instance;
   private server;
 
-  public static getInstance() {
+  public static getInstance(): Api {
     if (!Api.instance) {
       Api.instance = new Api();
     }
