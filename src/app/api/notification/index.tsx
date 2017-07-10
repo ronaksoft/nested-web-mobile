@@ -17,7 +17,7 @@ export default class NotificationApi {
     after: null,
     before: null,
   }) {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/get_all',
       data: params,
     }).then((res: INotificationResponse) => {
@@ -29,7 +29,7 @@ export default class NotificationApi {
   }
 
   public remove(params: INotificationRemoveRequest) {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/remove',
       data: params,
     }).then((res: any) => {
@@ -41,7 +41,7 @@ export default class NotificationApi {
   }
 
   public markAsRead(params: INotificationRemoveRequest) {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/mark_as_read',
       data: params,
     }).then((res: any) => {
@@ -53,7 +53,7 @@ export default class NotificationApi {
   }
 
   public markAllRead() {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/mark_as_read',
       data: {notification_id: 'all'}
       ,
@@ -66,7 +66,7 @@ export default class NotificationApi {
   }
 
   public getCount() {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/get_counter',
     }).then((res: INotificationCountRequest) => {
       return res.data;
@@ -77,7 +77,7 @@ export default class NotificationApi {
   }
 
   public resetCounter() {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'notification/reset_counter',
     }).then((res: any) => {
       return res;

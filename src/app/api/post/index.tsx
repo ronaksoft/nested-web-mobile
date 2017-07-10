@@ -10,7 +10,7 @@ export default class NotificationApi {
   }
 
   public getFavoritePosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'account/get_favorite_posts',
       data: params,
     }).then((res: any) => {

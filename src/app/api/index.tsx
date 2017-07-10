@@ -24,7 +24,7 @@ class Api {
 
   public request(req: IRequest): Promise <any> {
     return new Promise((resolve, reject) => {
-      this.server.request(req).then((response: IResponse) => {
+      this.getServer().request(req).then((response: IResponse) => {
         if (!response) {
           console.log('Response could not be empty!');
         }
@@ -41,9 +41,12 @@ class Api {
     });
   }
 
-  private constructor() {
-    this.server = Server.getInstance();
-    console.log('Start Api instance');
+  private getServer() {
+    if (!this.server) {
+      this.server = Server.getInstance();
+    }
+
+    return this.server;
   }
 
 }

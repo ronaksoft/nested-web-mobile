@@ -10,7 +10,7 @@ export default class PlaceApi {
     }
 
     public placeSuggestCompose(placeSuggestRequest: IPlaceSuggestComposeRequest): Promise<any> {
-        return this.api.server.request({
+        return this.api.request({
             cmd: 'search/places_for_compose',
             data: placeSuggestRequest,
         }).then((res: IPlaceListResponse) => {

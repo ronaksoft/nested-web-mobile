@@ -31,7 +31,7 @@ export default class AccountApi {
   }
 
   public get(data: IGetRequest): Promise<any> {
-    return this.api.server.request({
+    return this.api.request({
       cmd: 'account/get',
       data,
     }).then((res: any) => {
