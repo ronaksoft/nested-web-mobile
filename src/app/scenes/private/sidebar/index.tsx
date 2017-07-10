@@ -5,8 +5,7 @@ const style = require('./sidebar.css');
 // import {browserHistory} from 'react-router';
 
 interface INavbarProps {
-  sidebarOpen: () => void;
-  composeOpen: () => void;
+  closeSidebar: () => void;
 }
 
 interface INavbarState {
@@ -28,6 +27,7 @@ class Sidebar extends React.Component<INavbarProps, INavbarState> {
   public render() {
     return (
       <div className={style.sidebar}>
+        aa
       </div>
     );
   }
