@@ -44,14 +44,33 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       .then((response: IPlace[]) => {
         console.log(response);
         const places = sortBy(response, [(o) =>  o._id]);
-        let placesConjuctions: IPlaceConjuction[];
-        places.array.forEach((element, i) => {
-          console.log(element, i);
-          let placesConjuction: IPlaceConjuction;
+        const placesConjuctions = [];
+        places.forEach((element, i) => {
+          const idSplit = element._id.split('.');
+          const placesConjuction: IPlaceConjuction = {
+            id : '0',
+            depth : idSplit.length - 1,
+            isOpen : false,
+          };
           placesConjuction.id = element._id;
-          placesConjuction.isOpen = false;
-          placesConjuction.depth = 0;
-          console.log(placesConjuction.id.split('.'));
+          if (idSplit.length > 1) {
+            const prevSplit = placesConjuctions[i - 1].id.split('.');
+            let evaluateDepth = 0;
+            let actualDepth = 0;
+            if ( prevSplit.length < idSplit.length) {
+              evaluateDepth = prevSplit.length;
+            } else {
+              evaluateDepth = idSplit.length - 1;
+            }
+            let d: number;
+            for (d = 0; d < evaluateDepth; d++) {
+              if ( prevSplit[d] === idSplit[d] ) {
+                actualDepth++;
+              }
+            }
+            placesConjuction.depth = actualDepth;
+          }
+          console.log(placesConjuction);
           placesConjuctions.push(placesConjuction);
         });
       });
