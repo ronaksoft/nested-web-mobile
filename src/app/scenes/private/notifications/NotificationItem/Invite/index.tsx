@@ -2,7 +2,7 @@ import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
-// const style = require('../NotificationItem.css');
+const style = require('../NotificationItem.css');
 
 interface IProps {
   notification: INotification;
@@ -11,8 +11,21 @@ interface IProps {
 class Invite extends React.Component <IProps, any> {
   public render() {
     return (
-      <div>
-        Invite notification
+      <div className={style.mention}>
+        <div>
+          <div>
+            <p>
+              <b>
+                {this.props.notification.account_id}
+              </b>
+              invited you to
+              <b>
+                {this.props.notification.place_id}
+              </b>.
+              {new Date(this.props.notification.timestamp).toString()}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

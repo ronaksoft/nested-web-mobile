@@ -12,23 +12,20 @@ class Promoted extends React.Component <IProps, any> {
   public render() {
     return (
       <div className={style.mention}>
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<img/>*/}
-          {/*</div>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-          {/*<div>*/}
-            {/*<p>*/}
-              {/*<b></b> promoted you in <b></b>.*/}
-            {/*</p>*/}
-          {/*</div>*/}
-          {/*<div>*/}
-          {/*</div>*/}
-          {/*<svg>*/}
-            {/*<use></use>*/}
-          {/*</svg>*/}
-        {/*</div>*/}
+        <div>
+          <div>
+              <p>
+                <b>
+                  {this.props.notification.account_id}
+                </b>
+                promoted you in
+                <b>
+                  {this.props.notification.place_id}
+                </b>.
+                {new Date(this.props.notification.timestamp).toString()}
+              </p>
+          </div>
+        </div>
       </div>
     );
   }

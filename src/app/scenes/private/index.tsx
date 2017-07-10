@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
+import {Navbar} from 'components';
 
 interface IState {
   isLogin: boolean;
@@ -87,6 +88,11 @@ class Private extends React.Component<IProps, IState> {
     });
   }
 
+  public sampleF = () => {
+    console.log('nothing');
+    browserHistory.push('/feed');
+  }
+
   public componentWillUnmount() {
     this.unListenChangeRoute();
   }
@@ -94,7 +100,7 @@ class Private extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        Private
+        <Navbar sidebarOpen={this.sampleF} composeOpen={this.sampleF}/>
         {this.state.isLogin && this.props.children}
       </div>
     );

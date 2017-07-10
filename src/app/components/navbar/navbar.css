@@ -1,0 +1,40 @@
+.navbar {
+  display: flex;
+  height: 56px;
+  background-color: #F0F0F0;
+  border-bottom: 1px solid rgba(50,61,71,.08);
+  padding: 0 8px;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0
+}
+.navbar a {
+  width: 40px;
+  display: flex;
+  height: 40px;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+}
+.navbar a i{
+  margin: 0;
+  height: 24px;
+}
+.navbar a:last-child {
+  margin-left: 16px;
+}
+.active {
+  border-radius: 8px;
+  background-color: rgba(50, 61, 71, .08)!important;
+}
+.navbar svg {
+  max-width: 40px;
+  max-height: 40px;
+}
+.filler {
+  width: 100%;
+  display: flex;
+}

@@ -8,6 +8,8 @@ import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse'
 import {setPosts} from '../../../redux/app/actions/index';
 import ArrayUntiles from '../../../services/untils/array';
 import {Button} from 'antd';
+import Post from './components/post/index';
+const style = require('./posts.css');
 
 interface IProps {
   posts: IPost[];
@@ -55,7 +57,6 @@ class Posts extends React.Component<IProps, IState> {
 
     this.postApi.getFavoritePosts(params)
       .then((response: IPostsListResponse) => {
-
         const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
@@ -75,7 +76,8 @@ class Posts extends React.Component<IProps, IState> {
     this.postApi = new PostApi();
     this.getPost(true);
   }
- public sampleF = () => {
+
+  public sampleF = () => {
     console.log('nothing');
   }
 
@@ -205,12 +207,12 @@ class Posts extends React.Component<IProps, IState> {
       },
     ];
     return (
-      <div>
+      <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
         <Button onClick={this.getPost.bind(this, '')}>Load More ...</Button>
         <b>{this.state.posts[0] && this.state.posts[this.state.posts.length - 1].timestamp}
           => {this.state.posts.length}</b>
-        {this.state.posts.map((post: IPost) => (<div key={post._id}>{post.timestamp} -> {post.subject}</div>))};
+        {this.state.posts.map((post: IPost) => (<Post post={post} key={post._id}/>))};
       </div>
     );
   }

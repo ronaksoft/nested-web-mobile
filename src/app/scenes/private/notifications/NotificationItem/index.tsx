@@ -4,6 +4,7 @@ import Demoted from './Demoted';
 import Invite from './Invite';
 import InviteRespond from './InviteRespond';
 import YouJoined from './YouJoined';
+import Joined from './Joined';
 import Mention from './Mention';
 import NewSession from './NewSession';
 import Promoted from './Promoted';
@@ -46,6 +47,12 @@ class NotificationItem extends React.Component<IProps, any> {
         return (
           <div>
             <InviteRespond notification={this.props.notification}/>
+          </div>
+        );
+      case INotificationTypes.FRIEND_JOINED:
+        return (
+          <div>
+            <Joined notification={this.props.notification}/>
           </div>
         );
       case INotificationTypes.YOU_JOINED:
