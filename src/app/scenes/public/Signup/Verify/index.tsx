@@ -137,7 +137,8 @@ class Verify extends React.Component<IProps, IState> {
           <Waiting
                   time={60}
                   trigger={this.state.sendTextWaiting}
-                  onFinish={this.handleResendWaitFinish}>
+                  onFinish={this.handleResendWaitFinish}
+                  message="wait...">
             <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
               {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
             </a>
@@ -147,7 +148,8 @@ class Verify extends React.Component<IProps, IState> {
           <Waiting
                   time={180}
                   trigger={this.state.callPhoneWaiting}
-                  onFinish={this.handleCallWaitFinish}>
+                  onFinish={this.handleCallWaitFinish}
+                  message="wait...">
             <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
               {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
             </a>

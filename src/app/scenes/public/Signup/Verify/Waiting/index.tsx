@@ -5,6 +5,7 @@ interface IProps {
   time: number;
   trigger: boolean;
   onFinish: () => void;
+  message?: string;
 }
 
 interface IState {
@@ -44,7 +45,14 @@ class Waiting extends React.Component<IProps, IState> {
     return (
       <div>
         {this.props.children}
-        {this.state.running && <Timer time={this.props.time} onEnd={this.handleEnd} />}
+        {this.state.running &&
+          (
+            <span>
+              <span>{this.props.message}</span>
+              <Timer time={this.props.time} onEnd={this.handleEnd} />
+            </span>
+          )
+        }
       </div>
     );
   }
