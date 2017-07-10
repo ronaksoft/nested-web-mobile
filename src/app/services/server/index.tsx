@@ -15,9 +15,6 @@ class Server {
   private cid: string;
 
   public request(req: IRequest): Promise <any> {
-    console.log('====================================');
-    console.log(req);
-    console.log('====================================');
     const aaa = AAA.getInstance();
     const credential = aaa.getCredentials();
     if (!req._reqid) {
@@ -37,10 +34,6 @@ class Server {
     if (credential.ss && credential.ss !== 'null') {
       socketRequest._ss = credential.ss;
     }
-
-    console.log('====================================');
-    console.log(socketRequest);
-    console.log('====================================');
 
     let internalResolve;
     let internalReject;
