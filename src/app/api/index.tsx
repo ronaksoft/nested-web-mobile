@@ -25,25 +25,18 @@ class Api {
   public request(req: IRequest): Promise <any> {
     return new Promise((resolve, reject) => {
       this.getServer().request(req).then((response: IResponse) => {
-        if (!response) {
-          console.log('Response could not be empty!');
-        }
-
         if (response.status === 'ok') {
           resolve(response.data);
         } else {
           reject (response.data);
         }
-      }).catch((error) => {
-        console.error(error);
-        reject(error);
-      });
+      }).catch(reject);
     });
   }
 
   private getServer() {
     if (!this.server) {
-      this.server = Server.getInstance();
+      this.server = new Server();
     }
 
     return this.server;

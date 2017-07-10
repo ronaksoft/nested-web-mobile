@@ -9,21 +9,15 @@ import Client from 'services/client';
 const TIMEOUT_TIME = 24000;
 
 class Server {
-  private static instance: Server;
   private socket: any = null;
   private queue: any;
   private reqId: number = Date.now();
   private cid: string;
 
-  public static getInstance() {
-    if (!Server.instance) {
-      Server.instance = new Server();
-    }
-    return Server.instance;
-  }
-
   public request(req: IRequest): Promise <any> {
-
+    console.log('====================================');
+    console.log(req);
+    console.log('====================================');
     const aaa = AAA.getInstance();
     const credential = aaa.getCredentials();
     if (!req._reqid) {
@@ -43,6 +37,10 @@ class Server {
     if (credential.ss && credential.ss !== 'null') {
       socketRequest._ss = credential.ss;
     }
+
+    console.log('====================================');
+    console.log(socketRequest);
+    console.log('====================================');
 
     let internalResolve;
     let internalReject;
@@ -95,12 +93,11 @@ class Server {
     this.socket.onStateChanged = callback;
   }
 
-  private constructor() {
+  constructor() {
     console.log('Start Server instance');
     this.socket = new Socket({
       server: CONFIG.WEBSOCKET.URL,
       pingPongTime: 10000,
-      onReady: this.startQueue.bind(this),
       onMessage: this.response.bind(this),
     });
     this.queue = [];
@@ -110,6 +107,11 @@ class Server {
 
   private response(res: string): void {
     const response = JSON.parse(res);
+
+    // start the queue after receiving hi
+    if (this.socket.isReady() && response.data.msg === 'hi') {
+      this.startQueue();
+    }
 
     // try to find queued request
     const itemIndex = this.queue.findIndex((q) => {
@@ -138,7 +140,7 @@ class Server {
     }
 
     // remove request from queue
-    this.queue.splice(queueItem, 1);
+    this.queue.splice(itemIndex, 1);
   }
 
   private sendRequest(request: any) {
@@ -148,7 +150,7 @@ class Server {
   private startQueue() {
     this.queue.map((request) => {
       if (request.state === 0) {
-        this.sendRequest(request);
+        this.sendRequest(request.request);
       }
     });
   }

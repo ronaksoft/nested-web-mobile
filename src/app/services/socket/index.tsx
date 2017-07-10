@@ -88,7 +88,10 @@ class Socket {
     log.info(`SOCKET | Connection stabilised to ${this.config.server}`);
     this.stopReconnect();
     setTimeout(() => {
-      this.config.onReady();
+      if (this.config.onReady) {
+        this.config.onReady();
+      }
+
       this.startPingPong();
       this.setStateOpen();
     }, 100);
