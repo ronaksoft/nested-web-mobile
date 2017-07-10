@@ -32,7 +32,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
           <IcoN size={24} name="menu24"/>
         </a>
         <div className={style.filler}/>
-        <a onClick={this.goToNotification.bind(this)}>
+        <a onClick={this.goToNotification.bind(this, '')}>
           <IcoN size={32} name="bell24"/>
         </a>
         <a onClick={this.props.composeOpen}>
