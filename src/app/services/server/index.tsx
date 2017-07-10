@@ -70,7 +70,7 @@ class Server {
 
   private handleTimeout = (requestId) => {
     return setTimeout(() => {
-      this.writeLog('NO RESPONSE FOR', requestId);
+
       const errorData: IErrorResponseData = {
         err_code: 1000,
         items: [],
@@ -110,21 +110,32 @@ class Server {
 
   private response(res: string): void {
     const response = JSON.parse(res);
-    this.writeLog('<<<', response);
 
     // try to find queued request
-    const queueItem = this.queue.findIndex((q) => {
+    const itemIndex = this.queue.findIndex((q) => {
       return q.reqId === response._reqid;
     });
 
     // check for has request in queue
     // return if has any request with this
-    if (queueItem === -1) {
+    if (itemIndex === -1) {
       return;
     }
 
+    const queueItem = this.queue[itemIndex];
+
     // resole request
-    this.queue[queueItem].resolve(response);
+    queueItem.resolve(response);
+
+    // log request and response in a group
+    if (console.groupCollapsed) {
+      console.groupCollapsed(`Server : ${queueItem.request.cmd.toUpperCase()}`);
+    }
+    console.log('Request ', queueItem.request);
+    console.log('Response', response);
+    if (console.groupEnd) {
+      console.groupEnd();
+    }
 
     // remove request from queue
     this.queue.splice(queueItem, 1);
@@ -132,7 +143,6 @@ class Server {
 
   private sendRequest(request: any) {
     this.socket.send(JSON.stringify(request));
-    this.writeLog('>>>', request);
   }
 
   private startQueue() {
@@ -152,9 +162,6 @@ class Server {
     return ['web', device, browser, os].join('_');
   }
 
-  private writeLog(...params) {
-    console.log('Server', ...params);
-  }
 }
 
 export {Server, IRequest, IResponse};
