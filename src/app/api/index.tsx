@@ -1,6 +1,5 @@
 import {Server, IRequest} from 'services/server';
 import {IResponse} from 'services/server';
-import log from 'loglevel';
 
 class Api {
   private hasCredential: boolean = false;
@@ -27,7 +26,7 @@ class Api {
     return new Promise((resolve, reject) => {
       this.server.request(req).then((response: IResponse) => {
         if (!response) {
-          log.error('Response could not be empty!');
+          console.log('Response could not be empty!');
         }
 
         if (response.status === 'ok') {
@@ -36,7 +35,7 @@ class Api {
           reject (response.data);
         }
       }).catch((error) => {
-        log.error(error);
+        console.error(error);
         reject(error);
       });
     });

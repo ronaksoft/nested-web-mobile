@@ -1,9 +1,12 @@
 import IRequest from './interfaces/IRequest';
 import IResponse from './interfaces/IResponse';
+import IErrorResponseData from './interfaces/IErrorResponseData';
 import AAA from './../aaa/index';
 import CONFIG from 'config';
 import {Socket, SocketState} from 'services/socket';
 import Client from 'services/client';
+
+const TIMEOUT_TIME = 24000;
 
 class Server {
   private static instance: Server;
@@ -49,7 +52,7 @@ class Server {
       internalReject = rej;
 
       if (this.socket.isReady()) {
-        this.socket.send(JSON.stringify(socketRequest));
+        this.sendRequest(socketRequest);
       }
     });
 
@@ -59,9 +62,28 @@ class Server {
       resolve: internalResolve,
       reject: internalReject,
       request: socketRequest,
+      timeout: this.handleTimeout(req._reqid),
     });
 
     return promise;
+  }
+
+  private handleTimeout = (requestId) => {
+    return setTimeout(() => {
+      this.writeLog('NO RESPONSE FOR', requestId);
+      const errorData: IErrorResponseData = {
+        err_code: 1000,
+        items: [],
+      };
+
+      const fakeResponse: IResponse = {
+        _reqid: requestId,
+        status: 'err',
+        data: errorData,
+      };
+
+      this.response(JSON.stringify(fakeResponse));
+    }, TIMEOUT_TIME);
   }
 
   private getRequestId(): string {
@@ -88,6 +110,7 @@ class Server {
 
   private response(res: string): void {
     const response = JSON.parse(res);
+    this.writeLog('<<<', response);
 
     // try to find queued request
     const queueItem = this.queue.findIndex((q) => {
@@ -108,7 +131,8 @@ class Server {
   }
 
   private sendRequest(request: any) {
-    this.socket.send(JSON.stringify(request.request));
+    this.socket.send(JSON.stringify(request));
+    this.writeLog('>>>', request);
   }
 
   private startQueue() {
@@ -120,17 +144,16 @@ class Server {
   }
 
   private getClientId(): string {
+    const deviceName = Client.getDevice();
+    const device = deviceName ? 'mobile' : 'desktop';
+    const os = deviceName ? deviceName : Client.getOS();
+    const browser = Client.getBrowser();
 
-    function getId() {
-      const deviceName = Client.getDevice();
-      const device = deviceName ? 'mobile' : 'desktop';
-      const os = deviceName ? deviceName : Client.getOS();
-      const browser = Client.getBrowser();
+    return ['web', device, browser, os].join('_');
+  }
 
-      return ['web', device, browser, os].join('_');
-    }
-
-    return getId();
+  private writeLog(...params) {
+    console.log('Server', ...params);
   }
 }
 

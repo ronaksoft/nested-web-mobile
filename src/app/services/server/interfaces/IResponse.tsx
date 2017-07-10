@@ -1,6 +1,7 @@
+import IErrorResponseData from './IErrorResponseData';
 interface IResponse {
     _reqid ?: string | number;
-    data : {};
+    data : IErrorResponseData | {};
     status: string;
 }
 

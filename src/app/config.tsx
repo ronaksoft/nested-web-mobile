@@ -2,13 +2,6 @@ export default {
     APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
     APP_VERSION: 353,
     DOMAIN: '_DOMAIN_',
-    LOG: {
-        LEVEL: 3,
-        GATEWAY: {
-            TYPE: 'console',
-            OPTIONS: {},
-        },
-    },
     SIGN_OUT_TARGET: 'https://nested.me',
     WEBSOCKET: {
         URL: 'ws://cyrus.ronaksoftware.com:81',
