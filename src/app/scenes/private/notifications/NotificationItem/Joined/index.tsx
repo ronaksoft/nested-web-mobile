@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
+import PlaceName from '../../../../../components/PlaceName';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import 'antd/dist/antd.css';
 
@@ -21,7 +22,7 @@ class Joined extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               added you to
-              {this.props.notification.place_id}
+              <PlaceName plc_id={this.props.notification.place_id}/>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
