@@ -1,7 +1,13 @@
 interface IPlaceConjuction {
     id: string;
-    isOpen: boolean;
+    name: string;
+    picture: string;
+    expanded: boolean;
     depth: number;
+    childrenUnseen: boolean;
+    unreadPosts: number;
+    hasChildren: boolean;
+    isChildren: boolean;
 }
 
 export default IPlaceConjuction;
