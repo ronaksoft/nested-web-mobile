@@ -2,6 +2,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
+import TimeUntiles from '../../../../../services/untils/time';
 
 interface IProps {
   post: IPost;
@@ -20,7 +21,6 @@ class Post extends React.Component<IProps, IState> {
 
   public render() {
     const {post} = this.state;
-    console.log(post);
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
       <div>
@@ -30,7 +30,7 @@ class Post extends React.Component<IProps, IState> {
           {post.forward_from && <IcoN size={16} name={'forward16'}/>}
           {post.sender && <FullName user_id={post.sender._id}/>}
           {post.email_sender && `${post.email_sender._id}`}
-          {new Date(post.timestamp).getTime()}
+          {TimeUntiles.dynamic(post.timestamp)}
           {post.pinned && <IcoN size={16} name={'bookmark24'}/>}
           {!post.pinned && <IcoN size={16} name={'bookmarkWire24'}/>}
         </div>
