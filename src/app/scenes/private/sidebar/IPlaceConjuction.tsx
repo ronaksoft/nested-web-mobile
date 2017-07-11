@@ -3,6 +3,7 @@ interface IPlaceConjuction {
     name: string;
     picture: string;
     expanded: boolean;
+    isOpen: boolean;
     depth: number;
     childrenUnseen: boolean;
     unreadPosts: number;

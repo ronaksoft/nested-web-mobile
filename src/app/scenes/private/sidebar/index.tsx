@@ -55,6 +55,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             depth : idSplit.length - 1,
             childrenUnseen : false,
             expanded : false,
+            isOpen : false,
             hasChildren : false,
             isChildren : false,
             unreadPosts : element.unread_posts,
@@ -101,14 +102,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   public toggleChildren(placeId: string, depth: number) {
-    // const places: IPlace[];
-    // places = this.state.places;
-    // console.log(placeId);
-    // places[place].isOpen = !places[place].isOpen;
-    // this.setState({
-    //   places: places,
-    // });
     const placesMirror = this.state.places.slice(0);
+    const theParentItem = placesMirror.find((item) => {
+      return item.id === placeId;
+    });
+    theParentItem.isOpen = !theParentItem.isOpen;
     const filter = placesMirror.filter(
       (p) => {
         // console.log(arguments, i);
@@ -141,6 +139,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         }
         const placeDom = (
           <li key={place.id + i}>
+            {!place.isChildren &&
+              <hr className={style.hrDark}/>
+            }
+            {!place.isChildren &&
+              <hr className={style.hrLight}/>
+            }
             <div className={style.place}>
               {placeIndent}
               <img src={src}/>
@@ -149,18 +153,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                 <b>{place.unreadPosts}</b>
               }
               {place.hasChildren &&
-                <div className={style.childArrow + place.expanded ? style.active : null}
+                <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
                 onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
                   <IcoN size={16} name={'arrow16White'}/>
                 </div>
               }
             </div>
-            {!place.isChildren &&
-              <hr className={style.hrDark}/>
-            }
-            {!place.isChildren &&
-              <hr className={style.hrLight}/>
-            }
           </li>
         );
         placeDoms.push(placeDom);
@@ -185,24 +183,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             Shared by me
           </li>
         </ul>
-        <hr className={style.hrDark}/>
-        <hr className={style.hrLight}/>
         <ul className={style.places}>
           {placeDoms}
-          {/*<li>
-            <div className={style.place}>
-              <img src={src}/>
-              <span>Salisu Dutse</span>
-              <b>13</b>
-              <div className={style.childArrow + this.state[placeId] ? style.active : null}
-              onClick={this.toggleChildren.bind(this, 'placeId')}>
-                <IcoN size={16} name={'arrow16White'}/>
-              </div>
-            </div>
-            <hr className={style.hrDark}/>
-            <hr className={style.hrLight}/>
-          </li>*/}
         </ul>
+        <hr className={style.hrDark}/>
+        <hr className={style.hrLight}/>
         <ul className={style.invitations}>
           <li>
             <div className={style.place}>
