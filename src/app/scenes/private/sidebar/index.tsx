@@ -41,11 +41,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     };
 
     this.PlaceApi.getAllPlaces(params)
-      .then((response: IPlace[]) => {
-        console.log(response);
-        const places = sortBy(response, [(o) =>  o._id]);
+      .then((response: any) => {
+        const places = sortBy(response.data.places, [(o) =>  o._id]);
+        console.log(places);
         const placesConjuctions = [];
         places.forEach((element, i) => {
+          // console.log(element, i);
           const idSplit = element._id.split('.');
           const placesConjuction: IPlaceConjuction = {
             id : '0',
@@ -63,9 +64,15 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               evaluateDepth = idSplit.length - 1;
             }
             let d: number;
+            let anyUnMatch: boolean;
+            anyUnMatch = false;
             for (d = 0; d < evaluateDepth; d++) {
-              if ( prevSplit[d] === idSplit[d] ) {
-                actualDepth++;
+              if ( prevSplit[d] === idSplit[d]) {
+                if (!anyUnMatch) {
+                  actualDepth++;
+                }
+              } else {
+                anyUnMatch = true;
               }
             }
             placesConjuction.depth = actualDepth;
