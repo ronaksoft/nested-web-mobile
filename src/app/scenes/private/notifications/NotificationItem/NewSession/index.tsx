@@ -24,9 +24,7 @@ class NewSession extends React.Component <IProps, any> {
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
-          <div>
             <IcoN size={16} name={'devicePhone16'}/>
-          </div>
         </div>
       </div>
     );
