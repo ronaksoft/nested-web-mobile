@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
+import AAA from '../../../services/aaa/index';
+import CONFIG from '../../../config';
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import IPlaceConjuction from './IPlaceConjuction';
 // import IPlace from '../../../api/place/interfaces/IPlace';
@@ -42,8 +44,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
     this.PlaceApi.getAllPlaces(params)
       .then((response: any) => {
+        // console.time('a');
         const places = sortBy(response.data.places, [(o) =>  o._id]);
-        // console.log(places);
         const placesConjuctions = [];
         places.forEach((element, i) => {
           // console.log(element, i);
@@ -51,7 +53,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           const placesConjuction: IPlaceConjuction = {
             id : element._id,
             name : element.name,
-            picture : element.picture,
+            picture : element.picture.x32,
             depth : idSplit.length - 1,
             childrenUnseen : false,
             expanded : false,
@@ -94,10 +96,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           }
           placesConjuctions.push(placesConjuction);
         });
+        // console.timeEnd('a');
         this.setState({
           places: placesConjuctions,
         });
-        // console.log(placesConjuctions);
       });
   }
 
@@ -125,13 +127,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   public render() {
-    const src = 'https://xerxes.nested.me/view/5961b14f43b15f00017a4e29/' +
-    'THU58B56C37E5F16400019C525158B56C37E5F16400019C5252';
     const placeDoms = [];
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
         const placeIndent = [];
+        const src = place.picture ?
+        `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}` :
+        './../../../assets/icons/absents_place.svg';
         for (let i: number = 0; i < place.depth; i++) {
           placeIndent.push(
             <div key={place.id + i} className={style.indent}/>,
