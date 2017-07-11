@@ -3,23 +3,8 @@ import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
 import Api from 'api';
 import Configuration from 'config';
 import AAA from 'services/aaa';
-
-interface IThumbnails {
-  org: string;
-  pre: string;
-  x32: string;
-  x64: string;
-  x128: string;
-}
-
-interface IAttachment {
-  expiration_timestamp: number;
-  name: string;
-  size: string;
-  thumbs: IThumbnails;
-  type: string;
-  universal_id: string;
-}
+import IAttachment from './interfaces/IAttachment';
+import IResponse from 'services/server/interfaces/IResponse';
 
 class AttachmentApi {
   private static getUploadToken(): Promise<string> {
@@ -42,7 +27,6 @@ class AttachmentApi {
   }
 
   public static upload(file: File, type: string, onProgress: any): Promise<IAttachment> {
-
     const sessionKey = AAA.getInstance().getCredentials().sk;
     const storeUrl = Configuration.STORE.URL;
     const formData = new FormData();
@@ -60,7 +44,7 @@ class AttachmentApi {
 
         if (onProgress) {
           xhr.upload.onprogress = (e: any) => {
-            onProgress(e.loaded, e.total);
+            onProgress(e.total, e.loaded);
           };
         }
 
@@ -73,11 +57,11 @@ class AttachmentApi {
             return reject(e);
           }
 
-          const response = JSON.parse(e.target.response);
+          const response: IResponse = JSON.parse(e.target.response);
 
-          switch (response.data.status) {
+          switch (response.status) {
             case 'ok':
-              resolve(response);
+              resolve(response.data[0]);
               break;
 
             default:
