@@ -4,11 +4,11 @@ import AAA from '../../services/aaa/index';
 import CONFIG from '../../config';
 import {IcoN} from 'components';
 
-const style = require('./sidebarItem.css');
+const style = require('./invitationItem.css');
 
 interface ISidebarItemProps {
   place: IPlaceConjuction;
-  openChild: () => void;
+  openInvitation: () => void;
   i: number;
 }
 
@@ -19,23 +19,9 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
   }
 
   public render() {
-    const placeIndent = [];
-    let img;
-    if (this.props.place.picture.length > 0) {
-        img = (
-            <img className={style.picture}
-            src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${this.props.place.picture}`}/>
-        );
-    } else {
-        img = (
-            <IcoN size={24} name={'absentPlace24'}/>
-        );
-    }
-    for (let i: number = 0; i < this.props.place.depth; i++) {
-        placeIndent.push(
-            <div key={this.props.place.id + i} className={style.indent}/>,
-        );
-    }
+    const src = this.props.place.picture ?
+        `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${this.props.place.picture}` :
+        './../../../assets/icons/absents_place.svg';
     return (
       <li key={this.props.place.id + this.props.i}>
         {!this.props.place.isChildren &&
@@ -45,8 +31,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             <hr className={style.hrLight}/>
         }
         <div className={style.place}>
-            {placeIndent}
-            {img}
+            <img src={src}/>
             <span>{this.props.place.name}</span>
             {this.props.place.unreadPosts > 0 &&
             <b>{this.props.place.unreadPosts}</b>
@@ -54,7 +39,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             {this.props.place.hasChildren &&
             (
                 <div className={[style.childArrow, this.props.place.isOpen ? style.active : null].join(' ')}
-                onClick={this.props.openChild}>
+                onClick={this.props.openInvitation}>
                 <IcoN size={16} name={'arrow16White'}/>
                 </div>
             )
