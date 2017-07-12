@@ -70,14 +70,18 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     const params = {
       with_children: true,
     };
-    if (this.props.sidebarPlaces) {
+    console.log(1);
+    if (this.props.sidebarPlaces.length > 0) {
+      console.log(11);
       this.setState({
         places: this.props.sidebarPlaces,
       });
     } else {
+      console.log(12);
       this.PlaceApi.getAllPlaces(params)
         .then((response: IPlace) => {
           console.time('a');
+          console.log(response);
           const places = sortBy(response, [(o) => o._id]);
           const placesConjuctions = [];
           places.forEach((element, i) => {
@@ -138,9 +142,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
   public toggleChildren(placeId: string, depth: number) {
     const placesMirror = this.state.places.slice(0);
+    console.log(placesMirror);
     const theParentItem = placesMirror.find((item) => {
       return item.id === placeId;
     });
+    console.log(theParentItem);
     theParentItem.isOpen = !theParentItem.isOpen;
     const filter = placesMirror.filter(
       (p) => {
@@ -187,45 +193,47 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     });
     return (
       <div className={style.sidebar}>
-        <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-          <IcoN size={24} name={'xcross24White'}/>
+        <div>
+          <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
+            <IcoN size={24} name={'xcross24White'}/>
+          </div>
+          <ul className={style.sidebarActions}>
+            <li>
+              <IcoN size={16} name={'bookmarkMessage1White'}/>
+              Feed
+            </li>
+            <li>
+              <IcoN size={16} name={'bookmarkMessage16White'}/>
+              Bookmarked Posts
+            </li>
+            <li>
+              <IcoN size={16} name={'sentMessage16White'}/>
+              Shared by me
+            </li>
+          </ul>
+          <ul className={style.places}>
+            {placeDoms}
+          </ul>
+          <hr className={style.hrDark}/>
+          <hr className={style.hrLight}/>
+          <ul className={style.invitations}>
+            {invDoms}
+          </ul>
+          <ul className={style.sidebarActions}>
+            <li>
+              <IcoN size={16} name={'gear16White'}/>
+              Profile and Settings
+            </li>
+            <li>
+              <IcoN size={16} name={'ask16White'}/>
+              Help Center
+            </li>
+            <li>
+              <IcoN size={16} name={'exit16White'}/>
+              Sign out
+            </li>
+          </ul>
         </div>
-        <ul className={style.sidebarActions}>
-          <li>
-            <IcoN size={16} name={'bookmarkMessage1White'}/>
-            Feed
-          </li>
-          <li>
-            <IcoN size={16} name={'bookmarkMessage16White'}/>
-            Bookmarked Posts
-          </li>
-          <li>
-            <IcoN size={16} name={'sentMessage16White'}/>
-            Shared by me
-          </li>
-        </ul>
-        <ul className={style.places}>
-          {placeDoms}
-        </ul>
-        <hr className={style.hrDark}/>
-        <hr className={style.hrLight}/>
-        <ul className={style.invitations}>
-          {invDoms}
-        </ul>
-        <ul className={style.sidebarActions}>
-          <li>
-            <IcoN size={16} name={'gear16White'}/>
-            Profile and Settings
-          </li>
-          <li>
-            <IcoN size={16} name={'ask16White'}/>
-            Help Center
-          </li>
-          <li>
-            <IcoN size={16} name={'exit16White'}/>
-            Sign out
-          </li>
-        </ul>
       </div>
     );
   }
