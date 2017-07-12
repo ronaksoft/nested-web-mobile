@@ -6,11 +6,17 @@ import {connect} from 'react-redux';
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IPlace from '../../../api/place/interfaces/IPlace';
+
 const style = require('./sidebar.css');
 import {SidebarItem, InvitationItem, IcoN} from 'components';
 import {setSidebarPlaces, setUserPlaces} from '../../../redux/app/actions/';
 import {placeAdd} from '../../../redux/places/actions/';
+
 // import {browserHistory} from 'react-router';
+
+interface IOwnProps {
+  closeSidebar: () => void;
+}
 
 interface ISidebarProps {
   closeSidebar: () => void;
@@ -19,6 +25,7 @@ interface ISidebarProps {
   setUserPlaces: (placeIds: string[]) => void;
   sidebarPlaces: ISidebarPlace[];
   places: IPlace[];
+  userPlaces: string[];
 }
 
 interface ISidebarState {
@@ -29,6 +36,7 @@ interface ISidebarState {
 
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   private PlaceApi: PlaceApi;
+
   constructor(props: any) {
     super(props);
   }
@@ -62,69 +70,69 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     const params = {
       with_children: true,
     };
-    if (this.props.sidebarPlaces.length === 0 ) {
+    if (this.props.sidebarPlaces.length === 0) {
       this.setState({
         places: this.props.sidebarPlaces,
       });
     } else {
-    this.PlaceApi.getAllPlaces(params)
-      .then((response: IPlace) => {
-        console.time('a');
-        const places = sortBy(response, [(o) =>  o._id]);
-        const placesConjuctions = [];
-        places.forEach((element, i) => {
-          // console.log(element, i);
-          this.props.placeAdd(element);
-          const idSplit = element._id.split('.');
-          const placesConjuction: ISidebarPlace = {
-            id : element._id,
-            depth : idSplit.length - 1,
-            expanded : false,
-            isOpen : false,
-            hasChildren : false,
-            isChildren : false,
-          };
-          if (idSplit.length > 1) {
-            placesConjuction.isChildren = true;
-            const prevSplit = placesConjuctions[i - 1].id.split('.');
-            let evaluateDepth = 0;
-            let actualDepth = 0;
-            let anyUnMatch: boolean = false;
+      this.PlaceApi.getAllPlaces(params)
+        .then((response: IPlace) => {
+          console.time('a');
+          const places = sortBy(response, [(o) => o._id]);
+          const placesConjuctions = [];
+          places.forEach((element, i) => {
+            // console.log(element, i);
+            this.props.placeAdd(element);
+            const idSplit = element._id.split('.');
+            const placesConjuction: ISidebarPlace = {
+              id: element._id,
+              depth: idSplit.length - 1,
+              expanded: false,
+              isOpen: false,
+              hasChildren: false,
+              isChildren: false,
+            };
+            if (idSplit.length > 1) {
+              placesConjuction.isChildren = true;
+              const prevSplit = placesConjuctions[i - 1].id.split('.');
+              let evaluateDepth = 0;
+              let actualDepth = 0;
+              let anyUnMatch: boolean = false;
 
-            evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
-            for (let d: number = 0; d < evaluateDepth; d++) {
-              if ( prevSplit[d] === idSplit[d]) {
-                if (!anyUnMatch) {
-                  actualDepth++;
+              evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
+              for (let d: number = 0; d < evaluateDepth; d++) {
+                if (prevSplit[d] === idSplit[d]) {
+                  if (!anyUnMatch) {
+                    actualDepth++;
+                  }
+                } else {
+                  anyUnMatch = true;
                 }
-              } else {
-                anyUnMatch = true;
               }
+              placesConjuction.depth = actualDepth;
             }
-            placesConjuction.depth = actualDepth;
-          }
-          // FIXME
-          if (placesConjuction.depth > 0 && placesConjuctions[i - 1].depth + 1 === placesConjuction.depth ) {
-            placesConjuctions[i - 1].hasChildren = true;
-          }
-          // if ( placesConjuction.unreadPosts > 0 ) {
-          //   for (let j: number = 1; j <= placesConjuction.depth; j++) {
-          //     const newIdSplit = idSplit.slice(0);
-          //     const parentID = newIdSplit.splice(0, j).join('.');
-          //     const parentElement = placesConjuctions.find(
-          //       (item) => item.id === parentID,
-          //     );
-          //     parentElement.childrenUnseen = true;
-          //   }
-          // }
-          placesConjuctions.push(placesConjuction);
+            // FIXME
+            if (placesConjuction.depth > 0 && placesConjuctions[i - 1].depth + 1 === placesConjuction.depth) {
+              placesConjuctions[i - 1].hasChildren = true;
+            }
+            // if ( placesConjuction.unreadPosts > 0 ) {
+            //   for (let j: number = 1; j <= placesConjuction.depth; j++) {
+            //     const newIdSplit = idSplit.slice(0);
+            //     const parentID = newIdSplit.splice(0, j).join('.');
+            //     const parentElement = placesConjuctions.find(
+            //       (item) => item.id === parentID,
+            //     );
+            //     parentElement.childrenUnseen = true;
+            //   }
+            // }
+            placesConjuctions.push(placesConjuction);
+          });
+          console.timeEnd('a');
+          this.setState({
+            places: placesConjuctions,
+          });
+          this.props.setSidebarPlaces(placesConjuctions);
         });
-        console.timeEnd('a');
-        this.setState({
-          places: placesConjuctions,
-        });
-        this.props.setSidebarPlaces(placesConjuctions);
-      });
     }
   }
 
@@ -140,10 +148,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         // if statement for hide childrens tale
         if (p.expanded) {
           return placeId === childrenParent &&
-          p.depth >= depth + 1;
+            p.depth >= depth + 1;
         } else {
           return placeId === childrenParent &&
-          p.depth === depth + 1;
+            p.depth === depth + 1;
         }
       },
     );
@@ -162,16 +170,16 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     const invDoms = [];
     this.state.invitations.forEach((item, i) => {
       const invDom = (
-          <InvitationItem key={i + 'nc'} item={item}/>
-        );
+        <InvitationItem key={i + 'nc'} item={item}/>
+      );
       invDoms.push(invDom);
     });
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
-      if ( showCase ) {
+      if (showCase) {
         const placeDom = (
           <SidebarItem key={place.id + i + 'a'} place={place}
-          openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
+                       openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
         );
         placeDoms.push(placeDom);
       }
@@ -222,10 +230,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 }
 
-const mapStateToProps = (store) => ({
+const mapStateToProps = (store, ownPlops: IOwnProps) => ({
   places: store.places.places,
   userPlaces: store.app.userPlaces,
   sidebarPlaces: store.app.sidebarPlaces,
+  closeSidebar: ownPlops.closeSidebar,
 });
 
 const mapDispatchToProps = (dispatch) => {

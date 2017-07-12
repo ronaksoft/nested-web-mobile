@@ -15,7 +15,7 @@ import {login, logout, setNotificationCount} from 'redux/app/actions';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
 import {Navbar} from 'components';
-import {Sidebar} from './sidebar/';
+import Sidebar from './sidebar/';
 const style = require('./private.css');
 
 interface IState {

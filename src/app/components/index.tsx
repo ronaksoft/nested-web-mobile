@@ -10,7 +10,7 @@ export {InvitationItem} from './InvitationItem/';
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
 import PlaceName from './PlaceName';
-import PlaceItem from './PlaceItem';
+import PlaceItem from './placeItem/index';
 
 export {UserAvatar};
 export {FullName};
