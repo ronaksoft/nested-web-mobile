@@ -98,3 +98,16 @@ export function unsetSidebarPlaces(): IAppAction {
     type: ActionTypes.APP_SIDEBAR_PLACES_UNSET,
   };
 }
+
+export function setUnreadPlaces(places: any): IAppAction {
+  return {
+    type: ActionTypes.APP_UNREAD_PLACES_SET,
+    payload: places,
+  };
+}
+
+export function unsetUnreadPlaces(): IAppAction {
+  return {
+    type: ActionTypes.APP_UNREAD_PLACES_UNSET,
+  };
+}

@@ -14,6 +14,7 @@ export interface IAppStore {
   notificationsCount: INotificationCountRequest;
   posts: IPost[];
   sidebarPlaces: ISidebarPlace[];
+  sidebarPlacesUnreads: any;
 }
 
 export interface IAppAction {
