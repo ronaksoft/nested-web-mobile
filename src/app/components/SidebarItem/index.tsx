@@ -36,7 +36,6 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             <div key={this.props.place.id + i + 'b'} className={style.indent}/>,
         );
     }
-    console.log(this.props.place.id + this.props.i + 'a');
     return (
       <li key={this.props.key}>
         {!this.props.place.isChildren &&
