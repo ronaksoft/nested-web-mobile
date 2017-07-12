@@ -1,5 +1,6 @@
 interface IGetRequest {
-    place_id: string;
+    comment_id: string;
+    post_id?: string;
 }
 
 export default IGetRequest ;
