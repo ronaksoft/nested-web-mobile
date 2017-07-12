@@ -57,11 +57,11 @@ class PlaceItem extends React.Component<IProps, IState> {
     } else {
       const placeApi = new PlaceApi();
       placeApi.get({place_id: this.props.place_id})
-        .then((place: IPlace) => {
+        .then((p: IPlace) => {
           this.setState({
-            place: place,
+            place: p,
           });
-          this.props.placeAdd(place);
+          this.props.placeAdd(p);
         });
     }
   }
@@ -116,7 +116,7 @@ class PlaceItem extends React.Component<IProps, IState> {
     return (
       <Row className="place-row" type="flex" align="middle">
         <Col span={3}>
-            <div className='PlaveView' style={style}>
+            <div className="PlaveView" style={style}>
                 <div className="PlaceView--inner" style={innerStyle}>
                   {img}
                 </div>
