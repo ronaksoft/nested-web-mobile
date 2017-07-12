@@ -10,11 +10,6 @@ const initialState = Immutable.from <IPlaceStore>({
 
 export default function placeReducer(state = initialState, action?: IPlaceAction) {
 
-  // check state for finding place
-  const indexOfPlace: number = state.places.findIndex((p: IPlace) => {
-    return p._id === action.payload._id;
-  });
-
   switch (action.type) {
     case ActionTypes.PLACE_ADD:
       /**
@@ -26,13 +21,17 @@ export default function placeReducer(state = initialState, action?: IPlaceAction
        * NOTICE::if this place is exist in state.places, this case will bypass to PLACE_UPDATE
        *
        */
+
+      const places = Immutable.getIn(state, ['places']);
+      const indexOfPlace: number = places.findIndex((a: IPlace) => {
+        return a._id === action.payload._id;
+      });
+
       if (indexOfPlace === -1) {
-        let places;
-        places = Immutable.get(state, 'places');
-        places = places.concat([action.payload]);
-        return state.merge({
-          places,
-        });
+        const newState = [action.payload].concat(Immutable(state.places));
+        return Immutable({places: newState});
+      } else {
+        return state;
       }
 
     case ActionTypes.PLACE_UPDATE:

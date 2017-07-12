@@ -65,12 +65,19 @@ class PlaceItem extends React.Component<IProps, IState> {
         });
     }
   }
+
   public render() {
+    const {place} = this.state;
+
+    if (!place) {
+      return null;
+    }
+
     const {
       borderRadius,
       size,
     } = this.props;
-    const {place} = this.state;
+
     const sizePX = size.toString(10) + 'px';
 
     // const ImageHolder = {
@@ -104,28 +111,29 @@ class PlaceItem extends React.Component<IProps, IState> {
     let img;
     if (place.picture.x32.length > 0) {
       img = (
-          <img className={style.picture}
-          src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}`}/>
+        <img className={style.picture}
+             src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture.x32}`}/>
       );
     } else {
       img = (
-          <IcoN size={24} name={'absentPlace24'}/>
+        <IcoN size={24} name={'absentPlace24'}/>
       );
     }
 
     return (
       <Row className="place-row" type="flex" align="middle">
         <Col span={3}>
-            <div className="PlaveView" style={style}>
-                <div className="PlaceView--inner" style={innerStyle}>
-                  {img}
-                </div>
+          <div className="PlaveView" style={style}>
+            <div className="PlaceView--inner" style={innerStyle}>
+              {img}
             </div>
+          </div>
         </Col>
-    </Row>
+      </Row>
     );
   }
 }
+
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   places: store.places.places,
   place_id: ownProps.place_id,

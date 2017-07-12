@@ -3,14 +3,14 @@ import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
 import {connect} from 'react-redux';
 
-// import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IPlace from '../../../api/place/interfaces/IPlace';
-
-const style = require('./sidebar.css');
 import {SidebarItem, InvitationItem, IcoN} from 'components';
 import {setSidebarPlaces, setUserPlaces} from '../../../redux/app/actions/';
 import {placeAdd} from '../../../redux/places/actions/';
+
+// import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
+const style = require('./sidebar.css');
 
 // import {browserHistory} from 'react-router';
 
@@ -174,6 +174,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       );
       invDoms.push(invDom);
     });
+
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
       if (showCase) {

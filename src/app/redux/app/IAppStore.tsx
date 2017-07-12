@@ -13,7 +13,7 @@ export interface IAppStore {
   notifications: INotificationResponse[];
   notificationsCount: INotificationCountRequest;
   posts: IPost[];
-  sidebarPlaces: ISidebarPlace[], 
+  sidebarPlaces: ISidebarPlace[];
 }
 
 export interface IAppAction {

@@ -16,6 +16,7 @@ import NotificationApi from '../../api/notification/index';
 import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
 import {Navbar} from 'components';
 import Sidebar from './sidebar/';
+
 const style = require('./private.css');
 
 interface IState {
@@ -123,11 +124,9 @@ class Private extends React.Component<IProps, IState> {
     );
     return (
       <div>
-      { this.state.sidebarOpen &&
-          <Sidebar closeSidebar={this.closeSidebar}/>
-        }
-        { !this.state.sidebarOpen &&
-          layout
+        {layout}
+        {this.state.sidebarOpen &&
+        <Sidebar closeSidebar={this.closeSidebar}/>
         }
       </div>
     );
