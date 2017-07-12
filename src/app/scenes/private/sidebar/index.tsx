@@ -28,6 +28,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   public componentWillMount() {
     this.setState({
       places: [],
+      invitations: [],
     });
     this.PlaceApi = new PlaceApi();
     this.getPlaces();
@@ -147,13 +148,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   public render() {
     const placeDoms = [];
     const invDoms = [];
-    this.state.places.forEach((place, i) => {
-      if (i < 4) {
-        const invDom = (
-          <InvitationItem key={i + place.id + 'c'} place={place}/>
+    this.state.invitations.forEach((item, i) => {
+      const invDom = (
+          <InvitationItem key={i + 'nc'} item={item}/>
         );
-        invDoms.push(invDom);
-      }
+      invDoms.push(invDom);
+    });
+    this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
         const placeDom = (
