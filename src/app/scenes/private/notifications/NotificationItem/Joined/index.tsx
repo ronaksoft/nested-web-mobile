@@ -22,7 +22,7 @@ class Joined extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               added you to
-              <PlaceName plc_id={this.props.notification.place_id}/>
+              <PlaceName place_id={this.props.notification.place_id}/>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>

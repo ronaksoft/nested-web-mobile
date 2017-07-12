@@ -22,7 +22,7 @@ class Invite extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.account_id}/></b>
               invited you to
-              <b><PlaceName plc_id={this.props.notification.place_id}/></b>
+              <b><PlaceName place_id={this.props.notification.place_id}/></b>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
