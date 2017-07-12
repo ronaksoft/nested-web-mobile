@@ -144,7 +144,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
         const placeDom = (
-          <SidebarItem key={place.id + i + 'a'} place={place} openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
+          <SidebarItem key={place.id + i + 'a'} place={place}
+          openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
           // <li key={place.id + i}>
           //   {!place.isChildren &&
           //     <hr className={style.hrDark}/>
