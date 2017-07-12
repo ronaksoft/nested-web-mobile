@@ -156,10 +156,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
                 <b>{place.unreadPosts}</b>
               }
               {place.hasChildren &&
-                <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
-                onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
-                  <IcoN size={16} name={'arrow16White'}/>
-                </div>
+                (
+                  <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
+                  onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
+                    <IcoN size={16} name={'arrow16White'}/>
+                  </div>
+                )
               }
             </div>
           </li>
