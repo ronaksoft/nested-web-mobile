@@ -33,11 +33,11 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
     }
     for (let i: number = 0; i < this.props.place.depth; i++) {
         placeIndent.push(
-            <div key={this.props.place.id + i} className={style.indent}/>,
+            <div key={this.props.place.id + i + 'b'} className={style.indent}/>,
         );
     }
     return (
-      <li key={this.props.place.id + this.props.i}>
+      <li key={this.props.place.id + this.props.i + 'a'}>
         {!this.props.place.isChildren &&
             <hr className={style.hrDark}/>
         }
@@ -47,6 +47,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
         <div className={style.place}>
             {placeIndent}
             {img}
+            <div className={style.indent}/>
             <span>{this.props.place.name}</span>
             {this.props.place.unreadPosts > 0 &&
             <b>{this.props.place.unreadPosts}</b>
@@ -55,7 +56,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             (
                 <div className={[style.childArrow, this.props.place.isOpen ? style.active : null].join(' ')}
                 onClick={this.props.openChild}>
-                <IcoN size={16} name={'arrow16White'}/>
+                    <IcoN size={16} name={'arrow16White'}/>
                 </div>
             )
             }

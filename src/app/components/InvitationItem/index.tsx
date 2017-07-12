@@ -6,48 +6,43 @@ import {IcoN} from 'components';
 
 const style = require('./invitationItem.css');
 
-interface ISidebarItemProps {
+interface IInvitationItemProps {
   place: IPlaceConjuction;
-  openInvitation: () => void;
   i: number;
 }
 
-class SidebarItem extends React.Component<ISidebarItemProps, any> {
+class InvitationItem extends React.Component<IInvitationItemProps, any> {
 
   constructor(props: any) {
     super(props);
   }
 
   public render() {
-    const src = this.props.place.picture ?
-        `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${this.props.place.picture}` :
-        './../../../assets/icons/absents_place.svg';
+    let img;
+    if (this.props.place.picture.length > 0) {
+        img = (
+            <img className={style.picture}
+            src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${this.props.place.picture}`}/>
+        );
+    } else {
+        img = (
+            <IcoN size={24} name={'absentPlace24'}/>
+        );
+    }
     return (
-      <li key={this.props.place.id + this.props.i}>
-        {!this.props.place.isChildren &&
-            <hr className={style.hrDark}/>
-        }
-        {!this.props.place.isChildren &&
-            <hr className={style.hrLight}/>
-        }
+      <li key={this.props.i + this.props.place.id + 'c'}>
         <div className={style.place}>
-            <img src={src}/>
-            <span>{this.props.place.name}</span>
-            {this.props.place.unreadPosts > 0 &&
-            <b>{this.props.place.unreadPosts}</b>
-            }
-            {this.props.place.hasChildren &&
-            (
-                <div className={[style.childArrow, this.props.place.isOpen ? style.active : null].join(' ')}
-                onClick={this.props.openInvitation}>
-                <IcoN size={16} name={'arrow16White'}/>
-                </div>
-            )
-            }
+            {img}
+            <div>
+                <span>August Zetterberg invited you to:</span>
+                <a>{this.props.place.name}</a>
+            </div>
         </div>
+            <hr className={style.hrDark}/>
+            <hr className={style.hrLight}/>
         </li>
     );
   }
 }
 
-export {SidebarItem}
+export {InvitationItem}

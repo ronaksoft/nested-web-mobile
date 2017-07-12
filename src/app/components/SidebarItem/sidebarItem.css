@@ -35,12 +35,11 @@
   display: flex;
   align-items: center;
 }
-.place > span ~ img{
+.place img{
   height: 24px;
   width: 24px;
   flex: none;
   display: flex;
-  margin-right: 20px;
 }
 .place span{
   color: rgba(255,255,255,.4);

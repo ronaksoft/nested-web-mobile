@@ -4,10 +4,9 @@ import PlaceApi from '../../../api/place/index';
 
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import IPlaceConjuction from './IPlaceConjuction';
-import {SidebarItem} from '../../../components/SidebarItem';
 // import IPlace from '../../../api/place/interfaces/IPlace';
 const style = require('./sidebar.css');
-import {IcoN} from 'components';
+import {IcoN, SidebarItem, InvitationItem} from 'components';
 // import {browserHistory} from 'react-router';
 
 interface ISidebarProps {
@@ -111,14 +110,20 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     theParentItem.isOpen = !theParentItem.isOpen;
     const filter = placesMirror.filter(
       (p) => {
-        // console.log(arguments, i);
         const childrenParent = p.id.split('.').slice(0).splice(0, depth + 1).join('.');
-        // console.log(childrenParent);
-        return placeId === childrenParent &&
-        p.depth === depth + 1;
+        // if statement for hide childrens tale
+        if (p.expanded) {
+          return placeId === childrenParent &&
+          p.depth >= depth + 1;
+        } else {
+          return placeId === childrenParent &&
+          p.depth === depth + 1;
+        }
       },
     );
     filter.forEach((item) => {
+      // Retivice arrow rotation
+      item.isOpen = false;
       item.expanded = !item.expanded;
     });
     this.setState({
@@ -128,7 +133,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
   public render() {
     const placeDoms = [];
+    const invDoms = [];
     this.state.places.forEach((place, i) => {
+      if (i < 4) {
+        const invDom = (
+          <InvitationItem place={place} i={i}/>
+        );
+        invDoms.push(invDom);
+      }
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
         const placeDom = (
@@ -186,13 +198,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <hr className={style.hrDark}/>
         <hr className={style.hrLight}/>
         <ul className={style.invitations}>
-          <li>
-            <div className={style.place}>
-              image name
-            </div>
-            <hr className={style.hrDark}/>
-            <hr className={style.hrLight}/>
-          </li>
+          {invDoms}
         </ul>
         <ul className={style.sidebarActions}>
           <li>
