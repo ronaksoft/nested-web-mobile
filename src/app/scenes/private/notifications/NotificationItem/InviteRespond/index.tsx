@@ -2,6 +2,7 @@ import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
+import TimeUntiles from '../../../../../services/untils/time';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -15,18 +16,16 @@ class InviteRespond extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div className={style.notifWrapper}>
-          <div className={style.notifContainer}>
             <div>
               <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
             </div>
-            <div>
-              <b><FullName user_id={this.props.notification.actor_id}/></b>
-              accepted your invitation and joined
-              <b><PlaceName plc_id={this.props.notification.place_id}/></b>
-              {new Date(this.props.notification.timestamp).toString()}
+            <div className={style.notifContainer}>
+              <div className={style.notifData}>
+                <b><FullName user_id={this.props.notification.actor_id}/></b>
+                <span> accepted your invitation and joined </span>
+              <b><PlaceName plc_id={this.props.notification.place_id}/>.</b>
+                <span>{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
-          </div>
-          <div>
             <IcoN size={16} name={'devicePhone16'}/>
           </div>
         </div>

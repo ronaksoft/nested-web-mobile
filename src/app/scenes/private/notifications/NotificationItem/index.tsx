@@ -9,7 +9,6 @@ import Mention from './Mention';
 import NewSession from './NewSession';
 import Promoted from './Promoted';
 import PlaceSettingsChanged from './PlaceSettingsChanged';
-
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
@@ -22,7 +21,6 @@ interface IProps {
 
 class NotificationItem extends React.Component<IProps, any> {
   public render() {
-
     switch (this.props.notification.type) {
       case INotificationTypes.COMMENT:
         return (

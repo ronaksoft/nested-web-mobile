@@ -2,6 +2,7 @@ import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
 import INotification from '../../../../../api/notification/interfaces/INotification';
+import TimeUntiles from '../../../../../services/untils/time';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -15,18 +16,16 @@ class Joined extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div className={style.notifWrapper}>
-          <div className={style.notifContainer}>
             <div>
               <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
             </div>
-            <div>
-              <b><FullName user_id={this.props.notification.actor_id}/></b>
-              added you to
+            <div className={style.notifContainer}>
+              <div className={style.notifData}>
+              <b><FullName user_id={this.props.notification.actor_id}/>.</b>
+                <span> added you to </span>
               <PlaceName plc_id={this.props.notification.place_id}/>
-              {new Date(this.props.notification.timestamp).toString()}
+                <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
-          </div>
-          <div>
             <IcoN size={16} name={'devicePhone16'}/>
           </div>
         </div>
