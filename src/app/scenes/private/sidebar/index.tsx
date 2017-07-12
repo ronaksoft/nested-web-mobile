@@ -70,7 +70,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     const params = {
       with_children: true,
     };
-    if (this.props.sidebarPlaces.length === 0) {
+    if (!this.props.sidebarPlaces) {
       this.setState({
         places: this.props.sidebarPlaces,
       });
