@@ -8,7 +8,7 @@ const style = require('./invitationItem.css');
 
 interface IInvitationItemProps {
   place: IPlaceConjuction;
-  i: number;
+  key: string;
 }
 
 class InvitationItem extends React.Component<IInvitationItemProps, any> {
@@ -30,7 +30,7 @@ class InvitationItem extends React.Component<IInvitationItemProps, any> {
         );
     }
     return (
-      <li key={this.props.i + this.props.place.id + 'c'}>
+      <li key={this.props.key}>
         <div className={style.place}>
             {img}
             <div>

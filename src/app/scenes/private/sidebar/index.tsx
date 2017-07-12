@@ -137,14 +137,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.state.places.forEach((place, i) => {
       if (i < 4) {
         const invDom = (
-          <InvitationItem place={place} i={i}/>
+          <InvitationItem key={i + place.id + 'c'} place={place}/>
         );
         invDoms.push(invDom);
       }
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
         const placeDom = (
-          <SidebarItem place={place} i={i} openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
+          <SidebarItem key={place.id + i + 'a'} place={place} openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
           // <li key={place.id + i}>
           //   {!place.isChildren &&
           //     <hr className={style.hrDark}/>

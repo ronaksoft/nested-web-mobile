@@ -9,7 +9,7 @@ const style = require('./sidebarItem.css');
 interface ISidebarItemProps {
   place: IPlaceConjuction;
   openChild: () => void;
-  i: number;
+  key: string;
 }
 
 class SidebarItem extends React.Component<ISidebarItemProps, any> {
@@ -36,8 +36,9 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             <div key={this.props.place.id + i + 'b'} className={style.indent}/>,
         );
     }
+    console.log(this.props.place.id + this.props.i + 'a');
     return (
-      <li key={this.props.place.id + this.props.i + 'a'}>
+      <li key={this.props.key}>
         {!this.props.place.isChildren &&
             <hr className={style.hrDark}/>
         }
