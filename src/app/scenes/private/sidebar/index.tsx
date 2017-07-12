@@ -4,7 +4,7 @@ import PlaceApi from '../../../api/place/index';
 
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import IPlaceConjuction from './IPlaceConjuction';
-// import IPlace from '../../../api/place/interfaces/IPlace';
+import IPlace from '../../../api/place/interfaces/IPlace';
 const style = require('./sidebar.css');
 import {IcoN, SidebarItem, InvitationItem} from 'components';
 // import {browserHistory} from 'react-router';
@@ -16,6 +16,7 @@ interface ISidebarProps {
 interface ISidebarState {
   places?: IPlaceConjuction[];
   placesConjuction?: any;
+  invitations?: IPlace[];
 }
 
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
@@ -30,11 +31,23 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     });
     this.PlaceApi = new PlaceApi();
     this.getPlaces();
+    this.getInvitations();
   }
 
   // public componentDidMount() {
 
   // }
+
+  private getInvitations() {
+
+    this.PlaceApi.getInvitations()
+      .then((response: any) => {
+        console.log(response.invitations);
+        this.setState({
+          invitations: response.invitations,
+        });
+      });
+  }
 
   private getPlaces() {
     const params = {

@@ -31,4 +31,10 @@ export default class PlaceApi {
     });
   }
 
+  public getInvitations(): Promise<any> {
+    return this.api.request({
+      cmd: 'account/get_invitations',
+    });
+  }
+
 };
