@@ -2,6 +2,7 @@ import Api from './../index';
 import IPlaceSuggestComposeRequest from './interfaces/IPlaceSuggestComposeRequest';
 import IAccountPlacesRequest from './interfaces/IAccountPlacesRequest';
 import IGetRequest from './interfaces/IGetRequest';
+import IPlace from './interfaces/IPlace';
 
 export default class PlaceApi {
   private api;
@@ -21,6 +22,9 @@ export default class PlaceApi {
     return this.api.server.request({
       cmd: 'account/get_all_places',
       data: getAllPlacesRequest,
+    }).then( (res) => {
+      const places = res.data.places as IPlace[];
+      return places;
     });
   }
 

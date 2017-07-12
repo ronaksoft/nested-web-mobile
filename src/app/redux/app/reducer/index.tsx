@@ -12,6 +12,7 @@ const initialState = Immutable.from<IAppStore>({
   notifications: [],
   notificationsCount: 0,
   posts: [],
+  sidebarPlaces: [],
 });
 
 export default function appReducer(state = initialState, action?: IAppAction) {
@@ -51,6 +52,26 @@ export default function appReducer(state = initialState, action?: IAppAction) {
     case ActionTypes.APP_POST_UNSET:
       return Immutable.merge(state, {
         posts: [],
+      });
+
+    case ActionTypes.APP_USER_PLACES_SET:
+      return Immutable.merge(state, {
+        userPlaces: action.payload,
+      });
+
+    case ActionTypes.APP_USER_PLACES_UNSET:
+      return Immutable.merge(state, {
+        userPlaces: [],
+      });
+
+    case ActionTypes.APP_SIDEBAR_PLACES_SET:
+      return Immutable.merge(state, {
+        sidebarPlaces: action.payload,
+      });
+
+    case ActionTypes.APP_SIDEBAR_PLACES_UNSET:
+      return Immutable.merge(state, {
+        sidebarPlaces: [],
       });
 
     default :

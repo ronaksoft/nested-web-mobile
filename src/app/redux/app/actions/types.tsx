@@ -17,6 +17,10 @@ export const APP_SOCKET_IS_DISCONNECT: string = 'SOCKET_IS_DISCONNECT';
 export const APP_USER_PLACES_SET: string = 'APP/USER_PLACES_SET';
 export const APP_USER_PLACES_UNSET: string = 'APP/USER_PLACES_UNSET';
 
+/** SIDEBAR PLACES ACTION */
+export const APP_SIDEBAR_PLACES_SET: string = 'APP/SIDEBAR_PLACES_SET';
+export const APP_SIDEBAR_PLACES_UNSET: string = 'APP/SIDEBAR_PLACES_UNSET';
+
 /** PLACES UNSEEN COUNT ACTION */
 export const APP_PLACE_UNSEEN_COUNT_SET: string = 'APP/PLACE_UNSEEN_COUNT_SET';
 
@@ -30,13 +34,13 @@ export const APP_NOTIFICATION_COUNT: string = 'APP/NOTIFICATION_COUNT';
 /** LANGUAGE ACTION */
 export const APP_LANGUAGE_SET: string = 'APP/LANGUAGE_SET';
 
-/** LANGUAGE ACTION */
+/** LIMIT ACTION */
 export const APP_LIMITS_SET: string = 'APP/LIMITS_SET';
 
 /** DRAFT ACTION */
 export const APP_DRAFT_SET: string = 'APP/DRAFT_SET';
 export const APP_DRAFT_UNSET: string = 'APP/DRAFT_UNSET';
 
-/** DRAFT ACTION */
+/** POST ACTION */
 export const APP_POST_SET: string = 'APP/POST_SET';
 export const APP_POST_UNSET: string = 'APP/POST_UNSET';

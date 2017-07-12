@@ -2,7 +2,6 @@ import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
 import INotification from '../../../../../api/notification/interfaces/INotification';
-import TimeUntiles from '../../../../../services/untils/time';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -22,9 +21,9 @@ class YouJoined extends React.Component <IProps, any> {
           <div className={style.notifContainer}>
             <div className={style.notifData}>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
-              <span> added you to </span>
-              <b><PlaceName plc_id={this.props.notification.place_id}/>. </b>
-              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              added you to
+              <b><PlaceName place_id={this.props.notification.place_id}/></b>
+              {new Date(this.props.notification.timestamp).toString()}
             </div>
             <IcoN size={16} name={'comment24'}/>
           </div>

@@ -23,7 +23,7 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
             <div className={style.notifData}>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               <span> changed the settings of</span>
-              <PlaceName plc_id={this.props.notification.place_id}/>.
+              <PlaceName place_id={this.props.notification.place_id}/>.
               <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
             <IcoN size={16} name={'devicePhone16'}/>
