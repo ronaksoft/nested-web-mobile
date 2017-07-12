@@ -85,9 +85,15 @@
   transform-origin: center center;
   opacity: .4;
 }
-.place .childArrow.active i{
-  transform: rotateZ('180deg');
+.active i{
+  transform: rotateZ(180deg);
 }
 .invitations .place{
   background-color: rgba(50, 150, 255, .64);
+}
+.indent {
+  display: flex;
+  width: 16px;
+  height: 100%;
+  flex: none;
 }
