@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
 import {IcoN, UserAvatar, FullName} from 'components';
-
+import PlaceName from '../../../../../components/PlaceName';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 
 const style = require('../NotificationItem.css');
@@ -22,7 +22,7 @@ class PlaceSettingsChanged extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               changed the settings of
-              {this.props.notification.place_id}
+              <PlaceName plc_id={this.props.notification.place_id}/>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>

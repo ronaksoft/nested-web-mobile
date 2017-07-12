@@ -1,6 +1,7 @@
 import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import {IcoN, UserAvatar, FullName} from 'components';
+import PlaceName from '../../../../../components/PlaceName';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -21,7 +22,7 @@ class InviteRespond extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               accepted your invitation and joined
-              {this.props.notification.place_id}
+              <b><PlaceName plc_id={this.props.notification.place_id}/></b>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>
