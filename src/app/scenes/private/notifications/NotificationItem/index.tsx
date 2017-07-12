@@ -25,7 +25,6 @@ class NotificationItem extends React.Component<IProps, any> {
       case INotificationTypes.COMMENT:
         return (
           <div>
-            {this.props.notification._id}
             <Comment notification={this.props.notification}/>
           </div>
         );

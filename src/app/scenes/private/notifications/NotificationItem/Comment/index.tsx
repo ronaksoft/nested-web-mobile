@@ -22,7 +22,7 @@ class Comment extends React.Component <IProps, any> {
           <div className={style.notifContainer}>
             <div className={style.notifData}>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
-              <span>commented on your post:</span>
+              <span>commented: </span>
               <CommentBody comment_id={this.props.notification.comment_id} post_id={this.props.notification.post_id}/>.
               <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
