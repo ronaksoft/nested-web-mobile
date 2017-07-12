@@ -73,28 +73,28 @@ export function unsetPosts(): IAppAction {
   };
 }
 
-export function setUserPlaces(place_ids: string[]) : IAppAction{
+export function setUserPlaces(placeIds: string[]): IAppAction {
   return {
     type: ActionTypes.APP_USER_PLACES_SET,
-    payload: place_ids, 
-  }
+    payload: placeIds,
+  };
 }
 
-export function unsetUserPlaces() : IAppAction{
+export function unsetUserPlaces(): IAppAction {
   return {
-    type: ActionTypes.APP_USER_PLACES_UNSET, 
-  }
+    type: ActionTypes.APP_USER_PLACES_UNSET,
+  };
 }
 
-export function setSidebarPlaces(places: ISidebarPlace[]) : IAppAction{
+export function setSidebarPlaces(places: ISidebarPlace[]): IAppAction {
   return {
     type: ActionTypes.APP_SIDEBAR_PLACES_SET,
-    payload: places, 
-  }
+    payload: places,
+  };
 }
 
-export function unsetSidebarPlaces() : IAppAction{
+export function unsetSidebarPlaces(): IAppAction {
   return {
-    type: ActionTypes.APP_SIDEBAR_PLACES_UNSET, 
-  }
+    type: ActionTypes.APP_SIDEBAR_PLACES_UNSET,
+  };
 }
