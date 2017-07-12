@@ -1,6 +1,6 @@
-interface IPlace {
+interface IComment {
   id: string;
-  body: string;
+  text: string;
   timestamp: number;
   senderId: string;
   sender: string;
@@ -9,4 +9,4 @@ interface IPlace {
   removed: string;
 }
 
-export default IPlace;
+export default IComment;

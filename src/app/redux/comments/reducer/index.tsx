@@ -10,29 +10,19 @@ const initialState = Immutable.from <ICommentStore>({
 
 export default function commentReducer(state = initialState, action?: ICommentAction) {
 
-  // check state for finding comment
-  const indexOfComment: number = state.comments.findIndex((c: IComment) => {
-    return c.id === action.payload.id;
-  });
-
   switch (action.type) {
     case ActionTypes.COMMENT_ADD:
-      /**
-       * Place Add Action
-       *
-       * this part check current application state for finding place and then update place state if place exist.
-       * Otherwise add place to places list
-       *
-       * NOTICE::if this place is exist in state.places, this case will bypass to PLACE_UPDATE
-       *
-       */
+
+      const comments = Immutable.getIn(state, ['comments']);
+      const indexOfComment: number = comments.findIndex((a: IComment) => {
+        return a.id === action.payload.id;
+      });
+
       if (indexOfComment === -1) {
-        let comments;
-        comments = Immutable.get(state, 'comments');
-        comments = comments.concat([action.payload]);
-        return state.merge({
-          comments,
-        });
+        const newState = [action.payload].concat(Immutable(state.comments));
+        return Immutable({comments: newState});
+      } else {
+        return state;
       }
 
     case ActionTypes.COMMENT_UPDATE:

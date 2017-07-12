@@ -1,7 +1,7 @@
 import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import {IcoN, UserAvatar, FullName} from 'components';
-// import CommentBody from '../../../../../components/CommentBody';
+import CommentBody from '../../../../../components/CommentBody';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -22,7 +22,7 @@ class Comment extends React.Component <IProps, any> {
             <div>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
               commented on your post:
-              {/*<CommentBody com_id={this.props.notification.comment_id}/>*/}
+              <CommentBody comment_id={this.props.notification.comment_id} post_id={this.props.notification.post_id}/>
               {new Date(this.props.notification.timestamp).toString()}
             </div>
           </div>

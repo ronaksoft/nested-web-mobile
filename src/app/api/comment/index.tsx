@@ -1,5 +1,6 @@
 import Api from 'api';
-import IGetRequest from './interfaces/IGetRequest';
+import IGetCommentRequest from './interfaces/IGetRequest';
+import IComment from './interfaces/IComment';
 
 export default class CommentApi {
   private api;
@@ -8,10 +9,13 @@ export default class CommentApi {
     this.api = Api.getInstance();
   }
 
-  public get(data: IGetRequest): Promise<any> {
+  public get(data: IGetCommentRequest): Promise<any> {
     return this.api.request({
-      cmd: 'post/get_comments',
+      cmd: 'post/get_many_comments',
       data,
+    }).then((res) => {
+      const comments = res.comments[0] as IComment;
+      return comments;
     });
   }
 };

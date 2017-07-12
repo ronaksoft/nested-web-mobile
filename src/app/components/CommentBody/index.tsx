@@ -5,41 +5,48 @@ import CommentApi from '../../api/comment/index';
 import {connect} from 'react-redux';
 
 interface IOwnProps {
-  com_id: string;
+  comment_id: string;
+  post_id: string;
 }
+
 interface IProps {
-  com_id: string;
+  post_id: string;
+  comment_id: string;
   comments: IComment[];
   commentAdd: (comment: IComment) => {};
 }
 
 interface IState {
- com: IComment | null;
+  comment: IComment | null;
 }
 
 class CommentBody extends React.Component<IProps, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      com: null,
+      comment: null,
     };
   }
 
   public componentDidMount() {
-    const com = this.props.comments.filter((com: IComment) => {
-      return com.id === this.props.com_id;
+    const comments = this.props.comments.filter((comment: IComment) => {
+      return comment.id === this.props.comment_id;
     });
 
-    if (com.length > 0) {
+    if (comments.length > 0) {
       this.setState({
-        com: com[0],
+        comment: comments[0],
       });
     } else {
       const commentApi = new CommentApi();
-      commentApi.get({comment_id: this.props.com_id})
+      commentApi.get(
+        {
+          comment_id: this.props.comment_id,
+          post_id: this.props.post_id,
+        })
         .then((comment: IComment) => {
           this.setState({
-            com: comment,
+            comment,
           });
           this.props.commentAdd(comment);
         });
@@ -48,24 +55,26 @@ class CommentBody extends React.Component<IProps, IState> {
 
   public render() {
 
-    const {com} = this.state;
-
-    if (!com) {
+    const {comment} = this.state;
+    if (!comment) {
       return null;
     }
     return (
-      <span>{com.body}</span>
+      <span>{comment.text}</span>
     );
   }
 }
+
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   comments: store.comments.comments,
-  com_id: ownProps.com_id,
+  comment_id: ownProps.comment_id,
 });
 
 const mapDispatchAction = (dispatch) => {
   return {
-    commentAdd: (comment: IComment) => dispatch(commentAdd(comment)),
+    commentAdd: (comment: IComment) => {
+      dispatch(commentAdd(comment));
+    },
   };
 };
 

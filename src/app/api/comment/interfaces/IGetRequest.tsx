@@ -1,6 +1,6 @@
-interface IGetRequest {
-    comment_id: string;
-    post_id?: string;
+interface IGetCommentRequest {
+  comment_id: string;
+  post_id: string;
 }
 
-export default IGetRequest ;
+export default IGetCommentRequest;
