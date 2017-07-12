@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
-import AAA from '../../../services/aaa/index';
-import CONFIG from '../../../config';
+
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
 import IPlaceConjuction from './IPlaceConjuction';
+import {SidebarItem} from '../../../components/SidebarItem';
 // import IPlace from '../../../api/place/interfaces/IPlace';
 const style = require('./sidebar.css');
 import {IcoN} from 'components';
@@ -131,40 +131,32 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
       if ( showCase ) {
-        const placeIndent = [];
-        const src = place.picture ?
-        `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}` :
-        './../../../assets/icons/absents_place.svg';
-        for (let i: number = 0; i < place.depth; i++) {
-          placeIndent.push(
-            <div key={place.id + i} className={style.indent}/>,
-          );
-        }
         const placeDom = (
-          <li key={place.id + i}>
-            {!place.isChildren &&
-              <hr className={style.hrDark}/>
-            }
-            {!place.isChildren &&
-              <hr className={style.hrLight}/>
-            }
-            <div className={style.place}>
-              {placeIndent}
-              <img src={src}/>
-              <span>{place.name}</span>
-              {place.unreadPosts > 0 &&
-                <b>{place.unreadPosts}</b>
-              }
-              {place.hasChildren &&
-                (
-                  <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
-                  onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
-                    <IcoN size={16} name={'arrow16White'}/>
-                  </div>
-                )
-              }
-            </div>
-          </li>
+          <SidebarItem place={place} i={i} openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
+          // <li key={place.id + i}>
+          //   {!place.isChildren &&
+          //     <hr className={style.hrDark}/>
+          //   }
+          //   {!place.isChildren &&
+          //     <hr className={style.hrLight}/>
+          //   }
+          //   <div className={style.place}>
+          //     {placeIndent}
+          //     <img src={src}/>
+          //     <span>{place.name}</span>
+          //     {place.unreadPosts > 0 &&
+          //       <b>{place.unreadPosts}</b>
+          //     }
+          //     {place.hasChildren &&
+          //       (
+          //         <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
+          //         onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
+          //           <IcoN size={16} name={'arrow16White'}/>
+          //         </div>
+          //       )
+          //     }
+          //   </div>
+          // </li>
         );
         placeDoms.push(placeDom);
       }
