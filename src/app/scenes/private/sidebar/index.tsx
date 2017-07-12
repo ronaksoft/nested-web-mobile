@@ -1,20 +1,28 @@
 import * as React from 'react';
 import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
+import {connect} from 'react-redux';
 
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
-import IPlaceConjuction from './IPlaceConjuction';
+import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IPlace from '../../../api/place/interfaces/IPlace';
 const style = require('./sidebar.css');
-import {IcoN, SidebarItem, InvitationItem} from 'components';
+import {SidebarItem, InvitationItem, IcoN} from 'components';
+import {setSidebarPlaces, setUserPlaces} from '../../../redux/app/actions/';
+import {placeAdd} from '../../../redux/places/actions/';
 // import {browserHistory} from 'react-router';
 
 interface ISidebarProps {
   closeSidebar: () => void;
+  placeAdd: (place: IPlace) => void;
+  setSidebarPlaces: (sidebarPlaces: ISidebarPlace[]) => void;
+  setUserPlaces: (placeIds: string[]) => void;
+  sidebarPlaces: ISidebarPlace[];
+  places: IPlace[];
 }
 
 interface ISidebarState {
-  places?: IPlaceConjuction[];
+  places?: ISidebarPlace[];
   placesConjuction?: any;
   invitations?: IPlace[];
 }
@@ -31,7 +39,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       invitations: [],
     });
     this.PlaceApi = new PlaceApi();
-    this.getPlaces();
+    this.getMyPlaces();
     this.getInvitations();
   }
 
@@ -50,30 +58,31 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       });
   }
 
-  private getPlaces() {
+  private getMyPlaces() {
     const params = {
       with_children: true,
     };
-
+    if (this.props.sidebarPlaces.length === 0 ) {
+      this.setState({
+        places: this.props.sidebarPlaces,
+      });
+    } else {
     this.PlaceApi.getAllPlaces(params)
-      .then((response: any) => {
-        // console.time('a');
-        const places = sortBy(response.data.places, [(o) =>  o._id]);
+      .then((response: IPlace) => {
+        console.time('a');
+        const places = sortBy(response, [(o) =>  o._id]);
         const placesConjuctions = [];
         places.forEach((element, i) => {
           // console.log(element, i);
+          this.props.placeAdd(element);
           const idSplit = element._id.split('.');
-          const placesConjuction: IPlaceConjuction = {
+          const placesConjuction: ISidebarPlace = {
             id : element._id,
-            name : element.name,
-            picture : element.picture.x32,
             depth : idSplit.length - 1,
-            childrenUnseen : false,
             expanded : false,
             isOpen : false,
             hasChildren : false,
             isChildren : false,
-            unreadPosts : element.unread_posts,
           };
           if (idSplit.length > 1) {
             placesConjuction.isChildren = true;
@@ -94,26 +103,29 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             }
             placesConjuction.depth = actualDepth;
           }
+          // FIXME
           if (placesConjuction.depth > 0 && placesConjuctions[i - 1].depth + 1 === placesConjuction.depth ) {
             placesConjuctions[i - 1].hasChildren = true;
           }
-          if ( placesConjuction.unreadPosts > 0 ) {
-            for (let j: number = 1; j <= placesConjuction.depth; j++) {
-              const newIdSplit = idSplit.slice(0);
-              const parentID = newIdSplit.splice(0, j).join('.');
-              const parentElement = placesConjuctions.find(
-                (item) => item.id === parentID,
-              );
-              parentElement.childrenUnseen = true;
-            }
-          }
+          // if ( placesConjuction.unreadPosts > 0 ) {
+          //   for (let j: number = 1; j <= placesConjuction.depth; j++) {
+          //     const newIdSplit = idSplit.slice(0);
+          //     const parentID = newIdSplit.splice(0, j).join('.');
+          //     const parentElement = placesConjuctions.find(
+          //       (item) => item.id === parentID,
+          //     );
+          //     parentElement.childrenUnseen = true;
+          //   }
+          // }
           placesConjuctions.push(placesConjuction);
         });
-        // console.timeEnd('a');
+        console.timeEnd('a');
         this.setState({
           places: placesConjuctions,
         });
+        this.props.setSidebarPlaces(placesConjuctions);
       });
+    }
   }
 
   public toggleChildren(placeId: string, depth: number) {
@@ -160,30 +172,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         const placeDom = (
           <SidebarItem key={place.id + i + 'a'} place={place}
           openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
-          // <li key={place.id + i}>
-          //   {!place.isChildren &&
-          //     <hr className={style.hrDark}/>
-          //   }
-          //   {!place.isChildren &&
-          //     <hr className={style.hrLight}/>
-          //   }
-          //   <div className={style.place}>
-          //     {placeIndent}
-          //     <img src={src}/>
-          //     <span>{place.name}</span>
-          //     {place.unreadPosts > 0 &&
-          //       <b>{place.unreadPosts}</b>
-          //     }
-          //     {place.hasChildren &&
-          //       (
-          //         <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
-          //         onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
-          //           <IcoN size={16} name={'arrow16White'}/>
-          //         </div>
-          //       )
-          //     }
-          //   </div>
-          // </li>
         );
         placeDoms.push(placeDom);
       }
@@ -234,4 +222,18 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 }
 
-export {Sidebar}
+const mapStateToProps = (store) => ({
+  places: store.places.places,
+  userPlaces: store.app.userPlaces,
+  sidebarPlaces: store.app.sidebarPlaces,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    placeAdd: (place: IPlace) => (dispatch(placeAdd(place))),
+    setSidebarPlaces: (sidebarPlace: ISidebarPlace[]) => (dispatch(setSidebarPlaces(sidebarPlace))),
+    setUserPlaces: (placeIds: string[]) => (dispatch(setUserPlaces(placeIds))),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

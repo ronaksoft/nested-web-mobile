@@ -10,6 +10,8 @@ export {InvitationItem} from './InvitationItem/';
 
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
+import PlaceName from './PlaceName/';
 
 export {UserAvatar} ;
 export {FullName} ;
+export {PlaceName};

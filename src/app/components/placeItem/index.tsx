@@ -1,6 +1,12 @@
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
+import {placeAdd} from '../../redux/places/actions/index';
+import PlaceApi from '../../api/place/index';
+import {connect} from 'react-redux';
 import {Row, Col} from 'antd';
+import {IcoN} from 'components';
+import AAA from '../../services/aaa/index';
+import CONFIG from '../../config';
 
 const style = require('./placeItem.css');
 const settings = {
@@ -13,41 +19,69 @@ const settings = {
   radius: 0,
 };
 
-interface IPlaceItemProps {
-  item?: IPlace;
+interface IOwnProps {
+  place_id: string;
   borderRadius: string;
   size: any;
-  avatar: boolean;
-  name: boolean;
-  id: boolean;
 }
 
-class PlaceItem extends React.Component<IPlaceItemProps, any> {
+interface IProps {
+  place_id: string;
+  borderRadius: string;
+  size: any;
+  places: IPlace[];
+  placeAdd: (place: IPlace) => {};
+}
 
+interface IState {
+  place: IPlace | null;
+}
+
+class PlaceItem extends React.Component<IProps, IState> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      place: null,
+    };
   }
 
+  public componentDidMount() {
+    const place = this.props.places.filter((place: IPlace) => {
+      return place._id === this.props.place_id;
+    });
+
+    if (place.length > 0) {
+      this.setState({
+        place: place[0],
+      });
+    } else {
+      const placeApi = new PlaceApi();
+      placeApi.get({place_id: this.props.place_id})
+        .then((place: IPlace) => {
+          this.setState({
+            place: place,
+          });
+          this.props.placeAdd(place);
+        });
+    }
+  }
   public render() {
     const {
       borderRadius,
       size,
-      item,
-      avatar,
-      name,
-      id,
     } = this.props;
+    const {place} = this.state;
     const sizePX = size.toString(10) + 'px';
 
-    const ImageHolder = {
-      width: sizePX,
-      height: sizePX,
-      display: 'flex',
-      flex: 'none',
-      borderRadius,
-    //   position: 'relative',
-    //   justifyContent: 'center',
-    };
+    // const ImageHolder = {
+    //   width: sizePX,
+    //   height: sizePX,
+    //   display: 'flex',
+    //   flex: 'none',
+    //   borderRadius,
+    // //   position: 'relative',
+    // //   justifyContent: 'center',
+    // };
 
     const innerStyle = {
       lineHeight: sizePX,
@@ -67,39 +101,24 @@ class PlaceItem extends React.Component<IPlaceItemProps, any> {
       imageStyle.width = settings.width = size;
       imageStyle.height = settings.height = size;
     }
-
-    let imgDOM;
-    let nameDOM;
-    let idDOM;
-    const classes = ['PlaveView'];
-    const placeName = `${item.name}`;
-
-    if (avatar) {
-        const src = item.picture.x32 ? item.picture.x32 : './../../../style/images/absents_place.svg';
-        imgDOM = <img className="PlaceView--img" style={imageStyle} src={src}/>;
+    let img;
+    if (place.picture.x32.length > 0) {
+      img = (
+          <img className={style.picture}
+          src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}`}/>
+      );
+    } else {
+      img = (
+          <IcoN size={24} name={'absentPlace24'}/>
+      );
     }
 
-    if ( name ) {
-      nameDOM = <span className={style.textStyle}>{placeName}</span>;
-    }
-
-    if ( id ) {
-      idDOM = <span className={style.textIdStyle}>{`${item._id}`}</span>;
-    }
     return (
       <Row className="place-row" type="flex" align="middle">
         <Col span={3}>
-            <div aria-label={placeName} className={classes.join(' ')} style={style}>
+            <div className='PlaveView' style={style}>
                 <div className="PlaceView--inner" style={innerStyle}>
-                {avatar && (
-                    <div style={ImageHolder}>
-                        {imgDOM}
-                    </div>
-                )}
-                <div className="PlaveView-detail">
-                    {name && nameDOM}
-                    {id && idDOM}
-                </div>
+                  {img}
                 </div>
             </div>
         </Col>
@@ -107,5 +126,15 @@ class PlaceItem extends React.Component<IPlaceItemProps, any> {
     );
   }
 }
+const mapStateToProps = (store, ownProps: IOwnProps) => ({
+  places: store.places.places,
+  place_id: ownProps.place_id,
+});
 
-export {PlaceItem}
+const mapDispatchAction = (dispatch) => {
+  return {
+    placeAdd: (place: IPlace) => dispatch(placeAdd(place)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchAction)(PlaceItem);

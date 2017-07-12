@@ -5,62 +5,62 @@ import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
 
 interface IOwnProps {
-  plc_id: string;
+  place_id: string;
 }
 interface IProps {
-  plc_id: string;
+  place_id: string;
   places: IPlace[];
   placeAdd: (place: IPlace) => {};
 }
 
 interface IState {
-  plc: IPlace | null;
+  place: IPlace | null;
 }
 
 class PlaceName extends React.Component<IProps, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      plc: null,
+      place: null,
     };
   }
 
   public componentDidMount() {
-    const plc = this.props.places.filter((plc: IPlace) => {
-      return plc._id === this.props.plc_id;
+    const place = this.props.places.filter((place: IPlace) => {
+      return place._id === this.props.place_id;
     });
 
-    if (plc.length > 0) {
+    if (place.length > 0) {
       this.setState({
-        plc: plc[0],
+        place: place[0],
       });
     } else {
       const placeApi = new PlaceApi();
-      placeApi.get({place_id: this.props.plc_id})
-        .then((place: IPlace) => {
+      placeApi.get({place_id: this.props.place_id})
+        .then((p: IPlace) => {
           this.setState({
-            plc: place,
+            place: p,
           });
-          this.props.placeAdd(place);
+          this.props.placeAdd(p);
         });
     }
   }
 
   public render() {
 
-    const {plc} = this.state;
+    const {place} = this.state;
 
-    if (!plc) {
+    if (!place) {
       return null;
     }
     return (
-      <span>{plc.name}</span>
+      <span>{place.name}</span>
     );
   }
 }
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   places: store.places.places,
-  plc_id: ownProps.plc_id,
+  place_id: ownProps.place_id,
 });
 
 const mapDispatchAction = (dispatch) => {

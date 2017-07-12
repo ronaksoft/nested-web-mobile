@@ -4,6 +4,7 @@ import IUser from '../../../api/account/interfaces/IUser';
 import {IAppAction} from '../IAppStore';
 import INotificationCountRequest from '../../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../../api/post/interfaces/IPost';
+import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 
 export function userSet(user: IUser): IAppAction {
   return {
@@ -70,4 +71,30 @@ export function unsetPosts(): IAppAction {
   return {
     type: ActionTypes.APP_POST_UNSET,
   };
+}
+
+export function setUserPlaces(place_ids: string[]) : IAppAction{
+  return {
+    type: ActionTypes.APP_USER_PLACES_SET,
+    payload: place_ids, 
+  }
+}
+
+export function unsetUserPlaces() : IAppAction{
+  return {
+    type: ActionTypes.APP_USER_PLACES_UNSET, 
+  }
+}
+
+export function setSidebarPlaces(places: ISidebarPlace[]) : IAppAction{
+  return {
+    type: ActionTypes.APP_SIDEBAR_PLACES_SET,
+    payload: places, 
+  }
+}
+
+export function unsetSidebarPlaces() : IAppAction{
+  return {
+    type: ActionTypes.APP_SIDEBAR_PLACES_UNSET, 
+  }
 }
