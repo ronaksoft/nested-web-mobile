@@ -1,13 +1,10 @@
 import * as React from 'react';
 import {Button} from 'antd';
-import Configurations from 'config';
-import AAA from 'services/aaa';
+import Store from 'services/utils/store';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import Mode from './mode';
 import {Progress} from 'antd';
-
-let sessionKey = null;
 
 interface IProps {
   item: IAttachmentItem;
@@ -18,20 +15,6 @@ interface IProps {
 
 interface IState {
   progress: number;
-}
-
-/**
- * generate view url for thumbnails (download token is not required)
- *
- * @param {string} id
- * @returns
- */
-function getUrl(id: string) {
-  if (!sessionKey) {
-    sessionKey = AAA.getInstance().getCredentials().sk;
-  }
-
-  return `${Configurations.STORE.URL}/view/${sessionKey}/${id}/`;
 }
 
 /**
@@ -83,7 +66,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
                 )
               : (
                   <img
-                      src={getUrl(this.props.item.model.thumbs.x64)}
+                      src={Store.getViewUrl(this.props.item.model.thumbs.x64)}
                       alt={this.props.item.model.name}
                       style={{width: 64, height: 64}}
                   />

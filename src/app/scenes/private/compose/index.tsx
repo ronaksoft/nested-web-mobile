@@ -94,6 +94,14 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private send = () => {
+    if (this.targets.get().length === 0) {
+      console.log('====================================');
+      console.log('No target');
+      console.log('====================================');
+
+      return;
+    }
+
     if (!(this.state.subject || this.state.body)) {
       console.log('====================================');
       console.log('Subject or body is required');

@@ -4,6 +4,8 @@ import { debounce } from 'lodash';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
+import SearchApi from 'api/search';
+import Store from 'services/utils/store';
 
 const style = require('./suggestion.css');
 
@@ -22,12 +24,12 @@ interface ISuggestState {
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private debouncedFillSuggests: (val: string) => void;
   private inputVal: string;
-  // private placeApi: any;
+  private searchApi: SearchApi;
 
   constructor(props: any) {
     super(props);
     this.debouncedFillSuggests = debounce(this.fillSuggests, 100); // Prevents the call stack and wasting resources
-    // this.placeApi = new PlaceApi();
+    this.searchApi = new SearchApi();
   }
 
   public componentWillMount() {
@@ -80,41 +82,29 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
   private getSuggests(query: string): Promise<any> {
     return new Promise((resolve) => {
-      // TODO get items from serve
-      // this.placeApi.placeSuggestCompose({
-      //   keyword: query,
-      //   limit: 2,
-      // }).then((items) => {
-      //   console.log(items);
-      // });
-      const items = [
-        {
-          name: 'ALi',
-          picture: 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/' +
-          'THU592A9D036D433500013299F759' +
-          '2A9D036D433500013299F8',
-          _id: 'ali',
-        },
-        {
-          name: 'MAMAD',
-          picture: {
-            x32 : 'http://xerxes.ronaksoftware.com:83/view/59588244ca36b70001efbcfd/' +
-          'THU592A9D036D433500013299F759' +
-          '2A9D036D433500013299F8',
-          },
-          _id: 'mamad',
-        },
-      ];
-      // Bold the query in item name
-      const itemsMap = items.map( (item) => {
-        // FIXME : Case sensetive issue
-        if (item.name.indexOf(query) > -1) {
-          item.name = item.name.replace(query, '<b>' + query + '</b>');
-        }
-        return item;
+      const items = [];
+      this.searchApi.searchForCompose({
+        keyword: query,
+        limit: 3,
+      }).then((response) => {
+        items.push.apply(items, response.places);
+        items.push.apply(items, response.recipients);
+
+        const itemsMap = items.map( (item) => {
+          // FIXME : Case sensetive issue
+          if (item.name.indexOf(query) > -1) {
+            item.name = item.name.replace(query, '<b>' + query + '</b>');
+          }
+
+          return item;
+        });
+        // TODO : Remove expression on release just : query.length
+        resolve( query.length > 0 ? itemsMap : []);
+      }, (error) => {
+        console.log('====================================');
+        console.log(error);
+        console.log('====================================');
       });
-      // TODO : Remove expression on release just : query.length
-      resolve( query.length > 0 ? itemsMap : []);
     });
   }
 
@@ -160,7 +150,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       return (
         <li key={item._id}
         onClick={this.insertChip.bind(this, item)}>
-          <img src={item.picture.x32} alt=""/>
+          <img src={Store.getViewUrl(item.picture.x32)} alt=""/>
           <div>
             <p dangerouslySetInnerHTML={{ __html: item.name }}/>
             <span>{item._id}</span>
