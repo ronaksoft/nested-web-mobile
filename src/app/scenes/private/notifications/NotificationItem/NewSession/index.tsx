@@ -14,9 +14,7 @@ class NewSession extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div className={style.notifWrapper}>
-          <div>
             <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
-          </div>
           <div className={style.notifContainer}>
             <div className={style.notifData}>
               <span><b>New login</b> from:</span>
