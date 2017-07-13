@@ -99,10 +99,10 @@ export function unsetSidebarPlaces(): IAppAction {
   };
 }
 
-export function setUnreadPlaces(places: any): IAppAction {
+export function setUnreadPlaces(unreadPlaces: any): IAppAction {
   return {
     type: ActionTypes.APP_UNREAD_PLACES_SET,
-    payload: places,
+    payload: unreadPlaces,
   };
 }
 

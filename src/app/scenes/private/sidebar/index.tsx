@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IPlace from '../../../api/place/interfaces/IPlace';
+import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 import {SidebarItem, InvitationItem, IcoN} from 'components';
 import {setSidebarPlaces, setUserPlaces, setUnreadPlaces} from '../../../redux/app/actions/';
 import {placeAdd} from '../../../redux/places/actions/';
@@ -22,10 +23,10 @@ interface ISidebarProps {
   closeSidebar: () => void;
   placeAdd: (place: IPlace) => void;
   setSidebarPlaces: (sidebarPlaces: ISidebarPlace[]) => void;
-  setUnreadPlaces: (sidebarPlacesUnreads: any) => void;
+  setUnreadPlaces: (unreadPlaces: IUnreadPlace) => void;
   setUserPlaces: (placeIds: string[]) => void;
   sidebarPlaces: ISidebarPlace[];
-  sidebarUnreadPlaces: any;
+  sidebarUnreadPlaces: IUnreadPlace;
   places: IPlace[];
   userPlaces: string[];
 }
@@ -34,7 +35,7 @@ interface ISidebarState {
   places?: ISidebarPlace[];
   placesConjuction?: any;
   invitations?: IPlace[];
-  sidebarUnreadPlaces?: any;
+  sidebarUnreadPlaces?: IUnreadPlace;
 }
 
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
@@ -48,6 +49,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.setState({
       places: [],
       invitations: [],
+      sidebarUnreadPlaces: {
+        placesUnreadCounts: {},
+        placesUnreadChildrens: {},
+      },
     });
     this.PlaceApi = new PlaceApi();
     this.getMyPlaces();
@@ -69,7 +74,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   private getUnreads() {
-    if (this.props.sidebarUnreadPlaces.length > 0) {
+    if (this.props.sidebarUnreadPlaces && this.props.sidebarUnreadPlaces.placesUnreadCounts.length > 0) {
       this.setState({
         sidebarUnreadPlaces: this.props.sidebarUnreadPlaces,
       });
@@ -84,19 +89,36 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       };
       this.PlaceApi.getUnreads(params)
         .then( (items) => {
-          console.log(items);
+          const unreadCounts = {};
+          const unreadChildrens = {};
+          items.forEach((element) => {
+            const pid: string = element.place_id;
+            unreadCounts[pid] = element.count;
+            unreadChildrens[pid] = false;
+            const sidebarPlaceItem = this.state.places.find( (o) => o.id === pid);
+            if ( element.count > 0 ) {
+              for (let j: number = 1; j <= sidebarPlaceItem.depth; j++) {
+                const parentID = pid.split('.').splice(0, j).join('.');
+                const parentElement = this.state.places.find(
+                  (item) => item.id === parentID,
+                );
+                if ( parentElement ) {
+                  unreadChildrens[parentID] = true;
+                }
+              }
+            }
+          });
+          this.props.setUnreadPlaces({
+            placesUnreadCounts : unreadCounts,
+            placesUnreadChildrens : unreadChildrens,
+          });
+          this.setState({
+            sidebarUnreadPlaces : {
+              placesUnreadCounts : unreadCounts,
+              placesUnreadChildrens : unreadChildrens,
+            },
+          });
         });
-      // if ( place.unreadPosts > 0 ) {
-      //     for (let j: number = 1; j <= placesConjuction.depth; j++) {
-      //       const newIdSplit = idSplit.slice(0);
-      //       const parentID = newIdSplit.splice(0, j).join('.');
-      //       const parentElement = placesConjuctions.find(
-      //         (item) => item.id === parentID,
-      //       );
-      //       parentElement.childrenUnseen = true;
-      //     }
-      //   }
-      this.props.setUnreadPlaces('a');
     }
   }
 
@@ -144,34 +166,21 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               }
               placesConjuction.depth = actualDepth;
             }
-            // FIXME
-            // placesConjuctions[i - 1].id.split('.')
             if (placesConjuction.depth > 0) {
               const prv = placesConjuctions[i - 1].id.split('.');
               const newVar = idSplit.slice(0);
               const compareArray = newVar.splice(0, prv.length);
-              // console.log('aaaaaaaaaa', prv, compareArray, idSplit, prv.join('.') === compareArray.join('.'));
               if ( prv.join('.') === compareArray.join('.') ) {
                 placesConjuctions[i - 1].hasChildren = true;
               }
             }
-            // if ( placesConjuction.unreadPosts > 0 ) {
-            //   for (let j: number = 1; j <= placesConjuction.depth; j++) {
-            //     const newIdSplit = idSplit.slice(0);
-            //     const parentID = newIdSplit.splice(0, j).join('.');
-            //     const parentElement = placesConjuctions.find(
-            //       (item) => item.id === parentID,
-            //     );
-            //     parentElement.childrenUnseen = true;
-            //   }
-            // }
             placesConjuctions.push(placesConjuction);
           });
-          this.getUnreads();
           console.timeEnd('a');
           this.setState({
             places: placesConjuctions,
           });
+          this.getUnreads();
           this.props.setSidebarPlaces(placesConjuctions);
         });
     }
@@ -221,6 +230,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       if (showCase) {
         const placeDom = (
           <SidebarItem key={place.id + i + 'a'} place={place}
+          unreads={this.state.sidebarUnreadPlaces.placesUnreadCounts[place.id]}
+          childrenUnread={this.state.sidebarUnreadPlaces.placesUnreadChildrens[place.id]}
                        openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
         );
         placeDoms.push(placeDom);
@@ -278,6 +289,7 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => ({
   places: store.places.places,
   userPlaces: store.app.userPlaces,
   sidebarPlaces: store.app.sidebarPlaces,
+  sidebarUnreadPlaces: store.app.sidebarUnreadPlaces,
   closeSidebar: ownPlops.closeSidebar,
 });
 
@@ -286,6 +298,7 @@ const mapDispatchToProps = (dispatch) => {
     placeAdd: (place: IPlace) => (dispatch(placeAdd(place))),
     setSidebarPlaces: (sidebarPlace: ISidebarPlace[]) => (dispatch(setSidebarPlaces(sidebarPlace))),
     setUserPlaces: (placeIds: string[]) => (dispatch(setUserPlaces(placeIds))),
+    setUnreadPlaces: (unreadPlaces: any) => (dispatch(setUnreadPlaces(unreadPlaces))),
   };
 };
 

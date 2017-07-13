@@ -2,6 +2,7 @@ import Api from './../index';
 import IPlaceSuggestComposeRequest from './interfaces/IPlaceSuggestComposeRequest';
 import IAccountPlacesRequest from './interfaces/IAccountPlacesRequest';
 import IGetUnreadsRequest from './interfaces/IGetUnreadsRequest';
+import IGetUnreadsResponse from './interfaces/IGetUnreadsResponse';
 import IGetRequest from './interfaces/IGetRequest';
 import IPlace from './interfaces/IPlace';
 
@@ -34,8 +35,8 @@ export default class PlaceApi {
       cmd: 'place/count_unread_posts',
       data: IGetUnreadsRequest,
     }).then( (res) => {
-      // const places = res.counts as IPlace[];
-      return res.counts;
+      const places = res.data.counts as IGetUnreadsResponse[];
+      return places;
     });
   }
 
