@@ -80,9 +80,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private handleSubjectChange = (e: any) => {
-    console.log('====================================');
-    console.log(e.target.value);
-    console.log('====================================');
     this.setState({
       subject: e.target.value,
     });
@@ -136,10 +133,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       console.log(error);
       console.log('====================================');
     });
-
-    console.log('====================================');
-    console.log(this);
-    console.log('====================================');
   }
 
   public render() {
