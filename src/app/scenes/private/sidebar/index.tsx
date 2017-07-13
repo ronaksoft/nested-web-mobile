@@ -77,10 +77,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       const sidebarPlaces: string[] = [];
       this.state.places.forEach( (place) => {
         sidebarPlaces.push(place.id);
-      })
-      let params: IGetUnreadsRequest;
-      params.place_id = sidebarPlaces.join(',');
-      params.subs = false;
+      });
+      const params: IGetUnreadsRequest = {
+        place_id: sidebarPlaces.join(','),
+        subs: false,
+      };
       this.PlaceApi.getUnreads(params)
         .then( (items) => {
           console.log(items);
@@ -95,6 +96,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       //       parentElement.childrenUnseen = true;
       //     }
       //   }
+      this.props.setUnreadPlaces('a');
     }
   }
 

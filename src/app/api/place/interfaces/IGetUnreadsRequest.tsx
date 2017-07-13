@@ -3,4 +3,4 @@ interface IGetUnreadsRequest {
     subs: boolean;
 }
 
-export default IGetUnreadsRequest;
+export default IGetUnreadsRequest;s
