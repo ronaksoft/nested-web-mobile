@@ -16,7 +16,6 @@ interface IState {
 class Post extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-
     this.state = {post: this.props.post};
   }
 

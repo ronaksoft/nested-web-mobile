@@ -25,7 +25,6 @@ interface IComposeState {
   targets: string[];
   allowComment: boolean;
   loading: boolean;
-
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
 }
