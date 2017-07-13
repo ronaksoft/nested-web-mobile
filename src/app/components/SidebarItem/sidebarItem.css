@@ -60,7 +60,7 @@
   justify-content: center;
   flex-direction: column-reverse;
 }
-.place .childArrow i:last-child{
+.place .childArrow i:first-child + i{
   transform: translateY(-2px);
 }
 .place .childArrow i:first-child{

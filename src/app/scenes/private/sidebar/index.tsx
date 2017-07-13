@@ -222,6 +222,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.setState({
       places: placesMirror,
     });
+    return false;
   }
 
   public render() {
@@ -275,10 +276,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             {invDoms}
           </ul>
           <ul className={style.sidebarActions}>
-            <li>
+            {/*<li>
               <IcoN size={16} name={'gear16White'}/>
               Profile and Settings
-            </li>
+            </li>*/}
             <li>
               <IcoN size={16} name={'ask16White'}/>
               Help Center
@@ -294,13 +295,15 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 }
 
-const mapStateToProps = (store, ownPlops: IOwnProps) => ({
+const mapStateToProps = (store, ownPlops: IOwnProps) => {
+  return {
     places: store.places.places,
     userPlaces: store.app.userPlaces,
     sidebarPlaces: store.app.sidebarPlaces,
     sidebarPlacesUnreads: store.app.sidebarPlacesUnreads,
     closeSidebar: ownPlops.closeSidebar,
-});
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {

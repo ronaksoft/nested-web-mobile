@@ -3,6 +3,7 @@ import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
 import TimeUntiles from '../../../../../services/untils/time';
+const style = require('./post.css');
 
 interface IProps {
   post: IPost;
@@ -15,7 +16,6 @@ interface IState {
 class Post extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-
     this.state = {post: this.props.post};
   }
 
@@ -23,7 +23,7 @@ class Post extends React.Component<IProps, IState> {
     const {post} = this.state;
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
-      <div>
+      <div className={style.postCard}>
         <div>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
           {post.reply_to && <IcoN size={16} name={'replied16'}/>}
@@ -41,11 +41,11 @@ class Post extends React.Component<IProps, IState> {
           </p>
           {post.post_attachments.length > 0 && (
             <div>
-            <IcoN size={16} name={'attach16'}/>
-            {post.post_attachments.length}
-            {post.post_attachments.length === 1 && <span>Attachment</span>}
-            {post.post_attachments.length > 1 && <span>Attachments</span>}
-          </div>
+              <IcoN size={16} name={'attach16'}/>
+              {post.post_attachments.length}
+              {post.post_attachments.length === 1 && <span>Attachment</span>}
+              {post.post_attachments.length > 1 && <span>Attachments</span>}
+            </div>
           )}
           <div>
             {post.post_places.map((place: IPlace, index: number) => {
