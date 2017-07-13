@@ -1,19 +1,46 @@
 import * as React from 'react';
-import {Input, Icon} from 'antd';
+import {Input, Icon, Button} from 'antd';
 import { Suggestion } from 'components';
+import AttachmentList from './AttachmentList';
 const style = require('./compose.css');
+import ISendRequest from 'api/post/interfaces/ISendRequest';
+import ISendResponse from 'api/post/interfaces/ISendResponse';
+import PostApi from 'api/post';
+
+interface IParams {
+  replyId?: string;
+  forwardId?: string;
+  placeId?: string;
+}
+
 interface IComposeProps {
   attachModal?: boolean;
+  params: IParams;
 }
 
 interface IComposeState {
+  subject?: string;
+  body?: string;
+  attachments: string[];
+  targets: string[];
+  allowComment: boolean;
+  loading: boolean;
+
   attachModal?: boolean;
-  unselectSelectedRecipient: number;
+  unselectSelectedRecipient?: number;
 }
 class Compose extends React.Component<IComposeProps, IComposeState> {
-
+  private attachments: AttachmentList;
+  private targets: Suggestion;
+  private postApi: PostApi;
   constructor(props: any) {
     super(props);
+    this.state = {
+      attachments: [],
+      targets: [],
+      allowComment: true,
+      loading: false,
+    };
   }
 
   public componentWillMount() {
@@ -21,6 +48,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attachModal: false,
       unselectSelectedRecipient: 0,
     });
+    this.postApi = new PostApi();
   }
   private attachTypeSelect = () => {
     console.log('click');
@@ -45,12 +73,77 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     event.stopPropagation();
   }
 
+  private handleBodyChange = (e: any) => {
+    this.setState({
+      body: e.target.value,
+    });
+  }
+
+  private handleSubjectChange = (e: any) => {
+    this.setState({
+      subject: e.target.value,
+    });
+  }
+
+  private referenceAttachments = (value: AttachmentList) => {
+    this.attachments = value;
+  }
+
+  private referenceTargets = (value: Suggestion) => {
+    this.targets = value;
+  }
+
+  private send = () => {
+    if (!(this.state.subject || this.state.body)) {
+      console.log('====================================');
+      console.log('Subject or body is required');
+      console.log('====================================');
+
+      return;
+    }
+
+    if (this.attachments.isUploading()) {
+      console.log('====================================');
+      console.log('Upload is in progress');
+      console.log('====================================');
+
+      return;
+    }
+
+    this.setState({
+      loading: true,
+    });
+
+    const params: ISendRequest = {
+      forward_from: this.props.params.forwardId,
+      reply_to: this.props.params.replyId,
+      body: this.state.body,
+      no_comment: !this.state.allowComment,
+      subject: this.state.subject,
+      attaches: this.attachments.get().map((i) => i.model.universal_id).join(','),
+      targets: this.targets.get().map((i) => i._id).join(','),
+    };
+
+    this.postApi.send(params).then((response: ISendResponse) => {
+      console.log('====================================');
+      console.log(response);
+      console.log('====================================');
+    }).catch((error) => {
+      console.log('====================================');
+      console.log(error);
+      console.log('====================================');
+    });
+  }
+
   public render() {
     return (
       <div className={style.compose}>
-        <Suggestion selectedItems={[]} unselectSelectedRecipient={this.state.unselectSelectedRecipient}/>
+        <Suggestion ref={this.referenceTargets}
+                    selectedItems={[]}
+                    unselectSelectedRecipient={this.state.unselectSelectedRecipient}
+        />
         <div className={style.subject}>
-          <Input onFocus={this.subjectFocus} placeholder="Add a Title…"/>
+          <Input onFocus={this.subjectFocus} placeholder="Add a Title…" onChange={this.handleSubjectChange}/>
           <div onClick={this.attachTypeSelect}
           className={this.state.attachModal ? style.attachmentBtn + ' ' + style.attachActive : style.attachmentBtn}>
             <Icon type="link" />
@@ -60,7 +153,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             </div>
           </div>
         </div>
-        <textarea onFocus={this.bodyFocus} placeholder="Write something…"/>
+        <textarea onFocus={this.bodyFocus} placeholder="Write something…" onChange={this.handleBodyChange} />
+        <AttachmentList ref={this.referenceAttachments}/>
+        <Button type="primary" onClick={this.send}>Send</Button>
       </div>
     );
   }

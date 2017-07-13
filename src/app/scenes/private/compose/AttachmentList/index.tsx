@@ -239,6 +239,14 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  public get = () => {
+    return this.state.items;
+  }
+
+  public isUploading = () => {
+    return this.state.items.some((i) => i.uploading);
+  }
+
   public render() {
     const renderItem = (item: IAttachmentItem) => {
       const upload = this.uploads.find((u) => u.id === item.id);

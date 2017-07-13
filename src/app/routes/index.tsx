@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Posts, Notifications, Activities, Files, Compose, Signout, Foo} from 'scenes/private';
+import {Posts, Notifications, Activities, Files, Compose, Signout} from 'scenes/private';
 import Private from 'scenes/private';
 import {Public, Signin, Signup, NotFound} from 'scenes/public';
 import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
@@ -23,7 +23,6 @@ export default (
         <Route path="/notifications" component={Notifications}/>
         <Route path="/compose" component={Compose}/>
         <Route path="/signout" component={Signout}/>
-        <Route path="/foo" component={Foo}/>
         <Redirect from="/" to="/feed"/>
       </Route>
       <Route component={Public}>

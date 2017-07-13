@@ -5,7 +5,6 @@ import {Activities} from './activities';
 import {Files} from './files';
 import {Compose} from './compose';
 import Signout from './Signout';
-import Foo from './foo';
 import AccountApi from 'api/account';
 import {IUser, IRecallResponse} from 'api/account/interfaces';
 import {browserHistory} from 'react-router';
@@ -154,4 +153,4 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
-export {Posts, Activities, Files, Notifications, Compose, Signout, Foo};
+export {Posts, Activities, Files, Notifications, Compose, Signout};
