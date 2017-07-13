@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {IcoN, UserAvatar, FullName} from 'components';
+import {IcoN, UserAvatar} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
+import TimeUntiles from '../../../../../services/untils/time';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -13,18 +14,15 @@ class NewSession extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div className={style.notifWrapper}>
+            <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
-            <div>
-              <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            <div className={style.notifData}>
+              <span><b>New login</b> from:</span>
+              <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
+              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
-            <div>
-              <b><FullName user_id={this.props.notification.account_id}/></b>
-              <b>New login</b> from:
-              {this.props.notification._cid.replace(/_/g, ' ')}
-              {new Date(this.props.notification.timestamp).toString()}
-            </div>
-          </div>
             <IcoN size={16} name={'devicePhone16'}/>
+          </div>
         </div>
       </div>
     );

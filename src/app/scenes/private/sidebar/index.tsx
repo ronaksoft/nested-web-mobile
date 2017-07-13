@@ -1,26 +1,42 @@
 import * as React from 'react';
 import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
-import AAA from '../../../services/aaa/index';
-import CONFIG from '../../../config';
+import {connect} from 'react-redux';
+
+import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
+import IPlace from '../../../api/place/interfaces/IPlace';
+import {SidebarItem, InvitationItem, IcoN} from 'components';
+import {setSidebarPlaces, setUserPlaces} from '../../../redux/app/actions/';
+import {placeAdd} from '../../../redux/places/actions/';
+
 // import IPlaceListResponse from '../../../api/place/interfaces/IPlaceListResponse';
-import IPlaceConjuction from './IPlaceConjuction';
-// import IPlace from '../../../api/place/interfaces/IPlace';
 const style = require('./sidebar.css');
-import {IcoN} from 'components';
+
 // import {browserHistory} from 'react-router';
 
-interface ISidebarProps {
+interface IOwnProps {
   closeSidebar: () => void;
 }
 
+interface ISidebarProps {
+  closeSidebar: () => void;
+  placeAdd: (place: IPlace) => void;
+  setSidebarPlaces: (sidebarPlaces: ISidebarPlace[]) => void;
+  setUserPlaces: (placeIds: string[]) => void;
+  sidebarPlaces: ISidebarPlace[];
+  places: IPlace[];
+  userPlaces: string[];
+}
+
 interface ISidebarState {
-  places?: IPlaceConjuction[];
+  places?: ISidebarPlace[];
   placesConjuction?: any;
+  invitations?: IPlace[];
 }
 
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   private PlaceApi: PlaceApi;
+
   constructor(props: any) {
     super(props);
   }
@@ -28,97 +44,126 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   public componentWillMount() {
     this.setState({
       places: [],
+      invitations: [],
     });
     this.PlaceApi = new PlaceApi();
-    this.getPlaces();
+    this.getMyPlaces();
+    this.getInvitations();
   }
 
   // public componentDidMount() {
 
   // }
 
-  private getPlaces() {
-    const params = {
-      with_children: true,
-    };
+  private getInvitations() {
 
-    this.PlaceApi.getAllPlaces(params)
+    this.PlaceApi.getInvitations()
       .then((response: any) => {
-        // console.time('a');
-        const places = sortBy(response.data.places, [(o) =>  o._id]);
-        const placesConjuctions = [];
-        places.forEach((element, i) => {
-          // console.log(element, i);
-          const idSplit = element._id.split('.');
-          const placesConjuction: IPlaceConjuction = {
-            id : element._id,
-            name : element.name,
-            picture : element.picture.x32,
-            depth : idSplit.length - 1,
-            childrenUnseen : false,
-            expanded : false,
-            isOpen : false,
-            hasChildren : false,
-            isChildren : false,
-            unreadPosts : element.unread_posts,
-          };
-          if (idSplit.length > 1) {
-            placesConjuction.isChildren = true;
-            const prevSplit = placesConjuctions[i - 1].id.split('.');
-            let evaluateDepth = 0;
-            let actualDepth = 0;
-            let anyUnMatch: boolean = false;
-
-            evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
-            for (let d: number = 0; d < evaluateDepth; d++) {
-              if ( prevSplit[d] === idSplit[d]) {
-                if (!anyUnMatch) {
-                  actualDepth++;
-                }
-              } else {
-                anyUnMatch = true;
-              }
-            }
-            placesConjuction.depth = actualDepth;
-          }
-          if (placesConjuction.depth > 0 && placesConjuctions[i - 1].depth + 1 === placesConjuction.depth ) {
-            placesConjuctions[i - 1].hasChildren = true;
-          }
-          if ( placesConjuction.unreadPosts > 0 ) {
-            for (let j: number = 1; j <= placesConjuction.depth; j++) {
-              const newIdSplit = idSplit.slice(0);
-              const parentID = newIdSplit.splice(0, j).join('.');
-              const parentElement = placesConjuctions.find(
-                (item) => item.id === parentID,
-              );
-              parentElement.childrenUnseen = true;
-            }
-          }
-          placesConjuctions.push(placesConjuction);
-        });
-        // console.timeEnd('a');
+        console.log(response.invitations);
         this.setState({
-          places: placesConjuctions,
+          invitations: response.invitations,
         });
       });
   }
 
+  private getMyPlaces() {
+    const params = {
+      with_children: true,
+    };
+    console.log(1);
+    if (this.props.sidebarPlaces.length > 0) {
+      console.log(11);
+      this.setState({
+        places: this.props.sidebarPlaces,
+      });
+    } else {
+      console.log(12);
+      this.PlaceApi.getAllPlaces(params)
+        .then((response: IPlace) => {
+          console.time('a');
+          console.log(response);
+          const places = sortBy(response, [(o) => o._id]);
+          const placesConjuctions = [];
+          places.forEach((element, i) => {
+            // console.log(element, i);
+            this.props.placeAdd(element);
+            const idSplit = element._id.split('.');
+            const placesConjuction: ISidebarPlace = {
+              id: element._id,
+              depth: idSplit.length - 1,
+              expanded: false,
+              isOpen: false,
+              hasChildren: false,
+              isChildren: false,
+            };
+            if (idSplit.length > 1) {
+              placesConjuction.isChildren = true;
+              const prevSplit = placesConjuctions[i - 1].id.split('.');
+              let evaluateDepth = 0;
+              let actualDepth = 0;
+              let anyUnMatch: boolean = false;
+
+              evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
+              for (let d: number = 0; d < evaluateDepth; d++) {
+                if (prevSplit[d] === idSplit[d]) {
+                  if (!anyUnMatch) {
+                    actualDepth++;
+                  }
+                } else {
+                  anyUnMatch = true;
+                }
+              }
+              placesConjuction.depth = actualDepth;
+            }
+            // FIXME
+            if (placesConjuction.depth > 0 && placesConjuctions[i - 1].depth + 1 === placesConjuction.depth) {
+              placesConjuctions[i - 1].hasChildren = true;
+            }
+            // if ( placesConjuction.unreadPosts > 0 ) {
+            //   for (let j: number = 1; j <= placesConjuction.depth; j++) {
+            //     const newIdSplit = idSplit.slice(0);
+            //     const parentID = newIdSplit.splice(0, j).join('.');
+            //     const parentElement = placesConjuctions.find(
+            //       (item) => item.id === parentID,
+            //     );
+            //     parentElement.childrenUnseen = true;
+            //   }
+            // }
+            placesConjuctions.push(placesConjuction);
+          });
+          console.timeEnd('a');
+          this.setState({
+            places: placesConjuctions,
+          });
+          this.props.setSidebarPlaces(placesConjuctions);
+        });
+    }
+  }
+
   public toggleChildren(placeId: string, depth: number) {
     const placesMirror = this.state.places.slice(0);
+    console.log(placesMirror);
     const theParentItem = placesMirror.find((item) => {
       return item.id === placeId;
     });
+    console.log(theParentItem);
     theParentItem.isOpen = !theParentItem.isOpen;
     const filter = placesMirror.filter(
       (p) => {
-        // console.log(arguments, i);
         const childrenParent = p.id.split('.').slice(0).splice(0, depth + 1).join('.');
-        // console.log(childrenParent);
-        return placeId === childrenParent &&
-        p.depth === depth + 1;
+        // if statement for hide childrens tale
+        if (p.expanded) {
+          return placeId === childrenParent &&
+            p.depth >= depth + 1;
+        } else {
+          return placeId === childrenParent &&
+            p.depth === depth + 1;
+        }
       },
     );
     filter.forEach((item) => {
+      // Retivice arrow rotation
+      item.isOpen = false;
       item.expanded = !item.expanded;
     });
     this.setState({
@@ -128,97 +173,85 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
   public render() {
     const placeDoms = [];
+    const invDoms = [];
+    this.state.invitations.forEach((item, i) => {
+      const invDom = (
+        <InvitationItem key={i + 'nc'} item={item}/>
+      );
+      invDoms.push(invDom);
+    });
+
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
-      if ( showCase ) {
-        const placeIndent = [];
-        const src = place.picture ?
-        `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}` :
-        './../../../assets/icons/absents_place.svg';
-        for (let i: number = 0; i < place.depth; i++) {
-          placeIndent.push(
-            <div key={place.id + i} className={style.indent}/>,
-          );
-        }
+      if (showCase) {
         const placeDom = (
-          <li key={place.id + i}>
-            {!place.isChildren &&
-              <hr className={style.hrDark}/>
-            }
-            {!place.isChildren &&
-              <hr className={style.hrLight}/>
-            }
-            <div className={style.place}>
-              {placeIndent}
-              <img src={src}/>
-              <span>{place.name}</span>
-              {place.unreadPosts > 0 &&
-                <b>{place.unreadPosts}</b>
-              }
-              {place.hasChildren &&
-                (
-                  <div className={[style.childArrow, place.isOpen ? style.active : null].join(' ')}
-                  onClick={this.toggleChildren.bind(this, place.id, place.depth)}>
-                    <IcoN size={16} name={'arrow16White'}/>
-                  </div>
-                )
-              }
-            </div>
-          </li>
+          <SidebarItem key={place.id + i + 'a'} place={place}
+                       openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
         );
         placeDoms.push(placeDom);
       }
     });
     return (
       <div className={style.sidebar}>
-        <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-          <IcoN size={24} name={'xcross24White'}/>
+        <div>
+          <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
+            <IcoN size={24} name={'xcross24White'}/>
+          </div>
+          <ul className={style.sidebarActions}>
+            <li>
+              <IcoN size={16} name={'bookmarkMessage1White'}/>
+              Feed
+            </li>
+            <li>
+              <IcoN size={16} name={'bookmarkMessage16White'}/>
+              Bookmarked Posts
+            </li>
+            <li>
+              <IcoN size={16} name={'sentMessage16White'}/>
+              Shared by me
+            </li>
+          </ul>
+          <ul className={style.places}>
+            {placeDoms}
+          </ul>
+          <hr className={style.hrDark}/>
+          <hr className={style.hrLight}/>
+          <ul className={style.invitations}>
+            {invDoms}
+          </ul>
+          <ul className={style.sidebarActions}>
+            <li>
+              <IcoN size={16} name={'gear16White'}/>
+              Profile and Settings
+            </li>
+            <li>
+              <IcoN size={16} name={'ask16White'}/>
+              Help Center
+            </li>
+            <li>
+              <IcoN size={16} name={'exit16White'}/>
+              Sign out
+            </li>
+          </ul>
         </div>
-        <ul className={style.sidebarActions}>
-          <li>
-            <IcoN size={16} name={'bookmarkMessage1White'}/>
-            Feed
-          </li>
-          <li>
-            <IcoN size={16} name={'bookmarkMessage16White'}/>
-            Bookmarked Posts
-          </li>
-          <li>
-            <IcoN size={16} name={'sentMessage16White'}/>
-            Shared by me
-          </li>
-        </ul>
-        <ul className={style.places}>
-          {placeDoms}
-        </ul>
-        <hr className={style.hrDark}/>
-        <hr className={style.hrLight}/>
-        <ul className={style.invitations}>
-          <li>
-            <div className={style.place}>
-              image name
-            </div>
-            <hr className={style.hrDark}/>
-            <hr className={style.hrLight}/>
-          </li>
-        </ul>
-        <ul className={style.sidebarActions}>
-          <li>
-            <IcoN size={16} name={'gear16White'}/>
-            Profile and Settings
-          </li>
-          <li>
-            <IcoN size={16} name={'ask16White'}/>
-            Help Center
-          </li>
-          <li>
-            <IcoN size={16} name={'exit16White'}/>
-            Sign out
-          </li>
-        </ul>
       </div>
     );
   }
 }
 
-export {Sidebar}
+const mapStateToProps = (store, ownPlops: IOwnProps) => ({
+  places: store.places.places,
+  userPlaces: store.app.userPlaces,
+  sidebarPlaces: store.app.sidebarPlaces,
+  closeSidebar: ownPlops.closeSidebar,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    placeAdd: (place: IPlace) => (dispatch(placeAdd(place))),
+    setSidebarPlaces: (sidebarPlace: ISidebarPlace[]) => (dispatch(setSidebarPlaces(sidebarPlace))),
+    setUserPlaces: (placeIds: string[]) => (dispatch(setUserPlaces(placeIds))),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

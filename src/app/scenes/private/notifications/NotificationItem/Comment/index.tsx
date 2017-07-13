@@ -1,6 +1,8 @@
 import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
+import TimeUntiles from '../../../../../services/untils/time';
 import {IcoN, UserAvatar, FullName} from 'components';
+import CommentBody from '../../../../../components/CommentBody';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -14,18 +16,14 @@ class Comment extends React.Component <IProps, any> {
     return (
       <div className={style.mention}>
         <div className={style.notifWrapper}>
+            <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
-            <div>
-              <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
-            </div>
-            <div>
+            <div className={style.notifData}>
               <b><FullName user_id={this.props.notification.actor_id}/></b>
-              commented on your post:
-              {this.props.notification.comment_id}
-              {new Date(this.props.notification.timestamp).toString()}
+              <span> commented: </span>
+              <CommentBody comment_id={this.props.notification.comment_id} post_id={this.props.notification.post_id}/>.
+              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </div>
-          </div>
-          <div>
             <IcoN size={16} name={'comment24'}/>
           </div>
         </div>
