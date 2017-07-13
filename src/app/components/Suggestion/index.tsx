@@ -147,6 +147,10 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  public get = (): IPlace[] => {
+    return this.state.selectedItems;
+  }
+
   public render() {
     // tempFunctions for binding this and pass TSX hint
     const tempFunctionChange = this.changeInputVal.bind(this);
