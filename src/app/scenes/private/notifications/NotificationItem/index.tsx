@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Comment from './Comment';
+// import Comment from './Comment';
 import Demoted from './Demoted';
 import Invite from './Invite';
 import InviteRespond from './InviteRespond';
@@ -25,7 +25,8 @@ class NotificationItem extends React.Component<IProps, any> {
       case INotificationTypes.COMMENT:
         return (
           <div>
-            <Comment notification={this.props.notification}/>
+            comment
+            {/*<Comment notification={this.props.notification}/>*/}
           </div>
         );
       case INotificationTypes.DEMOTED:
