@@ -74,6 +74,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         sidebarPlaces: [],
       });
 
+    case ActionTypes.APP_UNREAD_PLACES_SET:
+      return Immutable.merge(state, {
+        setSidebarPlacesUnreads: action.payload,
+      });
+
+    case ActionTypes.APP_UNREAD_PLACES_UNSET:
+      return Immutable.merge(state, {
+        setSidebarPlacesUnreads: [],
+      });
+
     default :
       return state;
 

@@ -57,12 +57,19 @@
   display: flex;
   flex: none;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  flex-direction: column-reverse;
 }
-.place .childArrow i{
+.place .childArrow i:last-child{
+  transform: translateY(-2px);
+}
+.place .childArrow i:first-child{
   transform-origin: center center;
   opacity: .4;
 }
 .active i{
   transform: rotateZ(180deg);
+}
+.active i:first-child + i{
+  display: none;
 }

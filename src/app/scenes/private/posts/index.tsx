@@ -6,7 +6,7 @@ import PostApi from '../../../api/post/index';
 import IPost from '../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
 import {setPosts} from '../../../redux/app/actions/index';
-import ArrayUntiles from '../../../services/untils/array';
+import ArrayUntiles from 'services/utils/array';
 import {Button} from 'antd';
 import Post from './components/post/index';
 const style = require('./posts.css');
