@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Item from './Item';
-import {Progress} from 'antd';
+import {Progress, Button} from 'antd';
 import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
 import AttachmentApi from 'api/attachment';
@@ -17,6 +17,7 @@ interface IProps {
 
 interface IState {
   items: IAttachmentItem[];
+  isExpanded: boolean;
 }
 
 interface IUploadItem {
@@ -39,6 +40,7 @@ class AttachmentList extends React.Component<IProps, IState> {
 
     this.state = {
       items: [],
+      isExpanded: true,
     };
 
     this.uploads = [];
@@ -191,7 +193,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @private
    * @memberof AttachmentList
    */
-  private getFileThumbnail = (file) => {
+  private getFileThumbnail = (file: File) => {
     if (!file) {
       return Promise.resolve(EMPTY_PICTURE);
     }
@@ -225,6 +227,18 @@ class AttachmentList extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * switch between expanded and collapsed mode
+   *
+   * @private
+   * @memberof AttachmentList
+   */
+  private toggleView = () => {
+    this.setState({
+      isExpanded: !this.state.isExpanded,
+    });
+  }
+
   public render() {
     const renderItem = (item: IAttachmentItem) => {
       const upload = this.uploads.find((u) => u.id === item.id);
@@ -239,29 +253,53 @@ class AttachmentList extends React.Component<IProps, IState> {
       );
     };
     // calculate total progress by size
-    let totalSize = 1;
-    let totalLoaded = 0;
+    let totalSize: number = 1;
+    let totalLoaded: number = 0;
+    let isUploading: boolean = false;
+    let inProgressCount: number = 0;
     const items = [];
 
     this.state.items.forEach((i) => {
-      items.push(renderItem(i));
 
-      if (i.uploading) {
+      // render Items if is in expanded mode
+      if (this.state.isExpanded) {
+        items.push(renderItem(i));
+      }
+
+      if (i.mode === Mode.UPLOAD) {
         totalLoaded += i.progress.loaded;
         totalSize += i.progress.total;
+        inProgressCount++;
       }
+
+      isUploading = isUploading || i.uploading;
+
     });
-    const totalProgress = Math.floor((totalLoaded / totalSize) * 100);
+    const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
     return (
       <div>
         <div>
+          <Button onClick={this.toggleView} >{this.state.isExpanded ? 'Collapse' : 'Expand'}</Button>
+        </div>
+        <div>
           <Progress percent={totalProgress} strokeWidth={5} showInfo={false} />
         </div>
+        {
+          isUploading && (
+            <div>
+              {
+                inProgressCount === 1
+                  ? `One item is uploading ${totalProgress}%`
+                  : `${inProgressCount} attachments are uploading ${totalProgress}%`
+              }
+            </div>
+          )
+        }
         <div>
           <input id="myFile" type="file" onChange={this.upload} />
         </div>
         <div>
-          {items}
+          {this.state.isExpanded && items}
         </div>
       </div>
     );
