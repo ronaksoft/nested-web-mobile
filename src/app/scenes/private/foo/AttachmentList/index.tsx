@@ -50,10 +50,10 @@ class AttachmentList extends React.Component<IProps, IState> {
   /**
    * create an Item and upload the file
    *
-   * @private
+   * @public
    * @memberof AttachmentList
    */
-  private upload = (e: any) => {
+  public upload = (e: any) => {
     const file: File = e.target.files[0];
     const items: IAttachmentItem[] = [];
     // generate a unique id for every file that helps for tracking the file later

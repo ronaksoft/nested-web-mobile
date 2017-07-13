@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Icon} from 'antd';
+import {Button} from 'antd';
 import Configurations from 'config';
 import AAA from 'services/aaa';
 const style = require('./style.css');
@@ -111,7 +111,13 @@ class AttachmentItem extends React.Component<IProps, IState> {
           )
         }
         <span className={style.remove}>
-          <Icon type="close" onClick={handleRemoveClick}/>
+          <Button onClick={handleRemoveClick}>
+            {
+              this.props.item.uploading
+              ? 'Abort'
+              : 'Remove'
+            }
+          </Button>
         </span>
       </div>
     );
