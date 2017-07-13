@@ -9,6 +9,7 @@ import Mode from './Item/mode';
 const EMPTY_PICTURE = require('./default.gif');
 import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
+import IProgress from './IProgress';
 
 interface IProps {
   file?: File;
@@ -18,11 +19,6 @@ interface IState {
   items: IAttachmentItem[];
 }
 
-interface IProgress {
-  total: number;
-  loaded: number;
-}
-
 interface IUploadItem {
   id: number;
   file: File;
@@ -30,6 +26,12 @@ interface IUploadItem {
   thumb: string;
 }
 
+/**
+ * manage the Items list and file upload
+ *
+ * @class AttachmentList
+ * @extends {React.Component<IProps, IState>}
+ */
 class AttachmentList extends React.Component<IProps, IState> {
   private uploads: IUploadItem[];
   constructor(props: IProps) {
@@ -43,6 +45,12 @@ class AttachmentList extends React.Component<IProps, IState> {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
+  /**
+   * create an Item and upload the file
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private upload = (e: any) => {
     const file: File = e.target.files[0];
     const items: IAttachmentItem[] = [];
@@ -65,6 +73,7 @@ class AttachmentList extends React.Component<IProps, IState> {
     };
 
     items.push(item);
+    // upload the file
     this.send(item, file, UploadType.FILE);
 
     this.setState({
@@ -73,6 +82,15 @@ class AttachmentList extends React.Component<IProps, IState> {
 
   }
 
+  /**
+   * send the file to Store service
+   *
+   * @private
+   * @param {IAttachmentItem} item
+   * @param {File} file
+   * @param {string} type
+   * @memberof AttachmentList
+   */
   private send(item: IAttachmentItem, file: File, type: string) {
     // upload the given file with the specified type
     AttachmentApi.upload(file, type || UploadType.FILE).then((mission: IUploadMission) => {
@@ -99,6 +117,12 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * set the Item status to failed
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private onUploadError = (item: IAttachmentItem) => {
     item.uploading = false;
     item.failed = true;
@@ -108,6 +132,12 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * set the Item status to aborted
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private onUploadAbort = (item: IAttachmentItem) => {
     item.uploading = false;
     item.aborted = true;
@@ -117,6 +147,13 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * set the Item status to finished and set the Attachment model
+   * that Store service returns in response
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private onUploadFinish = (item: IAttachmentItem, attachment: IAttachment) => {
     const index = this.uploads.findIndex((upload) => upload.id === item.id);
     if (index >= 0) {
@@ -133,6 +170,12 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * set the item progress
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private onUploadProgress = (item: IAttachmentItem, progress: IProgress) => {
     item.progress = progress;
 
@@ -141,6 +184,13 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * create a thumbnail picture if the provided file is an image.
+   * otherwise, returns a default image
+   *
+   * @private
+   * @memberof AttachmentList
+   */
   private getFileThumbnail = (file) => {
     if (!file) {
       return Promise.resolve(EMPTY_PICTURE);
@@ -153,6 +203,13 @@ class AttachmentList extends React.Component<IProps, IState> {
     return Picture.resize(file);
   }
 
+  /**
+   * remove the file and abort the action if the file upload is in progress
+   *
+   * @private
+   * @param {IAttachmentItem} item
+   * @memberof AttachmentList
+   */
   private handleRemove(item: IAttachmentItem) {
     const index = this.state.items.findIndex((i) => i.id === item.id);
     if (index > -1) {
@@ -181,6 +238,7 @@ class AttachmentList extends React.Component<IProps, IState> {
           />
       );
     };
+    // calculate total progress by size
     let totalSize = 1;
     let totalLoaded = 0;
     const items = [];

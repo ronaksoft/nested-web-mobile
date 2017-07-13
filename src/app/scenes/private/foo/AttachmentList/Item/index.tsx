@@ -20,6 +20,12 @@ interface IState {
   progress: number;
 }
 
+/**
+ * generate view url for thumbnails (download token is not required)
+ *
+ * @param {string} id
+ * @returns
+ */
 function getUrl(id: string) {
   if (!sessionKey) {
     sessionKey = AAA.getInstance().getCredentials().sk;
@@ -28,6 +34,12 @@ function getUrl(id: string) {
   return `${Configurations.STORE.URL}/view/${sessionKey}/${id}/`;
 }
 
+/**
+ * a component that shows an attachment item
+ *
+ * @class AttachmentItem
+ * @extends {React.Component<IProps, IState>}
+ */
 class AttachmentItem extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
@@ -37,6 +49,12 @@ class AttachmentItem extends React.Component<IProps, IState> {
     };
   }
 
+  /**
+   * receive progress and updates the state
+   *
+   * @param {IProps} nextProps
+   * @memberof AttachmentItem
+   */
   public componentWillReceiveProps(nextProps: IProps) {
     const progressValue = Math.floor((nextProps.item.progress.loaded / nextProps.item.progress.total) * 100);
     this.setState({
