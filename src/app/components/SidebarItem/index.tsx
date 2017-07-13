@@ -44,11 +44,11 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
             }
             <div className={[style.childArrow, this.props.place.isOpen ? style.active : null].join(' ')}
                 onClick={this.props.openChild}>
-                {this.props.childrenUnread &&
-                    <IcoN size={8} name={'circle8blue'}/>
-                }
                 {this.props.place.hasChildren &&
                     <IcoN size={16} name={'arrow16White'}/>
+                }
+                {this.props.childrenUnread &&
+                    <IcoN size={8} name={'circle8blue'}/>
                 }
             </div>
         </div>

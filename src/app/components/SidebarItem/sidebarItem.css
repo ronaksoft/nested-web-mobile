@@ -58,18 +58,18 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-}
-.place .childArrow i:first-child{
-  transform: translateY(2px);
+  flex-direction: column-reverse;
 }
 .place .childArrow i:last-child{
+  transform: translateY(-2px);
+}
+.place .childArrow i:first-child{
   transform-origin: center center;
   opacity: .4;
 }
 .active i{
   transform: rotateZ(180deg);
 }
-.active i:first-child{
+.active i:first-child + i{
   display: none;
 }
