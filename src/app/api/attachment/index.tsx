@@ -26,7 +26,7 @@ class AttachmentApi {
     });
   }
 
-  public static upload(file: File, type: string, onProgress: any): Promise<IUploadMission> {
+  public static upload(file: File, type: string): Promise<IUploadMission> {
     const sessionKey = AAA.getInstance().getCredentials().sk;
     const storeUrl = Configuration.STORE.URL;
     const formData = new FormData();
@@ -52,11 +52,11 @@ class AttachmentApi {
         xhr.setRequestHeader('X-File-Size', file.size.toString());
         xhr.setRequestHeader('X-File-Type', file.type);
 
-        if (onProgress) {
-          xhr.upload.onprogress = (e: any) => {
-            onProgress(e.total, e.loaded);
-          };
-        }
+        xhr.upload.onprogress = (e: any) => {
+          if (mission.onProgress) {
+            mission.onProgress(e.total, e.loaded);
+          }
+        };
 
         xhr.upload.onloadstart = () => {
           resolve(mission);
