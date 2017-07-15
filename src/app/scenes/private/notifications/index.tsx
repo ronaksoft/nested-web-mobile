@@ -3,7 +3,7 @@ import {NotificationItem} from './NotificationItem';
 import NotificationApi from '../../../api/notification/index';
 import {INotificationData} from '../../../api/notification/interfaces/INotificationResponse';
 import INotification from 'api/notification/interfaces/INotification';
-import ArrayUntiles from '../../../services/untils/array';
+import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
@@ -60,6 +60,7 @@ class Notifications extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
+        {this.state.notifications.length}
         {this.state.notifications.map((notification) =>
           (<NotificationItem key={notification._id} notification={notification}/>))
         }

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
+import Store from 'services/utils/store';
 
 const style = require('./chips.css');
 
@@ -41,7 +42,7 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
     return (
       <a key={this.props.item._id} onClick={this.itemSelected.bind(this, '')}
       className={this.state.active ? style.placechips + ' ' + style.selectedItem : style.placechips}>
-        <img src={this.props.item.picture.x32} alt=""/>
+        <img src={Store.getViewUrl(this.props.item.picture.x32)} alt=""/>
         {this.props.item.name}
       </a>
     );

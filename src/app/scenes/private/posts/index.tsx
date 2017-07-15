@@ -65,7 +65,11 @@ class Posts extends React.Component<IProps, IState> {
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
           });
-        this.props.setPosts(posts);
+
+        if (fromNow === true) {
+          this.props.setPosts(posts);
+        }
+
         this.setState({
           posts,
         });

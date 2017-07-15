@@ -5,7 +5,7 @@ import * as ActionTypes from '../actions/types';
 /** Initial Places State */
 const initialState = Immutable.from<IAppStore>({
   isSocketConnect: false,
-  placesUnseenCounters: [],
+  sidebarUnreadPlaces: null,
   isLogin: false,
   user: null,
   userPlaces: [],
@@ -75,7 +75,18 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         sidebarPlaces: [],
       });
 
-    case ActionTypes.APP_CURRENT_POST_SET:
+    case ActionTypes.APP_UNREAD_PLACES_SET:
+      console.log(action);
+      return Immutable.merge(state, {
+        sidebarPlacesUnreads: action.payload,
+      });
+
+    case ActionTypes.APP_UNREAD_PLACES_UNSET:
+      return Immutable.merge(state, {
+        sidebarPlacesUnreads: [],
+      });
+
+case ActionTypes.APP_CURRENT_POST_SET:
       return Immutable.merge(state, {
         currentPost: action.payload,
       });
@@ -84,6 +95,7 @@ export default function appReducer(state = initialState, action?: IAppAction) {
       return Immutable.merge(state, {
         currentPost: null,
       });
+
 
     default :
       return state;

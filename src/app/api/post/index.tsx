@@ -2,6 +2,8 @@ import Api from 'api';
 import IPostsListRequest from './interfaces/IPostsListRequest';
 import IPostsListResponse from './interfaces/IPostsListResponse';
 import IGetPostRequest from './interfaces/IGetRequest';
+import ISendRequest from './interfaces/ISendRequest';
+import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
 
 export default class PostApi {
@@ -52,7 +54,15 @@ export default class PostApi {
     });
   }
 
-  public getComments(params: ICommentListRequest): Promise<any> {
+  public send(data: ISendRequest): Promise<ISendResponse> {
+    data.content_type = data.content_type || 'text/plain';
+    return this.api.request({
+      cmd: 'post/add',
+      data,
+    });
+  }
+
+ public getComments(params: ICommentListRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/get_comments',
       data: params,
