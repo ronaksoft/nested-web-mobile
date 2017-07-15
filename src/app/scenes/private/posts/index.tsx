@@ -5,15 +5,19 @@ import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../api/post/index';
 import IPost from '../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
-import {setPosts} from '../../../redux/app/actions/index';
+import {setCurrentPost, setPosts} from '../../../redux/app/actions/index';
 import ArrayUntiles from '../../../services/untils/array';
 import {Button} from 'antd';
 import Post from './components/post/index';
+import {browserHistory} from 'react-router';
+
 const style = require('./posts.css');
 
 interface IProps {
   posts: IPost[];
+  currentPost: IPost | null;
   setPosts: (posts: IPost[]) => {};
+  setCurrentPost: (post: IPost) => {};
 }
 
 interface IState {
@@ -38,7 +42,7 @@ class Posts extends React.Component<IProps, IState> {
       params = {
         before: Date.now(),
       };
-    } else if (after) {
+    } else if (typeof after === 'number') {
       params = {
         after,
       };
@@ -53,32 +57,53 @@ class Posts extends React.Component<IProps, IState> {
         };
       }
     }
-    params.limit = 8;
-
+    params.limit = 20;
+    console.log(111111, params, after);
     this.postApi.getFavoritePosts(params)
       .then((response: IPostsListResponse) => {
         const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
           });
-
-        if (fromNow === true) {
-          this.props.setPosts(posts);
-        }
-
+        this.props.setPosts(posts);
         this.setState({
           posts,
         });
       });
   }
 
+  public componentWillReceiveProps(newProps: IProps) {
+    this.setState({posts: newProps.posts});
+  }
+
+  private getOffset(id: string) {
+    const el = document.getElementById(id).getBoundingClientRect();
+    return {
+      left: el.left + window.scrollX,
+      top: el.top + window.scrollY,
+    };
+  }
+
   public componentDidMount() {
     this.postApi = new PostApi();
     this.getPost(true);
+
+    if (this.props.currentPost) {
+      setTimeout(() => {
+          window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
+        },
+        200);
+    }
+
   }
 
-  public sampleF = () => {
+  private sampleF = () => {
     console.log('nothing');
+  }
+
+  private gotoPost(post: IPost) {
+    this.props.setCurrentPost(post);
+    browserHistory.push(`/post/${post._id}`);
   }
 
   public render() {
@@ -206,13 +231,16 @@ class Posts extends React.Component<IProps, IState> {
         ],
       },
     ];
+    const loadMore = this.getPost.bind(this);
+
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={RightItem}/>
-        <Button onClick={this.getPost.bind(this, '')}>Load More ...</Button>
-        <b>{this.state.posts[0] && this.state.posts[this.state.posts.length - 1].timestamp}
-          => {this.state.posts.length}</b>
-        {this.state.posts.map((post: IPost) => (<Post post={post} key={post._id}/>))};
+        <Button onClick={loadMore}>Load More ...</Button>
+        {this.state.posts.map((post: IPost) => (
+          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+            <Post post={post}/>
+          </div>))};
       </div>
     );
   }
@@ -220,12 +248,16 @@ class Posts extends React.Component<IProps, IState> {
 
 const mapStateToProps = (store) => ({
   posts: store.app.posts,
+  currentPost: store.app.currentPost,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setPosts: (posts: IPost[]) => {
       dispatch(setPosts(posts));
+    },
+    setCurrentPost: (post: IPost) => {
+      dispatch(setCurrentPost(post));
     },
   };
 };
