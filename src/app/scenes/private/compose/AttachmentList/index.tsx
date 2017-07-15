@@ -10,6 +10,7 @@ const EMPTY_PICTURE = require('./default.gif');
 import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
+const style = require('./attachmentList.css');
 
 interface IProps {
   file?: File;
@@ -286,23 +287,25 @@ class AttachmentList extends React.Component<IProps, IState> {
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
     return (
       <div>
-        <div>
-          <Button onClick={this.toggleView} >{this.state.isExpanded ? 'Collapse' : 'Expand'}</Button>
+        <div className={style.AttachmentListTop}>
+          <div>
+            <Button onClick={this.toggleView}>{this.state.isExpanded ? 'Collapse' : 'Expand'}</Button>
+          </div>
+          <div>
+            <Progress percent={totalProgress} strokeWidth={5} showInfo={false} />
+          </div>
+          {
+            isUploading && (
+              <div>
+                {
+                  inProgressCount === 1
+                    ? `One item is uploading ${totalProgress}%`
+                    : `${inProgressCount} attachments are uploading ${totalProgress}%`
+                }
+              </div>
+            )
+          }
         </div>
-        <div>
-          <Progress percent={totalProgress} strokeWidth={5} showInfo={false} />
-        </div>
-        {
-          isUploading && (
-            <div>
-              {
-                inProgressCount === 1
-                  ? `One item is uploading ${totalProgress}%`
-                  : `${inProgressCount} attachments are uploading ${totalProgress}%`
-              }
-            </div>
-          )
-        }
         <div>
           <input id="myFile" type="file" onChange={this.upload} />
         </div>
