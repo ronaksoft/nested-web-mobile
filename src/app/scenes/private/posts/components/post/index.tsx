@@ -7,6 +7,7 @@ import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
+import PostAttachment from '../../../../../components/PostAttachment/index';
 
 const style = require('./post.css');
 
@@ -149,6 +150,9 @@ class Post extends React.Component<IProps, IState> {
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}/>
+          {post.post_attachments.length > 0 && (
+            <PostAttachment attachments={post.post_attachments}/>
+          )}
           {post.post_attachments.length > 0 && (
             <div className={style.postAttachs}>
               <IcoN size={16} name={'attach16'}/>

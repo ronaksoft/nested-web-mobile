@@ -1,6 +1,7 @@
 import IPostCounters from './IPostCounters';
 import IUser from '../../account/interfaces/IUser';
 import IPlace from '../../place/interfaces/IPlace';
+import IPostAttachment from './IPostAttachment';
 
 interface IPost {
   body: string;
@@ -12,7 +13,7 @@ interface IPost {
   last_update: number;
   no_comment: boolean;
   pinned: boolean;
-  post_attachments: any[]; // fixme:: attachment interfaces
+  post_attachments: IPostAttachment[]; // fixme:: attachment interfaces
   post_places: IPlace[];
   post_read: boolean;
   post_recipients: any[];
