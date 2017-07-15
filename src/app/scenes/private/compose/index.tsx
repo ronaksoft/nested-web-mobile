@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, Button, Modal} from 'antd';
+import {Input, Button, Modal, Switch} from 'antd';
 import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
@@ -138,7 +138,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       allowComment: !this.state.allowComment,
     });
   }
-  
+
   /**
    * Validate and send the post
    *

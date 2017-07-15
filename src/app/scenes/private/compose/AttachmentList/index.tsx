@@ -307,7 +307,7 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
     return (
-      <div>
+      <div className={style.AttachmentList}>
         <div className={style.AttachmentListTop}>
           <div>
             <Button onClick={this.toggleView}>{this.state.isExpanded ? 'Collapse' : 'Expand'}</Button>
