@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, Icon, Button, Popconfirm} from 'antd';
+import {Input, Icon, Button, Modal} from 'antd';
 import { Suggestion } from 'components';
 import AttachmentList from './AttachmentList';
 const style = require('./compose.css');
@@ -11,6 +11,8 @@ import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
 import {connect} from 'react-redux';
 import {IAttachment} from 'api/attachment/interfaces';
+import {IChipsItem} from 'components/Chips';
+const confirm = Modal.confirm;
 
 interface IParams {
   replyId?: string;
@@ -38,10 +40,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       targets: [],
       allowComment: true,
       loading: false,
+      body: '',
+      subject: '',
     };
-    console.log('====================================');
-    console.log(this.props.draft);
-    console.log('====================================');
     this.state = this.props.draft || defaultState;
   }
 
@@ -126,7 +127,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private send = () => {
-    if (this.targets.get().length === 0) {
+    if (this.state.targets.length === 0) {
       console.log('====================================');
       console.log('No target');
       console.log('====================================');
@@ -154,8 +155,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       loading: true,
     });
 
-    const targets = this.targets.get();
-
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
@@ -163,13 +162,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       no_comment: !this.state.allowComment,
       subject: this.state.subject,
       attaches: this.state.attachments.map((i) => i.universal_id).join(','),
-      targets: targets.map((i) => i._id).join(','),
+      targets: this.state.targets.map((i) => i._id).join(','),
     };
 
     this.postApi.send(params).then((response: ISendResponse) => {
       if (response.no_permit_places.length === 0) {
         console.log(`Your post has been shared.`);
-      } else if (response.no_permit_places.length < targets.length) {
+      } else if (response.no_permit_places.length < this.state.targets.length) {
         console.log(`Your post has been shared, but some targets did not received that.`);
       } else {
         console.log(`None of the selected targets receive the post!`);
@@ -194,6 +193,25 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
   private discard = () => {
     this.props.unsetDraft();
+    browserHistory.goBack();
+  }
+
+  private leave = () => {
+    if (this.state.targets.length > 0
+      || this.state.attachments.length > 0
+      || this.state.body.length > 0
+      || this.state.subject.length > 0) {
+
+      confirm({
+        title: 'What do you want to do?',
+        okText: 'Draft',
+        cancelText: 'Discard',
+        onCancel: this.discard,
+        onOk: this.draft,
+      });
+    } else {
+      browserHistory.goBack();
+    }
   }
 
   private handleAttachmentsChange = (items: IAttachment[]) => {
@@ -202,12 +220,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     });
   }
 
+  private handleTargetsChanged = (items: IChipsItem[]) => {
+    this.setState({
+      targets: items,
+    });
+  }
+
   public render() {
     return (
       <div className={style.compose}>
         <Suggestion ref={this.referenceTargets}
-                    selectedItems={[]}
-                    unselectSelectedRecipient={this.state.unselectSelectedRecipient}
+                    selectedItems={this.state.targets}
+                    onSelectedItemsChanged={this.handleTargetsChanged}
         />
         <div className={style.subject}>
           <Input
@@ -237,16 +261,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                         onItemsChanged={this.handleAttachmentsChange}
         />
         <Button type="primary" onClick={this.send}>Send</Button>
-        <Popconfirm
-                    placement="rightTop"
-                    title="What do you want to do?"
-                    onConfirm={this.draft}
-                    onCancel={this.discard}
-                    okText="Draft"
-                    cancelText="Discard"
-        >
-          <Button style={{width: 128}}>Leave</Button>
-        </Popconfirm>
+        <Button style={{width: 128}} onClick={this.leave}>Leave</Button>
       </div>
     );
   }
