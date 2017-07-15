@@ -254,16 +254,21 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </a>
           <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
         </div>
-        <div className={[style.composeOption, this.state.composeOption ? style.opened : null].join(' ')}>
-          <ul>
-            <li>
-              <label htmlFor="">
-                Allow Comments
-              </label>
-              <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment} />
-            </li>
-          </ul>
-        </div>
+        {this.state.composeOption && (
+          <div className={[style.composeOption, style.opened].join(' ')}>
+            <ul>
+              <li>
+                <label htmlFor="">
+                  Allow Comments
+                </label>
+                <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment} />
+              </li>
+            </ul>
+          </div>
+        )}
+        {this.state.composeOption &&
+          <div onClick={this.composeOption.bind(this, '')} className={style.overlay}/>
+        }
         <Suggestion ref={this.referenceTargets}
                     selectedItems={this.state.targets}
                     onSelectedItemsChanged={this.handleTargetsChanged}
@@ -280,7 +285,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             <div onClick={this.attachTypeSelect}>
               <IcoN size={24} name={'attach24'}/>
             </div>
-            <div onClick={this.overlayClick} className={style.overlay}/>
+            {this.state.attachModal &&
+              <div onClick={this.overlayClick} className={style.overlay}/>
+            }
             <div className={style.attachActions} onClick={this.overlayClick}>
               <div>
                 <IcoN size={24} name={'camera24'}/>
