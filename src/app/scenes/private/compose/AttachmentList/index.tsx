@@ -115,8 +115,11 @@ class AttachmentList extends React.Component<IProps, IState> {
   private send(item: IAttachmentItem, file: File, isMedia: boolean) {
     // TODO: Find upload type if is media
     const type: string = isMedia ? Store.getUploadType(file) : UploadType.FILE;
+    console.log('====================================');
+    console.log('type:', type);
+    console.log('====================================');
     // upload the given file with the specified type
-    AttachmentApi.upload(file, type || UploadType.FILE).then((mission: IUploadMission) => {
+    AttachmentApi.upload(file, type).then((mission: IUploadMission) => {
 
       mission.onError = () => this.onUploadError(item);
       mission.onFinish = (attachment: IAttachment) => this.onUploadFinish(item, attachment);

@@ -142,7 +142,7 @@ class Store {
 
     const type = Store.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
 
-    return type || FileTypes.OTHER;
+    return type.type || FileTypes.OTHER;
   }
 
   public static getSuffix(fileName: string) {
@@ -174,7 +174,13 @@ class Store {
   }
 
   public static getUploadType(file: File) {
+    console.log('====================================');
+    console.log('file', file);
+    console.log('====================================');
     const group = Store.getType(file.type);
+    console.log('====================================');
+    console.log('group', group);
+    console.log('====================================');
 
     if (Store.getSuffix(file.name) === 'gif') {
       return StoreTypes.GIF;
