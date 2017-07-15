@@ -44,7 +44,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
         <Link to={`/posts/${this.props.place.id}`} activeClassName="active">
             <div className={style.place}>
                 {placeIndent}
-                <PlaceItem place_id={this.props.place.id} size={24} borderRadius="0"/>
+                <PlaceItem place_id={this.props.place.id} size={24} borderRadius="3px"/>
                 <div className={style.indent}/>
                 <PlaceName place_id={this.props.place.id}/>
                 {this.props.unreads > 0 &&

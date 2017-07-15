@@ -51,7 +51,7 @@
   border-radius: 8px;
   background-color: rgba(50,61,71,.08)!important;
 }
-a i {
+.container a i {
   width: 24px;
   flex: none;
   margin-left: 8px;   

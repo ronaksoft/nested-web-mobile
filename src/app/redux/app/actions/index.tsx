@@ -5,6 +5,7 @@ import {IAppAction} from '../IAppStore';
 import INotificationCountRequest from '../../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../../api/post/interfaces/IPost';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
+import IComposeState from 'api/post/interfaces/IComposeState';
 
 export function userSet(user: IUser): IAppAction {
   return {
@@ -122,5 +123,17 @@ export function setUnreadPlaces(unreadPlaces: any): IAppAction {
 export function unsetUnreadPlaces(): IAppAction {
   return {
     type: ActionTypes.APP_UNREAD_PLACES_UNSET,
+  };
+}
+
+export function unsetDraft(): IAppAction {
+  return {
+    type: ActionTypes.APP_DRAFT_UNSET,
+  };
+}
+export function setDraft(model: IComposeState): IAppAction {
+  return {
+    type: ActionTypes.APP_DRAFT_SET,
+    payload: model,
   };
 }

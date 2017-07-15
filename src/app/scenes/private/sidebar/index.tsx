@@ -2,6 +2,7 @@ import * as React from 'react';
 import {sortBy} from 'lodash';
 import PlaceApi from '../../../api/place/index';
 import {connect} from 'react-redux';
+import {Link} from 'react-router';
 
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IPlace from '../../../api/place/interfaces/IPlace';
@@ -131,13 +132,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       with_children: true,
     };
     if (this.props.sidebarPlaces.length > 0) {
-      console.log(this.props.sidebarPlaces);
       this.setState({
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
       }, () => {
         this.getUnreads();
       });
-      console.log(this.state);
       this.getUnreads();
     } else {
       this.PlaceApi.getAllPlaces(params)
@@ -255,16 +254,22 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           </div>
           <ul className={style.sidebarActions}>
             <li>
-              <IcoN size={16} name={'bookmarkMessage1White'}/>
-              Feed
+              <Link to={`/feed`}>
+                <IcoN size={16} name={'bookmarkMessage1White'}/>
+                Feed
+              </Link>
             </li>
             <li>
-              <IcoN size={16} name={'bookmarkMessage16White'}/>
-              Bookmarked Posts
+              <Link to={`/bookmark`}>
+                <IcoN size={16} name={'bookmarkMessage16White'}/>
+                Bookmarked Posts
+              </Link>
             </li>
             <li>
-              <IcoN size={16} name={'sentMessage16White'}/>
-              Shared by me
+              <Link to={`/shared`}>
+                <IcoN size={16} name={'sentMessage16White'}/>
+                Shared by me
+              </Link>
             </li>
           </ul>
           <ul className={style.places}>
@@ -281,12 +286,16 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               Profile and Settings
             </li>*/}
             <li>
-              <IcoN size={16} name={'ask16White'}/>
-              Help Center
+              <a href={`http://help.nested.me`} target="_blank">
+                <IcoN size={16} name={'ask16White'}/>
+                Help Center
+              </a>
             </li>
             <li>
-              <IcoN size={16} name={'exit16White'}/>
-              Sign out
+              <Link to={`/signout`}>
+                <IcoN size={16} name={'exit16White'}/>
+                Sign out
+              </Link>
             </li>
           </ul>
         </div>

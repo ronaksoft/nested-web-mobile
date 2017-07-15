@@ -3,6 +3,10 @@
   display: inline-block;
   height : 24px;
 }
+.s24 svg{
+  width : 24px;
+  height : 24px;
+}
 .s16 {
   width : 16px;
   display: inline-block;
@@ -12,4 +16,9 @@
   width : 8px;
   display: inline-block;
   height : 8px;
+}
+.s40 {
+  width : 40px;
+  display: inline-block;
+  height : 40px;
 }

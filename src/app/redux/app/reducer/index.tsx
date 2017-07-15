@@ -96,6 +96,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         currentPost: null,
       });
 
+    case ActionTypes.APP_DRAFT_SET:
+      return Immutable.merge(state, {
+        draft: action.payload,
+      });
+
+    case ActionTypes.APP_DRAFT_UNSET:
+      return Immutable.merge(state, {
+        draft: null,
+      });
+
     default :
       return state;
 

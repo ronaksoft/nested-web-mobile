@@ -1,11 +1,17 @@
 import * as React from 'react';
-import IPlace from '../../api/place/interfaces/IPlace';
 import Store from 'services/utils/store';
+import IPicture from 'api/interfaces/IPicture';
 
 const style = require('./chips.css');
 
+interface IChipsItem {
+  _id: string;
+  name: string;
+  picture: IPicture;
+}
+
 interface IChipsProps {
-  item?: IPlace;
+  item?: IChipsItem;
   onChipsClick?: any;
   active: boolean;
 }
@@ -49,4 +55,4 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
   }
 }
 
-export {PlaceChips}
+export {PlaceChips, IChipsItem}

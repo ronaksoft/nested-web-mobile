@@ -10,11 +10,11 @@ import IProgress from '../IProgress';
 interface IAttachmentItem {
   id: number;
   model: IAttachment;
-  progress: IProgress;
+  progress?: IProgress;
   mode: Mode;
-  name: string;
-  type: string;
-  size: number;
+  name?: string;
+  type?: string;
+  size?: number;
   uploading?: boolean;
   finished?: boolean;
   failed?: boolean;

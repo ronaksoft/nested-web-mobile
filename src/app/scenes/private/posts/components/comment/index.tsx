@@ -140,10 +140,14 @@ class CommentsBoard extends React.Component<IProps, IState> {
   public render() {
     return (
       <div id={'comment-board'}>
-        {this.hasBeforeComments &&
-        <div id={'load-older-comments'} onClick={this.getBeforeComments.bind(this, '')}>
-          Load older comments
-        </div>
+        {
+          this.hasBeforeComments && (
+            <div id={'load-older-comments'}
+                 onClick={this.getBeforeComments.bind(this, '')}
+            >
+              Load older comments
+            </div>
+          )
         }
         <Input
           style={{

@@ -1,23 +1,23 @@
  import * as React from 'react';
 // import PlaceApi from '../../api/place';
 import { debounce } from 'lodash';
-import IPlace from '../../api/place/interfaces/IPlace';
 import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
+import {IChipsItem} from 'components/Chips';
 import SearchApi from 'api/search';
 import Store from 'services/utils/store';
 
 const style = require('./suggestion.css');
 
 interface ISuggestProps {
-  selectedItems?: IPlace[];
-  unselectSelectedRecipient: number;
+  selectedItems?: IChipsItem[];
+  onSelectedItemsChanged: (items: IChipsItem[]) => void;
 }
 
 interface ISuggestState {
-  suggests?: IPlace[];
-  selectedItems?: IPlace[];
-  activeItem?: IPlace;
+  suggests?: IChipsItem[];
+  selectedItems?: IChipsItem[];
+  activeItem?: IChipsItem;
   input: string;
 }
 
@@ -73,7 +73,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
   // fill and update suggest area
   private fillSuggests(query: string): Promise<any> {
-    return this.getSuggests(query).then((items: IPlace[]) => {
+    return this.getSuggests(query).then((items: IChipsItem[]) => {
       this.setState({
         suggests: items,
       });
@@ -108,11 +108,13 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
-  private insertChip = (item: IPlace) => {
+  private insertChip = (item: IChipsItem) => {
     item.name = item.name.replace('<b>', '');
     item.name = item.name.replace('</b>', '');
+    const items = [...this.state.selectedItems, item];
+    this.props.onSelectedItemsChanged(items);
     this.setState({
-      selectedItems: [...this.state.selectedItems, item],
+      selectedItems: items,
     });
   }
 
@@ -122,7 +124,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
-  private handleChipsClick = (item: IPlace) => {
+  private handleChipsClick = (item: IChipsItem) => {
     this.setState({
       activeItem: item,
       suggests: [],
@@ -132,13 +134,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private removeItem = () => {
     const index = this.state.selectedItems.indexOf(this.state.activeItem);
     this.unSelectItem();
+    const items = [...this.state.selectedItems.slice(0, index), ...this.state.selectedItems.slice(index + 1)];
+    this.props.onSelectedItemsChanged(items);
     this.setState({
-      selectedItems: [...this.state.selectedItems.slice(0, index), ...this.state.selectedItems.slice(index + 1)],
+      selectedItems: items,
     });
-  }
-
-  public get = (): IPlace[] => {
-    return this.state.selectedItems;
   }
 
   public render() {
