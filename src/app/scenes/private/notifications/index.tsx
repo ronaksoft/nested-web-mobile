@@ -7,11 +7,10 @@ import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
+import * as Hammer from 'react-hammerjs';
 
 interface IState {
   notifications: INotification[];
-  skip: number;
-  limit: number;
 }
 
 interface IProps {
@@ -21,23 +20,24 @@ interface IProps {
 }
 
 class Notifications extends React.Component<IProps, IState> {
+  private requestLimit: number = 20;
+
 // setting initial states
   constructor(props) {
     super(props);
     this.state = {
       notifications: this.props.notifications,
-      limit: 10,
-      skip: 0,
     };
   }
 
-  private getNotification() {
+  private getNotificationBefore(saveInStore: boolean) {
     const notificationApi = new NotificationApi();
     notificationApi.get({
-      skip: this.state.skip,
-      limit: this.state.limit,
+      limit: this.requestLimit,
+      before: (this.state.notifications.length > 0) ?
+        this.state.notifications[this.state.notifications.length - 1].timestamp : Date.now(),
     }).then((notificationsResponse: INotificationData) => {
-      if (this.state.skip === 0) {
+      if (saveInStore) {
         this.props.setNotification(notificationsResponse.notifications);
       }
       const notifs =
@@ -48,23 +48,59 @@ class Notifications extends React.Component<IProps, IState> {
 
       this.setState({
         notifications: notifs,
-        skip: notifs.length,
+      });
+    });
+  }
+
+  private getNotificationAfter() {
+    const notificationApi = new NotificationApi();
+    notificationApi.get({
+      limit: this.requestLimit,
+      after: this.state.notifications[0].timestamp,
+    }).then((notificationsResponse: INotificationData) => {
+      if (notificationsResponse.notifications.length > 0) {
+        this.props.setNotification(notificationsResponse.notifications);
+      }
+      const notifs =
+        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(this.state.notifications), '_id')
+          .sort((a: INotification, b: INotification) => {
+            return b.timestamp - a.timestamp;
+          });
+
+      this.setState({
+        notifications: notifs,
       });
     });
   }
 
   public componentDidMount() {
-    this.getNotification();
+    this.getNotificationBefore(true);
+  }
+
+  private onSwipe(event: any) {
+    console.log(event);
+    if (event.direction === 1) {
+      this.getNotificationAfter();
+    } else if (event.direction === 3) {
+      this.getNotificationBefore(false);
+    }
   }
 
   public render() {
     return (
       <div>
-        {this.state.notifications.length}
-        {this.state.notifications.map((notification) =>
-          (<NotificationItem key={notification._id} notification={notification}/>))
-        }
-        <Button onClick={this.getNotification.bind(this, '')}>More..</Button>
+        <Hammer onSwipe={this.onSwipe.bind(this)} options={{
+          preventDefault: true,
+        }}>
+          <div>
+            {this.state.notifications.length}
+            {this.state.notifications.map((notification) =>
+              (<NotificationItem key={notification._id} notification={notification}/>))
+            }
+
+            <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
+          </div>
+        </Hammer>
       </div>
     );
   }
