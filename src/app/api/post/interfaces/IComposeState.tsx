@@ -7,7 +7,7 @@ interface IComposeState {
   attachments: IAttachment[];
   targets: IChipsItem[];
   allowComment: boolean;
-  loading: boolean;
+  sending: boolean;
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
    composeOption: boolean;

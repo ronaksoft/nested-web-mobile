@@ -40,7 +40,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attachments: [],
       targets: [],
       allowComment: true,
-      loading: false,
+      sending: false,
       body: '',
       subject: '',
       composeOption: false,
@@ -167,7 +167,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     }
 
     this.setState({
-      loading: true,
+      sending: true,
     });
 
     const params: ISendRequest = {
@@ -190,7 +190,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       }
 
       this.setState({
-        loading: false,
+        sending: false,
       });
 
       browserHistory.goBack();
@@ -252,9 +252,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           <a onClick={this.composeOption.bind(this, '')}>
             <IcoN size={16} name="gear16"/>
           </a>
-          <a>
-            <Button type="primary" onClick={this.send}>Share</Button>
-          </a>
+          <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
         </div>
         <div className={[style.composeOption, this.state.composeOption ? style.opened : null].join(' ')}>
           <ul>
@@ -307,7 +305,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                         items={this.state.attachments}
                         onItemsChanged={this.handleAttachmentsChange}
         />
-        {/*<Button style={{width: 128}} onClick={this.leave}>Leave</Button>*/}
       </div>
     );
   }
