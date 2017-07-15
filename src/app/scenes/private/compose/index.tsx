@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, Button, Modal} from 'antd';
+import {Input, Button, Modal, Switch} from 'antd';
 import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
@@ -40,7 +40,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attachments: [],
       targets: [],
       allowComment: true,
-      loading: false,
+      sending: false,
       body: '',
       subject: '',
       composeOption: false,
@@ -112,10 +112,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.attachments = value;
   }
 
-  private closeCompose = () => {
-    console.log('close compose');
-  }
-
   private composeOption = () => {
     console.log('compose options');
     this.setState({
@@ -138,7 +134,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       allowComment: !this.state.allowComment,
     });
   }
-  
+
   /**
    * Validate and send the post
    *
@@ -171,7 +167,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     }
 
     this.setState({
-      loading: true,
+      sending: true,
     });
 
     const params: ISendRequest = {
@@ -194,7 +190,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       }
 
       this.setState({
-        loading: false,
+        sending: false,
       });
 
       browserHistory.goBack();
@@ -249,16 +245,14 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     return (
       <div className={style.compose}>
         <div className={styleNavbar.navbar}>
-          <a onClick={this.closeCompose}>
+          <a onClick={this.leave}>
             <IcoN size={24} name="xcross24"/>
           </a>
           <div className={styleNavbar.filler}/>
           <a onClick={this.composeOption.bind(this, '')}>
             <IcoN size={16} name="gear16"/>
           </a>
-          <a>
-            <Button type="primary" onClick={this.send}>Share</Button>
-          </a>
+          <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
         </div>
         <div className={[style.composeOption, this.state.composeOption ? style.opened : null].join(' ')}>
           <ul>
@@ -311,8 +305,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                         items={this.state.attachments}
                         onItemsChanged={this.handleAttachmentsChange}
         />
-        <Button type="primary" onClick={this.send}>Send</Button>
-        <Button style={{width: 128}} onClick={this.leave}>Leave</Button>
       </div>
     );
   }
