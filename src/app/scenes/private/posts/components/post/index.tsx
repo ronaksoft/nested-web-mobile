@@ -150,10 +150,10 @@ class Post extends React.Component<IProps, IState> {
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}/>
-          {post.post_attachments.length > 0 && (
+          {post.post_attachments.length > 0 && !this.props.post && (
             <PostAttachment attachments={post.post_attachments}/>
           )}
-          {post.post_attachments.length > 0 && (
+          {post.post_attachments.length > 0 && this.props.post && (
             <div className={style.postAttachs}>
               <IcoN size={16} name={'attach16'}/>
               {post.post_attachments.length}
