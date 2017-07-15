@@ -3,7 +3,7 @@ import Posts from './posts';
 import Notifications from './notifications';
 import {Activities} from './activities';
 import {Files} from './files';
-import {Compose} from './compose';
+import Compose from './compose';
 import Signout from './Signout';
 import AccountApi from 'api/account';
 import {IUser, IRecallResponse} from 'api/account/interfaces';
