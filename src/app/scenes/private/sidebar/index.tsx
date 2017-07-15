@@ -132,13 +132,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       with_children: true,
     };
     if (this.props.sidebarPlaces.length > 0) {
-      console.log(this.props.sidebarPlaces);
       this.setState({
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
       }, () => {
         this.getUnreads();
       });
-      console.log(this.state);
       this.getUnreads();
     } else {
       this.PlaceApi.getAllPlaces(params)
