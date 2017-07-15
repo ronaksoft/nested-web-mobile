@@ -4,12 +4,40 @@ import IPostsListResponse from './interfaces/IPostsListResponse';
 import IGetPostRequest from './interfaces/IGetRequest';
 import ISendRequest from './interfaces/ISendRequest';
 import ISendResponse from './interfaces/ISendResponse';
+import ICommentListRequest from './interfaces/ICommentListRequest';
 
 export default class PostApi {
   private api;
 
   constructor() {
     this.api = Api.getInstance();
+  }
+
+  public getPost(postId: string) {
+    return this.api.request({
+      cmd: 'post/get',
+      data: {
+        post_id: postId,
+      },
+    });
+  }
+
+  public pinPost(postId: string) {
+    return this.api.request({
+      cmd: 'post/pin',
+      data: {
+        post_id: postId,
+      },
+    });
+  }
+
+  public unpinPost(postId: string) {
+    return this.api.request({
+      cmd: 'post/unpin',
+      data: {
+        post_id: postId,
+      },
+    });
   }
 
   public getFavoritePosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -31,6 +59,15 @@ export default class PostApi {
     return this.api.request({
       cmd: 'post/add',
       data,
+    });
+  }
+
+ public getComments(params: ICommentListRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/get_comments',
+      data: params,
+    }).then((res) => {
+      return res.comments;
     });
   }
 }

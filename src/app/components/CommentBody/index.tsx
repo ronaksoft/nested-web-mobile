@@ -30,7 +30,7 @@ class CommentBody extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     const comments = this.props.comments.filter((comment: IComment) => {
-      return comment.id === this.props.comment_id;
+      return comment._id === this.props.comment_id;
     });
 
     if (comments.length > 0) {

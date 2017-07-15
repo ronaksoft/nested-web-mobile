@@ -62,14 +62,27 @@ export function unsetNotification(notifications: any[]): IAppAction {
 
 export function setPosts(posts: IPost[]): IAppAction {
   return {
-    type: ActionTypes.APP_POST_SET,
+    type: ActionTypes.APP_POSTS_SET,
     payload: posts,
   };
 }
 
 export function unsetPosts(): IAppAction {
   return {
-    type: ActionTypes.APP_POST_UNSET,
+    type: ActionTypes.APP_POSTS_UNSET,
+  };
+}
+
+export function setCurrentPost(post: IPost): IAppAction {
+  return {
+    type: ActionTypes.APP_CURRENT_POST_SET,
+    payload: post,
+  };
+}
+
+export function unsetCurrentPost(): IAppAction {
+  return {
+    type: ActionTypes.APP_CURRENT_POST_UNSET,
   };
 }
 

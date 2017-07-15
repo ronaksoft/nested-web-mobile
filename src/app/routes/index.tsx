@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Posts, Notifications, Activities, Files, Compose, Signout} from 'scenes/private';
+import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
 import {Public, Signin, Signup, NotFound} from 'scenes/public';
 import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
@@ -15,6 +16,8 @@ export default (
       <Route component={Private}>
         <IndexRoute component={Posts}/>
         <Route path="/feed" component={Posts}/>
+        <Route path="/posts/:placeId" component={Posts}/>
+        <Route path="/post/:postId" component={Post}/>
         <Route path="/shared" component={Posts}/>
         <Route path="/bookmarks" component={Posts}/>
         <Route path="/place/:placeId/posts" component={Posts}/>

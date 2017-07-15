@@ -15,9 +15,10 @@ export interface IAppStore {
   posts: IPost[];
   sidebarPlaces: ISidebarPlace[];
   sidebarPlacesUnreads: IUnreadPlace;
+  currentPost: IPost | null;
 }
 
 export interface IAppAction {
   type: string;
-  payload?: INotificationCountRequest | INotificationResponse[] | IUser | number | boolean;
+  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean;
 }
