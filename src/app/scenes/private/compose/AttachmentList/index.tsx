@@ -12,6 +12,7 @@ import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
 const style = require('./attachmentList.css');
+import Store from 'services/utils/store';
 
 interface IProps {
   file?: File;
@@ -71,7 +72,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @public
    * @memberof AttachmentList
    */
-  public upload = (e: any) => {
+  public upload = (e: any, isMedia: boolean) => {
     const file: File = e.target.files[0];
     const items: IAttachmentItem[] = [];
     // generate a unique id for every file that helps for tracking the file later
@@ -94,7 +95,7 @@ class AttachmentList extends React.Component<IProps, IState> {
 
     items.push(item);
     // upload the file
-    this.send(item, file, UploadType.FILE);
+    this.send(item, file, isMedia);
 
     this.setState({
       items: this.state.items.slice().concat(items),
@@ -111,9 +112,14 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @param {string} type
    * @memberof AttachmentList
    */
-  private send(item: IAttachmentItem, file: File, type: string) {
+  private send(item: IAttachmentItem, file: File, isMedia: boolean) {
+    // TODO: Find upload type if is media
+    const type: string = isMedia ? Store.getUploadType(file) : UploadType.FILE;
+    console.log('====================================');
+    console.log('type:', type);
+    console.log('====================================');
     // upload the given file with the specified type
-    AttachmentApi.upload(file, type || UploadType.FILE).then((mission: IUploadMission) => {
+    AttachmentApi.upload(file, type).then((mission: IUploadMission) => {
 
       mission.onError = () => this.onUploadError(item);
       mission.onFinish = (attachment: IAttachment) => this.onUploadFinish(item, attachment);
@@ -339,9 +345,6 @@ class AttachmentList extends React.Component<IProps, IState> {
           onClick={this.toggleView}>
             <IcoN size={24} name="arrow16"/>
           </div>
-        </div>
-        <div>
-          <input id="myFile" type="file" onChange={this.upload} />
         </div>
         <div>
           {this.state.isExpanded && items}

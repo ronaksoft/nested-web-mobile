@@ -33,6 +33,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private attachments: AttachmentList;
   private targets: Suggestion;
   private postApi: PostApi;
+  private file: HTMLInputElement;
+  private mediaMode: boolean;
+
   constructor(props: any) {
     super(props);
 
@@ -74,6 +77,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
     });
   }
+
   private overlayClick = (event) => {
     event.stopPropagation();
   }
@@ -127,6 +131,10 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   private referenceTargets = (value: Suggestion) => {
     this.targets = value;
+  }
+
+  private referenceFile = (value: HTMLInputElement) => {
+    this.file = value;
   }
 
   private allowComment = () => {
@@ -241,6 +249,20 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     });
   }
 
+  private upload = (e: any) => {
+    this.attachments.upload(e, this.mediaMode);
+  }
+
+  private selectFile = (isMedia: boolean) => {
+    return () => {
+      this.file.click();
+      this.mediaMode = isMedia;
+      this.setState({
+        attachModal: false,
+      });
+    };
+  }
+
   public render() {
     return (
       <div className={style.compose}>
@@ -282,10 +304,10 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             </div>
             <div onClick={this.overlayClick} className={style.overlay}/>
             <div className={style.attachActions} onClick={this.overlayClick}>
-              <div>
+              <div onClick={this.selectFile(true)}>
                 <IcoN size={24} name={'camera24'}/>
               </div>
-              <div>
+              <div onClick={this.selectFile(false)}>
                 <IcoN size={24} name={'attach24'}/>
               </div>
               <div onClick={this.attachTypeSelect}>
@@ -305,6 +327,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                         items={this.state.attachments}
                         onItemsChanged={this.handleAttachmentsChange}
         />
+        <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{ display: 'none' }} />
       </div>
     );
   }
