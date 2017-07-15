@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const style = require('./navbar.css');
 import {IcoN} from 'components';
-import {browserHistory} from 'react-router';
+import {browserHistory, Link} from 'react-router';
 
 interface INavbarProps {
   sidebarOpen: () => void;
@@ -48,9 +48,9 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>
           <IcoN size={32} name="bell24"/>
         </a>
-        <a onClick={this.props.composeOpen}>
+        <Link to="/compose">
           <IcoN size={24} name="compose24"/>
-        </a>
+        </Link>
       </div>
     );
   }

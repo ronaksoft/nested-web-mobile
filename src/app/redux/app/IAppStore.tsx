@@ -4,6 +4,7 @@ import INotificationCountRequest from '../../api/notification/interfaces/INotifi
 import IPost from '../../api/post/interfaces/IPost';
 import ISidebarPlace from '../../api/place/interfaces/ISidebarPlace';
 import IUnreadPlace from '../../api/place/interfaces/IUnreadPlace';
+import IComposeState from 'api/post/interfaces/IComposeState';
 
 export interface IAppStore {
   isSocketConnect: boolean;
@@ -16,9 +17,10 @@ export interface IAppStore {
   sidebarPlaces: ISidebarPlace[];
   sidebarPlacesUnreads: IUnreadPlace;
   currentPost: IPost | null;
+  draft: IComposeState | null;
 }
 
 export interface IAppAction {
   type: string;
-  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean;
+  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean | IComposeState;
 }

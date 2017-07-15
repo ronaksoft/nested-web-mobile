@@ -14,6 +14,8 @@ const style = require('./attachmentList.css');
 
 interface IProps {
   file?: File;
+  items: IAttachment[];
+  onItemsChanged: (items: IAttachment[]) => void;
 }
 
 interface IState {
@@ -40,12 +42,26 @@ class AttachmentList extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      items: [],
+      items: props.items.map(this.createItem),
       isExpanded: true,
     };
 
     this.uploads = [];
     this.handleRemove = this.handleRemove.bind(this);
+  }
+
+  /**
+   * Create an AttachmentItem using the provided Attachment model
+   *
+   * @private
+   * @memberof AttachmentList
+   */
+  private createItem = (attachment: IAttachment): IAttachmentItem => {
+    return {
+      id: Unique.get(),
+      mode: Mode.VIEW,
+      model: attachment,
+    };
   }
 
   /**
@@ -168,6 +184,8 @@ class AttachmentList extends React.Component<IProps, IState> {
     item.model = attachment;
     item.mode = Mode.VIEW;
 
+    this.props.onItemsChanged(this.state.items.map((i) => i.model));
+
     this.setState({
       items: this.state.items,
     });
@@ -222,6 +240,9 @@ class AttachmentList extends React.Component<IProps, IState> {
         this.uploads.splice(uploadIndex, 1);
       }
       this.state.items.splice(index, 1);
+
+      this.props.onItemsChanged(this.state.items.map((i) => i.model));
+
       this.setState({
         items: this.state.items,
       });
