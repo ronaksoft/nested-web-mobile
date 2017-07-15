@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {Button} from 'antd';
 import Store from 'services/utils/store';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import Mode from './mode';
+import {IcoN} from 'components';
 import {Progress} from 'antd';
 
 interface IProps {
@@ -54,54 +54,50 @@ class AttachmentItem extends React.Component<IProps, IState> {
 
     return (
       <div className={style.item}>
-        <span className={style.picture}>
+        <span className={style.thumb}>
           {
             this.props.item.mode === Mode.UPLOAD
               ? (
                   <img
                       src={this.props.picture}
                       alt={this.props.item.name}
-                      style={{width: 64, height: 64}}
+                      style={{width: 40, height: 40}}
                   />
                 )
               : (
                   <img
                       src={Store.getViewUrl(this.props.item.model.thumbs.x64)}
                       alt={this.props.item.model.name}
-                      style={{width: 64, height: 64}}
+                      style={{width: 40, height: 40}}
                   />
                 )
           }
         </span>
-        <span className={style.name}>
-          {
-            this.props.item.mode === Mode.UPLOAD
-              ? this.props.item.name
-              : this.props.item.model.name
-          }
-        </span>
-        {
-          this.props.item.mode === Mode.UPLOAD &&
-          (
-            <div className={style.progress}>
-              <Progress percent={this.state.progress}
-                        strokeWidth={5}
-                        showInfo={false}
-                        status={this.props.item.failed || this.props.item.aborted ? 'exception' : 'active'}
-                        width={300}
-              />
-            </div>
-          )
-        }
-        <span className={style.remove}>
-          <Button onClick={handleRemoveClick}>
+        <div className={style.atachmentDetail}>
+          <span className={style.name}>
             {
-              this.props.item.uploading
-              ? 'Abort'
-              : 'Remove'
+              this.props.item.mode === Mode.UPLOAD
+                ? this.props.item.name
+                : this.props.item.model.name
             }
-          </Button>
-        </span>
+          </span>
+          {
+            this.props.item.mode === Mode.UPLOAD &&
+            (
+              <div className={style.progress}>
+                <Progress percent={this.state.progress}
+                          strokeWidth={3}
+                          showInfo={false}
+                          className={style.progressLine}
+                          status={this.props.item.failed || this.props.item.aborted ? 'exception' : 'active'}
+                />
+              </div>
+            )
+          }
+          <div className={style.remove} onClick={handleRemoveClick}>
+            <IcoN size={24} name="xcross24"/>
+          </div>
+        </div>
       </div>
     );
   }

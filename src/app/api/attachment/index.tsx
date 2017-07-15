@@ -1,4 +1,4 @@
-import UploadType from './UploadType';
+import UploadType from './constants/UploadType';
 import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
 import Api from 'api';
 import Configuration from 'config';

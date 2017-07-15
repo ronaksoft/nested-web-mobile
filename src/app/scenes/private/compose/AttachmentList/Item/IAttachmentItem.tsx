@@ -4,7 +4,7 @@ import IProgress from '../IProgress';
 
 /**
  * the interface is used to generate Items of AttachmentList
- * 
+ *
  * @interface IAttachmentItem
  */
 interface IAttachmentItem {

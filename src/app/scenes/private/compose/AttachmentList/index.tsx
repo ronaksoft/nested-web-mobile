@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Item from './Item';
-import {Progress, Button} from 'antd';
+import {Progress} from 'antd';
+import {IcoN} from 'components';
 import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
 import AttachmentApi from 'api/attachment';
@@ -312,23 +313,35 @@ class AttachmentList extends React.Component<IProps, IState> {
     return (
       <div className={style.AttachmentList}>
         <div className={style.AttachmentListTop}>
-          <div>
-            <Button onClick={this.toggleView}>{this.state.isExpanded ? 'Collapse' : 'Expand'}</Button>
-          </div>
-          <div>
-            <Progress percent={totalProgress} strokeWidth={5} showInfo={false} />
+          <div className={style.totallProgress}>
+            <Progress percent={totalProgress} strokeWidth={3} showInfo={false} />
           </div>
           {
             isUploading && (
-              <div>
+              <span>
                 {
                   inProgressCount === 1
                     ? `One item is uploading ${totalProgress}%`
                     : `${inProgressCount} attachments are uploading ${totalProgress}%`
                 }
-              </div>
+              </span>
             )
           }
+          {
+            !isUploading && (
+              <span>
+                {
+                  this.state.items.length === 1
+                    ? `One item is uploaded.`
+                    : `${this.state.items.length} attachments are uploaded.`
+                }
+              </span>
+            )
+          }
+          <div className={[style.attachListAnchor, this.state.isExpanded ? style.expanded : null].join(' ')}
+          onClick={this.toggleView}>
+            <IcoN size={24} name="arrow16"/>
+          </div>
         </div>
         <div>
           {this.state.isExpanded && items}
