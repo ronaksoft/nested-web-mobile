@@ -1,3 +1,86 @@
 .postCard {
   border-bottom: 1px solid rgba(50,61,71,.16);
 }
+.postHead {
+  padding: 12px 24px 12px 16px;
+  display: flex;
+  align-items: center;
+  line-height: 21px;
+  font-size: 14px;
+  color: rgba(50,61,71,.72);
+  position: relative;
+}
+.postHead p{
+  flex: none;
+}
+.postHead span,
+.postHead p{
+  display: flex;
+  line-height: 21px;
+  font-size: 14px;
+  padding-left: 6px;
+  color: rgba(50,61,71,.72);
+}
+.postHead span{
+  width: 100%;
+}
+.postPin,
+.postPinned{
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotateZ(90deg);
+  transform-origin: center center;
+}
+.postPin {
+  opacity: .16;
+}
+.postBody {
+  padding: 0 24px;
+}
+.postBody h3 {
+  color: rgba(50,61,71,1);
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.postBody p{
+  color: rgba(50,61,71,.72);
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+.postBody .postAttachs {
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 18px;
+}
+.postBody .postAttachs i{
+  margin-right: 6px;
+  opacity: .72;
+}
+.postBody .postPlaces{
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 24px;
+  color: rgba(50,61,71,.40);
+  flex-wrap: wrap;
+  display: flex;
+}
+.postBody .postFooter{
+  margin-top: 12px;
+  margin-bottom: 16px;
+  opacity: .64;
+  display: flex;
+}
+.postBody .postFooter p{
+  font-size: 13px;
+  line-height: 18px;
+  height: 18px;
+  margin: 0
+}
+.postBody .postFooter i{
+  margin-right: 6px;
+  margin-top: 1px;
+}
