@@ -51,4 +51,5 @@ body {
 }
 .container {
   padding-top: 56px;
+  min-height: 100%;
 }

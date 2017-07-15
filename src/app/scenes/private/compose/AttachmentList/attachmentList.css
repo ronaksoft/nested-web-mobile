@@ -1,13 +1,41 @@
 .AttachmentList {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(100%);
+  /*transform: translateY(100%);*/
   background-color: white;
   flex-direction: column;
+  border-top: 1px solid rgba(50,61,71,.16);
 }
 .AttachmentListTop {
   height: 48px;
   width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.AttachmentListTop span{
+  width: 100%;
+  padding-left: 16px;
+  font-size: 14px;
+  line-height: 19px;
+  color: rgba(50,61,71,.72);
+}
+.totallProgress {
+  position: absolute;
+  left: 0;
+  top: -7px;
+  right: 0;
+}
+.attachListAnchor {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+.expanded i{
+  transform: rotateZ(180deg);
 }

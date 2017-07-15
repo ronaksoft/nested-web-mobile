@@ -112,10 +112,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.attachments = value;
   }
 
-  private closeCompose = () => {
-    console.log('close compose');
-  }
-
   private composeOption = () => {
     console.log('compose options');
     this.setState({
@@ -249,7 +245,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     return (
       <div className={style.compose}>
         <div className={styleNavbar.navbar}>
-          <a onClick={this.closeCompose}>
+          <a onClick={this.leave}>
             <IcoN size={24} name="xcross24"/>
           </a>
           <div className={styleNavbar.filler}/>
@@ -311,8 +307,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                         items={this.state.attachments}
                         onItemsChanged={this.handleAttachmentsChange}
         />
-        <Button type="primary" onClick={this.send}>Send</Button>
-        <Button style={{width: 128}} onClick={this.leave}>Leave</Button>
+        {/*<Button style={{width: 128}} onClick={this.leave}>Leave</Button>*/}
       </div>
     );
   }
