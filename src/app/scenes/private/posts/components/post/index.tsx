@@ -140,7 +140,8 @@ class Post extends React.Component<IProps, IState> {
             {TimeUntiles.dynamic(post.timestamp)}
           </p>
           {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
-          <div className={post.pinned ? style.postPinned : style.postPin} onClick={this.toggleBookmark}>
+          <div className={post.pinned ? style.postPinned : style.postPin}
+               onClick={this.toggleBookmark.bind(this, '')}>
             {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
