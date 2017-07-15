@@ -10,6 +10,9 @@
   color: rgba(50,61,71,.72);
   position: relative;
 }
+.postHead > i{
+  margin-left: 6px
+}
 .postHead p{
   flex: none;
 }

@@ -132,10 +132,14 @@ class Post extends React.Component<IProps, IState> {
       <div className={style.postCard}>
         <div className={style.postHead}>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
-          {post.reply_to && <IcoN size={16} name={'replied16'}/>}
-          {post.forward_from && <IcoN size={16} name={'forward16'}/>}
+          {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
+          {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
           {post.sender && <FullName user_id={post.sender._id}/>}
-          {post.email_sender && `${post.email_sender._id}`}
+          {post.email_sender && (
+            <span>
+              {`${post.email_sender._id}`}
+            </span>
+          )}
           <p>
             {TimeUntiles.dynamic(post.timestamp)}
           </p>
