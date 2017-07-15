@@ -5,15 +5,13 @@ import CONFIG from '../../../../config';
 
 interface IProps {
   attachment: IPostAttachment;
-  fullWidth?: boolean;
-  onclick: (attachment: IPostAttachment) => void;
 }
 
 interface IState {
-  attachment: IPostAttachment;
+  urlSrc: string;
 }
 
-export default class VideoThumbnail extends React.Component<IProps, IState> {
+export default class ImageThumbnail extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
   }
@@ -22,13 +20,12 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
     const {attachment} = this.props;
     const src =
       `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-      `${this.props.fullWidth ? attachment.thumbs.pre : attachment.thumbs.x128}`;
+      `${attachment.thumbs.pre}`;
     return (
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
+      <li>
         <img src={src}
              style={{
-               width: this.props.fullWidth ? '100%' : 'inherit',
-               height: this.props.fullWidth ? 'inherit' : '96px',
+               width: '100%',
              }}/>
       </li>
     );

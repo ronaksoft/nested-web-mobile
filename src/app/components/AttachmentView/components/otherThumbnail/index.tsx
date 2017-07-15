@@ -3,7 +3,6 @@ import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
 
 interface IProps {
   attachment: IPostAttachment;
-  onclick: (attachment: IPostAttachment) => void;
 }
 
 interface IState {
@@ -18,7 +17,7 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
   public render() {
     const {attachment} = this.props;
     return (
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
+      <li key={attachment._id}>
         {attachment.filename}
         {attachment.type}
       </li>
