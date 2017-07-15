@@ -10,6 +10,7 @@ interface IComposeState {
   loading: boolean;
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
+   composeOption: boolean;
 }
 
 export default IComposeState;

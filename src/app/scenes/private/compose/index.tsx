@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {Input, Icon, Button, Modal} from 'antd';
-import { Suggestion } from 'components';
+import {Input, Button, Modal} from 'antd';
+import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
-const style = require('./compose.css');
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
@@ -13,6 +12,8 @@ import {connect} from 'react-redux';
 import {IAttachment} from 'api/attachment/interfaces';
 import {IChipsItem} from 'components/Chips';
 const confirm = Modal.confirm;
+const style = require('./compose.css');
+const styleNavbar = require('../../../components/navbar/navbar.css');
 
 interface IParams {
   replyId?: string;
@@ -42,6 +43,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       loading: false,
       body: '',
       subject: '',
+      composeOption: false,
     };
     this.state = this.props.draft || defaultState;
   }
@@ -110,6 +112,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.attachments = value;
   }
 
+  private closeCompose = () => {
+    console.log('close compose');
+  }
+
+  private composeOption = () => {
+    console.log('compose options');
+    this.setState({
+      composeOption: !this.state.composeOption,
+    });
+  }
+
   /**
    * keep reference of Suggestion component
    *
@@ -120,6 +133,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.targets = value;
   }
 
+  private allowComment = () => {
+    this.setState({
+      allowComment: !this.state.allowComment,
+    });
+  }
+  
   /**
    * Validate and send the post
    *
@@ -229,6 +248,28 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public render() {
     return (
       <div className={style.compose}>
+        <div className={styleNavbar.navbar}>
+          <a onClick={this.closeCompose}>
+            <IcoN size={24} name="xcross24"/>
+          </a>
+          <div className={styleNavbar.filler}/>
+          <a onClick={this.composeOption.bind(this, '')}>
+            <IcoN size={16} name="gear16"/>
+          </a>
+          <a>
+            <Button type="primary" onClick={this.send}>Share</Button>
+          </a>
+        </div>
+        <div className={[style.composeOption, this.state.composeOption ? style.opened : null].join(' ')}>
+          <ul>
+            <li>
+              <label htmlFor="">
+                Allow Comments
+              </label>
+              <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment} />
+            </li>
+          </ul>
+        </div>
         <Suggestion ref={this.referenceTargets}
                     selectedItems={this.state.targets}
                     onSelectedItemsChanged={this.handleTargetsChanged}
@@ -241,11 +282,21 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                 value={this.state.subject}
           />
           <div onClick={this.attachTypeSelect}
-          className={this.state.attachModal ? style.attachmentBtn + ' ' + style.attachActive : style.attachmentBtn}>
-            <Icon type="link" />
+          className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
+            <div onClick={this.attachTypeSelect}>
+              <IcoN size={24} name={'attach24'}/>
+            </div>
             <div onClick={this.overlayClick} className={style.overlay}/>
             <div className={style.attachActions} onClick={this.overlayClick}>
-              <Icon type="rocket" /><Icon type="car" /><Icon type="close"  onClick={this.attachTypeSelect}/>
+              <div>
+                <IcoN size={24} name={'camera24'}/>
+              </div>
+              <div>
+                <IcoN size={24} name={'attach24'}/>
+              </div>
+              <div onClick={this.attachTypeSelect}>
+                <IcoN size={24} name={'xcross24'}/>
+              </div>
             </div>
           </div>
         </div>

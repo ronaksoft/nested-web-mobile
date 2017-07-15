@@ -42,6 +42,16 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     this.setState(state);
   }
 
+  public closeAll = () => {
+    let state;
+    state = {
+      titlePopup: false,
+      iconIPopup: false,
+      iconIIPopup: false,
+    };
+    this.setState(state);
+  }
+
   private renderLeftItems = () => {
     const LeftItemMenuDOM = [];
     this.props.leftItem.menu.forEach((menuItem, index) => {
@@ -145,7 +155,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
         }
         {rightMenu.rightMenuItemsDOMS}
         {showOverlay &&
-        <div className={style.overlay}/>
+        <div onClick={this.closeAll.bind(this, '')} className={style.overlay}/>
         }
       </div>
     );

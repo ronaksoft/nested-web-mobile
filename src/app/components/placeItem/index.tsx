@@ -3,19 +3,14 @@ import IPlace from '../../api/place/interfaces/IPlace';
 import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
-import {Row, Col} from 'antd';
 import {IcoN} from 'components';
 import AAA from '../../services/aaa/index';
 import CONFIG from '../../config';
 
 const style = require('./placeItem.css');
 const settings = {
-  textColor: '#ffffff',
   height: 24,
   width: 24,
-  fontSize: 11,
-  fontWeight: 400,
-  fontFamily: 'HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica, Arial,Lucida Grande, sans-serif',
   radius: 0,
 };
 
@@ -80,28 +75,13 @@ class PlaceItem extends React.Component<IProps, IState> {
 
     const sizePX = size.toString(10) + 'px';
 
-    // const ImageHolder = {
-    //   width: sizePX,
-    //   height: sizePX,
-    //   display: 'flex',
-    //   flex: 'none',
-    //   borderRadius,
-    // //   position: 'relative',
-    // //   justifyContent: 'center',
-    // };
-
-    const innerStyle = {
-      lineHeight: sizePX,
-      display: 'flex',
-      borderRadius,
-    };
-
     const imageStyle = {
       display: 'flex',
       borderRadius,
       margin: '0!important',
       width: sizePX,
       height: sizePX,
+      oveflow: 'hidden',
     };
 
     if (size) {
@@ -121,15 +101,9 @@ class PlaceItem extends React.Component<IProps, IState> {
     }
 
     return (
-      <Row className="place-row" type="flex" align="middle">
-        <Col span={3}>
-          <div className="PlaveView" style={style}>
-            <div className="PlaceView--inner" style={innerStyle}>
-              {img}
-            </div>
-          </div>
-        </Col>
-      </Row>
+      <div style={imageStyle}>
+        {img}
+      </div>
     );
   }
 }
