@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {Input, Icon, Button} from 'antd';
+import {Input, Button, Switch} from 'antd';
 import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
-const style = require('./compose.css');
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
+const style = require('./compose.css');
+const styleNavbar = require('../../../components/navbar/navbar.css');
 
 interface IParams {
   replyId?: string;
@@ -27,6 +28,7 @@ interface IComposeState {
   loading: boolean;
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
+  composeOption: boolean;
 }
 class Compose extends React.Component<IComposeProps, IComposeState> {
   private attachments: AttachmentList;
@@ -39,6 +41,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       targets: [],
       allowComment: true,
       loading: false,
+      composeOption: false,
     };
   }
 
@@ -88,8 +91,25 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.attachments = value;
   }
 
+  private closeCompose = () => {
+    console.log('close compose');
+  }
+
+  private composeOption = () => {
+    console.log('compose options');
+    this.setState({
+      composeOption: !this.state.composeOption,
+    });
+  }
+
   private referenceTargets = (value: Suggestion) => {
     this.targets = value;
+  }
+
+  private allowComment = () => {
+    this.setState({
+      allowComment: !this.state.allowComment,
+    });
   }
 
   private send = () => {
@@ -145,6 +165,28 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public render() {
     return (
       <div className={style.compose}>
+        <div className={styleNavbar.navbar}>
+          <a onClick={this.closeCompose}>
+            <IcoN size={24} name="xcross24"/>
+          </a>
+          <div className={styleNavbar.filler}/>
+          <a onClick={this.composeOption.bind(this, '')}>
+            <IcoN size={16} name="gear16"/>
+          </a>
+          <a>
+            <Button type="primary" onClick={this.send}>Share</Button>
+          </a>
+        </div>
+        <div className={[style.composeOption, this.state.composeOption ? style.opened : null].join(' ')}>
+          <ul>
+            <li>
+              <label htmlFor="">
+                Allow Comments
+              </label>
+              <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment} />
+            </li>
+          </ul>
+        </div>
         <Suggestion ref={this.referenceTargets}
                     selectedItems={[]}
                     unselectSelectedRecipient={this.state.unselectSelectedRecipient}
@@ -172,7 +214,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         </div>
         <textarea onFocus={this.bodyFocus} placeholder="Write something…" onChange={this.handleBodyChange} />
         <AttachmentList ref={this.referenceAttachments}/>
-        <Button type="primary" onClick={this.send}>Send</Button>
+        
       </div>
     );
   }

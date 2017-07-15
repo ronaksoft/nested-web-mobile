@@ -20,7 +20,6 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   }
 
   private goToNotification() {
-    console.log('aaaaaa');
     if (this.state.notificationOpen) {
       browserHistory.push('/feed');
     } else {
@@ -32,6 +31,8 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   }
 
   public componentWillMount() {
+
+    // FIXME : maybe its nor false ! on go straight to the notif
     this.setState({
       notificationOpen: false,
     });

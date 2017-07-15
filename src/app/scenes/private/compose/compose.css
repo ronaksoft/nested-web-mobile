@@ -9,6 +9,35 @@ main > div {
   flex-direction: column;
   height: 100%;
 }
+.compose >div:first-child a:last-child {
+  width: 70px
+}
+.composeOption {
+  background-color: #F0F0F0;
+  position: fixed;
+  left: 0;
+  top: 56px;
+  z-index: 2;
+  right: 0;
+  display: none;
+}
+.composeOption.opened {
+  display: block;
+}
+.composeOption ul{
+  padding: 8px 0;
+  flex-direction: column;
+}
+.composeOption li{
+  padding: 0 16px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+.composeOption label{
+  width: 100%;
+  display: flex
+}
 .subject {
   display: flex;
   width: 100%;
