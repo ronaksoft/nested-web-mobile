@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Input, Icon, Button} from 'antd';
-import { Suggestion } from 'components';
+import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
 const style = require('./compose.css');
 import ISendRequest from 'api/post/interfaces/ISendRequest';
@@ -152,11 +152,21 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         <div className={style.subject}>
           <Input onFocus={this.subjectFocus} placeholder="Add a Title…" onChange={this.handleSubjectChange}/>
           <div onClick={this.attachTypeSelect}
-          className={this.state.attachModal ? style.attachmentBtn + ' ' + style.attachActive : style.attachmentBtn}>
-            <Icon type="link" />
+          className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
+            <div onClick={this.attachTypeSelect}>
+              <IcoN size={24} name={'attach24'}/>
+            </div>
             <div onClick={this.overlayClick} className={style.overlay}/>
             <div className={style.attachActions} onClick={this.overlayClick}>
-              <Icon type="rocket" /><Icon type="car" /><Icon type="close"  onClick={this.attachTypeSelect}/>
+              <div>
+                <IcoN size={24} name={'camera24'}/>
+              </div>
+              <div>
+                <IcoN size={24} name={'attach24'}/>
+              </div>
+              <div onClick={this.attachTypeSelect}>
+                <IcoN size={24} name={'xcross24'}/>
+              </div>
             </div>
           </div>
         </div>

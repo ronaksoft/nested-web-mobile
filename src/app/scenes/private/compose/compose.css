@@ -64,6 +64,7 @@ main > div {
   top: 0;
   bottom: 0;
   right: 0;
+  z-index: 1;
   background-color: rgba(50,61,71,.40)
 }
 
@@ -79,7 +80,7 @@ main > div {
   width: 200px;
   background-color: white;
   box-shadow: 0 8px 32px rgba(0,0,0,.64);
-  transform: translateX(-64px);
+  transform: translateX(-85px);
   border-radius: 8px;
   flex: none;
   padding: 0 8px;
