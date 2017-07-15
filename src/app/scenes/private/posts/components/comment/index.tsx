@@ -102,7 +102,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.hasBeforeComments = false;
         }
 
-        this.setScrollPositionOnId(this.state.comments[this.state.comments.length - 1].id);
+        this.setScrollPositionOnId(this.state.comments[this.state.comments.length - 1]._id);
 
         this.setState({
           comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
@@ -156,7 +156,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
           disabled={this.state.sendingComment}
           onPressEnter={this.addComment.bind(this, '')}/>
         {this.state.comments.map((comment: IComment) => (
-          <div>
+          <div id={comment._id}>
             <UserAvatar user_id={comment.sender._id} size={32} borderRadius={'16px'}/>
             <b><FullName user_id={comment.sender._id}/></b>
             <div>{comment.text}</div>

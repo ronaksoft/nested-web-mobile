@@ -15,7 +15,7 @@ export default function commentReducer(state = initialState, action?: ICommentAc
 
       const comments = Immutable.getIn(state, ['comments']);
       const indexOfComment: number = comments.findIndex((a: IComment) => {
-        return a.id === action.payload.id;
+        return a._id === action.payload._id;
       });
 
       if (indexOfComment === -1) {

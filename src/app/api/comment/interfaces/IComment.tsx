@@ -1,7 +1,7 @@
 import IUser from '../../account/interfaces/IUser';
 
 interface IComment {
-  id: string;
+  _id: string;
   text: string;
   timestamp: number;
   senderId: string;

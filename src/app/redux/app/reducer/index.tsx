@@ -86,7 +86,7 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         sidebarPlacesUnreads: [],
       });
 
-case ActionTypes.APP_CURRENT_POST_SET:
+    case ActionTypes.APP_CURRENT_POST_SET:
       return Immutable.merge(state, {
         currentPost: action.payload,
       });
@@ -95,7 +95,6 @@ case ActionTypes.APP_CURRENT_POST_SET:
       return Immutable.merge(state, {
         currentPost: null,
       });
-
 
     default :
       return state;

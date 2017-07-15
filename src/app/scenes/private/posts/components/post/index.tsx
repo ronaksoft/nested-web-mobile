@@ -7,6 +7,7 @@ import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
+
 const style = require('./post.css');
 
 interface IOwnProps {
@@ -37,7 +38,7 @@ class Post extends React.Component<IProps, IState> {
     this.state = {post: this.props.post};
   }
 
-public componentDidMount() {
+  public componentDidMount() {
     if (this.props.post) {
       this.setState({
         post: this.props.post ? this.props.post : null,
@@ -72,8 +73,7 @@ public componentDidMount() {
     }
   }
 
-
- private toggleBookmark() {
+  private toggleBookmark() {
 
     // change pinned of post
     let post;
@@ -162,7 +162,7 @@ public componentDidMount() {
                 return <span>{place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>;
               }
             })}
-            {post.post_places.length >= 2 && <span>+{post.post_places.length - 2}</span>}
+            {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
           </div>
 
           <div className={style.postFooter}>
@@ -172,7 +172,7 @@ public componentDidMount() {
           </div>
         </div>
         {!this.props.post &&
-          <CommentsBoard post_id={this.state.post._id}/>
+        <CommentsBoard post_id={this.state.post._id}/>
         }
       </div>
     );
