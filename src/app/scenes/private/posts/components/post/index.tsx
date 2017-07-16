@@ -182,7 +182,7 @@ class Post extends React.Component<IProps, IState> {
           )}
           {post.post_attachments.length > 0 && this.props.post && (
             <div className={style.postAttachs}>
-              <IcoN size={16} name={'attach16'}/>
+              <IcoN size={16} name={'attach24'}/>
               {post.post_attachments.length}
               {post.post_attachments.length === 1 && <span>Attachment</span>}
               {post.post_attachments.length > 1 && <span>Attachments</span>}

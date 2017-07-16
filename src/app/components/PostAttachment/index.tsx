@@ -5,6 +5,8 @@ import ImageThumbnail from 'components/PostAttachment/components/imageThumbnail'
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
 
+const style = require('./postattachment.css');
+
 interface IProps {
   attachments: IPostAttachment[];
 }
@@ -20,7 +22,7 @@ export default class PostAttachment extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div>
+      <div className={style.attachmentBar}>
         <ul>
           {this.props.attachments.map((attachment: IPostAttachment) => {
             switch (attachment.type) {

@@ -49,18 +49,21 @@
 .postPin {
   opacity: .16;
 }
-.postBody {
-  padding: 0 24px;
-}
+/*.postBody {
+}*/
 .postBody h3{
   color: rgba(50,61,71,1);
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
   margin-bottom: 2px;
+  padding: 0 24px;
 }
 .postView .postBody h3{
   margin-top: 12px
+}
+.postBody > div:first-of-type {
+  padding: 0 24px;
 }
 .postBody p{
   color: rgba(50,61,71,.72);
@@ -72,6 +75,7 @@
   font-size: 13px;
   margin-top: 8px;
   line-height: 18px;
+  padding: 0 24px;
 }
 .postBody .postAttachs i{
   margin-right: 6px;
@@ -84,7 +88,8 @@
   color: rgba(50,61,71,.40);
   flex-wrap: wrap;
   display: flex;
-  margin-bottom: 20px
+  margin-bottom: 20px;
+  padding: 0 24px;
 }
 .postBody .postPlaces a{
   font-weight: 300;
@@ -95,6 +100,7 @@
   margin-top: 12px;
   margin-bottom: 16px;
   opacity: .64;
+  padding: 0 24px;
   display: flex;
 }
 .postBody .postFooter p{
