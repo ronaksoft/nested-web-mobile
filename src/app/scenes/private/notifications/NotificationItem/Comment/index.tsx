@@ -29,18 +29,26 @@ class Comment extends React.Component <IProps, any> {
     }
 
     return (
-      <div className={style.mention}>
-        <Link to={`message/${notification.post_id}`}>
-          <div className={style.notifWrapper}>
-            <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
-            {others &&
-            others.map((userId: string, index: number) => {
-              if (index < 3) {
-                return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
-              }
-            })
-            }
-            <div className={style.notifContainer}>
+      <Link to={`message/${notification.post_id}`} className={style.mention}>
+        <div className={style.notifWrapper}>
+          <div>
+            <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            <div>
+              <div className={style.notifContainer}>
+                {others &&
+                others.map((userId: string, index: number) => {
+                  if (index < 4) {
+                    return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
+                  } else {
+                    return (
+                      <div>
+                        <span>+{index - 3}</span>
+                      </div>
+                    );
+                  }
+                })
+                }
+              </div>
               <div className={style.notifData}>
                 <b><FullName user_id={this.props.notification.actor_id}/> </b>
                 {others &&
@@ -56,11 +64,11 @@ class Comment extends React.Component <IProps, any> {
                              post_id={this.props.notification.post_id}/>.
                 <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
               </div>
-              <IcoN size={16} name={'comment24'}/>
             </div>
+            <IcoN size={16} name={'comment24'}/>
           </div>
-        </Link>
-      </div>
+        </div>
+      </Link>
     );
   }
 }

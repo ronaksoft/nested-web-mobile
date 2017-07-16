@@ -42,3 +42,9 @@
 .notifData{
   flex: 1;
 }
+
+/*.notifMultiAvatar{*/
+  /*display: inline-flex;*/
+  /*flex-direction: column;*/
+  /*flex: 1;*/
+/*}*/

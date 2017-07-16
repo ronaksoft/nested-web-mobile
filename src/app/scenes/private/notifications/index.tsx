@@ -88,7 +88,7 @@ class Notifications extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Hammer onSwipe={this.onSwipe.bind(this)} options={{
+        <Hammer onSwipe={this.onSwipe.bind(this, '')} options={{
           preventDefault: true,
         }}>
           <div>
