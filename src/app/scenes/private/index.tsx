@@ -1,5 +1,11 @@
 import * as React from 'react';
-import Posts from './posts';
+import Feed from './posts/feed';
+import FeedByActivity from './posts/feedByActivity';
+import Bookmarked from './posts/bookmarked';
+import Shared from './posts/shared';
+import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
+import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
+import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';
 import Notifications from './notifications';
 import {Activities} from './activities';
 import {Files} from './files';
@@ -89,6 +95,7 @@ class Private extends React.Component<IProps, IState> {
     this.getNotificationCounts();
 
     this.unListenChangeRoute = browserHistory.listen(() => {
+      this.closeSidebar();
       this.getNotificationCounts();
     });
   }
@@ -153,4 +160,17 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
-export {Posts, Activities, Files, Notifications, Compose, Signout};
+export {
+  Feed,
+  FeedByActivity,
+  Bookmarked,
+  Shared,
+  PlacePostsAllSortedByActivity,
+  PlacePostsAllSortedByRecent,
+  PlacePostsUnreadSortedByRecent,
+  Activities,
+  Files,
+  Notifications,
+  Compose,
+  Signout
+};

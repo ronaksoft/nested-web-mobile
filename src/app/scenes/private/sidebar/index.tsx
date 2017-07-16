@@ -239,11 +239,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       const showCase = !place.isChildren || place.expanded;
       if (showCase) {
         const placeDom = (
-          <SidebarItem key={place.id + i + 'a'} place={place}
-                       unreads={this.state.sidebarPlacesUnreads.placesUnreadCounts[place.id]}
-                       childrenUnread={this.state.sidebarPlacesUnreads.placesUnreadChildrens[place.id]}
-                       openChild={this.toggleChildren.bind(this, place.id, place.depth)}
-                       onClick={this.props.closeSidebar.bind(this, '')}/>
+          <SidebarItem
+            key={place.id + i + 'a'}
+            place={place}
+            unreads={this.state.sidebarPlacesUnreads.placesUnreadCounts[place.id]}
+            childrenUnread={this.state.sidebarPlacesUnreads.placesUnreadChildrens[place.id]}
+            openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
         );
         placeDoms.push(placeDom);
       }
@@ -256,19 +257,19 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           </div>
           <ul className={style.sidebarActions}>
             <li>
-              <Link to={`/feed`} onClick={this.props.closeSidebar.bind(this, '')}>
+              <Link to={`/feed`}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             <li>
-              <Link to={`/bookmark`} onClick={this.props.closeSidebar.bind(this, '')}>
+              <Link to={`/bookmarks`}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             <li>
-              <Link to={`/shared`} onClick={this.props.closeSidebar.bind(this, '')}>
+              <Link to={`/shared`}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -288,13 +289,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               Profile and Settings
             </li>*/}
             <li>
-              <a href={`http://help.nested.me`} target="_blank" onClick={this.props.closeSidebar.bind(this, '')}>
+              <a href={`http://help.nested.me`} target="_blank">
                 <IcoN size={16} name={'ask16White'}/>
                 Help Center
               </a>
             </li>
             <li>
-              <Link to={`/signout`} onClick={this.props.closeSidebar.bind(this, '')}>
+              <Link to={`/signout`}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>

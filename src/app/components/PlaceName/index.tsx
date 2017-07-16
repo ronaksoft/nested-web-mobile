@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 interface IOwnProps {
   place_id: string;
 }
+
 interface IProps {
   place_id: string;
   places: IPlace[];
@@ -25,9 +26,9 @@ class PlaceName extends React.Component<IProps, IState> {
     };
   }
 
-  public componentDidMount() {
+  private setPlace(placeId) {
     const place = this.props.places.filter((place: IPlace) => {
-      return place._id === this.props.place_id;
+      return place._id === placeId;
     });
 
     if (place.length > 0) {
@@ -36,7 +37,7 @@ class PlaceName extends React.Component<IProps, IState> {
       });
     } else {
       const placeApi = new PlaceApi();
-      placeApi.get({place_id: this.props.place_id})
+      placeApi.get({place_id: placeId})
         .then((p: IPlace) => {
           this.setState({
             place: p,
@@ -44,6 +45,14 @@ class PlaceName extends React.Component<IProps, IState> {
           this.props.placeAdd(p);
         });
     }
+  }
+
+  public componentWillReceiveProps(newProps: IProps) {
+    this.setPlace(newProps.place_id);
+  }
+
+  public componentDidMount() {
+    this.setPlace(this.props.place_id);
   }
 
   public render() {
@@ -58,6 +67,7 @@ class PlaceName extends React.Component<IProps, IState> {
     );
   }
 }
+
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   places: store.places.places,
   place_id: ownProps.place_id,

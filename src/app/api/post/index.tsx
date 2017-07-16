@@ -47,6 +47,57 @@ export default class PostApi {
     });
   }
 
+  public getFavoritePostsSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    return this.api.request({
+      cmd: 'account/get_favorite_posts',
+      data: params,
+    });
+  }
+
+  public getPlacePostsAllSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    params.by_update = true;
+    return this.api.request({
+      cmd: 'place/get_posts',
+      data: params,
+    });
+  }
+
+  public getPlacePostsAllSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    return this.api.request({
+      cmd: 'place/get_posts',
+      data: params,
+    });
+  }
+
+  public getPlacePostsUnreadSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    return this.api.request({
+      cmd: 'place/get_unread_posts',
+      data: params,
+    });
+  }
+
+  public getPlacePostsUnreadSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    params.by_update = true;
+    return this.api.request({
+      cmd: 'place/get_unread_posts',
+      data: params,
+    });
+  }
+
+  public getBockmarkedPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    return this.api.request({
+      cmd: 'account/get_pinned_posts',
+      data: params,
+    });
+  }
+
+  public getSentPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+    return this.api.request({
+      cmd: 'account/get_sent_posts',
+      data: params,
+    });
+  }
+
   public get(data: IGetPostRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/get',
@@ -62,7 +113,7 @@ export default class PostApi {
     });
   }
 
- public getComments(params: ICommentListRequest): Promise<any> {
+  public getComments(params: ICommentListRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/get_comments',
       data: params,

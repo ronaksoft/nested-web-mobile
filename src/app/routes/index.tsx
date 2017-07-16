@@ -1,5 +1,10 @@
 import * as React from 'react';
-import {Posts, Notifications, Activities, Files, Compose, Signout} from 'scenes/private';
+import {
+  Feed, FeedByActivity, Bookmarked, Shared,
+  PlacePostsAllSortedByActivity, PlacePostsAllSortedByRecent,
+  PlacePostsUnreadSortedByRecent,
+  Notifications, Activities, Files, Compose, Signout,
+} from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
 import {Public, Signin, Signup, NotFound} from 'scenes/public';
@@ -14,12 +19,21 @@ export default (
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route component={Private}>
-        <IndexRoute component={Posts}/>
-        <Route path="/feed" component={Posts}/>
-        <Route path="/shared" component={Posts}/>
-        <Route path="/bookmarks" component={Posts}/>
-        <Route path="/places/:placeId/messages" component={Posts}/>
-        <Route path="/places/:placeId/messages/latest-messages" component={Posts}/>
+        <IndexRoute component={Feed}/>
+        <Route path="/feed" component={Feed}/>
+        <Route path="/feed/latest-activity" component={FeedByActivity}/>
+        <Route path="/shared" component={Shared}/>
+        <Route path="/bookmarks" component={Bookmarked}/>
+
+        {/* All post sorted by activity*/}
+        <Route path="/places/:placeId/messages" component={PlacePostsAllSortedByRecent}/>
+
+        {/* All recent post */}
+        <Route path="/places/:placeId/messages/latest-activity" component={PlacePostsAllSortedByActivity}/>
+
+        {/* Unread post sorted by activity*/}
+        <Route path="/places/:placeId/unread" component={PlacePostsUnreadSortedByRecent}/>
+
         <Route path="/places/:placeId/activities" component={Activities}/>
         <Route path="/places/:placeId/files" component={Files}/>
         <Route path="/messages/latest-activity" component={Activities}/>

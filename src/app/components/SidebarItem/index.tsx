@@ -11,7 +11,6 @@ interface ISidebarItemProps {
   key: string;
   childrenUnread: boolean;
   unreads: number;
-  onClick: (place?: ISidebarPlace) => {};
 }
 
 class SidebarItem extends React.Component<ISidebarItemProps, any> {
@@ -28,7 +27,6 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
 
   public render() {
     const placeIndent = [];
-    console.log(this.props.unreads, this.props.childrenUnread);
     for (let i: number = 0; i < this.props.place.depth; i++) {
       placeIndent.push(
         <div key={this.props.place.id + i + 'b'} className={style.indent}/>,
@@ -42,7 +40,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
         {!this.props.place.isChildren &&
         <hr className={style.hrLight}/>
         }
-        <Link to={`/posts/${this.props.place.id}`} activeClassName="active" onClick={this.props.onClick.bind(this, '')}>
+        <Link to={`/places/${this.props.place.id}/messages`} activeClassName="active">
           <div className={style.place}>
             {placeIndent}
             <PlaceItem place_id={this.props.place.id} size={24} borderRadius="3px"/>

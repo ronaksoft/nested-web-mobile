@@ -2,6 +2,7 @@ import * as React from 'react';
 import ILeftItem from './ILeftItem';
 import IRightItem from './IRightItem';
 import {IcoN} from 'components';
+import {browserHistory} from 'react-router';
 
 const style = require('./OptionsMenu.css');
 
@@ -20,13 +21,21 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      titlePopup: false,
+      iconIPopup: false,
+      iconIIPopup: false,
+    };
   }
 
-  public componentWillMount() {
+  public componentDidMount() {
     this.setState({
       titlePopup: false,
       iconIPopup: false,
       iconIIPopup: false,
+    });
+    browserHistory.listen(() => {
+      this.closeAll();
     });
   }
 
@@ -57,7 +66,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     this.props.leftItem.menu.forEach((menuItem, index) => {
       LeftItemMenuDOM.push(
         <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
-        onClick={menuItem.onClick}>
+            onClick={menuItem.onClick}>
           <div>
             <IcoN size={16} name={menuItem.icon.name}/>
           </div>
@@ -84,15 +93,15 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
         childrens.push(
           // Need develops :
           <li key={menuItem.name.replace(' ', '') + item.type}
-          onClick={menuItem.onClick}
-          className={[menuItem.isChecked ? style.activeItem : null,
-          menuItem.type === 'kind' ? style.kindItem : null].join(' ')}>
+              onClick={menuItem.onClick}
+              className={[menuItem.isChecked ? style.activeItem : null,
+                menuItem.type === 'kind' ? style.kindItem : null].join(' ')}>
             {item.type === 'iconII' &&
-              <IcoN size={16} name={menuItem.icon.name}/>
+            <IcoN size={16} name={menuItem.icon.name}/>
             }
             <span>{menuItem.name}</span>
             {menuItem.isChecked &&
-              <IcoN size={16} name="heavyCheck16"/>
+            <IcoN size={16} name="heavyCheck16"/>
             }
           </li>,
         );
