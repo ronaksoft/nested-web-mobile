@@ -39,6 +39,9 @@
   line-height: 16px;
   margin-bottom: 2px;
 }
+.commentHead a:hover {
+  color: rgba(50,61,71,1);
+}
 .commentHead a{
   display: flex;
   width: 100%;

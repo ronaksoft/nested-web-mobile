@@ -24,7 +24,10 @@
   margin: 0;
   /*height: 24px;*/
 }
-.navbar a:last-child {
+.navbar a:first-child {
+  margin-left: 0;
+}
+.navbar a {
   margin-left: 16px;
 }
 .active {

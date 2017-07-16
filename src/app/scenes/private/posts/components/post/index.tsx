@@ -10,6 +10,7 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 
 const style = require('./post.css');
+const styleNavbar = require('../../../../../components/navbar/navbar.css');
 
 interface IOwnProps {
   post?: IPost;
@@ -74,6 +75,10 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  private leave = () => {
+    console.log('leave');
+  }
+
   private toggleBookmark() {
 
     // change pinned of post
@@ -131,6 +136,23 @@ class Post extends React.Component<IProps, IState> {
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
       <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
+        {postView && (
+          <div className={styleNavbar.navbar}>
+            <a onClick={this.leave}>
+              <IcoN size={24} name="xcross24"/>
+            </a>
+            <div className={styleNavbar.filler}/>
+            <a>
+              <IcoN size={24} name="forward16"/>
+            </a>
+            <a>
+              <IcoN size={24} name="reply24"/>
+            </a>
+            <a>
+              <IcoN size={24} name="more24"/>
+            </a>
+          </div>
+        )}
         <div className={style.postHead}>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
           {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
