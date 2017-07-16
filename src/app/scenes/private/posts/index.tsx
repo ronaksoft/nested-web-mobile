@@ -107,7 +107,7 @@ class Posts extends React.Component<IProps, IState> {
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/post/${post._id}`);
+    browserHistory.push(`/message/${post._id}`);
   }
 
   public render() {

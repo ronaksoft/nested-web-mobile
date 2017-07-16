@@ -7,10 +7,11 @@ import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
-import * as Hammer from 'react-hammerjs';
+import ReactPullToRefresh from 'react-pull-to-refresh';
 
 interface IState {
   notifications: INotification[];
+  trasnlateY: number;
 }
 
 interface IProps {
@@ -21,12 +22,13 @@ interface IProps {
 
 class Notifications extends React.Component<IProps, IState> {
   private requestLimit: number = 20;
-
+  private startTouchPoint: number = 0;
 // setting initial states
   constructor(props) {
     super(props);
     this.state = {
       notifications: this.props.notifications,
+      trasnlateY: 0,
     };
   }
 
@@ -77,20 +79,47 @@ class Notifications extends React.Component<IProps, IState> {
     this.getNotificationBefore(true);
   }
 
-  private onSwipe(event: any) {
-    if (event.direction === 1) {
-      this.getNotificationAfter();
-    } else if (event.direction === 3) {
-      this.getNotificationBefore(false);
-    }
+  // private onSwipe(props: any, event: any) {
+  //   console.log(event, props);
+  //   if (event.direction === 8) {
+  //     this.getNotificationAfter();
+  //   } else if (event.direction === 16) {
+  //     this.getNotificationBefore(false);
+  //   }
+  // }
+  private handleRefresh(resolve) {
+    // do some async code here
+    resolve();
+    this.getNotificationAfter();
+  }
+
+  private onTouchStart() {
+    const touch = arguments[1].touches[0];
+    this.startTouchPoint = touch.clientY;
+  }
+
+  private onTouchEnd() {
+    this.setState({
+      trasnlateY : 0,
+    });
+  }
+
+  private onTouchMove() {
+    // const touch = arguments[1].touches[0];
+    // const trasnlated = touch.clientY - this.startTouchPoint > 0 ? touch.clientY - this.startTouchPoint : 0;
+    // this.setState({
+    //   trasnlateY : trasnlated < 60 ? trasnlated : 60,
+    // });
+    // document.getElementById('transform').style.transform = 'translateY(' + trasnlated + 'px)';
   }
 
   public render() {
     return (
-      <div>
-        <Hammer onSwipe={this.onSwipe.bind(this, '')} options={{
-          preventDefault: true,
-        }}>
+      <ReactPullToRefresh
+        onRefresh={this.handleRefresh}>
+        <div onTouchMove={this.onTouchMove.bind(this, '')}
+        onTouchStart={this.onTouchStart.bind(this, '')}
+        onTouchEnd={this.onTouchEnd.bind(this, '')}>
           <div>
             {this.state.notifications.length}
             {this.state.notifications.map((notification) =>
@@ -99,8 +128,8 @@ class Notifications extends React.Component<IProps, IState> {
 
             <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
           </div>
-        </Hammer>
-      </div>
+        </div>
+      </ReactPullToRefresh>
     );
   }
 }
