@@ -122,7 +122,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public render() {
-
+    const postView = !this.props.post;
     if (!this.state.post) {
       return <div>Loading ...</div>;
     }
@@ -130,7 +130,7 @@ class Post extends React.Component<IProps, IState> {
     const {post} = this.state;
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
-      <div className={style.postCard}>
+      <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
         <div className={style.postHead}>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
           {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
@@ -151,6 +151,7 @@ class Post extends React.Component<IProps, IState> {
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
         </div>
+        {!this.props.post && <hr/>}
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}/>
@@ -166,6 +167,7 @@ class Post extends React.Component<IProps, IState> {
             </div>
           )}
           <div className={style.postPlaces}>
+            {postView && <a>Shared with:</a>}
             {post.post_places.map((place: IPlace, index: number) => {
               if (index < 2) {
                 return <span>{place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>;
@@ -174,11 +176,13 @@ class Post extends React.Component<IProps, IState> {
             {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
           </div>
 
-          <div className={style.postFooter}>
-            <IcoN size={16} name={'comment24'}/>
-            {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-            {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
-          </div>
+          {!postView && (
+            <div className={style.postFooter}>
+              <IcoN size={16} name={'comment24'}/>
+              {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
+              {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+            </div>
+          )}
         </div>
         {!this.props.post &&
         <CommentsBoard post_id={this.state.post._id}/>

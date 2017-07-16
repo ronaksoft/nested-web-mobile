@@ -1,6 +1,16 @@
 .postCard {
   border-bottom: 1px solid rgba(50,61,71,.16);
 }
+.postView  {
+  margin-bottom: 56px;
+}
+.postCard hr{
+  border-top: none;
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  border-bottom: 1px solid rgba(50,61,71,.16);
+}
+
 .postHead {
   padding: 12px 24px 12px 16px;
   display: flex;
@@ -42,12 +52,15 @@
 .postBody {
   padding: 0 24px;
 }
-.postBody h3 {
+.postBody h3{
   color: rgba(50,61,71,1);
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
   margin-bottom: 2px;
+}
+.postView .postBody h3{
+  margin-top: 12px
 }
 .postBody p{
   color: rgba(50,61,71,.72);
@@ -71,6 +84,12 @@
   color: rgba(50,61,71,.40);
   flex-wrap: wrap;
   display: flex;
+  margin-bottom: 20px
+}
+.postBody .postPlaces a{
+  font-weight: 300;
+  color: rgba(50,61,71,.40);
+  width: 100%;
 }
 .postBody .postFooter{
   margin-top: 12px;
