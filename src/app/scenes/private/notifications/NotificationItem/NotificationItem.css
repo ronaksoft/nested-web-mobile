@@ -52,3 +52,18 @@
   border-bottom: 1px solid #f0f0f0;
   padding: 0 0 0 8px;
 }
+
+.multiAvatars{
+display: inline-flex;
+}
+
+.plus{
+  border: 1px solid #dcdcdc;
+  background-color: transparent;
+  width: 32px;
+  height: 24px;
+  border-radius: 24px;
+  justify-content: center;
+  text-align: center;
+  color: #dcdcdc;
+}

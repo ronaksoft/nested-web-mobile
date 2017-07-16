@@ -35,16 +35,14 @@ class Comment extends React.Component <IProps, any> {
             <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
             <div className={style.multiNotifData}>
               <div>
-                <div>
+                <div className={style.multiAvatars}>
                   {others &&
                   others.map((userId: string, index: number) => {
-                    if (index < 4) {
+                    if (index < 3) {
                       return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
                     } else {
                       return (
-                        <div>
-                          <span>+{index - 3}</span>
-                        </div>
+                        <div className={style.plus}>+{index - 2}</div>
                       );
                     }
                   })

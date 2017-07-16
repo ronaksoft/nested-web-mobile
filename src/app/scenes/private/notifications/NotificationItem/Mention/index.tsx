@@ -20,11 +20,13 @@ class Mention extends React.Component <IProps, any> {
               <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
             <div className={style.notifContainer}>
               <div className={style.notifData}>
+                <p>
                 <b>
               <FullName user_id={this.props.notification.account_id}/>
               </b>:
               <span><b> @{this.props.notification.account_id}.</b></span>
                 <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+                </p>
             </div>
             <IcoN size={16} name={'atsign16'}/>
           </div>

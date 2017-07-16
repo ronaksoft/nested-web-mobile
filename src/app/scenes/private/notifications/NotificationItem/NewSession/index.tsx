@@ -17,9 +17,11 @@ class NewSession extends React.Component <IProps, any> {
             <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
             <div className={style.notifData}>
+              <p>
               <span><b>New login</b> from:</span>
               <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
               <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              </p>
             </div>
             <IcoN size={16} name={'devicePhone16'}/>
           </div>

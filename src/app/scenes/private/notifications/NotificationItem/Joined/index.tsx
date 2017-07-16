@@ -21,12 +21,14 @@ class Joined extends React.Component <IProps, any> {
           <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
             <div className={style.notifData}>
+              <p>
               <b><FullName user_id={this.props.notification.actor_id}/>.</b>
               <span> added you to </span>
               <PlaceName place_id={this.props.notification.place_id}/>
               <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              </p>
             </div>
-            <IcoN size={16} name={'devicePhone16'}/>
+            <IcoN size={16} name={'addToPlace16'}/>
           </div>
         </div>
       </Link>
