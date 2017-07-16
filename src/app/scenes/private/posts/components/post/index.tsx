@@ -10,6 +10,7 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 
 const style = require('./post.css');
+const styleNavbar = require('../../../../../components/navbar/navbar.css');
 
 interface IOwnProps {
   post?: IPost;
@@ -74,6 +75,10 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  private leave = () => {
+    console.log('leave');
+  }
+
   private toggleBookmark() {
 
     // change pinned of post
@@ -122,7 +127,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public render() {
-
+    const postView = !this.props.post;
     if (!this.state.post) {
       return <div>Loading ...</div>;
     }
@@ -130,7 +135,24 @@ class Post extends React.Component<IProps, IState> {
     const {post} = this.state;
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
-      <div className={style.postCard}>
+      <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
+        {postView && (
+          <div className={styleNavbar.navbar}>
+            <a onClick={this.leave}>
+              <IcoN size={24} name="xcross24"/>
+            </a>
+            <div className={styleNavbar.filler}/>
+            <a>
+              <IcoN size={24} name="forward16"/>
+            </a>
+            <a>
+              <IcoN size={24} name="reply24"/>
+            </a>
+            <a>
+              <IcoN size={24} name="more24"/>
+            </a>
+          </div>
+        )}
         <div className={style.postHead}>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
           {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
@@ -151,6 +173,7 @@ class Post extends React.Component<IProps, IState> {
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
         </div>
+        {!this.props.post && <hr/>}
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}/>
@@ -159,13 +182,14 @@ class Post extends React.Component<IProps, IState> {
           )}
           {post.post_attachments.length > 0 && this.props.post && (
             <div className={style.postAttachs}>
-              <IcoN size={16} name={'attach16'}/>
+              <IcoN size={16} name={'attach24'}/>
               {post.post_attachments.length}
               {post.post_attachments.length === 1 && <span>Attachment</span>}
               {post.post_attachments.length > 1 && <span>Attachments</span>}
             </div>
           )}
           <div className={style.postPlaces}>
+            {postView && <a>Shared with:</a>}
             {post.post_places.map((place: IPlace, index: number) => {
               if (index < 2) {
                 return <span>{place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>;
@@ -174,11 +198,13 @@ class Post extends React.Component<IProps, IState> {
             {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
           </div>
 
-          <div className={style.postFooter}>
-            <IcoN size={16} name={'comment24'}/>
-            {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-            {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
-          </div>
+          {!postView && (
+            <div className={style.postFooter}>
+              <IcoN size={16} name={'comment24'}/>
+              {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
+              {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+            </div>
+          )}
         </div>
         {!this.props.post &&
         <CommentsBoard post_id={this.state.post._id}/>

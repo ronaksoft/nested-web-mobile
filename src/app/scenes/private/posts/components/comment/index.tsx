@@ -6,6 +6,9 @@ import {Input} from 'antd';
 import CommentApi from '../../../../../api/comment/index';
 import ArrayUntiles from '../../../../../services/untils/array';
 import TimeUntiles from '../../../../../services/untils/time';
+import {IcoN} from 'components';
+
+const style = require('./comment-board.css');
 
 interface IProps {
   post_id: string;
@@ -139,34 +142,38 @@ class CommentsBoard extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div id={'comment-board'}>
+      <div className={style.commentBoard} id={'comment-board'}>
         {
           this.hasBeforeComments && (
-            <div id={'load-older-comments'}
+            <div id={'load-older-comments'} className={style.loadMore}
                  onClick={this.getBeforeComments.bind(this, '')}
             >
+              <IcoN size={16} name={'comment24'}/>
               Load older comments
             </div>
           )
         }
-        <Input
-          style={{
-            position: 'fixed',
-            bottom: 0,
-          }}
+        {this.state.comments.map((comment: IComment) => (
+          <div id={comment._id} className={style.commentRow}>
+            <UserAvatar user_id={comment.sender._id} size={24} borderRadius={'16px'}/>
+            <div className={style.commentContent}>
+              <div className={style.commentHead}>
+                <a><FullName user_id={comment.sender._id}/></a>
+                <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
+              </div>
+              <p>{comment.text}</p>
+            </div>
+          </div>
+        ))}
+        <div className={style.commentInput}>
+          <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
+          <Input
           placeholder={'write your comment...'}
           value={this.state.newCommentTxt}
           onChange={this.handleChangeComment}
           disabled={this.state.sendingComment}
           onPressEnter={this.addComment.bind(this, '')}/>
-        {this.state.comments.map((comment: IComment) => (
-          <div id={comment._id}>
-            <UserAvatar user_id={comment.sender._id} size={32} borderRadius={'16px'}/>
-            <b><FullName user_id={comment.sender._id}/></b>
-            <div>{comment.text}</div>
-            <div>{TimeUntiles.dynamic(comment.timestamp)}</div>
-          </div>
-        ))}
+        </div>
       </div>
     );
   }

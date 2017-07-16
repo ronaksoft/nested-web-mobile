@@ -46,7 +46,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         </a>
         <div className={style.filler}/>
         <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>
-          <IcoN size={32} name="bell24"/>
+          <IcoN size={24} name="bell24"/>
         </a>
         <Link to="/compose">
           <IcoN size={24} name="compose24"/>
