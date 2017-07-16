@@ -3,7 +3,7 @@
   display: flex;
   position: relative;
   width: 100%;
-  padding: 15px 12px 0 12px;
+  padding: 15px 0 0 12px;
 }
 
 .mention p {
@@ -41,13 +41,16 @@
 
 .notifData{
   flex: 1;
+  margin-right: 20px;
 }
 
 .multiNotifAvatar{
+  width: 100%;
   display: flex;
 }
 
 .multiNotifData{
+  width: 100%;
   display: inline-flex;
   border-bottom: 1px solid #f0f0f0;
   padding: 0 0 0 8px;
@@ -66,4 +69,8 @@ display: inline-flex;
   justify-content: center;
   text-align: center;
   color: #dcdcdc;
+}
+
+.multiAvatarsWrapper{
+  flex:1;
 }

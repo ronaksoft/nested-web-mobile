@@ -34,7 +34,7 @@ class Comment extends React.Component <IProps, any> {
           <div className={style.multiNotifAvatar}>
             <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
             <div className={style.multiNotifData}>
-              <div>
+              <div className={style.multiAvatarsWrapper}>
                 <div className={style.multiAvatars}>
                   {others &&
                   others.map((userId: string, index: number) => {
