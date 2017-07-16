@@ -32,7 +32,7 @@ class Comment extends React.Component <IProps, any> {
       <Link to={`message/${notification.post_id}`} className={style.mention}>
         <div className={style.notifWrapper}>
           <div className={style.multiNotifAvatar}>
-            <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+            <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
             <div className={style.multiNotifData}>
               <div>
                 <div className={style.multiAvatars}>
