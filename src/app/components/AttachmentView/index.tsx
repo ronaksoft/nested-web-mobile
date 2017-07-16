@@ -82,7 +82,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         <button onClick={this.props.onClose}>X</button>
         <button onClick={this.next.bind(this, '')}>next</button>
         <button onClick={this.prev.bind(this, '')}>prev</button>
-        <Hammer onSwipe={this.onSwipe.bind(this)}>
+        <Hammer onSwipe={this.onSwipe.bind(this, '')}>
           <div>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
