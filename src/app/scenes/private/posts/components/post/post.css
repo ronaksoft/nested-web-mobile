@@ -9,6 +9,7 @@
   font-size: 14px;
   color: rgba(50,61,71,.72);
   position: relative;
+  overflow-x: hidden
 }
 .postHead > i{
   margin-left: 6px
