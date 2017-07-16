@@ -19,6 +19,17 @@ class ArrayUntiles {
     return newArray;
 
   }
+
+  public uniqueArray(array: string[] | number[]): any[] {
+    let obj = new Object();
+    obj = {};
+
+    for (const value of array) {
+      obj[value] = value;
+    }
+
+    return Object.keys(obj);
+  }
 }
 
 export default new ArrayUntiles();

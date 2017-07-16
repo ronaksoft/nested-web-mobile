@@ -78,7 +78,6 @@ class Notifications extends React.Component<IProps, IState> {
   }
 
   private onSwipe(event: any) {
-    console.log(event);
     if (event.direction === 1) {
       this.getNotificationAfter();
     } else if (event.direction === 3) {
