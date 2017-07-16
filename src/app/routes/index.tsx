@@ -16,13 +16,14 @@ export default (
       <Route component={Private}>
         <IndexRoute component={Posts}/>
         <Route path="/feed" component={Posts}/>
-        <Route path="/posts/:placeId" component={Posts}/>
-        <Route path="/post/:postId" component={Post}/>
         <Route path="/shared" component={Posts}/>
         <Route path="/bookmarks" component={Posts}/>
-        <Route path="/place/:placeId/posts" component={Posts}/>
-        <Route path="/place/:placeId/activities" component={Activities}/>
-        <Route path="/place/:placeId/files" component={Files}/>
+        <Route path="/places/:placeId/messages" component={Posts}/>
+        <Route path="/places/:placeId/messages/latest-messages" component={Posts}/>
+        <Route path="/places/:placeId/activities" component={Activities}/>
+        <Route path="/places/:placeId/files" component={Files}/>
+        <Route path="/messages/latest-activity" component={Activities}/>
+        <Route path="/message/:postId" component={Post}/>
         <Route path="/notifications" component={Notifications}/>
         <Route path="/compose" component={Compose}/>
         <Route path="/signout" component={Signout}/>

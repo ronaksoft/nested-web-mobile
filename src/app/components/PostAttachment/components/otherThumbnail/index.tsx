@@ -4,6 +4,7 @@ const style = require('../../postattachment.css');
 
 interface IProps {
   attachment: IPostAttachment;
+  onclick: (attachment: IPostAttachment) => void;
 }
 
 interface IState {
@@ -19,7 +20,7 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
     const {attachment} = this.props;
     console.log(attachment.type);
     return (
-      <li key={attachment._id}>
+      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
         <div className={[style.attachmentHolder, style[attachment.type]].join(' ')}>
           <div className={style.fileName}><p>{attachment.filename}</p></div>
           <div className={style.detail}>

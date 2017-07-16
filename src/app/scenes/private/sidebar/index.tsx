@@ -12,6 +12,7 @@ import {setSidebarPlaces, setUserPlaces, setUnreadPlaces} from '../../../redux/a
 import {placeAdd} from '../../../redux/places/actions/';
 
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
+
 const style = require('./sidebar.css');
 
 // import {browserHistory} from 'react-router';
@@ -45,7 +46,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      places : [],
+      places: [],
     };
   }
 
@@ -78,14 +79,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
   private getUnreads() {
     if (this.props.sidebarPlacesUnreads &&
-    this.props.sidebarPlacesUnreads.placesUnreadCounts &&
-    this.props.sidebarPlacesUnreads.placesUnreadChildrens) {
+      this.props.sidebarPlacesUnreads.placesUnreadCounts &&
+      this.props.sidebarPlacesUnreads.placesUnreadChildrens) {
       this.setState({
         sidebarPlacesUnreads: this.props.sidebarPlacesUnreads,
       });
     } else {
       const sidebarPlaces: string[] = [];
-      this.state.places.slice(0).forEach( (place) => {
+      this.state.places.slice(0).forEach((place) => {
         sidebarPlaces.push(place.id);
       });
       const params: IGetUnreadsRequest = {
@@ -93,34 +94,34 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         subs: false,
       };
       this.PlaceApi.getUnreads(params)
-        .then( (items) => {
+        .then((items) => {
           const unreadCounts = {};
           const unreadChildrens = {};
           items.forEach((element) => {
             const pid: string = element.place_id;
             unreadCounts[pid] = element.count;
             unreadChildrens[pid] = false;
-            const sidebarPlaceItem = this.state.places.find( (o) => o.id === pid);
-            if ( element.count > 0 ) {
+            const sidebarPlaceItem = this.state.places.find((o) => o.id === pid);
+            if (element.count > 0) {
               for (let j: number = 1; j <= sidebarPlaceItem.depth; j++) {
                 const parentID = pid.split('.').splice(0, j).join('.');
                 const parentElement = this.state.places.find(
                   (item) => item.id === parentID,
                 );
-                if ( parentElement ) {
+                if (parentElement) {
                   unreadChildrens[parentID] = true;
                 }
               }
             }
           });
           this.props.setUnreadPlaces({
-            placesUnreadCounts : unreadCounts,
-            placesUnreadChildrens : unreadChildrens,
+            placesUnreadCounts: unreadCounts,
+            placesUnreadChildrens: unreadChildrens,
           });
           this.setState({
-            sidebarPlacesUnreads : {
-              placesUnreadCounts : unreadCounts,
-              placesUnreadChildrens : unreadChildrens,
+            sidebarPlacesUnreads: {
+              placesUnreadCounts: unreadCounts,
+              placesUnreadChildrens: unreadChildrens,
             },
           });
         });
@@ -178,7 +179,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               const prv = placesConjuctions[i - 1].id.split('.');
               const newVar = idSplit.slice(0);
               const compareArray = newVar.splice(0, prv.length);
-              if ( prv.join('.') === compareArray.join('.') ) {
+              if (prv.join('.') === compareArray.join('.')) {
                 placesConjuctions[i - 1].hasChildren = true;
               }
             }
@@ -239,9 +240,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       if (showCase) {
         const placeDom = (
           <SidebarItem key={place.id + i + 'a'} place={place}
-          unreads={this.state.sidebarPlacesUnreads.placesUnreadCounts[place.id]}
-          childrenUnread={this.state.sidebarPlacesUnreads.placesUnreadChildrens[place.id]}
-                       openChild={this.toggleChildren.bind(this, place.id, place.depth)}/>
+                       unreads={this.state.sidebarPlacesUnreads.placesUnreadCounts[place.id]}
+                       childrenUnread={this.state.sidebarPlacesUnreads.placesUnreadChildrens[place.id]}
+                       openChild={this.toggleChildren.bind(this, place.id, place.depth)}
+                       onClick={this.props.closeSidebar.bind(this)}/>
         );
         placeDoms.push(placeDom);
       }
@@ -254,19 +256,19 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           </div>
           <ul className={style.sidebarActions}>
             <li>
-              <Link to={`/feed`}>
+              <Link to={`/feed`} onClick={this.props.closeSidebar.bind(this)}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             <li>
-              <Link to={`/bookmark`}>
+              <Link to={`/bookmark`} onClick={this.props.closeSidebar.bind(this)}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             <li>
-              <Link to={`/shared`}>
+              <Link to={`/shared`} onClick={this.props.closeSidebar.bind(this)}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -286,13 +288,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               Profile and Settings
             </li>*/}
             <li>
-              <a href={`http://help.nested.me`} target="_blank">
+              <a href={`http://help.nested.me`} target="_blank" onClick={this.props.closeSidebar.bind(this)}>
                 <IcoN size={16} name={'ask16White'}/>
                 Help Center
               </a>
             </li>
             <li>
-              <Link to={`/signout`}>
+              <Link to={`/signout`} onClick={this.props.closeSidebar.bind(this)}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>
