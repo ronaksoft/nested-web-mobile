@@ -2,6 +2,7 @@ import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import TimeUntiles from '../../../../../services/untils/time';
+import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -12,8 +13,9 @@ interface IProps {
 
 class Mention extends React.Component <IProps, any> {
   public render() {
+    const notification = this.props.notification;
     return (
-      <div className={style.mention}>
+      <Link to={`message/${notification.place_id}`} className={style.mention}>
         <div className={style.notifWrapper}>
               <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
             <div className={style.notifContainer}>
@@ -27,7 +29,7 @@ class Mention extends React.Component <IProps, any> {
             <IcoN size={16} name={'atsign16'}/>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 }

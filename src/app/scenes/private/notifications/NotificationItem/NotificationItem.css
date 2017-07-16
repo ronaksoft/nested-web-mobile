@@ -43,8 +43,12 @@
   flex: 1;
 }
 
-/*.notifMultiAvatar{*/
-  /*display: inline-flex;*/
-  /*flex-direction: column;*/
-  /*flex: 1;*/
-/*}*/
+.multiNotifAvatar{
+  display: flex;
+}
+
+.multiNotifData{
+  display: inline-flex;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0 0 0 8px;
+}

@@ -31,41 +31,45 @@ class Comment extends React.Component <IProps, any> {
     return (
       <Link to={`message/${notification.post_id}`} className={style.mention}>
         <div className={style.notifWrapper}>
-          <div>
+          <div className={style.multiNotifAvatar}>
             <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
-            <div>
-              <div className={style.notifContainer}>
-                {others &&
-                others.map((userId: string, index: number) => {
-                  if (index < 4) {
-                    return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
-                  } else {
-                    return (
-                      <div>
-                        <span>+{index - 3}</span>
-                      </div>
-                    );
+            <div className={style.multiNotifData}>
+              <div>
+                <div>
+                  {others &&
+                  others.map((userId: string, index: number) => {
+                    if (index < 4) {
+                      return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
+                    } else {
+                      return (
+                        <div>
+                          <span>+{index - 3}</span>
+                        </div>
+                      );
+                    }
+                  })
                   }
-                })
-                }
-              </div>
-              <div className={style.notifData}>
-                <b><FullName user_id={this.props.notification.actor_id}/> </b>
-                {others &&
-                others.map((userId: string, index: number) => {
-                  if (index < 3) {
-                    return <span>and <b><FullName user_id={userId}/></b></span>;
-                  }
-                })
-                }
-                <span> commented on <b><PostSubject post_id={notification.post_id}/></b>
+                </div>
+                <div className={style.notifData}>
+                  <p>
+                    <b><FullName user_id={this.props.notification.actor_id}/> </b>
+                    {others &&
+                    others.map((userId: string, index: number) => {
+                      if (index < 3) {
+                        return <span> and <b><FullName user_id={userId}/></b></span>;
+                      }
+                    })
+                    }
+                    <span> commented on <b><PostSubject post_id={notification.post_id}/></b>
               </span>
-                <CommentBody comment_id={this.props.notification.comment_id}
-                             post_id={this.props.notification.post_id}/>.
-                <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+                    <CommentBody comment_id={this.props.notification.comment_id}
+                                 post_id={this.props.notification.post_id}/>.
+                    <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+                  </p>
+                </div>
               </div>
+              <IcoN size={16} name={'comment24'}/>
             </div>
-            <IcoN size={16} name={'comment24'}/>
           </div>
         </div>
       </Link>

@@ -92,7 +92,6 @@ class Notifications extends React.Component<IProps, IState> {
           preventDefault: true,
         }}>
           <div>
-            {this.state.notifications.length}
             {this.state.notifications.map((notification) =>
               (<NotificationItem key={notification._id} notification={notification}/>))
             }

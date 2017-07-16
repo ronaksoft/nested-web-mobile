@@ -3,6 +3,7 @@ import INotification from '../../../../../api/notification/interfaces/INotificat
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
 import TimeUntiles from '../../../../../services/untils/time';
+import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -13,8 +14,9 @@ interface IProps {
 
 class InviteRespond extends React.Component <IProps, any> {
   public render() {
+    const notification = this.props.notification;
     return (
-      <div className={style.mention}>
+      <Link to={`message/${notification.place_id}`} className={style.mention}>
         <div className={style.notifWrapper}>
             <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
@@ -27,7 +29,7 @@ class InviteRespond extends React.Component <IProps, any> {
             <IcoN size={16} name={'devicePhone16'}/>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 }
