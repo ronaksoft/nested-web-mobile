@@ -17,7 +17,7 @@ class Mention extends React.Component <IProps, any> {
     return (
       <Link to={`message/${notification.place_id}`} className={style.mention}>
         <div className={style.notifWrapper}>
-              <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+              <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
             <div className={style.notifContainer}>
               <div className={style.notifData}>
                 <p>
