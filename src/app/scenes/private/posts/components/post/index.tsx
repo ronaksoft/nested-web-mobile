@@ -81,7 +81,6 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private toggleBookmark() {
-
     // change pinned of post
     let post;
     post = this.state.post;

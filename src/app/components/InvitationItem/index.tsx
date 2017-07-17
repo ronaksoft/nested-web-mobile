@@ -6,13 +6,13 @@ import {IcoN, Invitation} from 'components';
 
 const style = require('./invitationItem.css');
 
-interface IInvitationItemState {
-  modal: boolean;
-}
-
 interface IInvitationItemProps {
   item: any;
   key: string;
+}
+
+interface IInvitationItemState {
+  modal: boolean;
 }
 
 class InvitationItem extends React.Component<IInvitationItemProps, IInvitationItemState> {
@@ -33,14 +33,12 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
   }
 
   private closeModal() {
-      this.setState({
-          modal: false,
-      });
-      console.log(this.state.modal);
+    this.setState({
+        modal: false,
+    });
   }
 
   public render() {
-    console.log(this.props.item, this.state.modal);
     const place = this.props.item.place;
     const inviter = this.props.item.inviter;
     let img;

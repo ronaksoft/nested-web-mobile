@@ -191,7 +191,7 @@ class Feed extends React.Component<IProps, IState> {
         !this.state.loadingBefore && this.state.posts.length === 0 &&
         <div>
           You have no message in your feed
-          <div>
+          <div className={style.loadMore}>
             <Button onClick={loadMore}>Try again</Button>
           </div>
         </div>
@@ -201,7 +201,7 @@ class Feed extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div><Button onClick={loadMore}>Load More</Button></div>
+        <div className={style.loadMore}><Button onClick={loadMore}>Load More</Button></div>
         }
       </div>
     );
