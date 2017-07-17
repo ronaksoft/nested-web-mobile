@@ -25,6 +25,9 @@ interface IProps {
 
 interface IState {
   posts: IPost[];
+  loadingAfter: boolean;
+  loadingBefore: boolean;
+  reachedTheEnd: boolean;
 }
 
 class Shared extends React.Component<IProps, IState> {
@@ -33,7 +36,11 @@ class Shared extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      posts: this.props.posts,
+      posts: [],
+      // posts: this.props.posts,
+      loadingAfter: false,
+      loadingBefore: false,
+      reachedTheEnd: false,
     };
   }
 
@@ -55,17 +62,25 @@ class Shared extends React.Component<IProps, IState> {
   }
 
   private getPost(fromNow?: boolean, after?: number) {
-
     let params: IPostsListRequest;
     if (fromNow === true) {
       params = {
         before: Date.now(),
       };
+      this.setState({
+        loadingBefore: true,
+      });
     } else if (typeof after === 'number') {
       params = {
         after,
       };
+      this.setState({
+        loadingAfter: true,
+      });
     } else {
+      this.setState({
+        loadingBefore: true,
+      });
       if (this.state.posts.length === 0) {
         params = {
           before: Date.now(),
@@ -79,6 +94,13 @@ class Shared extends React.Component<IProps, IState> {
     params.limit = 20;
     this.postApi.getSentPosts(params)
       .then((response: IPostsListResponse) => {
+
+        if (this.state.posts.length > 0 && response.posts.length < params.limit) {
+          this.setState({
+            reachedTheEnd: true,
+          });
+        }
+
         const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
@@ -90,6 +112,8 @@ class Shared extends React.Component<IProps, IState> {
 
         this.setState({
           posts,
+          loadingBefore: false,
+          loadingAfter: false,
         });
       });
   }
@@ -121,11 +145,27 @@ class Shared extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <Button onClick={loadMore}>Load More ...</Button>
+        {this.state.loadingAfter &&
+        <div>Loading new posts...</div>
+        }
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
+        {this.state.loadingBefore &&
+        <div>Loading...</div>
+        }
+        {!this.state.reachedTheEnd && !this.state.loadingAfter &&
+        !this.state.loadingBefore && this.state.posts.length === 0 &&
+        <div>You don't have any unseen posts.</div>
+        }
+        {this.state.reachedTheEnd &&
+        <div>No more messages here!</div>
+        }
+        {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
+        !this.state.loadingBefore && !this.state.loadingAfter &&
+        <div><Button onClick={loadMore}>Load More</Button></div>
+        }
       </div>
     );
   }

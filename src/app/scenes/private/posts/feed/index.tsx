@@ -62,7 +62,7 @@ class Feed extends React.Component<IProps, IState> {
   }
 
   private gotoFeedByActivity() {
-    console.log('FIXME');
+    browserHistory.push(`/feed/latest-activity`);
   }
 
   private getPost(fromNow?: boolean, after?: number) {

@@ -174,6 +174,7 @@ class Bookmarked extends React.Component<IProps, IState> {
         <div>No more messages here!</div>
         }
         {!this.state.reachedTheEnd &&
+        !this.state.loadingBefore && !this.state.loadingAfter &&
         <div><Button onClick={loadMore}>Load More</Button></div>
         }
       </div>
