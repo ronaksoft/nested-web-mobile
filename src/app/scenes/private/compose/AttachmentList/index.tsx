@@ -103,6 +103,10 @@ class AttachmentList extends React.Component<IProps, IState> {
 
   }
 
+  public abortAll = () => {
+    this.uploads.forEach((i) => i.abort);
+  }
+
   /**
    * send the file to Store service
    *
@@ -296,21 +300,23 @@ class AttachmentList extends React.Component<IProps, IState> {
     let inProgressCount: number = 0;
     const items = [];
 
-    this.state.items.forEach((i) => {
+    this.state.items.forEach((item) => {
+      if (!item) {
+        return;
+      }
 
       // render Items if is in expanded mode
       if (this.state.isExpanded) {
-        items.push(renderItem(i));
+        items.push(renderItem(item));
       }
 
-      if (i.mode === Mode.UPLOAD) {
-        totalLoaded += i.progress.loaded;
-        totalSize += i.progress.total;
+      if (item.mode === Mode.UPLOAD) {
+        totalLoaded += item.progress.loaded;
+        totalSize += item.progress.total;
         inProgressCount++;
       }
 
-      isUploading = isUploading || i.uploading;
-
+      isUploading = isUploading || item.uploading;
     });
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
     const getInProgressMessage = () => {
@@ -359,8 +365,9 @@ class AttachmentList extends React.Component<IProps, IState> {
             )
           }
           <div className={[style.attachListAnchor, this.state.isExpanded ? style.expanded : null].join(' ')}
-          onClick={this.toggleView}>
-            <IcoN size={24} name="arrow16"/>
+               onClick={this.toggleView}
+          >
+            <IcoN size={24} name="arrow16" />
           </div>
         </div>
         <div>

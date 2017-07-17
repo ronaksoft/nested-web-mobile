@@ -36,7 +36,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private file: HTMLInputElement;
   private mediaMode: boolean;
 
-  constructor(props: any) {
+  constructor(props: IComposeProps) {
     super(props);
 
     const defaultState: IComposeState = {
@@ -48,7 +48,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       subject: '',
       composeOption: false,
     };
-    this.state = this.props.draft || defaultState;
+    this.state = props.draft || defaultState;
   }
 
   public componentWillMount() {
@@ -212,15 +212,31 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private leave = () => {
+    if (this.attachments.isUploading()) {
+      confirm({
+        title: 'Upload in progress',
+        content: 'An upload is in progress. Do you want to abort the process and leave here?',
+        cancelText: 'Yes, Let me go',
+        okText: 'No',
+        onCancel: () => {
+          this.attachments.abortAll();
+          browserHistory.goBack();
+        },
+      });
+
+      return;
+    }
+
     if (this.state.targets.length > 0
       || this.state.attachments.length > 0
       || this.state.body.length > 0
       || this.state.subject.length > 0) {
 
       confirm({
-        title: 'What do you want to do?',
-        okText: 'Draft',
-        cancelText: 'Discard',
+        title: 'Save a draft',
+        content: `Do you want to save a draft before leaving here?`,
+        okText: 'Yes',
+        cancelText: 'No, Let me go',
         onCancel: this.discard,
         onOk: this.draft,
       });
