@@ -174,13 +174,7 @@ class Store {
   }
 
   public static getUploadType(file: File) {
-    console.log('====================================');
-    console.log('file', file);
-    console.log('====================================');
     const group = Store.getType(file.type);
-    console.log('====================================');
-    console.log('group', group);
-    console.log('====================================');
 
     if (Store.getSuffix(file.name) === 'gif') {
       return StoreTypes.GIF;

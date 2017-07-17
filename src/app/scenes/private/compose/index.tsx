@@ -330,9 +330,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                   value={this.state.body}
         />
         <AttachmentList
+                        onItemsChanged={this.handleAttachmentsChange}
                         ref={this.referenceAttachments}
                         items={this.state.attachments}
-                        onItemsChanged={this.handleAttachmentsChange}
         />
         <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{ display: 'none' }} />
       </div>
