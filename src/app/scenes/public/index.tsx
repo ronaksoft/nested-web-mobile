@@ -7,7 +7,6 @@ class Public extends React.Component<any, any> {
   public render() {
     return (
       <div>
-        Public
         {this.props.children}
       </div>
     );

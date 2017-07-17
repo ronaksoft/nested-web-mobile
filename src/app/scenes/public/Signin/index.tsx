@@ -103,12 +103,13 @@ class Signin extends React.Component<IProps, IState> {
   public render() {
     // const { getFieldDecorator } = this.props.form;
     return (
-      <div>
-        <div>
-          <img src={require('./logo.svg')} className={style.logo} alt="Nested" style={{ width: 48, height: 48 }}/>
+      <div className={style.publicPage}>
+        <div className={style.publicHead}>
+          <img src={require('./logo.svg')} className={style.logo} alt="Nested"/>
+          <div className={style.filler} />
         </div>
         <h2>Sign in to Nested</h2>
-        <div>
+        <div className={style.publicForm}>
             <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
             <br />
             <Input
@@ -118,10 +119,10 @@ class Signin extends React.Component<IProps, IState> {
                   onChange={this.handlePasswordChange}
             />
             <br />
-            <Button type="primary" className={style.submit} onClick={this.submit}>
+            <Button type="primary" htmlType="submit" className={style.submit} onClick={this.submit}>
               <b>Sign in</b>
             </Button>
-          <p>Don't have an account? <Link to="/signup">Create a new account</Link></p>
+          <p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
         </div>
       </div>
     );
