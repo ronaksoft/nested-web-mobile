@@ -38,7 +38,6 @@ class Feed extends React.Component<IProps, IState> {
   private postApi: PostApi;
   private syncActivity = SyncActivity.getInstance();
   private syncActivityListeners = [];
-  private syncedCommentsId = [];
 
   constructor(props: IProps) {
     super(props);
