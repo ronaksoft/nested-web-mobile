@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import Mode from './mode';
@@ -66,7 +66,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
                 )
               : (
                   <img
-                      src={Store.getViewUrl(this.props.item.model.thumbs.x64)}
+                      src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
                       alt={this.props.item.model.name}
                       style={{width: 40, height: 40}}
                   />

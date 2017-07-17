@@ -61,6 +61,10 @@ class Feed extends React.Component<IProps, IState> {
 
   }
 
+  private gotoFeedByActivity() {
+    console.log('FIXME');
+  }
+
   private getPost(fromNow?: boolean, after?: number) {
 
     let params: IPostsListRequest;
@@ -133,10 +137,6 @@ class Feed extends React.Component<IProps, IState> {
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
     browserHistory.push(`/message/${post._id}`);
-  }
-
-  private gotoFeedByActivity() {
-    browserHistory.push('/feed/latest-activity');
   }
 
   public render() {

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 import IPicture from 'api/interfaces/IPicture';
 
 const style = require('./chips.css');
+const unknownPicture = require('assets/icons/absents_place.svg');
 
 interface IChipsItem {
   _id: string;
@@ -44,11 +45,17 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
     this.props.onChipsClick(this.props.item);
   }
 
+  private getPicture(item: IChipsItem) {
+    return item.picture.x64
+            ? FileUtil.getViewUrl(item.picture.x64)
+            : unknownPicture;
+  }
+
   public render() {
     return (
       <a key={this.props.item._id} onClick={this.itemSelected.bind(this, '')}
       className={this.state.active ? style.placechips + ' ' + style.selectedItem : style.placechips}>
-        <img src={Store.getViewUrl(this.props.item.picture.x32)} alt=""/>
+        <img src={this.getPicture(this.props.item)} alt=""/>
         {this.props.item.name}
       </a>
     );

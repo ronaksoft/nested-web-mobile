@@ -12,7 +12,7 @@ import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
 const style = require('./attachmentList.css');
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 
 interface IProps {
   file?: File;
@@ -114,7 +114,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    */
   private send(item: IAttachmentItem, file: File, isMedia: boolean) {
     // TODO: Find upload type if is media
-    const type: string = isMedia ? Store.getUploadType(file) : UploadType.FILE;
+    const type: string = isMedia ? FileUtil.getUploadType(file) : UploadType.FILE;
     console.log('====================================');
     console.log('type:', type);
     console.log('====================================');
@@ -313,6 +313,31 @@ class AttachmentList extends React.Component<IProps, IState> {
 
     });
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
+    const getInProgressMessage = () => {
+      switch (inProgressCount) {
+        case 1:
+          return `One item is uploading ${totalProgress}%`;
+        default:
+          return `${inProgressCount} attachments are uploading ${totalProgress}%`;
+      }
+    };
+    const getMessage = () => {
+      switch (this.state.items.length) {
+        case 0:
+          return 'No attachment';
+        case 1:
+          return 'One attachment';
+        default:
+          return `${this.state.items.length} attachments`;
+      }
+    };
+
+    if (this.state.items.length === 0) {
+      return (
+      null
+      );
+    }
+
     return (
       <div className={style.AttachmentList}>
         <div className={style.AttachmentListTop}>
@@ -322,22 +347,14 @@ class AttachmentList extends React.Component<IProps, IState> {
           {
             isUploading && (
               <span>
-                {
-                  inProgressCount === 1
-                    ? `One item is uploading ${totalProgress}%`
-                    : `${inProgressCount} attachments are uploading ${totalProgress}%`
-                }
+                {getInProgressMessage()}
               </span>
             )
           }
           {
             !isUploading && (
               <span>
-                {
-                  this.state.items.length === 1
-                    ? `One item is uploaded.`
-                    : `${this.state.items.length} attachments are uploaded.`
-                }
+                {getMessage()}
               </span>
             )
           }

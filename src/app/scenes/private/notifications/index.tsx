@@ -7,8 +7,18 @@ import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
-import * as Hammer from 'react-hammerjs';
+import {IcoN} from 'components';
+const style = require('./notifications.css');
 
+// import PullRefresh from 'react-pullrefresh';
+
+// custom renderer
+// const renderWaitingComponent = () => {
+//   return <div style={{backgroundColor: '#00f', color: '#fff'}}>waiting</div>;
+// };
+// const renderPullingComponent = (props, step) => {
+//   return <div style={{backgroundColor: '#f00', color: '#fff'}}>{step + '/' + props.max}</div>;
+// };
 interface IState {
   notifications: INotification[];
 }
@@ -21,10 +31,12 @@ interface IProps {
 
 class Notifications extends React.Component<IProps, IState> {
   private requestLimit: number = 20;
-
+  // private startTouchPoint: number = 0;
+  // private isInTop: boolean = true;
 // setting initial states
   constructor(props) {
     super(props);
+    this.handleRefresh = this.handleRefresh.bind(this);
     this.state = {
       notifications: this.props.notifications,
     };
@@ -77,28 +89,64 @@ class Notifications extends React.Component<IProps, IState> {
     this.getNotificationBefore(true);
   }
 
-  private onSwipe(event: any) {
-    if (event.direction === 1) {
-      this.getNotificationAfter();
-    } else if (event.direction === 3) {
-      this.getNotificationBefore(false);
-    }
+  // public componentWillUnmount() {
+  //   ;
+  // }
+
+  // private onSwipe(props: any, event: any) {
+  //   console.log(event, props);
+  //   if (event.direction === 8) {
+  //     this.getNotificationAfter();
+  //   } else if (event.direction === 16) {
+  //     this.getNotificationBefore(false);
+  //   }
+  // }
+  private handleRefresh(resolve) {
+    // do some async code here
+    resolve();
+    this.getNotificationAfter();
   }
+
+  // private onTouchStart() {
+  //   if (window.scrollY === 0) {
+  //     this.isInTop = true;
+  //     const touch = arguments[1].touches[0];
+  //     this.startTouchPoint = touch.clientY;
+  //     console.log(touch.clientY);
+  //   }
+  // }
+
+  // private onTouchEnd() {
+  //   console.log(arguments[1].touches[0]);
+  // }
+
+  // private onTouchMove() {
+  //   console.log(arguments[1].touches[0]);
+  //   const touch = arguments[1].touches[0];
+  //   const trasnlated = touch.clientY - this.startTouchPoint > 0 ? touch.clientY - this.startTouchPoint : 0;
+  //   if ( trasnlated > 80 ) {
+  //     return;
+  //   }
+  //   console.log(trasnlated);
+
+  //   document.getElementById('scrollWrp').style.maxHeight = trasnlated + 'px';
+  // }
 
   public render() {
     return (
       <div>
-        <Hammer onSwipe={this.onSwipe.bind(this, '')} options={{
-          preventDefault: true,
-        }}>
-          <div>
-            {this.state.notifications.map((notification) =>
-              (<NotificationItem key={notification._id} notification={notification}/>))
-            }
-
-            <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
-          </div>
-        </Hammer>
+        <div className={style.notificationHead}>
+          <h2>Notifications</h2>
+          <a>
+            <IcoN size={24} name="listCheck24"/>
+          </a>
+        </div>
+        <div className={style.notificationWrp}>
+          {this.state.notifications.map((notification) =>
+            (<NotificationItem key={notification._id} notification={notification}/>))
+          }
+          <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
+        </div>
       </div>
     );
   }

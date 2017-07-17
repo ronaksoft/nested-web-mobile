@@ -5,9 +5,10 @@ import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
 import {IChipsItem} from 'components/Chips';
 import SearchApi from 'api/search';
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 
 const style = require('./suggestion.css');
+const unknownPicture = require('assets/icons/absents_place.svg');
 
 interface ISuggestProps {
   selectedItems?: IChipsItem[];
@@ -23,12 +24,11 @@ interface ISuggestState {
 
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private debouncedFillSuggests: (val: string) => void;
-  private inputVal: string;
   private searchApi: SearchApi;
 
   constructor(props: any) {
     super(props);
-    this.debouncedFillSuggests = debounce(this.fillSuggests, 100); // Prevents the call stack and wasting resources
+    this.debouncedFillSuggests = debounce(this.fillSuggests, 372); // Prevents the call stack and wasting resources
     this.searchApi = new SearchApi();
   }
 
@@ -40,20 +40,18 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
-  // public componentDidMount() {
-  // }
-
-  public componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-    this.unSelectItem();
+  public clearSuggests = () => {
+    this.setState({
+      suggests: [],
+    });
   }
+
   // Calling on evry change in input
-  private changeInputVal(event) {
-    event.persist();
-    const val = event.currentTarget.value;
-    this.inputVal = val;
-    console.log(this.inputVal);
-    this.debouncedFillSuggests(val);
+  private handleInputChange(event) {
+    this.setState({
+      input: event.currentTarget.value,
+    });
+    this.debouncedFillSuggests(event.currentTarget.value);
   }
   // Calling on evry input key down
   private keyDownInputVal(event) {
@@ -82,24 +80,42 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
   private getSuggests(query: string): Promise<any> {
     return new Promise((resolve) => {
-      const items = [];
       this.searchApi.searchForCompose({
         keyword: query,
-        limit: 3,
+        limit: 13,
       }).then((response) => {
-        items.push.apply(items, response.places);
-        items.push.apply(items, response.recipients);
+        let placesCount: number = response.places.length < 3 ? response.places.length : 3;
+        const recipientsCount: number = response.recipients.length < 3 ? response.recipients.length : 3;
 
-        const itemsMap = items.map( (item) => {
-          // FIXME : Case sensetive issue
-          if (item.name.indexOf(query) > -1) {
-            item.name = item.name.replace(query, '<b>' + query + '</b>');
-          }
+        // we must have just 3 items to suggest
+        // and the 3rd item should be a recipient
+        if (recipientsCount > 0) {
+          placesCount = 2;
+        }
+
+        const items: IChipsItem[] = response.places.filter((i) => {
+          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
+        }).map((i) => {
+          const item: IChipsItem = {
+            _id: i._id,
+            name: i.name,
+            picture: i.picture,
+          };
 
           return item;
-        });
-        // TODO : Remove expression on release just : query.length
-        resolve( query.length > 0 ? itemsMap : []);
+        }).slice(0, placesCount).concat(response.recipients.filter((i) => {
+          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
+        }).map((i) => {
+          const item: IChipsItem = {
+            _id: i._id,
+            name: `${i.fname} ${i.lname}`,
+            picture: i.picture,
+          };
+
+          return item;
+        }).slice(0, recipientsCount));
+
+        resolve(items);
       }, (error) => {
         console.log('====================================');
         console.log(error);
@@ -108,20 +124,39 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  private mark = (text: string, keyword: string): string => {
+    if (!keyword) {
+      return text;
+    }
+
+    if (!text) {
+      return text;
+    }
+
+    const index = text.toLowerCase().indexOf(keyword.toLowerCase());
+    if (index === -1) {
+      return text;
+    }
+
+    return text.replace(keyword, `<b>${keyword}</b>`);
+  }
+
   private insertChip = (item: IChipsItem) => {
-    item.name = item.name.replace('<b>', '');
-    item.name = item.name.replace('</b>', '');
     const items = [...this.state.selectedItems, item];
+
     this.props.onSelectedItemsChanged(items);
     this.setState({
       selectedItems: items,
+      input: null,
     });
+    this.fillSuggests(this.state.input);
   }
 
-  private unSelectItem = () => {
+  private handleInputFocus = () => {
     this.setState({
       activeItem: null,
     });
+    this.fillSuggests(this.state.input);
   }
 
   private handleChipsClick = (item: IChipsItem) => {
@@ -133,27 +168,41 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
   private removeItem = () => {
     const index = this.state.selectedItems.indexOf(this.state.activeItem);
-    this.unSelectItem();
     const items = [...this.state.selectedItems.slice(0, index), ...this.state.selectedItems.slice(index + 1)];
     this.props.onSelectedItemsChanged(items);
     this.setState({
       selectedItems: items,
+      activeItem: null,
     });
+  }
+
+  private getPicture = (item: IChipsItem) => {
+    return item.picture.x64
+      ? FileUtil.getViewUrl(item.picture.x64)
+      : unknownPicture;
+  }
+
+  private handleInputBlur = (e: any) => {
+    // this.setState({
+    //   suggests: [],
+    // });
+    console.log('====================================');
+    console.log('lost focus', e.currentTarget);
+    console.log('====================================');
   }
 
   public render() {
     // tempFunctions for binding this and pass TSX hint
-    const tempFunctionChange = this.changeInputVal.bind(this);
-    const tempFunctionFocus = this.unSelectItem.bind(this);
+    const tempFunctionChange = this.handleInputChange.bind(this);
     const tempFunctionKeydown = this.keyDownInputVal.bind(this);
     const listItems = this.state.suggests.map((item) => {
       return (
         <li key={item._id}
         onClick={this.insertChip.bind(this, item)}>
-          <img src={Store.getViewUrl(item.picture.x32)} alt=""/>
+          <img src={this.getPicture(item)} alt=""/>
           <div>
-            <p dangerouslySetInnerHTML={{ __html: item.name }}/>
-            <span>{item._id}</span>
+            <p dangerouslySetInnerHTML={{ __html: this.mark(item.name, this.state.input) }}/>
+            <span dangerouslySetInnerHTML={{ __html: this.mark(item._id, this.state.input) }} />
           </div>
         </li>
       );
@@ -171,12 +220,22 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
             With:
           </span>
           {recipients}
-          <Input onChange={tempFunctionChange} onKeyDown={tempFunctionKeydown}
-          onFocus={tempFunctionFocus}/>
+          <Input
+                onChange={tempFunctionChange}
+                onKeyDown={tempFunctionKeydown}
+                onFocus={this.handleInputFocus}
+                value={this.state.input}
+                onBlur={this.handleInputBlur}
+          />
         </div>
-        <ul className={style.suggests}>
-          {listItems}
-        </ul>
+        {
+          this.state.suggests.length > 0 &&
+          (
+            <ul className={style.suggests}>
+              {listItems}
+            </ul>
+          )
+        }
         { this.state.activeItem &&
         (
           <div className={style.selectItemControl}>

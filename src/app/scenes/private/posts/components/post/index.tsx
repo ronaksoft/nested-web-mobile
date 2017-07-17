@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
+import {browserHistory} from 'react-router';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -76,7 +77,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private leave = () => {
-    console.log('leave');
+    browserHistory.goBack();
   }
 
   private toggleBookmark() {
@@ -148,9 +149,9 @@ class Post extends React.Component<IProps, IState> {
             <a>
               <IcoN size={24} name="reply24"/>
             </a>
-            <a>
+            {/*<a>
               <IcoN size={24} name="more24"/>
-            </a>
+            </a>*/}
           </div>
         )}
         <div className={style.postHead}>

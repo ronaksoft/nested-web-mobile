@@ -54,28 +54,20 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public componentWillMount() {
     this.setState({
       attachModal: false,
-      unselectSelectedRecipient: 0,
     });
     this.postApi = new PostApi();
   }
   private attachTypeSelect = () => {
-    console.log('click');
     this.setState({
       attachModal: !this.state.attachModal,
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
     });
+    this.targets.clearSuggests();
   }
   private subjectFocus = () => {
-    console.log('subjectFocus');
-    this.setState({
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
-    });
+    this.targets.clearSuggests();
   }
   private bodyFocus = () => {
-    console.log('bodyFocus');
-    this.setState({
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
-    });
+    this.targets.clearSuggests();
   }
 
   private overlayClick = (event) => {
@@ -330,9 +322,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                   value={this.state.body}
         />
         <AttachmentList
+                        onItemsChanged={this.handleAttachmentsChange}
                         ref={this.referenceAttachments}
                         items={this.state.attachments}
-                        onItemsChanged={this.handleAttachmentsChange}
         />
         <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{ display: 'none' }} />
       </div>

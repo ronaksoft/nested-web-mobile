@@ -5,6 +5,8 @@ import AttachmentType from '../../api/attachment/constants/AttachmentType';
 import ImageThumbnail from './components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
+import {IcoN} from 'components';
+const style = require('./attachmentview.css');
 
 interface IProps {
   attachments: IPostAttachment[];
@@ -57,7 +59,8 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     }
   }
 
-  private onSwipe(props: any) {
+  private onSwipe(event: any, props: any) {
+    console.log(props, event);
     if (props.direction === 2) {
       this.next();
     } else if (props.direction === 4) {
@@ -66,23 +69,24 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   }
 
   public render() {
+    console.log(this.state.selectedAttachment);
     return (
       <div
         id={'attachment-view'}
-        style={{
-          backgroundColor: '#000',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1000,
-        }}
+        className={style.attachmentView}
       >
-        <button onClick={this.props.onClose}>X</button>
-        <button onClick={this.next.bind(this, '')}>next</button>
-        <button onClick={this.prev.bind(this, '')}>prev</button>
-        <Hammer onSwipe={this.onSwipe.bind(this, '')}>
+        <div className={style.navigation}>
+          <a onClick={this.props.onClose}>
+            <IcoN size={24} name={'xcross24White'}/>
+          </a>
+          <span>
+            1 of 5
+          </span>
+          {/*<button onClick={this.next.bind(this, '')}>next</button>
+          <button onClick={this.prev.bind(this, '')}>prev</button>*/}
+        </div>
+        <Hammer onSwipe={this.onSwipe.bind(this, '')} direction="DIRECTION_ALL"
+        >
           <div>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
@@ -98,6 +102,23 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             }
           </div>
         </Hammer>
+        <div className={style.footer}>
+          <div>
+            <p>{this.state.selectedAttachment.filename}</p>
+            {(this.state.selectedAttachment.type === AttachmentType.GIF ||
+              this.state.selectedAttachment.type === AttachmentType.IMAGE) ? (
+              <span>Original Image: {this.state.selectedAttachment.size} kb, 
+              {this.state.selectedAttachment.height} × {this.state.selectedAttachment.width}</span>
+            ) : (
+              <span>
+                {this.state.selectedAttachment.size} kb
+              </span>
+            )}
+          </div>
+          <a onClick={this.props.onClose}>
+            <IcoN size={24} name={'attach24'}/>
+          </a>
+        </div>
       </div>
     );
   }

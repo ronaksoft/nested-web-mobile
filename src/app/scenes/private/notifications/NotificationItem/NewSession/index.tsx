@@ -11,20 +11,19 @@ interface IProps {
 }
 class NewSession extends React.Component <IProps, any> {
   public render() {
+    console.log(this.props.notification);
     return (
-      <div className={style.mention}>
-        <div className={style.notifWrapper}>
-            <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
-          <div className={style.notifContainer}>
-            <div className={style.notifData}>
-              <p>
-              <span><b>New login</b> from:</span>
-              <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
-              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
-              </p>
-            </div>
-            <IcoN size={16} name={'devicePhone16'}/>
+      <div className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+        <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+        <div className={style.notifContainer}>
+          <div className={style.notifData}>
+            <p>
+            <span><b>New login</b> from:</span>
+            <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
+            <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+            </p>
           </div>
+          <IcoN size={16} name={'devicePhone16'}/>
         </div>
       </div>
     );

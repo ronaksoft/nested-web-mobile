@@ -1,47 +1,82 @@
-.mention {
-  flex: 1;
+.notifWrapper {
   display: flex;
   position: relative;
   width: 100%;
-  padding: 15px 0 0 12px;
+  padding-top: 12px;
+}
+.notifWrapper > div:first-child {
+  width: 56px;
+  display: flex;
+  flex: none;
+  padding-left: 16px;
+  padding-right: 8px;
 }
 
-.mention p {
+
+.notifContainer{
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  padding-top: 4px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+}
+.commentContainer{
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  flex-direction: column;
+  padding-bottom: 16px;
+}
+.multiAvatars {
+  height: 32px;
+  display: flex;
+  padding-right: 16px;
+}
+.multiAvatars > div {
+  margin-right: 8px;
+}
+.filler {
+  display: flex;
+  width: 100%;
+}
+.notifData{
+  width: 100%;
+  margin-right: 8px;
+}
+
+.notifData p {
   white-space: normal;
-  line-height: 16px;
+  line-height: 18px;
   color: #323D47;
   font-size: 13px;
   font-weight: 400;
   margin: 0;
 }
-
-.mention p small {
+.time {
+  font-size: 13px;
+  opacity: .4;
+  font-weight: 300;
+  white-space: nowrap;
+}
+.notifData p small {
   font-size: 13px;
   font-weight: 600;
 }
 
-.mention p small span {
+.notifData p small span {
   line-height: 16px;
   color: #323D47;
   font-size: 13px;
   font-weight: 700;
 }
-
-.notifContainer{
-  width: 100%;
-  display: inline-flex;
-  border-bottom: 1px solid #f0f0f0;
-  margin: 0 0 0 10px;
+.read {
+  background-color: rgba(50,61,71,.08)
 }
-
+/*
 .notifWrapper{
   width: 100%;
   display: inline-flex;
-}
-
-.notifData{
-  flex: 1;
-  margin-right: 20px;
 }
 
 .multiNotifAvatar{
@@ -57,7 +92,7 @@
 }
 
 .multiAvatars{
-display: inline-flex;
+  display: inline-flex;
 }
 
 .plus{
@@ -72,5 +107,5 @@ display: inline-flex;
 }
 
 .multiAvatarsWrapper{
-  flex:1;
-}
+  flex: 1;
+}*/

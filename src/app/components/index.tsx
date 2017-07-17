@@ -6,6 +6,7 @@ export {Navbar} from './navbar/';
 export {IcoN} from './Icons/';
 export {SidebarItem} from './SidebarItem/';
 export {InvitationItem} from './InvitationItem/';
+export {Invitation} from './invitation/';
 
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
