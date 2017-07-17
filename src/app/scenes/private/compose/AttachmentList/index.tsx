@@ -313,6 +313,31 @@ class AttachmentList extends React.Component<IProps, IState> {
 
     });
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
+    const getInProgressMessage = () => {
+      switch (inProgressCount) {
+        case 1:
+          return `One item is uploading ${totalProgress}%`;
+        default:
+          return `${inProgressCount} attachments are uploading ${totalProgress}%`;
+      }
+    };
+    const getMessage = () => {
+      switch (this.state.items.length) {
+        case 0:
+          return 'No attachment';
+        case 1:
+          return 'One attachment';
+        default:
+          return `${this.state.items.length} attachments`;
+      }
+    };
+
+    if (this.state.items.length === 0) {
+      return (
+      null
+      );
+    }
+
     return (
       <div className={style.AttachmentList}>
         <div className={style.AttachmentListTop}>
@@ -322,22 +347,14 @@ class AttachmentList extends React.Component<IProps, IState> {
           {
             isUploading && (
               <span>
-                {
-                  inProgressCount === 1
-                    ? `One item is uploading ${totalProgress}%`
-                    : `${inProgressCount} attachments are uploading ${totalProgress}%`
-                }
+                {getInProgressMessage()}
               </span>
             )
           }
           {
             !isUploading && (
               <span>
-                {
-                  this.state.items.length === 1
-                    ? `One item is uploaded.`
-                    : `${this.state.items.length} attachments are uploaded.`
-                }
+                {getMessage()}
               </span>
             )
           }

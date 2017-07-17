@@ -8,6 +8,7 @@ import SearchApi from 'api/search';
 import Store from 'services/utils/store';
 
 const style = require('./suggestion.css');
+const unknownPicture = require('assets/icons/absents_place.svg');
 
 interface ISuggestProps {
   selectedItems?: IChipsItem[];
@@ -150,7 +151,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       return (
         <li key={item._id}
         onClick={this.insertChip.bind(this, item)}>
-          <img src={Store.getViewUrl(item.picture.x32)} alt=""/>
+          <img src={item.picture.x64 ? Store.getViewUrl(item.picture.x64) : unknownPicture} alt=""/>
           <div>
             <p dangerouslySetInnerHTML={{ __html: item.name }}/>
             <span>{item._id}</span>
