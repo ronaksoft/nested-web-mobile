@@ -149,11 +149,14 @@ class Feed extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <Button onClick={loadMore}>Load More ...</Button>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
-          </div>))}
+          </div>
+        ))}
+        <div className={style.loadMore}>
+          <Button onClick={loadMore}>Load More ...</Button>
+        </div>
       </div>
     );
   }

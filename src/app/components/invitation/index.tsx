@@ -21,16 +21,12 @@ class Invitation extends React.Component<IProps, IState> {
     };
   }
 
-  public componentDidMount() {
-    console.log('yes');
-  }
-
   public accept() {
-    console.log('yes');
+    console.log('accept');
   }
 
   public decline() {
-    console.log('yes');
+    console.log('decline');
   }
 
   public render() {
@@ -46,7 +42,7 @@ class Invitation extends React.Component<IProps, IState> {
             <div className={style.devider}/>
             <button className={style.btnGreen} onClick={this.accept}>Accept</button>
         </div>
-        <div className={style.close} onClick={this.props.onClose.bind(this, '')}>
+        <div className={style.close} onClick={this.props.onClose}>
             <IcoN size={24} name={'xcross24'}/>
         </div>
       </div>

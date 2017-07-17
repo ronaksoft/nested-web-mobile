@@ -2,3 +2,10 @@
   height: 100%;
   margin-top: 56px;
 }
+.loadMore {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 72px;
+  align-items: center;
+}
