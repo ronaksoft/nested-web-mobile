@@ -10,6 +10,9 @@ import ArrayUntiles from '../../../../services/untils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
+import SyncActivity from '../../../../services/syncActivity/index';
+import IActivity from '../../../../api/activity/interfaces/IActivitiy';
+import SyncActions from '../../../../services/syncActivity/syncActions';
 
 const style = require('../posts.css');
 
@@ -33,6 +36,9 @@ interface IState {
 
 class Feed extends React.Component<IProps, IState> {
   private postApi: PostApi;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
+  private syncedCommentsId = [];
 
   constructor(props: IProps) {
     super(props);
@@ -59,6 +65,37 @@ class Feed extends React.Component<IProps, IState> {
         200);
     }
 
+    this.syncActivityListeners.push(
+      this.syncActivity.openAllChannel(
+        (activity: IActivity) => {
+          switch (activity.action) {
+            case SyncActions.COMMENT_ADD:
+              return this.addCommentToPostActivity(activity);
+            default:
+              return;
+          }
+        },
+      ));
+
+  }
+
+  private addCommentToPostActivity(activity: IActivity) {
+
+    const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
+
+    if (indexOfPost > -1) {
+      let posts;
+      posts = JSON.parse(JSON.stringify(this.state.posts));
+
+      this.postApi.get({post_id: activity.post_id})
+        .then((post: IPost) => {
+          posts[indexOfPost].counters = post.counters;
+          this.setState({
+            posts,
+          });
+          this.props.setPosts(posts);
+        });
+    }
   }
 
   private gotoFeedByActivity() {

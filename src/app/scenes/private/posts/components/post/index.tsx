@@ -58,6 +58,14 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  public componentWillReceiveProps(newProps: IProps) {
+    if (this.props.post) {
+      this.setState({
+        post: newProps.post ? newProps.post : null,
+      });
+    }
+  }
+
   private updatePostsInStore(key: string, value: any) {
 
     const posts = JSON.parse(JSON.stringify(this.props.posts));
@@ -207,7 +215,7 @@ class Post extends React.Component<IProps, IState> {
           )}
         </div>
         {!this.props.post &&
-        <CommentsBoard post_id={this.state.post._id}/>
+        <CommentsBoard post_id={this.state.post._id} post={this.state.post}/>
         }
       </div>
     );

@@ -5,6 +5,7 @@ import AAA from './../aaa/index';
 import CONFIG from 'config';
 import {Socket, SocketState} from 'services/socket';
 import Client from 'services/client';
+import Unique from './../utils/unique';
 
 const TIMEOUT_TIME = 24000;
 
@@ -13,8 +14,21 @@ class Server {
   private queue: any;
   private reqId: number = Date.now();
   private cid: string;
+  private messageListeners: object = {};
 
-  public request(req: IRequest): Promise <any> {
+  constructor() {
+    console.log('Start Server instance');
+    this.socket = new Socket({
+      server: CONFIG.WEBSOCKET.URL,
+      pingPongTime: 10000,
+      onMessage: this.response.bind(this),
+    });
+    this.queue = [];
+    this.socket.connect();
+    this.cid = this.getClientId();
+  }
+
+  public request(req: IRequest): Promise<any> {
     const aaa = AAA.getInstance();
     const credential = aaa.getCredentials();
     if (!req._reqid) {
@@ -59,6 +73,25 @@ class Server {
     return promise;
   }
 
+  public addMessageListener(callback: (syncObj: any) => void): any {
+    const listenerId = 'listener_' + Unique.get();
+    this.messageListeners[listenerId] = callback;
+    const canceler = () => {
+      delete this.messageListeners[listenerId];
+    };
+    return canceler;
+  }
+
+  public onConnectionStateChange(callback: (state: SocketState) => void) {
+    this.socket.onStateChanged = callback;
+  }
+
+  private callMessageListeners(message: object) {
+    Object.keys(this.messageListeners).forEach((key: string) => {
+      this.messageListeners[key](message);
+    });
+  }
+
   private handleTimeout = (requestId) => {
     return setTimeout(() => {
 
@@ -82,22 +115,6 @@ class Server {
     return 'REQ' + this.reqId;
   }
 
-  public onConnectionStateChange(callback: (state: SocketState) => void) {
-    this.socket.onStateChanged = callback;
-  }
-
-  constructor() {
-    console.log('Start Server instance');
-    this.socket = new Socket({
-      server: CONFIG.WEBSOCKET.URL,
-      pingPongTime: 10000,
-      onMessage: this.response.bind(this),
-    });
-    this.queue = [];
-    this.socket.connect();
-    this.cid = this.getClientId();
-  }
-
   private response(res: string): void {
     const response = JSON.parse(res);
 
@@ -105,6 +122,8 @@ class Server {
     if (this.socket.isReady() && response.data.msg === 'hi') {
       this.startQueue();
     }
+
+    this.callMessageListeners(response);
 
     // try to find queued request
     const itemIndex = this.queue.findIndex((q) => {

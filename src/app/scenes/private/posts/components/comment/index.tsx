@@ -7,11 +7,15 @@ import CommentApi from '../../../../../api/comment/index';
 import ArrayUntiles from '../../../../../services/untils/array';
 import TimeUntiles from '../../../../../services/untils/time';
 import {IcoN} from 'components';
+import IPost from '../../../../../api/post/interfaces/IPost';
+import SyncActivity from '../../../../../services/syncActivity/index';
+import SyncActions from '../../../../../services/syncActivity/syncActions';
 
 const style = require('./comment-board.css');
 
 interface IProps {
   post_id: string;
+  post?: IPost;
 }
 
 interface IState {
@@ -22,6 +26,8 @@ interface IState {
 
 class CommentsBoard extends React.Component<IProps, IState> {
   private postApi;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
   private hasBeforeComments: boolean = true;
 
   constructor(props: IProps) {
@@ -56,6 +62,27 @@ class CommentsBoard extends React.Component<IProps, IState> {
       .catch((err) => {
         console.log(err);
       });
+
+    // set sync listeners
+    if (this.props.post && this.props.post.post_places) {
+      this.syncActivityListeners.push(
+        this.syncActivity.openChannel(
+          this.props.post.post_places[0]._id,
+          SyncActions.COMMENT_ADD,
+          () => {
+            this.getAfterComments(false);
+          },
+        ));
+    }
+  }
+
+  public componentWillUnmount() {
+    // set sync listeners
+    if (this.props.post) {
+      this.syncActivityListeners.forEach((canceller) => {
+        canceller();
+      });
+    }
   }
 
   private getAfterComments(scrollToBottom?: boolean) {
@@ -129,7 +156,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         sendingComment: false,
         newCommentTxt: '',
       });
-      this.getAfterComments(true);
+      // this.getAfterComments(true);
     });
   }
 
@@ -168,11 +195,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
         <div className={style.commentInput}>
           <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
           <Input
-          placeholder={'write your comment...'}
-          value={this.state.newCommentTxt}
-          onChange={this.handleChangeComment}
-          disabled={this.state.sendingComment}
-          onPressEnter={this.addComment.bind(this, '')}/>
+            placeholder={'write your comment...'}
+            value={this.state.newCommentTxt}
+            onChange={this.handleChangeComment}
+            disabled={this.state.sendingComment}
+            onPressEnter={this.addComment.bind(this, '')}/>
         </div>
       </div>
     );
