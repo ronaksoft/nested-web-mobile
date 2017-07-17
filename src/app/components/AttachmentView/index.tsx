@@ -6,6 +6,7 @@ import ImageThumbnail from './components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
 import {IcoN} from 'components';
+
 const style = require('./attachmentview.css');
 
 interface IProps {
@@ -35,10 +36,15 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     });
   }
 
-  private next() {
+  private getIndexOfAttachment() {
     const indexOfAttachment = this.state.attachments.findIndex((attachment: IPostAttachment) => {
       return attachment._id === this.state.selectedAttachment._id;
     });
+    return indexOfAttachment;
+  }
+
+  private next() {
+    const indexOfAttachment = this.getIndexOfAttachment();
 
     if (this.state.attachments.length - 1 === indexOfAttachment) {
       this.setState({selectedAttachment: this.state.attachments[0]});
@@ -48,9 +54,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   }
 
   private prev() {
-    const indexOfAttachment = this.state.attachments.findIndex((attachment: IPostAttachment) => {
-      return attachment._id === this.state.selectedAttachment._id;
-    });
+    const indexOfAttachment = this.getIndexOfAttachment();
 
     if (indexOfAttachment > 0) {
       this.setState({selectedAttachment: this.state.attachments[indexOfAttachment - 1]});
@@ -69,7 +73,8 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   }
 
   public render() {
-    console.log(this.state.selectedAttachment);
+    const indexOfAttachment = this.getIndexOfAttachment();
+
     return (
       <div
         id={'attachment-view'}
@@ -80,7 +85,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             <IcoN size={24} name={'xcross24White'}/>
           </a>
           <span>
-            1 of 5
+            {indexOfAttachment + 1} of {this.state.attachments.length}
           </span>
           {/*<button onClick={this.next.bind(this, '')}>next</button>
           <button onClick={this.prev.bind(this, '')}>prev</button>*/}
@@ -107,11 +112,12 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             <p>{this.state.selectedAttachment.filename}</p>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) ? (
-              <span>Original Image: {this.state.selectedAttachment.size} kb, 
-              {this.state.selectedAttachment.height} × {this.state.selectedAttachment.width}</span>
+              <span>Original Image:
+                {/*{this.state.selectedAttachment.size} kb,*/}
+                {this.state.selectedAttachment.height} × {this.state.selectedAttachment.width}</span>
             ) : (
               <span>
-                {this.state.selectedAttachment.size} kb
+                {/*{this.state.selectedAttachment.size} kb*/}
               </span>
             )}
           </div>
