@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Input, Button} from 'antd';
-import {Link} from 'react-router';
+// import {Link} from 'react-router';
 import {browserHistory} from 'react-router';
 const style = require('./style.css');
 import {connect} from 'react-redux';
@@ -119,7 +119,8 @@ class Signin extends React.Component<IProps, IState> {
                   onChange={this.handlePasswordChange}
             />
             <br />
-            <Button type="primary" htmlType="submit" className={style.submit} onClick={this.submit}>
+            <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
+            htmlType="submit" className={style.submit} onClick={this.submit}>
               <b>Sign in</b>
             </Button>
           {/*<p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>*/}
