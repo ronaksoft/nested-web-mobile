@@ -109,7 +109,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private composeOption = () => {
-    console.log('compose options');
     this.setState({
       composeOption: !this.state.composeOption,
     });
