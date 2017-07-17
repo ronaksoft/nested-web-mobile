@@ -5,7 +5,7 @@ import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest
 import PostApi from '../../../../api/post/index';
 import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
-import {setCurrentPost, setPosts} from '../../../../redux/app/actions/index';
+import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
 import ArrayUntiles from '../../../../services/untils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
@@ -14,10 +14,11 @@ import {browserHistory} from 'react-router';
 const style = require('../posts.css');
 
 interface IProps {
-  routing: any;
+  postsRoute: string;
   posts: IPost[];
   currentPost: IPost | null;
   setPosts: (posts: IPost[]) => {};
+  setPostsRoute: (route: string) => {};
   setCurrentPost: (post: IPost) => {};
   params?: any;
   location: any;
@@ -36,8 +37,7 @@ class Feed extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      // posts: this.props.posts,
-      posts: [],
+      posts: this.props.location.pathname === this.props.postsRoute ? this.props.posts : [],
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
@@ -113,6 +113,7 @@ class Feed extends React.Component<IProps, IState> {
 
         if (fromNow === true) {
           this.props.setPosts(posts);
+          this.props.setPostsRoute(this.props.location.pathname);
         }
 
         this.setState({
@@ -208,7 +209,7 @@ class Feed extends React.Component<IProps, IState> {
 }
 
 const mapStateToProps = (store) => ({
-  routing: store.routing,
+  postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,
 });
@@ -220,6 +221,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setCurrentPost: (post: IPost) => {
       dispatch(setCurrentPost(post));
+    },
+    setPostsRoute: (route: string) => {
+      dispatch(setPostsRoute(route));
     },
   };
 };

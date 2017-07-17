@@ -74,6 +74,19 @@ export function unsetPosts(): IAppAction {
   };
 }
 
+export function setPostsRoute(route: string): IAppAction {
+  return {
+    type: ActionTypes.APP_POSTS_ROUTE_SET,
+    payload: route,
+  };
+}
+
+export function unsetPostsRoute(): IAppAction {
+  return {
+    type: ActionTypes.APP_POSTS_ROUTE_UNSET,
+  };
+}
+
 export function setCurrentPost(post: IPost): IAppAction {
   return {
     type: ActionTypes.APP_CURRENT_POST_SET,
@@ -131,6 +144,7 @@ export function unsetDraft(): IAppAction {
     type: ActionTypes.APP_DRAFT_UNSET,
   };
 }
+
 export function setDraft(model: IComposeState): IAppAction {
   return {
     type: ActionTypes.APP_DRAFT_SET,
