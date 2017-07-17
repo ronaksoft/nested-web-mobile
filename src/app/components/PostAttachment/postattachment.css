@@ -56,7 +56,7 @@
   padding-right: 48px;
   font-size: 16px;
 }
-.detail P {
+.detail p {
   display: flex;
   flex: 1;
   align-items: center;
@@ -76,17 +76,32 @@
 .other {
   background: url('../../assets/icons/bg_attachment_other.svg') no-repeat;
   color: #282828;
+  box-shadow: 0 2px 4px rgbargb(40, 40, 40, .32);
+}
+.default .detail p,
+.gif .detail p,
+.other .detail p {
+  color: 282828;
 }
 .archive {
   background: url('../../assets/icons/bg_attachment_zip.svg') no-repeat;
+  color: #502D96;
+}
+.archive .detail p {
   color: #502D96;
 }
 .DOC {
   background: url('../../assets/icons/bg_attachment_document.svg') no-repeat;
   color: #2878CD;
 }
+.DOC .detail p {
+  color: #2878CD;
+}
 .PDF {
   background: url('../../assets/icons/bg_attachment_pdf.svg') no-repeat;
+  color: #CD2828;
+}
+.PDF .detail p {
   color: #CD2828;
 }
 .audio {

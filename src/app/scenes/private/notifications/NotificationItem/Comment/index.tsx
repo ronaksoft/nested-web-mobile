@@ -29,7 +29,8 @@ class Comment extends React.Component <IProps, any> {
     }
 
     return (
-      <Link to={`message/${notification.post_id}`} className={style.notifWrapper}>
+      <Link to={`message/${notification.post_id}`}
+      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
         { others.length > 0 && (
           <div className={style.commentContainer}>

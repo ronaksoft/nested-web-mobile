@@ -70,6 +70,9 @@
   font-size: 13px;
   font-weight: 700;
 }
+.read {
+  background-color: rgba(50,61,71,.08)
+}
 /*
 .notifWrapper{
   width: 100%;

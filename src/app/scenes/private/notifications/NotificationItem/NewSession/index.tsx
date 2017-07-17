@@ -11,8 +11,9 @@ interface IProps {
 }
 class NewSession extends React.Component <IProps, any> {
   public render() {
+    console.log(this.props.notification);
     return (
-      <div className={style.notifWrapper}>
+      <div className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
