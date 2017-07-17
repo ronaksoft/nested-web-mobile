@@ -40,6 +40,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  public load(items: IChipsItem[]) {
+    this.setState({
+      selectedItems: items,
+    });
+  }
+
   public clearSuggests = () => {
     this.setState({
       suggests: [],
@@ -182,15 +188,6 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       : unknownPicture;
   }
 
-  private handleInputBlur = (e: any) => {
-    // this.setState({
-    //   suggests: [],
-    // });
-    console.log('====================================');
-    console.log('lost focus', e.currentTarget);
-    console.log('====================================');
-  }
-
   public render() {
     // tempFunctions for binding this and pass TSX hint
     const tempFunctionChange = this.handleInputChange.bind(this);
@@ -225,7 +222,6 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
                 onKeyDown={tempFunctionKeydown}
                 onFocus={this.handleInputFocus}
                 value={this.state.input}
-                onBlur={this.handleInputBlur}
           />
         </div>
         {

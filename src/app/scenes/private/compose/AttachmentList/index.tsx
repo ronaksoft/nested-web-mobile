@@ -52,6 +52,24 @@ class AttachmentList extends React.Component<IProps, IState> {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
+  public load(attachments: IAttachment[]) {
+    this.setState({
+      items: attachments.map((attachment) => {
+        const item: IAttachmentItem = {
+          id: Unique.get(),
+          mode: Mode.VIEW,
+          model: attachment,
+          progress: {
+            loaded: 0,
+            total: 1,
+          },
+        };
+
+        return item;
+      }),
+    });
+  }
+
   /**
    * Create an AttachmentItem using the provided Attachment model
    *
@@ -117,11 +135,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @memberof AttachmentList
    */
   private send(item: IAttachmentItem, file: File, isMedia: boolean) {
-    // TODO: Find upload type if is media
     const type: string = isMedia ? FileUtil.getUploadType(file) : UploadType.FILE;
-    console.log('====================================');
-    console.log('type:', type);
-    console.log('====================================');
     // upload the given file with the specified type
     AttachmentApi.upload(file, type).then((mission: IUploadMission) => {
 
