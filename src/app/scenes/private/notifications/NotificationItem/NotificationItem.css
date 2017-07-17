@@ -57,7 +57,7 @@
 }
 
 .multiAvatars{
-display: inline-flex;
+  display: inline-flex;
 }
 
 .plus{
@@ -72,5 +72,5 @@ display: inline-flex;
 }
 
 .multiAvatarsWrapper{
-  flex:1;
+  flex: 1;
 }

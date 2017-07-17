@@ -7,8 +7,15 @@ import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
-import ReactPullToRefresh from 'react-pull-to-refresh';
+// import PullRefresh from 'react-pullrefresh';
 
+// custom renderer
+// const renderWaitingComponent = () => {
+//   return <div style={{backgroundColor: '#00f', color: '#fff'}}>waiting</div>;
+// };
+// const renderPullingComponent = (props, step) => {
+//   return <div style={{backgroundColor: '#f00', color: '#fff'}}>{step + '/' + props.max}</div>;
+// };
 interface IState {
   notifications: INotification[];
   trasnlateY: number;
@@ -26,6 +33,7 @@ class Notifications extends React.Component<IProps, IState> {
 // setting initial states
   constructor(props) {
     super(props);
+    this.handleRefresh = this.handleRefresh.bind(this);
     this.state = {
       notifications: this.props.notifications,
       trasnlateY: 0,
@@ -115,8 +123,17 @@ class Notifications extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <ReactPullToRefresh
-        onRefresh={this.handleRefresh}>
+      <div>
+        {/*<PullRefresh
+          zIndex={10000}
+          size={40}
+          max={100}
+          waitingComponent={false}
+          pullingComponent={renderPullingComponent}
+          onRefresh={this.handleRefresh}
+          supportDesktop={true}
+        />*/}
+        
         <div onTouchMove={this.onTouchMove.bind(this, '')}
         onTouchStart={this.onTouchStart.bind(this, '')}
         onTouchEnd={this.onTouchEnd.bind(this, '')}>
@@ -128,7 +145,7 @@ class Notifications extends React.Component<IProps, IState> {
             <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
           </div>
         </div>
-      </ReactPullToRefresh>
+      </div>
     );
   }
 }

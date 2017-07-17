@@ -55,6 +55,10 @@ class Feed extends React.Component<IProps, IState> {
 
   }
 
+  private gotoFeedByActivity() {
+    console.log('FIXME');
+  }
+
   private getPost(fromNow?: boolean, after?: number) {
 
     let params: IPostsListRequest;
