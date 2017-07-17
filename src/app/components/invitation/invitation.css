@@ -1,0 +1,66 @@
+.invitation {
+  position: fixed;
+  width: 100vw;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 32px 24px 24px 24px;
+  box-shadow: 0 16px 32px rgba(50,61,71,.64);
+  flex-direction: column;
+}
+.invitation h2{
+  margin-top: 16px;
+  color: #323D47;
+}
+.invitation p{
+  margin-top: 8px;
+  color: #323D47;
+}
+.invitation span{
+  margin-top: 24px;
+  margin-bottom: 32px;
+  color: #323D47;
+}
+.invitation button {
+  width: 128px;
+  height: 40px;
+}
+.invitation > .buttons {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.invitation .btnGreen {
+  background-color: #14D769;
+  color: white;
+  border: 1px solid #19BF63;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,180,90,.32);
+  border-radius: 4px;
+}
+.devider {
+  width: 16px;
+  flex: none;
+}
+.invitation .btnWhite {
+  background-color: #F5F5F5;
+  color: rgb(50,61,71);
+  border: 1px solid #D6D8D9;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(50,61,71,.32);
+  border-radius: 4px;
+}
+.close {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

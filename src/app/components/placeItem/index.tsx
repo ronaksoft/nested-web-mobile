@@ -72,7 +72,9 @@ class PlaceItem extends React.Component<IProps, IState> {
       borderRadius,
       size,
     } = this.props;
-
+    console.log(size, size > 32);
+    const picDim = size > 32 ? 'x64' : 'x32';
+    console.log('aaaaaa', place.picture[picDim]);
     const sizePX = size.toString(10) + 'px';
 
     const imageStyle = {
@@ -92,7 +94,7 @@ class PlaceItem extends React.Component<IProps, IState> {
     if (place.picture.x32.length > 0) {
       img = (
         <img className={style.picture}
-             src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture.x32}`}/>
+             src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture[picDim]}`}/>
       );
     } else {
       img = (
