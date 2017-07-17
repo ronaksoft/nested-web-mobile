@@ -54,28 +54,20 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public componentWillMount() {
     this.setState({
       attachModal: false,
-      unselectSelectedRecipient: 0,
     });
     this.postApi = new PostApi();
   }
   private attachTypeSelect = () => {
-    console.log('click');
     this.setState({
       attachModal: !this.state.attachModal,
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
     });
+    this.targets.clearSuggests();
   }
   private subjectFocus = () => {
-    console.log('subjectFocus');
-    this.setState({
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
-    });
+    this.targets.clearSuggests();
   }
   private bodyFocus = () => {
-    console.log('bodyFocus');
-    this.setState({
-      unselectSelectedRecipient: this.state.unselectSelectedRecipient + 1,
-    });
+    this.targets.clearSuggests();
   }
 
   private overlayClick = (event) => {
