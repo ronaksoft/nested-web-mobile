@@ -122,7 +122,7 @@ class Signin extends React.Component<IProps, IState> {
             <Button type="primary" htmlType="submit" className={style.submit} onClick={this.submit}>
               <b>Sign in</b>
             </Button>
-          <p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
+          {/*<p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>*/}
         </div>
       </div>
     );
