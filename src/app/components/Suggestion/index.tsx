@@ -5,7 +5,7 @@ import {Input, Button} from 'antd';
 import { PlaceChips } from 'components';
 import {IChipsItem} from 'components/Chips';
 import SearchApi from 'api/search';
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 
 const style = require('./suggestion.css');
 const unknownPicture = require('assets/icons/absents_place.svg');
@@ -142,6 +142,10 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  private getPicture = (item: IChipsItem) => {
+    return item.picture.x64 ? FileUtil.getViewUrl(item.picture.x64) : unknownPicture;
+  }
+
   public render() {
     // tempFunctions for binding this and pass TSX hint
     const tempFunctionChange = this.changeInputVal.bind(this);
@@ -151,7 +155,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       return (
         <li key={item._id}
         onClick={this.insertChip.bind(this, item)}>
-          <img src={item.picture.x64 ? Store.getViewUrl(item.picture.x64) : unknownPicture} alt=""/>
+          <img src={this.getPicture(item)} alt=""/>
           <div>
             <p dangerouslySetInnerHTML={{ __html: item.name }}/>
             <span>{item._id}</span>

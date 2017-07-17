@@ -6,7 +6,7 @@ enum UrlType {
     Download = 1,
 }
 
-const StoreTypes = {
+const UploadTypes = {
   GIF: 'gif',
   FILE: 'file',
   AUDIO: 'audio',
@@ -27,13 +27,13 @@ const FileTypes = {
   OTHER: 'other',
 };
 
-class Store {
+class FileUtil {
   public static getViewUrl(id: string) {
-    return Store.getUrl(id, UrlType.View);
+    return FileUtil.getUrl(id, UrlType.View);
   }
 
   public static getDownloadUrl(id: string) {
-    return Store.getUrl(id, UrlType.Download);
+    return FileUtil.getUrl(id, UrlType.Download);
   }
 
   private static getUrl(id: string, type: UrlType) {
@@ -140,7 +140,7 @@ class Store {
       return '';
     }
 
-    const type = Store.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
+    const type = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
 
     return type.type || FileTypes.OTHER;
   }
@@ -174,23 +174,23 @@ class Store {
   }
 
   public static getUploadType(file: File) {
-    const group = Store.getType(file.type);
+    const group = FileUtil.getType(file.type);
 
-    if (Store.getSuffix(file.name) === 'gif') {
-      return StoreTypes.GIF;
+    if (FileUtil.getSuffix(file.name) === 'gif') {
+      return UploadTypes.GIF;
     }
 
     if (group === FileTypes.IMAGE) {
-      return StoreTypes.IMAGE;
+      return UploadTypes.IMAGE;
     } else if (group === FileTypes.VIDEO) {
-      return StoreTypes.VIDEO;
+      return UploadTypes.VIDEO;
     } else if (group === FileTypes.AUDIO) {
-      return StoreTypes.AUDIO;
+      return UploadTypes.AUDIO;
     } else {
-      return StoreTypes.FILE;
+      return UploadTypes.FILE;
     }
   }
 
 }
 
-export default Store;
+export default FileUtil;

@@ -12,7 +12,7 @@ import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
 const style = require('./attachmentList.css');
-import Store from 'services/utils/store';
+import FileUtil from 'services/utils/file';
 
 interface IProps {
   file?: File;
@@ -114,7 +114,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    */
   private send(item: IAttachmentItem, file: File, isMedia: boolean) {
     // TODO: Find upload type if is media
-    const type: string = isMedia ? Store.getUploadType(file) : UploadType.FILE;
+    const type: string = isMedia ? FileUtil.getUploadType(file) : UploadType.FILE;
     console.log('====================================');
     console.log('type:', type);
     console.log('====================================');
