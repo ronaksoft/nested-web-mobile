@@ -1,5 +1,6 @@
 import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
+const style = require('../../../PostAttachment/postattachment.css');
 
 interface IProps {
   attachment: IPostAttachment;
@@ -17,10 +18,13 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
   public render() {
     const {attachment} = this.props;
     return (
-      <li key={attachment._id}>
-        {attachment.filename}
-        {attachment.type}
-      </li>
+      <div className={[style.attachmentHolder, style[attachment.type]].join(' ')}>
+        <div className={style.fileName}><p>{attachment.filename}</p></div>
+        <div className={style.detail}>
+          <p>{'extension'}</p>
+          <span className={style.attsize}>{attachment.size}</span>
+        </div>
+      </div>
     );
   }
 }

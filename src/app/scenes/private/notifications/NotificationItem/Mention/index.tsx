@@ -15,21 +15,20 @@ class Mention extends React.Component <IProps, any> {
   public render() {
     const notification = this.props.notification;
     return (
-      <Link to={`message/${notification.place_id}`} className={style.mention}>
-        <div className={style.notifWrapper}>
-              <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
-            <div className={style.notifContainer}>
-              <div className={style.notifData}>
-                <p>
-                <b>
+      <Link to={`message/${notification.place_id}`}
+      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+        <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
+        <div className={style.notifContainer}>
+          <div className={style.notifData}>
+            <p>
+              <b>
               <FullName user_id={this.props.notification.account_id}/>
               </b>:
               <span><b> @{this.props.notification.account_id}.</b></span>
-                <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
-                </p>
-            </div>
-            <IcoN size={16} name={'atsign16'}/>
+              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+            </p>
           </div>
+        <IcoN size={16} name={'atsign16'}/>
         </div>
       </Link>
     );

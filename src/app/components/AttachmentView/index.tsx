@@ -69,6 +69,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   }
 
   public render() {
+    console.log(this.state.selectedAttachment);
     return (
       <div
         id={'attachment-view'}
@@ -105,9 +106,13 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           <div>
             <p>{this.state.selectedAttachment.filename}</p>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
-              this.state.selectedAttachment.type === AttachmentType.IMAGE) && (
+              this.state.selectedAttachment.type === AttachmentType.IMAGE) ? (
               <span>Original Image: {this.state.selectedAttachment.size} kb, 
               {this.state.selectedAttachment.height} × {this.state.selectedAttachment.width}</span>
+            ) : (
+              <span>
+                {this.state.selectedAttachment.size} kb
+              </span>
             )}
           </div>
           <a onClick={this.props.onClose}>

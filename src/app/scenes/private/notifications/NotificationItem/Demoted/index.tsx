@@ -17,8 +17,8 @@ class Demoted extends React.Component <IProps, any> {
 
     const notification = this.props.notification;
     return (
-      <Link to={`message/${notification.place_id}`} className={style.mention}>
-        <div className={style.notifWrapper}>
+      <Link to={`message/${notification.place_id}`}
+      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
           <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
           <div className={style.notifContainer}>
             <div className={style.notifData}>
@@ -31,7 +31,6 @@ class Demoted extends React.Component <IProps, any> {
             </div>
             <IcoN size={16} name={'person16'}/>
           </div>
-        </div>
       </Link>
     );
   }

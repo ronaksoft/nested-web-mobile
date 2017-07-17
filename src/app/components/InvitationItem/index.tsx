@@ -2,22 +2,45 @@
 // import IPlaceConjuction from '../../api/place/interfaces/IPlaceConjuction';
 import AAA from '../../services/aaa/index';
 import CONFIG from '../../config';
-import {IcoN} from 'components';
+import {IcoN, Invitation} from 'components';
 
 const style = require('./invitationItem.css');
+
+interface IInvitationItemState {
+  modal: boolean;
+}
 
 interface IInvitationItemProps {
   item: any;
   key: string;
 }
 
-class InvitationItem extends React.Component<IInvitationItemProps, any> {
+class InvitationItem extends React.Component<IInvitationItemProps, IInvitationItemState> {
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      modal: false,
+    };
+    this.closeModal = this.closeModal.bind(this);
+    this.inivtationModal = this.inivtationModal.bind(this);
+  }
+
+  private inivtationModal() {
+      this.setState({
+          modal: true,
+      });
+  }
+
+  private closeModal() {
+      this.setState({
+          modal: false,
+      });
+      console.log(this.state.modal);
   }
 
   public render() {
+    console.log(this.props.item, this.state.modal);
     const place = this.props.item.place;
     const inviter = this.props.item.inviter;
     let img;
@@ -32,7 +55,7 @@ class InvitationItem extends React.Component<IInvitationItemProps, any> {
         );
     }
     return (
-      <li key={this.props.key}>
+      <li key={this.props.key} onClick={this.inivtationModal}>
         <div className={style.place}>
             {img}
             <div>
@@ -40,9 +63,10 @@ class InvitationItem extends React.Component<IInvitationItemProps, any> {
                 <a>{place.name}</a>
             </div>
         </div>
-            <hr className={style.hrDark}/>
-            <hr className={style.hrLight}/>
-        </li>
+        <hr className={style.hrDark}/>
+        <hr className={style.hrLight}/>
+        {this.state.modal && <Invitation inv={this.props.item} onClose={this.closeModal}/>}
+    </li>
     );
   }
 }

@@ -7,6 +7,9 @@ import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
+import {IcoN} from 'components';
+const style = require('./notifications.css');
+
 // import PullRefresh from 'react-pullrefresh';
 
 // custom renderer
@@ -18,7 +21,6 @@ import {Button} from 'antd';
 // };
 interface IState {
   notifications: INotification[];
-  trasnlateY: number;
 }
 
 interface IProps {
@@ -29,14 +31,14 @@ interface IProps {
 
 class Notifications extends React.Component<IProps, IState> {
   private requestLimit: number = 20;
-  private startTouchPoint: number = 0;
+  // private startTouchPoint: number = 0;
+  // private isInTop: boolean = true;
 // setting initial states
   constructor(props) {
     super(props);
     this.handleRefresh = this.handleRefresh.bind(this);
     this.state = {
       notifications: this.props.notifications,
-      trasnlateY: 0,
     };
   }
 
@@ -87,6 +89,10 @@ class Notifications extends React.Component<IProps, IState> {
     this.getNotificationBefore(true);
   }
 
+  // public componentWillUnmount() {
+  //   ;
+  // }
+
   // private onSwipe(props: any, event: any) {
   //   console.log(event, props);
   //   if (event.direction === 8) {
@@ -101,49 +107,45 @@ class Notifications extends React.Component<IProps, IState> {
     this.getNotificationAfter();
   }
 
-  private onTouchStart() {
-    const touch = arguments[1].touches[0];
-    this.startTouchPoint = touch.clientY;
-  }
+  // private onTouchStart() {
+  //   if (window.scrollY === 0) {
+  //     this.isInTop = true;
+  //     const touch = arguments[1].touches[0];
+  //     this.startTouchPoint = touch.clientY;
+  //     console.log(touch.clientY);
+  //   }
+  // }
 
-  private onTouchEnd() {
-    this.setState({
-      trasnlateY : 0,
-    });
-  }
+  // private onTouchEnd() {
+  //   console.log(arguments[1].touches[0]);
+  // }
 
-  private onTouchMove() {
-    // const touch = arguments[1].touches[0];
-    // const trasnlated = touch.clientY - this.startTouchPoint > 0 ? touch.clientY - this.startTouchPoint : 0;
-    // this.setState({
-    //   trasnlateY : trasnlated < 60 ? trasnlated : 60,
-    // });
-    // document.getElementById('transform').style.transform = 'translateY(' + trasnlated + 'px)';
-  }
+  // private onTouchMove() {
+  //   console.log(arguments[1].touches[0]);
+  //   const touch = arguments[1].touches[0];
+  //   const trasnlated = touch.clientY - this.startTouchPoint > 0 ? touch.clientY - this.startTouchPoint : 0;
+  //   if ( trasnlated > 80 ) {
+  //     return;
+  //   }
+  //   console.log(trasnlated);
+
+  //   document.getElementById('scrollWrp').style.maxHeight = trasnlated + 'px';
+  // }
 
   public render() {
     return (
       <div>
-        {/*<PullRefresh
-          zIndex={10000}
-          size={40}
-          max={100}
-          waitingComponent={false}
-          pullingComponent={renderPullingComponent}
-          onRefresh={this.handleRefresh}
-          supportDesktop={true}
-        />*/}
-        
-        <div onTouchMove={this.onTouchMove.bind(this, '')}
-        onTouchStart={this.onTouchStart.bind(this, '')}
-        onTouchEnd={this.onTouchEnd.bind(this, '')}>
-          <div>
-            {this.state.notifications.map((notification) =>
-              (<NotificationItem key={notification._id} notification={notification}/>))
-            }
-
-            <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
-          </div>
+        <div className={style.notificationHead}>
+          <h2>Notifications</h2>
+          <a>
+            <IcoN size={24} name="listCheck24"/>
+          </a>
+        </div>
+        <div className={style.notificationWrp}>
+          {this.state.notifications.map((notification) =>
+            (<NotificationItem key={notification._id} notification={notification}/>))
+          }
+          <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
         </div>
       </div>
     );
