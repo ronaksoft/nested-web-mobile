@@ -13,15 +13,22 @@
 .invitation h2{
   margin-top: 16px;
   color: #323D47;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 27px
 }
 .invitation p{
   margin-top: 8px;
+  font-size: 14px;
+  line-height: 18px;
   color: #323D47;
 }
 .invitation span{
   margin-top: 24px;
   margin-bottom: 32px;
   color: #323D47;
+  opacity: .64;
+  font-size: 13px;
 }
 .invitation button {
   width: 128px;
