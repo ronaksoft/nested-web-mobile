@@ -29,47 +29,64 @@ class Comment extends React.Component <IProps, any> {
     }
 
     return (
-      <Link to={`message/${notification.post_id}`} className={style.mention}>
-        <div className={style.notifWrapper}>
-          <div className={style.multiNotifAvatar}>
-            <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
-            <div className={style.multiNotifData}>
-              <div className={style.multiAvatarsWrapper}>
-                <div className={style.multiAvatars}>
-                  {others &&
-                  others.map((userId: string, index: number) => {
-                    if (index < 3) {
-                      return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
-                    } else {
-                      return (
-                        <div className={style.plus}>+{index - 2}</div>
-                      );
-                    }
-                  })
+      <Link to={`message/${notification.post_id}`} className={style.notifWrapper}>
+        <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
+        { others.length > 0 && (
+          <div className={style.commentContainer}>
+            <div className={style.multiAvatars}>
+              {others &&
+              others.map((userId: string, index: number) => {
+                if (index < 3) {
+                  return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
+                } else {
+                  return (
+                    <div className={style.plus}>+{index - 2}</div>
+                  );
+                }
+              })
+              }
+              <div className={style.filler}/>
+              <IcoN size={16} name={'comment24Crown'}/>
+            </div>
+            <div className={style.notifData}>
+              <p>
+                <b><FullName user_id={this.props.notification.actor_id}/> </b>
+                {others &&
+                others.map((userId: string, index: number) => {
+                  if (index < 3) {
+                    return <span> and <b><FullName user_id={userId}/></b></span>;
                   }
-                </div>
-                <div className={style.notifData}>
-                  <p>
-                    <b><FullName user_id={this.props.notification.actor_id}/> </b>
-                    {others &&
-                    others.map((userId: string, index: number) => {
-                      if (index < 3) {
-                        return <span> and <b><FullName user_id={userId}/></b></span>;
-                      }
-                    })
-                    }
-                    <span> commented on <b><PostSubject post_id={notification.post_id}/></b>
-              </span>
-                    <CommentBody comment_id={this.props.notification.comment_id}
-                                 post_id={this.props.notification.post_id}/>.
-                    <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
-                  </p>
-                </div>
-              </div>
-              <IcoN size={16} name={'comment24'}/>
+                })
+                }
+                <span>
+                  commented on
+                  <b><PostSubject post_id={notification.post_id}/></b>
+                </span>
+                <CommentBody comment_id={this.props.notification.comment_id}
+                              post_id={this.props.notification.post_id}/>.
+                <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              </p>
             </div>
           </div>
-        </div>
+        )}
+        {others.length === 0 && (
+          <div className={style.notifContainer}>
+            <div className={style.notifData}>
+              <p>
+                <b><FullName user_id={this.props.notification.actor_id}/> </b>
+                <span>
+                  commented on
+                  <b><PostSubject post_id={notification.post_id}/></b>
+                </span>
+                <CommentBody comment_id={this.props.notification.comment_id}
+                              post_id={this.props.notification.post_id}/>.
+                <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              </p>
+            </div>
+            <IcoN size={16} name={'comment24Crown'}/>
+          </div>
+        )}
+        
       </Link>
     );
   }

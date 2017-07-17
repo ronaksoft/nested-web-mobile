@@ -57,7 +57,7 @@
   margin-left: 8px;   
 }
 .rightItems {
-  width: 104px;
+  /*width: 104px;*/
   padding: 0 8px;
   flex: none;
   display: flex;
