@@ -20,9 +20,9 @@
 }
 .input input {
   border: none;
-  height: 128px;
+  height: 48px;
   font-size: 14px;
-  width: 50px;
+  width: 128px;
   display: flex;
   flex: 1;
 }
