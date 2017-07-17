@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, Button, Modal, Switch} from 'antd';
+import {Input, Button, Modal, Switch, message} from 'antd';
 import { Suggestion, IcoN } from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
@@ -11,6 +11,8 @@ import {setDraft, unsetDraft} from 'redux/app/actions';
 import {connect} from 'react-redux';
 import {IAttachment} from 'api/attachment/interfaces';
 import {IChipsItem} from 'components/Chips';
+import IPost from 'api/post/interfaces/IPost';
+import IPostAttachment from 'api/post/interfaces//IPostAttachment';
 const confirm = Modal.confirm;
 const style = require('./compose.css');
 const styleNavbar = require('../../../components/navbar/navbar.css');
@@ -36,7 +38,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private file: HTMLInputElement;
   private mediaMode: boolean;
 
-  constructor(props: any) {
+  constructor(props: IComposeProps) {
     super(props);
 
     const defaultState: IComposeState = {
@@ -48,7 +50,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       subject: '',
       composeOption: false,
     };
-    this.state = this.props.draft || defaultState;
+    this.state = props.draft || defaultState;
   }
 
   public componentWillMount() {
@@ -56,6 +58,65 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attachModal: false,
     });
     this.postApi = new PostApi();
+  }
+
+  public componentDidMount() {
+    if (this.props.params.replyId || this.props.params.forwardId) {
+      this.postApi.get({
+        post_id: this.props.params.replyId || this.props.params.forwardId,
+      }).then((post: IPost) => {
+        if (this.props.params.replyId) {
+
+          const targets = post.post_places.map((i) => {
+            const chipsItem: IChipsItem = {
+              _id: i._id,
+              name: i.name,
+              picture: i.picture,
+            };
+
+            return chipsItem;
+          }).concat(post.post_recipients.map((i) => {
+            const chipsItem: IChipsItem = {
+            _id: i._id,
+            name: i.name,
+            picture: i.picture,
+            };
+
+            return chipsItem;
+          }));
+
+          this.setState({
+            targets,
+            subject: post.subject,
+          });
+
+          this.targets.load(targets);
+
+      } else {
+        const attachments = post.post_attachments.map((i: IPostAttachment) => {
+          const attachment: IAttachment = {
+            universal_id: i._id,
+            name: i.filename,
+            expiration_timestamp: 0,
+            size: i.size,
+            thumbs: i.thumbs,
+            type: i.type,
+          };
+
+          return attachment;
+        });
+        this.setState({
+          subject: post.subject,
+          body: post.body,
+          attachments,
+        });
+
+        this.attachments.load(attachments);
+      }
+      }, () => {
+        message.error('An error has occured in loading the post!');
+      });
+    }
   }
   private attachTypeSelect = () => {
     this.setState({
@@ -109,7 +170,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private composeOption = () => {
-    console.log('compose options');
     this.setState({
       composeOption: !this.state.composeOption,
     });
@@ -212,15 +272,31 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   private leave = () => {
+    if (this.attachments.isUploading()) {
+      confirm({
+        title: 'Upload in progress',
+        content: 'An upload is in progress. Do you want to abort the process and leave here?',
+        cancelText: 'Yes, Let me go',
+        okText: 'No',
+        onCancel: () => {
+          this.attachments.abortAll();
+          browserHistory.goBack();
+        },
+      });
+
+      return;
+    }
+
     if (this.state.targets.length > 0
       || this.state.attachments.length > 0
       || this.state.body.length > 0
       || this.state.subject.length > 0) {
 
       confirm({
-        title: 'What do you want to do?',
-        okText: 'Draft',
-        cancelText: 'Discard',
+        title: 'Save a draft',
+        content: `Do you want to save a draft before leaving here?`,
+        okText: 'Yes',
+        cancelText: 'No, Let me go',
         onCancel: this.discard,
         onOk: this.draft,
       });
@@ -256,6 +332,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   public render() {
+    console.log('====================================');
+    console.log('state', this.state);
+    console.log('====================================');
     return (
       <div className={style.compose}>
         <div className={styleNavbar.navbar}>

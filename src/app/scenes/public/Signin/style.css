@@ -8,4 +8,46 @@
 .submit {
   width: 100%;
 }
-
+.publicHead {
+  height: 72px;
+  padding: 16px 16px 8px 16px;
+  display: flex;
+}
+.publicHead img{
+  height: 48px;
+  width: 48px;
+  display: flex;
+  flex: none
+}
+.filler {
+  width: 100%;
+  display: flex;
+}
+.publicPage h2 {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 56px;
+  padding-left: 16px;
+}
+.publicForm {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.publicForm input{
+  height: 48px;
+  margin: 8px 0;
+}
+.publicForm button{
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+.detail {
+  padding: 12px 0;
+  font-size: 14px;
+  color: rgba(50,61,71,.72)
+}
+.detail a{
+  color: #00B45A
+}
