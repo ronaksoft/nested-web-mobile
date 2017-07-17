@@ -46,9 +46,13 @@ export const APP_LIMITS_SET: string = 'APP/LIMITS_SET';
 export const APP_DRAFT_SET: string = 'APP/DRAFT_SET';
 export const APP_DRAFT_UNSET: string = 'APP/DRAFT_UNSET';
 
-/** POST ACTION */
-export const APP_POSTS_SET: string = 'APP/POST_SET';
-export const APP_POSTS_UNSET: string = 'APP/POST_UNSET';
+/** POSTS ACTION */
+export const APP_POSTS_SET: string = 'APP/POSTS_SET';
+export const APP_POSTS_UNSET: string = 'APP/POSTS_UNSET';
+
+/** POSTS ACTION */
+export const APP_POSTS_ROUTE_SET: string = 'APP/POSTS_ROUTE_SET';
+export const APP_POSTS_ROUTE_UNSET: string = 'APP/POSTS_ROUTE_UNSET';
 
 /** CURRENT POST ACTION */
 export const APP_CURRENT_POST_SET: string = 'APP/CURRENT_POST_SET';
