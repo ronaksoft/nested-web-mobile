@@ -55,6 +55,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         posts: [],
       });
 
+    case ActionTypes.APP_POSTS_ROUTE_SET:
+      return Immutable.merge(state, {
+        postsRoute: action.payload,
+      });
+
+    case ActionTypes.APP_POSTS_UNSET:
+      return Immutable.merge(state, {
+        postsRoute: '',
+      });
+
     case ActionTypes.APP_USER_PLACES_SET:
       return Immutable.merge(state, {
         userPlaces: action.payload,

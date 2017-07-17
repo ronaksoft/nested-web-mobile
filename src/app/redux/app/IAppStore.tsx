@@ -14,6 +14,7 @@ export interface IAppStore {
   notifications: INotificationResponse[];
   notificationsCount: INotificationCountRequest;
   posts: IPost[];
+  postsRoute: string;
   sidebarPlaces: ISidebarPlace[];
   sidebarPlacesUnreads: IUnreadPlace;
   currentPost: IPost | null;
@@ -22,5 +23,6 @@ export interface IAppStore {
 
 export interface IAppAction {
   type: string;
-  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean | IComposeState;
+  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean | string
+    | IComposeState;
 }

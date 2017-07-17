@@ -5,19 +5,21 @@ import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest
 import PostApi from '../../../../api/post/index';
 import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
-import {setCurrentPost, setPosts} from '../../../../redux/app/actions/index';
+import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
 import ArrayUntiles from '../../../../services/untils/array';
-import {Button} from 'antd';
+import {Button, message} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
 
 const style = require('../posts.css');
 
 interface IProps {
+  postsRoute: string;
   routing: any;
   posts: IPost[];
   currentPost: IPost | null;
   setPosts: (posts: IPost[]) => {};
+  setPostsRoute: (route: string) => {};
   setCurrentPost: (post: IPost) => {};
   params?: any;
   location: any;
@@ -25,6 +27,9 @@ interface IProps {
 
 interface IState {
   posts: IPost[];
+  loadingAfter: boolean;
+  loadingBefore: boolean;
+  reachedTheEnd: boolean;
 }
 
 class Bookmarked extends React.Component<IProps, IState> {
@@ -33,8 +38,10 @@ class Bookmarked extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      // posts: this.props.posts,
-      posts : [],
+      posts: this.props.location.pathname === this.props.postsRoute ? this.props.posts : [],
+      loadingAfter: false,
+      loadingBefore: false,
+      reachedTheEnd: false,
     };
   }
 
@@ -62,11 +69,20 @@ class Bookmarked extends React.Component<IProps, IState> {
       params = {
         before: Date.now(),
       };
+      this.setState({
+        loadingBefore: true,
+      });
     } else if (typeof after === 'number') {
       params = {
         after,
       };
+      this.setState({
+        loadingAfter: true,
+      });
     } else {
+      this.setState({
+        loadingBefore: true,
+      });
       if (this.state.posts.length === 0) {
         params = {
           before: Date.now(),
@@ -80,6 +96,13 @@ class Bookmarked extends React.Component<IProps, IState> {
     params.limit = 20;
     this.postApi.getBockmarkedPosts(params)
       .then((response: IPostsListResponse) => {
+
+        if (this.state.posts.length > 0 && response.posts.length < params.limit) {
+          this.setState({
+            reachedTheEnd: true,
+          });
+        }
+
         const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
@@ -87,11 +110,17 @@ class Bookmarked extends React.Component<IProps, IState> {
 
         if (fromNow === true) {
           this.props.setPosts(posts);
+          this.props.setPostsRoute(this.props.location.pathname);
         }
 
         this.setState({
           posts,
+          loadingBefore: false,
+          loadingAfter: false,
         });
+      })
+      .catch(() => {
+        message.success('An error has occurred.', 10);
       });
   }
 
@@ -122,18 +151,41 @@ class Bookmarked extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <Button onClick={loadMore}>Load More ...</Button>
+        {this.state.loadingAfter &&
+        <div>Loading new posts...</div>
+        }
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
+        {this.state.loadingBefore &&
+        <div>Loading...</div>
+        }
+        {!this.state.reachedTheEnd && !this.state.loadingAfter &&
+        !this.state.loadingBefore && this.state.posts.length === 0 &&
+        <div>
+          <b>You haven't bookmarked anything yet!</b>
+          <div>There's a bookmark icon on the upper-right corner of each post.</div>
+          Click on it to save the post to be viewed later.
+          <div>
+            <Button onClick={loadMore}>Try again</Button>
+          </div>
+        </div>
+        }
+        {this.state.reachedTheEnd &&
+        <div>No more messages here!</div>
+        }
+        {!this.state.reachedTheEnd &&
+        !this.state.loadingBefore && !this.state.loadingAfter &&
+        <div><Button onClick={loadMore}>Load More</Button></div>
+        }
       </div>
     );
   }
 }
 
 const mapStateToProps = (store) => ({
-  routing: store.routing,
+  postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,
 });
@@ -145,6 +197,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setCurrentPost: (post: IPost) => {
       dispatch(setCurrentPost(post));
+    },
+    setPostsRoute: (route: string) => {
+      dispatch(setPostsRoute(route));
     },
   };
 };

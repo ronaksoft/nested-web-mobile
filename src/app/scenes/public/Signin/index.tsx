@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Input, Button} from 'antd';
-import {Link} from 'react-router';
+// import {Link} from 'react-router';
 import {browserHistory} from 'react-router';
 const style = require('./style.css');
 import {connect} from 'react-redux';
@@ -103,12 +103,13 @@ class Signin extends React.Component<IProps, IState> {
   public render() {
     // const { getFieldDecorator } = this.props.form;
     return (
-      <div>
-        <div>
-          <img src={require('./logo.svg')} className={style.logo} alt="Nested" style={{ width: 48, height: 48 }}/>
+      <div className={style.publicPage}>
+        <div className={style.publicHead}>
+          <img src={require('./logo.svg')} className={style.logo} alt="Nested"/>
+          <div className={style.filler} />
         </div>
         <h2>Sign in to Nested</h2>
-        <div>
+        <div className={style.publicForm}>
             <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
             <br />
             <Input
@@ -118,10 +119,11 @@ class Signin extends React.Component<IProps, IState> {
                   onChange={this.handlePasswordChange}
             />
             <br />
-            <Button type="primary" className={style.submit} onClick={this.submit}>
+            <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
+            htmlType="submit" className={style.submit} onClick={this.submit}>
               <b>Sign in</b>
             </Button>
-          <p>Don't have an account? <Link to="/signup">Create a new account</Link></p>
+          {/*<p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>*/}
         </div>
       </div>
     );
