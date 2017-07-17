@@ -108,10 +108,6 @@ class Feed extends React.Component<IProps, IState> {
     browserHistory.push(`/message/${post._id}`);
   }
 
-  private gotoFeedByActivity() {
-    browserHistory.push('/feed/latest-activity');
-  }
-
   public render() {
     const loadMore = this.getPost.bind(this);
 
