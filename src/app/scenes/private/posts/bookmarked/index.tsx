@@ -10,6 +10,7 @@ import ArrayUntiles from '../../../../services/untils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
+import {Loading} from '../../../../components/Loading/index';
 
 const style = require('../posts.css');
 
@@ -151,16 +152,12 @@ class Bookmarked extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        {this.state.loadingAfter &&
-        <div>Loading new posts...</div>
-        }
+        <Loading active={this.state.loadingAfter} />
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
-        {this.state.loadingBefore &&
-        <div>Loading...</div>
-        }
+        <Loading active={this.state.loadingBefore}/>
         {
           !this.state.reachedTheEnd &&
           !this.state.loadingAfter &&

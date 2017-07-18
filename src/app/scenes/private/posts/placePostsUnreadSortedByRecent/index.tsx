@@ -10,6 +10,13 @@ import ArrayUntiles from '../../../../services/untils/array';
 import {Button} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
+import {Loading} from '../../../../components/Loading/index';
+import SyncActivity from '../../../../services/syncActivity/index';
+import SyncActions from '../../../../services/syncActivity/syncActions';
+import IActivity from '../../../../api/activity/interfaces/IActivitiy';
+import {NewBadge} from 'components/NewBadge';
+
+const privateStyle = require('../../private.css');
 
 const style = require('../posts.css');
 
@@ -30,11 +37,15 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
+  newPostCount: number;
 }
 
 class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
   private postApi: PostApi;
   private currentPlaceId: string | null;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
+  private newPostsIds = [];
 
   constructor(props: IProps) {
     super(props);
@@ -44,7 +55,50 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
+      newPostCount: 0,
     };
+  }
+
+  private addNewPostActivity(activity: IActivity) {
+    if (this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+      this.newPostsIds.push(activity.post_id);
+      this.setState({
+        newPostCount: this.newPostsIds.length,
+      });
+    }
+  }
+
+  private addCommentToPostActivity(activity: IActivity) {
+
+    const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
+
+    if (indexOfPost > -1) {
+      let posts;
+      posts = JSON.parse(JSON.stringify(this.state.posts));
+
+      this.postApi.get({post_id: activity.post_id})
+        .then((post: IPost) => {
+          posts[indexOfPost].counters = post.counters;
+          this.setState({
+            posts,
+          });
+          this.props.setPosts(posts);
+        });
+    }
+  }
+
+  private showNewPosts() {
+    this.props.setPosts([]);
+    this.newPostsIds = [];
+    this.setState({
+      newPostCount: 0,
+      posts: [],
+      loadingBefore: true,
+    });
+    setTimeout(() => {
+      this.getPost();
+    }, 1000);
+
   }
 
   public componentWillReceiveProps(newProps: IProps) {
@@ -71,6 +125,23 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
         },
         200);
     }
+
+    this.syncActivityListeners.push(
+      this.syncActivity.openChannel(
+        this.currentPlaceId,
+        SyncActions.ALL_ACTIONS,
+        (activity: IActivity) => {
+          switch (activity.action) {
+            case SyncActions.COMMENT_ADD:
+            case SyncActions.COMMENT_REMOVE:
+              return this.addCommentToPostActivity(activity);
+            case SyncActions.POST_ADD:
+              return this.addNewPostActivity(activity);
+            default :
+              return;
+          }
+        },
+      ));
 
   }
 
@@ -264,16 +335,20 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        {this.state.loadingAfter &&
-        <div>Loading new posts...</div>
-        }
+        <NewBadge onClick={this.showNewPosts.bind(this, '')}
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
+        <Loading active={this.state.loadingAfter}/>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
-        {this.state.loadingBefore &&
-        <div>Loading...</div>
-        }
+        {this.state.posts.map((post: IPost) => (
+          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+            <Post post={post}/>
+          </div>))}
+        <Loading active={this.state.loadingBefore}/>
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&
         !this.state.loadingBefore && this.state.posts.length === 0 &&
         <div>You don't have any unseen posts.</div>
@@ -283,7 +358,9 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div><Button onClick={loadMore}>Load More</Button></div>
+        <div className={privateStyle.loadMore}>
+          <Button onClick={loadMore}>Load More</Button>
+        </div>
         }
       </div>
     );

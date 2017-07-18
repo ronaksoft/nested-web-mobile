@@ -13,11 +13,12 @@ export default class PostApi {
     this.api = Api.getInstance();
   }
 
-  public getPost(postId: string) {
+  public getPost(postId: string, markRead: boolean = false) {
     return this.api.request({
       cmd: 'post/get',
       data: {
         post_id: postId,
+        mark_read: markRead,
       },
     });
   }

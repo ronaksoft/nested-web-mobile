@@ -48,7 +48,7 @@ class Post extends React.Component<IProps, IState> {
       });
     } else {
       const postApi = new PostApi();
-      postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id)
+      postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
           this.setState({
             post,
@@ -84,7 +84,7 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
-  private leave = () => {
+  private leave() {
     browserHistory.goBack();
   }
 

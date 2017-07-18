@@ -10,6 +10,12 @@ import ArrayUntiles from '../../../../services/untils/array';
 import {Button} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
+import {Loading} from '../../../../components/Loading/index';
+import {NewBadge} from '../../../../components/NewBadge/index';
+import IActivity from '../../../../api/activity/interfaces/IActivitiy';
+import SyncActions from '../../../../services/syncActivity/syncActions';
+import SyncActivity from '../../../../services/syncActivity/index';
+import IUser from '../../../../api/account/interfaces/IUser';
 
 const style = require('../posts.css');
 
@@ -23,6 +29,7 @@ interface IProps {
   setCurrentPost: (post: IPost) => {};
   params?: any;
   location: any;
+  user: IUser;
 }
 
 interface IState {
@@ -30,10 +37,14 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
+  newPostCount: number;
 }
 
 class Shared extends React.Component<IProps, IState> {
   private postApi: PostApi;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
+  private newPostsIds = [];
 
   constructor(props: IProps) {
     super(props);
@@ -42,6 +53,7 @@ class Shared extends React.Component<IProps, IState> {
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
+      newPostCount: 0,
     };
   }
 
@@ -59,6 +71,65 @@ class Shared extends React.Component<IProps, IState> {
         },
         200);
     }
+
+    this.syncActivityListeners.push(
+      this.syncActivity.openChannel(
+        this.props.user._id,
+        SyncActions.ALL_ACTIONS,
+        (activity: IActivity) => {
+          switch (activity.action) {
+            case SyncActions.COMMENT_ADD:
+            case SyncActions.COMMENT_REMOVE:
+              return this.addCommentToPostActivity(activity);
+            case SyncActions.POST_ADD:
+              return this.addNewPostActivity(activity);
+            default :
+              return;
+          }
+        },
+      ));
+
+  }
+
+  private addNewPostActivity(activity: IActivity) {
+    if (this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+      this.newPostsIds.push(activity.post_id);
+      this.setState({
+        newPostCount: this.newPostsIds.length,
+      });
+    }
+  }
+
+  private addCommentToPostActivity(activity: IActivity) {
+
+    const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
+
+    if (indexOfPost > -1) {
+      let posts;
+      posts = JSON.parse(JSON.stringify(this.state.posts));
+
+      this.postApi.get({post_id: activity.post_id})
+        .then((post: IPost) => {
+          posts[indexOfPost].counters = post.counters;
+          this.setState({
+            posts,
+          });
+          this.props.setPosts(posts);
+        });
+    }
+  }
+
+  private showNewPosts() {
+    this.props.setPosts([]);
+    this.newPostsIds = [];
+    this.setState({
+      newPostCount: 0,
+      posts: [],
+      loadingBefore: true,
+    });
+    setTimeout(() => {
+      this.getPost();
+    }, 1000);
 
   }
 
@@ -147,8 +218,12 @@ class Shared extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
+        <NewBadge onClick={this.showNewPosts.bind(this, '')}
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
         {this.state.loadingAfter &&
-        <div>Loading new posts...</div>
+        <Loading active={this.state.loadingAfter}/>
         }
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
@@ -174,6 +249,7 @@ class Shared extends React.Component<IProps, IState> {
 }
 
 const mapStateToProps = (store) => ({
+  user: store.app.user,
   postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,

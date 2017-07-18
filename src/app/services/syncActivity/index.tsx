@@ -98,7 +98,7 @@ export default class SyncActivity {
 
     this.activityApi.getActivities({
       // fixme:: fix time
-      after: this.latestActivityTimestamp - 100000,
+      after: this.latestActivityTimestamp - 10000,
       place_id: syncObj.place_id,
     }).then((activities: IActivity[]) => {
       this.latestActivityTimestamp = Date.now();

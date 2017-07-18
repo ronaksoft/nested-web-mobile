@@ -15,6 +15,7 @@ import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 import AccountApi from '../../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';
+import {Loading} from '../../../../components/Loading/index';
 
 const style = require('../posts.css');
 const privateStyle = require('../../private.css');
@@ -251,16 +252,12 @@ class Feed extends React.Component<IProps, IState> {
                   count={this.state.newPostCount}
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        {this.state.loadingAfter &&
-        <div>Loading new posts...</div>
-        }
+        <Loading active={this.state.loadingAfter}/>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
-        {this.state.loadingBefore &&
-        <div>Loading...</div>
-        }
+        <Loading active={this.state.loadingBefore}/>
         {
           !this.state.reachedTheEnd &&
           !this.state.loadingAfter &&
