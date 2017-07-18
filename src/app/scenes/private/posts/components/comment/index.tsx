@@ -16,6 +16,7 @@ const style = require('./comment-board.css');
 interface IProps {
   post_id: string;
   post?: IPost;
+  no_comment?: boolean;
 }
 
 interface IState {
@@ -192,15 +193,17 @@ class CommentsBoard extends React.Component<IProps, IState> {
             </div>
           </div>
         ))}
-        <div className={style.commentInput}>
-          <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
-          <Input
-            placeholder={'write your comment...'}
-            value={this.state.newCommentTxt}
-            onChange={this.handleChangeComment}
-            disabled={this.state.sendingComment}
-            onPressEnter={this.addComment.bind(this, '')}/>
-        </div>
+        {!this.props.no_comment && (
+          <div className={style.commentInput}>
+            <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
+            <Input
+              placeholder={'write your comment...'}
+              value={this.state.newCommentTxt}
+              onChange={this.handleChangeComment}
+              disabled={this.state.sendingComment}
+              onPressEnter={this.addComment.bind(this, '')}/>
+          </div>
+        )}
       </div>
     );
   }
