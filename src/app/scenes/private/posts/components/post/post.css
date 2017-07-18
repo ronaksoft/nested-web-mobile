@@ -23,7 +23,8 @@
   overflow-x: hidden
 }
 .postHead > i{
-  margin-left: 6px
+  margin-left: 6px;
+  flex: none;
 }
 .postHead p{
   flex: none;

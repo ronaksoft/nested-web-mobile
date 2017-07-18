@@ -125,7 +125,7 @@ class Private extends React.Component<IProps, IState> {
   public render() {
     const layout = (
       <div className={style.container}>
-        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF}/>
+        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={2}/>
         {this.props.children}
       </div>
     );
