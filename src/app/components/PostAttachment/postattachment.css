@@ -8,6 +8,7 @@
 .singleImage img {
   max-width: 100%;
   height: inherit;
+  object-fit: contain;
 }
 .attachmentBar {
   width: 100%;
