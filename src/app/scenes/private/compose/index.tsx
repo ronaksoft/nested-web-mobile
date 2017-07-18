@@ -208,8 +208,10 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       return;
     }
 
-    if (!(this.state.subject || this.state.body)) {
-      message.error('Subject or body is required');
+    if (!(this.state.subject ||
+        this.state.body ||
+        this.state.attachments.length > 0)) {
+      message.error('You can not send an empty message');
 
       return;
     }
