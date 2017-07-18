@@ -27,7 +27,18 @@ class Comment extends React.Component <IProps, any> {
     if (indexOfActorInOthers > -1) {
       others.splice(indexOfActorInOthers, 1);
     }
-
+    let more = 0;
+    const othersDoms = [];
+    others.map((userId: string, index: number) => {
+      if (index < 3) {
+        return othersDoms.push(<UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>);
+      } else {
+        return more++;
+      }
+    });
+    if ( more > 0) {
+      othersDoms.push(<div className={style.plus}>+{more}</div>);
+    }
     return (
       <Link to={`message/${notification.post_id}`}
       className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
@@ -35,17 +46,7 @@ class Comment extends React.Component <IProps, any> {
         { others.length > 0 && (
           <div className={style.commentContainer}>
             <div className={style.multiAvatars}>
-              {others &&
-              others.map((userId: string, index: number) => {
-                if (index < 3) {
-                  return <UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>;
-                } else {
-                  return (
-                    <div className={style.plus}>+{index - 2}</div>
-                  );
-                }
-              })
-              }
+              {others && othersDoms}
               <div className={style.filler}/>
               <IcoN size={16} name={'comment24Crown'}/>
             </div>
