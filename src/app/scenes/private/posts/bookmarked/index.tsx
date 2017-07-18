@@ -161,16 +161,21 @@ class Bookmarked extends React.Component<IProps, IState> {
         {this.state.loadingBefore &&
         <div>Loading...</div>
         }
-        {!this.state.reachedTheEnd && !this.state.loadingAfter &&
-        !this.state.loadingBefore && this.state.posts.length === 0 &&
-        <div>
-          <b>You haven't bookmarked anything yet!</b>
-          <div>There's a bookmark icon on the upper-right corner of each post.</div>
-          Click on it to save the post to be viewed later.
-          <div>
-            <Button onClick={loadMore}>Try again</Button>
-          </div>
-        </div>
+        {
+          !this.state.reachedTheEnd &&
+          !this.state.loadingAfter &&
+          !this.state.loadingBefore &&
+          this.state.posts.length === 0 &&
+          (
+            <div>
+              <b>You haven't bookmarked anything yet!</b>
+              <div>There's a bookmark icon on the upper-right corner of each post.</div>
+              Click on it to save the post to be viewed later.
+              <div>
+                <Button onClick={loadMore}>Try again</Button>
+              </div>
+            </div>
+          )
         }
         {this.state.reachedTheEnd &&
         <div>No more messages here!</div>

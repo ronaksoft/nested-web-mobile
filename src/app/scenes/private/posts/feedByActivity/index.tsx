@@ -188,14 +188,19 @@ class FeedByActivity extends React.Component<IProps, IState> {
         {this.state.loadingBefore &&
         <div>Loading...</div>
         }
-        {!this.state.reachedTheEnd && !this.state.loadingAfter &&
-        !this.state.loadingBefore && this.state.posts.length === 0 &&
-        <div>
-          You have no message in your feed
-          <div>
-            <Button onClick={loadMore}>Try again</Button>
-          </div>
-        </div>
+        {
+          !this.state.reachedTheEnd &&
+          !this.state.loadingAfter &&
+          !this.state.loadingBefore &&
+          this.state.posts.length === 0 &&
+          (
+            <div>
+              You have no message in your feed
+              <div>
+                <Button onClick={loadMore}>Try again</Button>
+              </div>
+            </div>
+          )
         }
         {this.state.reachedTheEnd &&
         <div>No more messages here!</div>
