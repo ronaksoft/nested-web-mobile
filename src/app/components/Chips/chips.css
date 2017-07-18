@@ -1,5 +1,9 @@
 .selectedItem {
-  background-color: cyan!important;
+  background-color: #83d8ad!important;
+  color: #323D47;
+}
+.selectedItem:hover {
+  color: #323D47;
 }
 .placechips{
   height: 24px;

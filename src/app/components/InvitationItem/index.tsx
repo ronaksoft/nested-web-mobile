@@ -22,8 +22,6 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
     this.state = {
       modal: false,
     };
-    this.closeModal = this.closeModal.bind(this);
-    this.inivtationModal = this.inivtationModal.bind(this);
   }
 
   private inivtationModal() {
@@ -34,7 +32,7 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
 
   private closeModal() {
     this.setState({
-        modal: false,
+      modal: false,
     });
   }
 
@@ -53,8 +51,8 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
         );
     }
     return (
-      <li key={this.props.key} onClick={this.inivtationModal}>
-        <div className={style.place}>
+      <li key={this.props.key}>
+        <div className={style.place} onClick={this.inivtationModal.bind(this, '')}>
             {img}
             <div>
                 <span>{inviter.fname + ' ' + inviter.lname} invited you to:</span>
@@ -63,7 +61,7 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
         </div>
         <hr className={style.hrDark}/>
         <hr className={style.hrLight}/>
-        {this.state.modal && <Invitation inv={this.props.item} onClose={this.closeModal}/>}
+        {this.state.modal && <Invitation inv={this.props.item} onClose={this.closeModal.bind(this, '')}/>}
     </li>
     );
   }
