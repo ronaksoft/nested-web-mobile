@@ -7,6 +7,7 @@ export {IcoN} from './Icons/';
 export {SidebarItem} from './SidebarItem/';
 export {InvitationItem} from './InvitationItem/';
 export {Invitation} from './invitation/';
+export {Loading} from './Loading/';
 
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';

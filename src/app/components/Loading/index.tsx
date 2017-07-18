@@ -14,17 +14,13 @@ class Loading extends React.Component<IProps, IState> {
 
   constructor(props: any) {
     super(props);
-  }
-
-  public componentDidMount() {
-
-    // FIXME : maybe its nor false ! on go straight to the notif
-    this.setState({
-      active: this.props.active,
-    });
+    this.state = {
+      active : this.props.active,
+    };
   }
 
   public componentWillRecieveProps(newProps: IProps) {
+
     this.setState({
       active: newProps.active,
     });

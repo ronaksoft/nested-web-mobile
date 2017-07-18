@@ -1,7 +1,7 @@
 import * as React from 'react';
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
 import AttachmentType from '../../api/attachment/constants/AttachmentType';
-import ImageSingle from 'components/PostAttachment/components/ImageSingle';
+import ImageSingle from 'components/PostAttachment/components/imageSingle';
 import ImageThumbnail from 'components/PostAttachment/components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
