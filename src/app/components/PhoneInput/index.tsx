@@ -4,6 +4,7 @@ const InputGroup = Input.Group;
 import Countries from './Countries';
 import ICountry from './ICountry';
 import CountrySelect from './CountrySelect';
+const style = require('./phoneinput.css');
 
 interface IProps {
   style?: {};
@@ -165,13 +166,14 @@ class PhoneInput extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
+        <label>Country</label>
         <CountrySelect
                       onSelected={this.handleCountrySelect}
                       selected={this.state.country}
                       style={this.props.style || {}}
         />
-        <br/>
-        <InputGroup compact={true} style={this.props.style || {}}>
+        <label>Phone Number</label>
+        <InputGroup className={style.phoneNumber} compact={true} style={this.props.style || {}}>
           <Input
                 prefix="+"
                 style={{ width: 64, borderLeft: 0 }}

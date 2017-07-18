@@ -2,7 +2,7 @@
   width: 20px;
   height: 15px;
   box-shadow: 0 0 1px 0 #888;
-  background-image: url('./flags.png');
+  background-image: url('./CountrySelect/flags.png');
   background-repeat: no-repeat;
   background-color: #DBDBDB;
   background-position: 20px 0;
@@ -15,7 +15,7 @@
   only screen and (min-resolution: 192 dpi),
   only screen and (min-resolution: 2 dppx) {
   .flag {
-    background-image: url('./flags@2x.png');
+    background-image: url('./CountrySelect/flags@2x.png');
   }
 }
 
@@ -1347,4 +1347,22 @@
 
 .flag.np {
   background-color: transparent;
+}
+.CountrySelect {
+  height: 40px;
+  margin-bottom: 8px;
+}
+.CountrySelect> div ,
+.CountrySelect> div > div {
+  height: auto;
+  line-height: 40px;
+}
+.CountrySelect> div > div input {
+  margin: 0;
+}
+.phoneNumber {
+  margin-bottom: 8px;
+}
+.phoneNumber input{
+  margin: 0!important;
 }
