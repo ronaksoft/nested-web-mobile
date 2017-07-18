@@ -53,3 +53,10 @@ body {
   padding-top: 56px;
   min-height: 100%;
 }
+.loadMore {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 72px;
+  align-items: center;
+}

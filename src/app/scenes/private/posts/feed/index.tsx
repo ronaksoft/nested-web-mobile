@@ -15,6 +15,7 @@ import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 
 const style = require('../posts.css');
+const privateStyle = require('../../private.css');
 
 interface IProps {
   postsRoute: string;
@@ -241,9 +242,11 @@ class Feed extends React.Component<IProps, IState> {
         <div>No more messages here!</div>
         }
         {!this.state.reachedTheEnd &&
-        !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div className={style.loadMore}><Button onClick={loadMore}>Load More</Button></div>
-        }
+        !this.state.loadingBefore && !this.state.loadingAfter && (
+        <div className={privateStyle.loadMore}>
+          <Button onClick={loadMore}>Load More</Button>
+        </div>
+        )}
       </div>
     );
   }
