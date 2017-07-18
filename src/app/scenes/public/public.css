@@ -1,0 +1,69 @@
+.logo {
+  width: 48px;
+  height: 48px;
+}
+.publicPage h2 {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 56px;
+  padding-left: 16px;
+}
+.publicHead {
+  height: 72px;
+  padding: 16px 16px 8px 16px;
+  display: flex;
+}
+.publicHead img{
+  height: 48px;
+  width: 48px;
+  display: flex;
+  flex: none
+}
+.filler {
+  width: 100%;
+  display: flex;
+}
+.publicForm {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.publicForm label{
+  margin-top: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 18px;
+  color: rgba(50,61,71,.72);
+  display: block;
+}
+.publicForm p{
+  padding: 12px 0;
+  font-size: 14px;
+  line-height: 18px;
+}
+.publicForm input{
+  height: 48px;
+  margin: 8px 0;
+}
+.publicForm button{
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+.submit {
+  width: 100%;
+}
+.detail {
+  padding: 12px 0;
+  font-size: 14px;
+  color: rgba(50,61,71,.72)
+}
+.detail a{
+  color: #00B45A;
+  white-space: nowrap;
+}
+.formParagraph a{
+  color: #00B45A;
+  white-space: nowrap;
+}

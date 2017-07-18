@@ -1,14 +1,16 @@
 import * as React from 'react';
 import {Input, Button} from 'antd';
-// import {Link} from 'react-router';
-import {browserHistory} from 'react-router';
-const style = require('./style.css');
+import {Link, browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
 import * as md5 from 'md5';
 import AccountApi from 'api/account';
 import {IUser, ILoginResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
+
+// const style = require('./style.css');
+const publicStyle = require('../public.css');
+
 interface IState {
   isLogin: boolean;
   username: string;
@@ -103,13 +105,13 @@ class Signin extends React.Component<IProps, IState> {
   public render() {
     // const { getFieldDecorator } = this.props.form;
     return (
-      <div className={style.publicPage}>
-        <div className={style.publicHead}>
-          <img src={require('./logo.svg')} className={style.logo} alt="Nested"/>
-          <div className={style.filler} />
+      <div className={publicStyle.publicPage}>
+        <div className={publicStyle.publicHead}>
+          <img src={require('./logo.svg')} className={publicStyle.logo} alt="Nested"/>
+          <div className={publicStyle.filler} />
         </div>
         <h2>Sign in to Nested</h2>
-        <div className={style.publicForm}>
+        <div className={publicStyle.publicForm}>
             <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
             <br />
             <Input
@@ -120,10 +122,10 @@ class Signin extends React.Component<IProps, IState> {
             />
             <br />
             <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
-            htmlType="submit" className={style.submit} onClick={this.submit}>
+            htmlType="submit" className={publicStyle.submit} onClick={this.submit}>
               <b>Sign in</b>
             </Button>
-          {/*<p className={style.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>*/}
+          <p className={publicStyle.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
         </div>
       </div>
     );

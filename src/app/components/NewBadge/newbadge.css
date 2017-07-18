@@ -23,12 +23,12 @@
   height: 20px;
   border-radius: 16px;
   background-color: #3296FF;
-  color: white;
+  color: #ffffff;
   position: absolute;
-  right: -10px;
+  right: -8px;
   font-size: 13px;
   font-weight: bold;
   line-height: 20px;
   text-align: center;
-  top: -10px;
+  top: -8px;
 }

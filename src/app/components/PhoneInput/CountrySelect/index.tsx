@@ -3,7 +3,7 @@ const Option = Select.Option;
 import Countries from '../Countries';
 import './flags.png';
 import './flags@2x.png';
-const style = require('./style.css');
+const style = require('../phoneinput.css');
 import * as React from 'react';
 import ICountry from '../ICountry';
 
@@ -89,6 +89,7 @@ export default class CountrySelect extends React.Component<IProps, IState> {
         placeholder="Select your country"
         onChange={this.handleChange}
         value={this.state.selectedId}
+        className={style.CountrySelect}
         filterOption={this.filterCountry}
       >
         {Countries.map(createCountry)}

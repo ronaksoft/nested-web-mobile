@@ -4,6 +4,7 @@ const InputGroup = Input.Group;
 import Countries from './Countries';
 import ICountry from './ICountry';
 import CountrySelect from './CountrySelect';
+const style = require('./phoneinput.css');
 
 interface IProps {
   style?: {};
@@ -86,7 +87,8 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.country.id, e.target.value, this.state.phone);
+      const country = this.state.country ? this.state.country.id : null;
+      this.props.onChange(country, e.target.value, this.state.phone);
     }
   }
 
@@ -107,7 +109,8 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.country.id, this.state.code, e.target.value);
+      const country = this.state.country ? this.state.country.id : null;
+      this.props.onChange(country, this.state.code, e.target.value);
     }
   };
 
@@ -165,13 +168,14 @@ class PhoneInput extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
+        <label>Country</label>
         <CountrySelect
                       onSelected={this.handleCountrySelect}
                       selected={this.state.country}
                       style={this.props.style || {}}
         />
-        <br/>
-        <InputGroup compact={true} style={this.props.style || {}}>
+        <label>Phone Number</label>
+        <InputGroup className={style.phoneNumber} compact={true} style={this.props.style || {}}>
           <Input
                 prefix="+"
                 style={{ width: 64, borderLeft: 0 }}
@@ -180,7 +184,7 @@ class PhoneInput extends React.Component<IProps, IState> {
                 value={this.state.code}
           />
           <Input
-                style={{ width: 'auto' }}
+                style={{ width: '100%' }}
                 defaultValue={this.props.phone}
                 onChange={this.handlePhoneChange}
                 value={this.state.phone}

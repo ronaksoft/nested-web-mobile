@@ -73,6 +73,18 @@
 .read {
   background-color: rgba(50,61,71,.08)
 }
+.plus{
+  border: 1px solid rgba(50,61,71,.24);
+  background-color: transparent;
+  width: 32px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 24px;
+  justify-content: center;
+  padding: 0 8px;
+  text-align: center;
+  color: rgba(50,61,71,.72);
+}
 /*
 .notifWrapper{
   width: 100%;
@@ -93,17 +105,6 @@
 
 .multiAvatars{
   display: inline-flex;
-}
-
-.plus{
-  border: 1px solid #dcdcdc;
-  background-color: transparent;
-  width: 32px;
-  height: 24px;
-  border-radius: 24px;
-  justify-content: center;
-  text-align: center;
-  color: #dcdcdc;
 }
 
 .multiAvatarsWrapper{

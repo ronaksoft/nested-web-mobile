@@ -20,6 +20,7 @@ class Loading extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(newProps: IProps) {
+
     this.setState({
       active: newProps.active,
     });
