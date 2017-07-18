@@ -7,7 +7,7 @@ export {IcoN} from './Icons/';
 export {SidebarItem} from './SidebarItem/';
 export {InvitationItem} from './InvitationItem/';
 export {Invitation} from './invitation/';
-export {Newbadge} from './NewBadge/';
+export {NewBadge} from './NewBadge/';
 export {Loading} from './Loading/';
 
 import UserAvatar from './user/Avatar';

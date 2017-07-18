@@ -16,7 +16,7 @@ interface IState {
   count: number;
 }
 
-class Newbadge extends React.Component<IProps, IState> {
+class NewBadge extends React.Component<IProps, IState> {
 
   constructor(props: any) {
     super(props);
@@ -28,7 +28,7 @@ class Newbadge extends React.Component<IProps, IState> {
     };
   }
 
-  public componentWillRecieveProps(newProps: IProps) {
+  public componentWillReceiveProps(newProps: IProps) {
 
     this.setState({
       text: newProps.text,
@@ -52,4 +52,4 @@ class Newbadge extends React.Component<IProps, IState> {
   }
 }
 
-export {Newbadge}
+export {NewBadge}
