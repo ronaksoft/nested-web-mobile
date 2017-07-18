@@ -1,5 +1,6 @@
 .postCard {
   border-bottom: 1px solid rgba(50,61,71,.16);
+  overflow-x: hidden;
 }
 .postView  {
   margin-bottom: 56px;

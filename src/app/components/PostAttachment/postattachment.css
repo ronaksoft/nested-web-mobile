@@ -1,3 +1,14 @@
+.singleImage {
+  padding: 0 16px;
+}
+.singleImage > div {
+  display: flex;
+  justify-content: center;
+}
+.singleImage img {
+  max-width: 100%;
+  height: inherit;
+}
 .attachmentBar {
   width: 100%;
   height: 108px;
