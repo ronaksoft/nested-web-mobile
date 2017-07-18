@@ -110,12 +110,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
           return item;
         }).slice(0, placesCount).concat(response.recipients.filter((i) => {
-          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
+          return this.state.selectedItems.findIndex((s) => s._id === i) === -1;
         }).map((i) => {
           const item: IChipsItem = {
-            _id: i._id,
-            name: `${i.fname} ${i.lname}`,
-            picture: i.picture,
+            _id: i,
+            name: i,
+            picture: null,
           };
 
           return item;
@@ -183,7 +183,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 
   private getPicture = (item: IChipsItem) => {
-    return item.picture.x64
+    return item.picture && item.picture.x64
       ? FileUtil.getViewUrl(item.picture.x64)
       : unknownPicture;
   }

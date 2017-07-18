@@ -8,7 +8,7 @@ const unknownPicture = require('assets/icons/absents_place.svg');
 interface IChipsItem {
   _id: string;
   name: string;
-  picture: IPicture;
+  picture?: IPicture;
 }
 
 interface IChipsProps {
