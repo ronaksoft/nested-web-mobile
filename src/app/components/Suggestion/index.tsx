@@ -32,7 +32,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     this.searchApi = new SearchApi();
   }
 
-  public componentWillMount() {
+  public componentDidMount() {
     this.setState({
       suggests: [],
       selectedItems: this.props.selectedItems || [],

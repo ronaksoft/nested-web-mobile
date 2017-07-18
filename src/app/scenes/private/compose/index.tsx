@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
-import { Suggestion, IcoN } from 'components';
+import {Suggestion, IcoN} from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
@@ -13,6 +13,7 @@ import {IAttachment} from 'api/attachment/interfaces';
 import {IChipsItem} from 'components/Chips';
 import IPost from 'api/post/interfaces/IPost';
 import IPostAttachment from 'api/post/interfaces//IPostAttachment';
+
 const confirm = Modal.confirm;
 const style = require('./compose.css');
 const styleNavbar = require('../../../components/navbar/navbar.css');
@@ -49,18 +50,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       body: '',
       subject: '',
       composeOption: false,
+      attachModal: false,
     };
     this.state = props.draft || defaultState;
   }
 
-  public componentWillMount() {
-    this.setState({
-      attachModal: false,
-    });
-    this.postApi = new PostApi();
-  }
-
   public componentDidMount() {
+    this.postApi = new PostApi();
     if (this.props.params.replyId || this.props.params.forwardId) {
       this.postApi.get({
         post_id: this.props.params.replyId || this.props.params.forwardId,
@@ -77,9 +73,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             return chipsItem;
           }).concat(post.post_recipients.map((i) => {
             const chipsItem: IChipsItem = {
-            _id: i._id,
-            name: i.name,
-            picture: i.picture,
+              _id: i._id,
+              name: i.name,
+              picture: i.picture,
             };
 
             return chipsItem;
@@ -92,32 +88,33 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
           this.targets.load(targets);
 
-      } else {
-        const attachments = post.post_attachments.map((i: IPostAttachment) => {
-          const attachment: IAttachment = {
-            universal_id: i._id,
-            name: i.filename,
-            expiration_timestamp: 0,
-            size: i.size,
-            thumbs: i.thumbs,
-            type: i.type,
-          };
+        } else {
+          const attachments = post.post_attachments.map((i: IPostAttachment) => {
+            const attachment: IAttachment = {
+              universal_id: i._id,
+              name: i.filename,
+              expiration_timestamp: 0,
+              size: i.size,
+              thumbs: i.thumbs,
+              type: i.type,
+            };
 
-          return attachment;
-        });
-        this.setState({
-          subject: post.subject,
-          body: post.body,
-          attachments,
-        });
+            return attachment;
+          });
+          this.setState({
+            subject: post.subject,
+            body: post.body,
+            attachments,
+          });
 
-        this.attachments.load(attachments);
-      }
+          this.attachments.load(attachments);
+        }
       }, () => {
         message.error('An error has occured in loading the post!');
       });
     }
   }
+
   private attachTypeSelect = () => {
     this.setState({
       attachModal: !this.state.attachModal,
@@ -354,13 +351,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                 <label htmlFor="">
                   Allow Comments
                 </label>
-                <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment} />
+                <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment}/>
               </li>
             </ul>
           </div>
         )}
         {this.state.composeOption &&
-          <div onClick={this.composeOption.bind(this, '')} className={style.overlay}/>
+        <div onClick={this.composeOption.bind(this, '')} className={style.overlay}/>
         }
         <Suggestion ref={this.referenceTargets}
                     selectedItems={this.state.targets}
@@ -368,18 +365,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         />
         <div className={style.subject}>
           <Input
-                onFocus={this.subjectFocus}
-                placeholder="Add a Title…"
-                onChange={this.handleSubjectChange}
-                value={this.state.subject}
+            onFocus={this.subjectFocus}
+            placeholder="Add a Title…"
+            onChange={this.handleSubjectChange}
+            value={this.state.subject}
           />
           <div onClick={this.attachTypeSelect}
-          className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
+               className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
             <div onClick={this.attachTypeSelect}>
               <IcoN size={24} name={'attach24'}/>
             </div>
             {this.state.attachModal &&
-              <div onClick={this.overlayClick} className={style.overlay}/>
+            <div onClick={this.overlayClick} className={style.overlay}/>
             }
             <div className={style.attachActions} onClick={this.overlayClick}>
               <div onClick={this.selectFile(true)}>
@@ -395,17 +392,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </div>
         </div>
         <textarea
-                  onFocus={this.bodyFocus}
-                  placeholder="Write something…"
-                  onChange={this.handleBodyChange}
-                  value={this.state.body}
+          onFocus={this.bodyFocus}
+          placeholder="Write something…"
+          onChange={this.handleBodyChange}
+          value={this.state.body}
         />
         <AttachmentList
-                        onItemsChanged={this.handleAttachmentsChange}
-                        ref={this.referenceAttachments}
-                        items={this.state.attachments}
+          onItemsChanged={this.handleAttachmentsChange}
+          ref={this.referenceAttachments}
+          items={this.state.attachments}
         />
-        <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{ display: 'none' }} />
+        <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{display: 'none'}}/>
       </div>
     );
   }

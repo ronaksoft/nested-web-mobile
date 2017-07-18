@@ -40,8 +40,8 @@ export default class AccountApi {
   public getFavoritePlaces(): Promise<string[]> {
     return this.api.request({
       cmd: 'account/get_favorite_places',
-    }).then((places: IPlace[]) => {
-      return places.map((place: IPlace) => {
+    }).then((data) => {
+      return data.places.map((place: IPlace) => {
         return place._id;
       });
     });

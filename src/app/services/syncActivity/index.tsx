@@ -112,7 +112,6 @@ export default class SyncActivity {
           const channel: IChanel = this.openChannelsStack[channelUid];
           if ((channel.action === activity.action || channel.action === SyncActions.ALL_ACTIONS)) {
             calledChannelCallbacks.push(channelUid);
-            console.log('activity111', activity);
             channel.cb(activity);
           }
         });

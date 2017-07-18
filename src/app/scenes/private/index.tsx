@@ -18,7 +18,7 @@ import AAA from 'services/aaa';
 import {connect} from 'react-redux';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 import NotificationApi from '../../api/notification/index';
-import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
+import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import {Navbar} from 'components';
 import Sidebar from './sidebar/';
 
@@ -27,14 +27,16 @@ const style = require('./private.css');
 interface IState {
   isLogin: boolean;
   sidebarOpen: boolean;
+  notificationsCount: number;
 };
 
 interface IProps {
   isLogin: boolean;
   user: IUser;
-  setNotificationCount: (counts: INotificationCountRequest) => {};
+  setNotificationCount: (counts: INotificationCountResponse) => {};
   setLogin: (user: IUser) => {};
   setLogout: () => {};
+  notificationsCount: INotificationCountResponse;
 }
 
 class Private extends React.Component<IProps, IState> {
@@ -42,12 +44,19 @@ class Private extends React.Component<IProps, IState> {
   private notificationApi: NotificationApi;
   private unListenChangeRoute: any;
 
-  public constructor() {
-    super();
+  public constructor(props: IProps) {
+    super(props);
     this.state = {
       isLogin: false,
       sidebarOpen: false,
+      notificationsCount: this.props.notificationsCount.unread_notifications,
     };
+  }
+
+  public componentWillReceiveProps(newProps: IProps) {
+    this.setState({
+      notificationsCount: newProps.notificationsCount.unread_notifications,
+    });
   }
 
   private handleAAA() {
@@ -82,7 +91,8 @@ class Private extends React.Component<IProps, IState> {
 
   private getNotificationCounts() {
     this.notificationApi.getCount()
-      .then((counts: INotificationCountRequest) => {
+      .then((counts: INotificationCountResponse) => {
+        console.error(counts);
         this.props.setNotificationCount(counts);
       });
   }
@@ -125,7 +135,7 @@ class Private extends React.Component<IProps, IState> {
   public render() {
     const layout = (
       <div className={style.container}>
-        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={2}/>
+        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={this.state.notificationsCount}/>
         {this.props.children}
       </div>
     );
@@ -143,6 +153,7 @@ class Private extends React.Component<IProps, IState> {
 const mapStateToProps = (store) => ({
   isLogin: store.app.isLogin,
   user: store.app.user,
+  notificationsCount: store.app.notificationsCount,
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -153,7 +164,7 @@ const mapDispatchToProps = (dispatch) => {
     setLogout: () => {
       dispatch(logout());
     },
-    setNotificationCount: (counts: INotificationCountRequest) => {
+    setNotificationCount: (counts: INotificationCountResponse) => {
       dispatch(setNotificationCount(counts));
     },
   };

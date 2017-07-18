@@ -25,7 +25,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
     };
   }
 
-  public componentWillRecieveProps(newProps: INavbarProps) {
+  public componentWillReceiveProps(newProps: INavbarProps) {
 
     this.setState({
       notifCount: newProps.notifCount,

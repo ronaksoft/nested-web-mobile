@@ -1,7 +1,7 @@
-interface INotificationCountRequest {
+interface INotificationCountResponse {
   unread_notifications: number;
   total_notifications: number;
   data: any;
 }
 
-export default INotificationCountRequest;
+export default INotificationCountResponse;

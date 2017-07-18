@@ -94,7 +94,6 @@ class Feed extends React.Component<IProps, IState> {
   }
 
   private addNewPostActivity(activity: IActivity) {
-    console.log(111111111111, activity, this);
     if (this.favoritePlacesId.filter((placeId) => (placeId === activity.place_id)).length === 0 &&
       this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
       this.newPostsIds.push(activity.post_id);

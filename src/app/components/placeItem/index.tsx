@@ -72,11 +72,9 @@ class PlaceItem extends React.Component<IProps, IState> {
       borderRadius,
       size,
     } = this.props;
-    console.log(size, size > 32);
-    const picDim = size > 32 ? 'x64' : 'x32';
-    console.log('aaaaaa', place.picture[picDim]);
-    const sizePX = size.toString(10) + 'px';
 
+    const picDim = size > 32 ? 'x64' : 'x32';
+    const sizePX = size.toString(10) + 'px';
     const imageStyle = {
       display: 'flex',
       borderRadius,
