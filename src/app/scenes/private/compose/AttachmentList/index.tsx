@@ -29,7 +29,7 @@ interface IUploadItem {
   id: number;
   file: File;
   abort: () => void;
-  thumb: string;
+  thumb: any;
 }
 
 /**
