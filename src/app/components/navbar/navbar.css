@@ -19,6 +19,18 @@
   flex: none;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+.navbar a span{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 16px;
+  border-radius: 20px;
+  background-color: #FF6464;
+  text-align: center;
+  color: white;
+  height: 16px;
 }
 .navbar a i{
   margin: 0;

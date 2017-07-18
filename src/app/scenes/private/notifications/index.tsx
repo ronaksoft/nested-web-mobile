@@ -9,6 +9,7 @@ import {setNotification} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
 import {IcoN} from 'components';
 const style = require('./notifications.css');
+const privateStyle = require('../private.css');
 
 // import PullRefresh from 'react-pullrefresh';
 
@@ -145,7 +146,9 @@ class Notifications extends React.Component<IProps, IState> {
           {this.state.notifications.map((notification) =>
             (<NotificationItem key={notification._id} notification={notification}/>))
           }
-          <Button onClick={this.getNotificationBefore.bind(this, false)}>More..</Button>
+          <div className={privateStyle.loadMore}>
+            <Button onClick={this.getNotificationBefore.bind(this, false)}>Load More</Button>
+          </div>    
         </div>
       </div>
     );

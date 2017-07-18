@@ -16,6 +16,7 @@ const style = require('./comment-board.css');
 interface IProps {
   post_id: string;
   post?: IPost;
+  no_comment?: boolean;
 }
 
 interface IState {
@@ -70,7 +71,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.props.post.post_places[0]._id,
           SyncActions.COMMENT_ADD,
           () => {
-            this.getAfterComments(false);
+            if (document.documentElement.scrollHeight - 20 >
+            document.documentElement.scrollTop + document.documentElement.clientHeight) {
+              this.getAfterComments(true);
+            } else {
+              this.getAfterComments(false);
+            }
           },
         ));
     }
@@ -104,8 +110,9 @@ class CommentsBoard extends React.Component<IProps, IState> {
               return a.timestamp - b.timestamp;
             }),
         });
+
         if (scrollToBottom) {
-          document.getElementById('comment-board').scrollIntoView(false);
+          document.body.scrollTop = document.body.scrollHeight - document.body.clientHeight;
         }
       });
   }
@@ -156,7 +163,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         sendingComment: false,
         newCommentTxt: '',
       });
-      // this.getAfterComments(true);
+      this.getAfterComments(true);
     });
   }
 
@@ -192,15 +199,17 @@ class CommentsBoard extends React.Component<IProps, IState> {
             </div>
           </div>
         ))}
-        <div className={style.commentInput}>
-          <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
-          <Input
-            placeholder={'write your comment...'}
-            value={this.state.newCommentTxt}
-            onChange={this.handleChangeComment}
-            disabled={this.state.sendingComment}
-            onPressEnter={this.addComment.bind(this, '')}/>
-        </div>
+        {!this.props.no_comment && (
+          <div className={style.commentInput}>
+            <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
+            <Input
+              placeholder={'write your comment...'}
+              value={this.state.newCommentTxt}
+              onChange={this.handleChangeComment}
+              disabled={this.state.sendingComment}
+              onPressEnter={this.addComment.bind(this, '')}/>
+          </div>
+        )}
       </div>
     );
   }

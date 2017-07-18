@@ -87,7 +87,6 @@ export default class SyncActivity {
    * @param event           sync-a payload data
    */
   public dispatchActivityPushEvents(syncObj: any): void {
-    console.log(this);
     const filteredChannelsWithPlaceId = Object.keys(this.openChannelsStack).filter((channelUid: string): boolean => {
       return this.openChannelsStack[channelUid].placeId === syncObj.place_id ||
         this.openChannelsStack[channelUid].action === SyncActions.ALL_ACTIONS;
@@ -99,7 +98,7 @@ export default class SyncActivity {
 
     this.activityApi.getActivities({
       // fixme:: fix time
-      after: this.latestActivityTimestamp - 900000,
+      after: this.latestActivityTimestamp - 100000,
       place_id: syncObj.place_id,
     }).then((activities: IActivity[]) => {
       this.latestActivityTimestamp = Date.now();
@@ -111,9 +110,7 @@ export default class SyncActivity {
 
         filteredChannelsWithPlaceId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
-          if ((channel.action === activity.action || channel.action === SyncActions.ALL_ACTIONS) &&
-            calledChannelCallbacks.filter((uid) => (uid === channelUid)).length === 0
-          ) {
+          if ((channel.action === activity.action || channel.action === SyncActions.ALL_ACTIONS)) {
             calledChannelCallbacks.push(channelUid);
             console.log('activity111', activity);
             channel.cb(activity);

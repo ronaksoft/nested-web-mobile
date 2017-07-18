@@ -215,7 +215,7 @@ class Post extends React.Component<IProps, IState> {
           )}
         </div>
         {!this.props.post &&
-        <CommentsBoard post_id={this.state.post._id} post={this.state.post}/>
+        <CommentsBoard no_comment={this.state.post.no_comment} post_id={this.state.post._id} post={this.state.post}/>
         }
       </div>
     );

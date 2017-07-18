@@ -13,24 +13,25 @@ interface IState {
   urlSrc: string;
 }
 
-export default class ImageThumbnail extends React.Component<IProps, IState> {
+export default class ImageSingle extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
   }
 
   public render() {
     const {attachment} = this.props;
+    const width: number = attachment.width < window.innerWidth ? attachment.width : window.innerWidth - 32;
+    const height: number = (attachment.height / attachment.width) * width;
     const src =
       `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-      `${attachment.thumbs.x128}`;
+      `${attachment.thumbs.pre}`;
     return (
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
-        <img src={src}
-             style={{
-               width: 'inherit',
-               height: '96px',
-             }}/>
-      </li>
+      <div onClick={this.props.onclick.bind(this, attachment)}>
+        <img src={src} style={{
+          width: width + 'px',
+          height: height + 'px',
+        }}/>
+      </div>
     );
   }
 }

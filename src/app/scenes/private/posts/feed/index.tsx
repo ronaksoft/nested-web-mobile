@@ -13,8 +13,11 @@ import {browserHistory} from 'react-router';
 import SyncActivity from '../../../../services/syncActivity/index';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
+import AccountApi from '../../../../api/account/index';
+import {NewBadge} from 'components/NewBadge';
 
 const style = require('../posts.css');
+const privateStyle = require('../../private.css');
 
 interface IProps {
   postsRoute: string;
@@ -32,12 +35,15 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
+  newPostCount: number;
 }
 
 class Feed extends React.Component<IProps, IState> {
   private postApi: PostApi;
   private syncActivity = SyncActivity.getInstance();
   private syncActivityListeners = [];
+  private favoritePlacesId = [];
+  private newPostsIds = [];
 
   constructor(props: IProps) {
     super(props);
@@ -46,6 +52,7 @@ class Feed extends React.Component<IProps, IState> {
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
+      newPostCount: 0,
     };
   }
 
@@ -56,6 +63,12 @@ class Feed extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.postApi = new PostApi();
     this.getPost(true);
+
+    const accountApi = new AccountApi();
+    accountApi.getFavoritePlaces()
+      .then((placesId: string[]) => {
+        this.favoritePlacesId = placesId;
+      });
 
     if (this.props.currentPost) {
       setTimeout(() => {
@@ -69,13 +82,26 @@ class Feed extends React.Component<IProps, IState> {
         (activity: IActivity) => {
           switch (activity.action) {
             case SyncActions.COMMENT_ADD:
+            case SyncActions.COMMENT_REMOVE:
               return this.addCommentToPostActivity(activity);
-            default:
+            case SyncActions.POST_ADD:
+              return this.addNewPostActivity(activity);
+            default :
               return;
           }
         },
       ));
+  }
 
+  private addNewPostActivity(activity: IActivity) {
+    console.log(111111111111, activity, this);
+    if (this.favoritePlacesId.filter((placeId) => (placeId === activity.place_id)).length === 0 &&
+      this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+      this.newPostsIds.push(activity.post_id);
+      this.setState({
+        newPostCount: this.newPostsIds.length,
+      });
+    }
   }
 
   private addCommentToPostActivity(activity: IActivity) {
@@ -163,6 +189,15 @@ class Feed extends React.Component<IProps, IState> {
       });
   }
 
+  private showNewPosts() {
+    this.props.setPosts([]);
+    this.getPost();
+    this.newPostsIds = [];
+    this.setState({
+      newPostCount: 0,
+    });
+  }
+
   private getOffset(id: string) {
     const el = document.getElementById(id).getBoundingClientRect();
     return {
@@ -212,6 +247,10 @@ class Feed extends React.Component<IProps, IState> {
 
     return (
       <div className={style.container}>
+        <NewBadge onClick={this.showNewPosts.bind(this, '')}
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
         {this.state.loadingAfter &&
         <div>Loading new posts...</div>
@@ -241,9 +280,11 @@ class Feed extends React.Component<IProps, IState> {
         <div>No more messages here!</div>
         }
         {!this.state.reachedTheEnd &&
-        !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div className={style.loadMore}><Button onClick={loadMore}>Load More</Button></div>
-        }
+        !this.state.loadingBefore && !this.state.loadingAfter && (
+          <div className={privateStyle.loadMore}>
+            <Button onClick={loadMore}>Load More</Button>
+          </div>
+        )}
       </div>
     );
   }

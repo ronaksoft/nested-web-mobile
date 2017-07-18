@@ -1,5 +1,6 @@
 .postCard {
   border-bottom: 1px solid rgba(50,61,71,.16);
+  overflow-x: hidden;
 }
 .postView  {
   margin-bottom: 56px;
@@ -22,7 +23,8 @@
   overflow-x: hidden
 }
 .postHead > i{
-  margin-left: 6px
+  margin-left: 6px;
+  flex: none;
 }
 .postHead p{
   flex: none;

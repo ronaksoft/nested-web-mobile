@@ -14,6 +14,7 @@ import {
   ICallPhoneRequest,
   IUsernameAvailable,
 } from './interfaces';
+import IPlace from '../place/interfaces/IPlace';
 
 export default class AccountApi {
   private api;
@@ -34,6 +35,16 @@ export default class AccountApi {
     return this.api.request({
       cmd: 'account/get',
       data,
+    });
+  }
+
+  public getFavoritePlaces(): Promise<string[]> {
+    return this.api.request({
+      cmd: 'account/get_favorite_places',
+    }).then((places: IPlace[]) => {
+      return places.map((place: IPlace) => {
+        return place._id;
+      });
     });
   }
 
