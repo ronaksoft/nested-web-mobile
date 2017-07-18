@@ -71,7 +71,14 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.props.post.post_places[0]._id,
           SyncActions.COMMENT_ADD,
           () => {
-            this.getAfterComments(false);
+            console.log(document.documentElement.scrollHeight,
+              document.documentElement.scrollTop, document.documentElement.clientHeight);
+            if (document.documentElement.scrollHeight - 20 >
+            document.documentElement.scrollTop + document.documentElement.clientHeight) {
+              this.getAfterComments(true);
+            } else {
+              this.getAfterComments(false);
+            }
           },
         ));
     }
@@ -105,8 +112,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
               return a.timestamp - b.timestamp;
             }),
         });
+        console.log('1');
         if (scrollToBottom) {
-          document.getElementById('comment-board').scrollIntoView(false);
+          console.log('2');
+          setTimeout(() => {
+            console.log('now');
+            document.getElementById('comment-board').scrollIntoView(false);
+          }, 1000);
         }
       });
   }
@@ -157,7 +169,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         sendingComment: false,
         newCommentTxt: '',
       });
-      // this.getAfterComments(true);
+      this.getAfterComments(true);
     });
   }
 
