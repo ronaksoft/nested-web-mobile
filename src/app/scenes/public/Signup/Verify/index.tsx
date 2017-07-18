@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {browserHistory, Link} from 'react-router';
-import {Input, Button} from 'antd';
+import {Input, Button, message, Form} from 'antd';
 import AccountApi from 'api/account';
 import Waiting from './Waiting';
+import ValidationStatus from '../ValidationStatus';
+import IValidationResult from '../IValidationResult';
 
 interface IParams {
   country: string;
@@ -17,13 +19,15 @@ interface IState {
   callingPhone: boolean;
   sendTextWaiting: boolean;
   callPhoneWaiting: boolean;
+  validateStatus?: ValidationStatus;
+  validationMessage?: string;
 }
 
 interface IProps {
   params: IParams;
 }
 
-// const CODE_REGEX = /^[0-9]{0,6}$/;
+const CODE_REGEX = /^[0-9]{0,6}$/;
 class Verify extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
   constructor(props: any) {
@@ -42,12 +46,53 @@ class Verify extends React.Component<IProps, IState> {
   }
 
   private handleVerificationCodeChange = (e: any) => {
+    const validationResult = this.validateVerificationCode(e.target.value);
     this.setState({
       verificationCode: e.target.value,
+      validateStatus: validationResult.status,
+      validationMessage: validationResult.message,
     });
   }
 
+  private validateVerificationCode = (value: string): IValidationResult => {
+    if (!value) {
+      return {
+        status: 'error',
+        message: 'Required',
+      };
+    }
+
+    if (CODE_REGEX.test(value)) {
+      return {
+        status: 'error',
+        message: 'Invalid',
+      };
+    }
+
+    return {
+      status: 'success',
+      message: null,
+    };
+  }
+
+  private validate = (): boolean => {
+    const result = this.validateVerificationCode(this.state.verificationCode);
+    if (result.status !== 'success') {
+      this.setState({
+        validateStatus: result.status,
+        validationMessage: result.message,
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
   private submit = () => {
+    if (!this.validate()) {
+      return;
+    }
     this.accountApi.verifyCode({
       code: this.state.verificationCode,
       vid: this.props.params.vid,
@@ -59,10 +104,8 @@ class Verify extends React.Component<IProps, IState> {
         .replace(':vid', this.props.params.vid);
 
       browserHistory.push(nextStepRoute);
-    }, (error) => {
-      console.log('====================================');
-      console.log(error);
-      console.log('====================================');
+    }, () => {
+      message.error('An error has occured in verifying your phone');
     });
   }
 
@@ -118,7 +161,7 @@ class Verify extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div>
+      <Form>
         <p>We've sent a verification code via SMS to</p>
         <p>
           <Link
@@ -127,12 +170,17 @@ class Verify extends React.Component<IProps, IState> {
           </Link>
         </p>
         <p>Check your phone and enter the code below:</p>
-        <label>Verification code</label>
-        <Input
-              id="verificationCode"
-              value={this.state.verificationCode}
-              onChange={this.handleVerificationCodeChange}
-        />
+        <Form.Item
+                  validateStatus={this.state.validateStatus}
+                  help={this.state.validationMessage}
+        >
+          <label>Verification code</label>
+          <Input
+                id="verificationCode"
+                value={this.state.verificationCode}
+                onChange={this.handleVerificationCodeChange}
+          />
+        </Form.Item>
         <div>
           <Waiting
                   time={60}
@@ -158,7 +206,7 @@ class Verify extends React.Component<IProps, IState> {
         <Button type="primary" style={{width: '100%'}} onClick={this.submit}>
           <b>Verify</b>
         </Button>
-      </div>
+      </Form>
     );
   }
 }

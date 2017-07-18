@@ -12,6 +12,7 @@ import {
   IGetVerificationResponse,
   ISendTextRequest,
   ICallPhoneRequest,
+  IUsernameAvailable,
 } from './interfaces';
 
 export default class AccountApi {
@@ -67,6 +68,19 @@ export default class AccountApi {
     return this.api.request({
       cmd: 'auth/phone_available',
       data,
+    });
+  }
+
+  public usernameAvailable(data: IUsernameAvailable): Promise<boolean> {
+    return new Promise((resolve) => {
+      return this.api.request({
+        cmd: 'account/available',
+        data,
+      }).then(() => {
+        resolve(true);
+      }, () => {
+        resolve(false);
+      });
     });
   }
 
