@@ -71,8 +71,6 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.props.post.post_places[0]._id,
           SyncActions.COMMENT_ADD,
           () => {
-            console.log(document.documentElement.scrollHeight,
-              document.documentElement.scrollTop, document.documentElement.clientHeight);
             if (document.documentElement.scrollHeight - 20 >
             document.documentElement.scrollTop + document.documentElement.clientHeight) {
               this.getAfterComments(true);
@@ -112,13 +110,9 @@ class CommentsBoard extends React.Component<IProps, IState> {
               return a.timestamp - b.timestamp;
             }),
         });
-        console.log('1');
+
         if (scrollToBottom) {
-          console.log('2');
-          setTimeout(() => {
-            console.log('now');
-            document.getElementById('comment-board').scrollIntoView(false);
-          }, 1000);
+          document.body.scrollTop = document.body.scrollHeight - document.body.clientHeight;
         }
       });
   }
