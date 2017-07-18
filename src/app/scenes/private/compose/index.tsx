@@ -203,25 +203,19 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   private send = () => {
     if (this.state.targets.length === 0) {
-      console.log('====================================');
-      console.log('No target');
-      console.log('====================================');
+      message.error('No target is specified');
 
       return;
     }
 
     if (!(this.state.subject || this.state.body)) {
-      console.log('====================================');
-      console.log('Subject or body is required');
-      console.log('====================================');
+      message.error('Subject or body is required');
 
       return;
     }
 
     if (this.attachments.isUploading()) {
-      console.log('====================================');
-      console.log('Upload is in progress');
-      console.log('====================================');
+      message.error('Upload is in progress');
 
       return;
     }
@@ -242,11 +236,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
     this.postApi.send(params).then((response: ISendResponse) => {
       if (response.no_permit_places.length === 0) {
-        console.log(`Your post has been shared.`);
+        message.success(`Your post has been shared.`);
       } else if (response.no_permit_places.length < this.state.targets.length) {
-        console.log(`Your post has been shared, but some targets did not received that.`);
+        message.warning(`Your post has been shared, but some targets did not received that.`);
       } else {
-        console.log(`None of the selected targets receive the post!`);
+        message.error(`None of the selected targets receive the post!`);
       }
 
       this.setState({
@@ -255,9 +249,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
       browserHistory.goBack();
     }).catch(() => {
-      console.log('====================================');
-      console.log('An error has been occured in sharing the post!');
-      console.log('====================================');
+      message.error('An error has been occured in sharing the post!');
     });
   }
 
@@ -332,9 +324,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   public render() {
-    console.log('====================================');
-    console.log('state', this.state);
-    console.log('====================================');
     return (
       <div className={style.compose}>
         <div className={styleNavbar.navbar}>
