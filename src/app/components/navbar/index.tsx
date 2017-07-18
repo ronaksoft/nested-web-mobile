@@ -7,16 +7,29 @@ import {browserHistory, Link} from 'react-router';
 interface INavbarProps {
   sidebarOpen: () => void;
   composeOpen: () => void;
+  notifCount: number;
 }
 
 interface INavbarState {
-  notificationOpen?: boolean;
+  notificationOpen: boolean;
+  notifCount: number;
 }
 
 class Navbar extends React.Component<INavbarProps, INavbarState> {
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      notifCount: this.props.notifCount,
+      notificationOpen: false,
+    };
+  }
+
+  public componentWillRecieveProps(newProps: INavbarProps) {
+
+    this.setState({
+      notifCount: newProps.notifCount,
+    });
   }
 
   private goToNotification() {
@@ -30,14 +43,6 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
     });
   }
 
-  public componentWillMount() {
-
-    // FIXME : maybe its nor false ! on go straight to the notif
-    this.setState({
-      notificationOpen: false,
-    });
-  }
-
   public render() {
     return (
       <div className={style.navbar}>
@@ -47,6 +52,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         <div className={style.filler}/>
         <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>
           <IcoN size={24} name="bell24"/>
+          {this.state.notifCount > 0 && <span>{this.state.notifCount}</span>}
         </a>
         <Link to="/compose">
           <IcoN size={24} name="compose24"/>
