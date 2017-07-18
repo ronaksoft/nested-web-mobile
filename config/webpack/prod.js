@@ -7,6 +7,9 @@ var stylelint = require('stylelint');
 var ManifestPlugin = require('webpack-manifest-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const lessToJs = require('less-vars-to-js');
+const themeVariables = lessToJs(fs.readFileSync(path.join(path.resolve('./src/app'), 'ant-theme-vars.less'), 'utf8'));
+
 var config = {
   bail: true,
 
@@ -75,6 +78,18 @@ var config = {
             'css-loader',
           ]
         })
+      },
+      {
+        test: /\.less$/,
+        use: [
+          {loader: "style-loader"},
+          {loader: "css-loader"},
+          {loader: "less-loader",
+            options: {
+              modifyVars: themeVariables
+            }
+          }
+        ]
       },
       {
         test: /\.eot(\?.*)?$/,
