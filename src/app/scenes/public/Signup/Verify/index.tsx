@@ -5,6 +5,8 @@ import AccountApi from 'api/account';
 import Waiting from './Waiting';
 import ValidationStatus from '../ValidationStatus';
 import IValidationResult from '../IValidationResult';
+const style = require('./verify.css');
+const publicStyle = require('../../public.css');
 
 interface IParams {
   country: string;
@@ -162,50 +164,52 @@ class Verify extends React.Component<IProps, IState> {
   public render() {
     return (
       <Form>
-        <p>We've sent a verification code via SMS to</p>
-        <p>
-          <Link
-              to={`/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
-              {`+${this.props.params.code} ${this.props.params.phone}`}
-          </Link>
-        </p>
-        <p>Check your phone and enter the code below:</p>
-        <Form.Item
-                  validateStatus={this.state.validateStatus}
-                  help={this.state.validationMessage}
-        >
-          <label>Verification code</label>
-          <Input
-                id="verificationCode"
-                value={this.state.verificationCode}
-                onChange={this.handleVerificationCodeChange}
-          />
-        </Form.Item>
-        <div>
-          <Waiting
-                  time={60}
-                  trigger={this.state.sendTextWaiting}
-                  onFinish={this.handleResendWaitFinish}
-                  message="wait...">
-            <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
-              {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
-            </a>
-          </Waiting>
+        <h2>Create an account</h2>
+        <div className={publicStyle.publicForm}>
+          <p className={publicStyle.formParagraph}>We've sent a verification code via SMS to
+            &nbsp;<Link
+                to={`/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
+                {`+${this.props.params.code} ${this.props.params.phone}`}
+            </Link>
+           &nbsp;Check your phone and enter the code below:
+          </p>
+          <Form.Item
+                    validateStatus={this.state.validateStatus}
+                    help={this.state.validationMessage}
+          >
+            <label>Verification code</label>
+            <Input className={style.verifyCode}
+                  id="verificationCode"
+                  value={this.state.verificationCode}
+                  onChange={this.handleVerificationCodeChange}
+            />
+          </Form.Item>
+          <div>
+            <Waiting
+                    time={60}
+                    trigger={this.state.sendTextWaiting}
+                    onFinish={this.handleResendWaitFinish}
+                    message="wait...">
+              <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
+                {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
+              </a>
+            </Waiting>
+          </div>
+          <div>
+            <Waiting
+                    time={180}
+                    trigger={this.state.callPhoneWaiting}
+                    onFinish={this.handleCallWaitFinish}
+                    message="wait...">
+              <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
+                {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
+              </a>
+            </Waiting>
+          </div>
+          <Button type="primary" style={{width: '100%'}} onClick={this.submit}>
+            <b>Verify</b>
+          </Button>
         </div>
-        <div>
-          <Waiting
-                  time={180}
-                  trigger={this.state.callPhoneWaiting}
-                  onFinish={this.handleCallWaitFinish}
-                  message="wait...">
-            <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
-              {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
-            </a>
-          </Waiting>
-        </div>
-        <Button type="primary" style={{width: '100%'}} onClick={this.submit}>
-          <b>Verify</b>
-        </Button>
       </Form>
     );
   }
