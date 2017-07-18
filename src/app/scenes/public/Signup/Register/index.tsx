@@ -5,6 +5,8 @@ import AccountApi from 'api/account';
 import * as md5 from 'md5';
 import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
+const publicStyle = require('../../public.css');
+const style = require('./register.css');
 
 const VALID_CHAR_REGEX = /^[a-zA-Z0-9-.]+$/;
 const DOT_REGEX = /\./;
@@ -362,46 +364,49 @@ class Register extends React.Component<IProps, IState> {
   public render() {
     return (
       <Form>
-        <p>Hooray :) Please continue to complete your account information.</p>
-        <Form.Item
-                  help={this.state.username.message}
-                  validateStatus={this.state.username.status}
-        >
-          <label>Choose your username</label>
-          <Input value={this.state.username.value} onChange={this.handleUsernameChange} />
-        </Form.Item>
-        <Form.Item
-                  help={this.state.password.message}
-                  validateStatus={this.state.password.status}
-        >
-          <label>Set a password</label>
-          <Input value={this.state.password.value} onChange={this.handlePasswordChange} />
-        </Form.Item>
-        <Form.Item
-                  help={this.state.firstName.message}
-                  validateStatus={this.state.firstName.status}
-        >
-          <label>First Name</label>
-          <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange} />
-        </Form.Item>
-        <Form.Item
-                  help={this.state.lastName.message}
-                  validateStatus={this.state.lastName.status}
-        >
-          <label>Sure Name</label>
-          <Input value={this.state.lastName.value} onChange={this.handleLastNameChange} />
-        </Form.Item>
-        <Form.Item
-                  help={this.state.email.message}
-                  validateStatus={this.state.email.status}
-        >
-          <label>Email</label>
-          <Input value={this.state.email.value} onChange={this.handleEmailChange}/>
-        </Form.Item>
-        <p>By proceeding to create a Nested account, you are agreeing to our <a href="#">Terms and Conditions</a>.</p>
-        <Button type="primary" onClick={this.submit} style={{width: '100%'}} disabled={this.state.submitting}>
-          <b>{this.state.submitting ? 'Submitting...' : 'Finish'}</b>
-        </Button>
+        <h2>Create an account</h2>
+        <div className={[publicStyle.publicForm, style.register].join(' ')}>
+          <p>Hooray :) Please continue to complete your account information.</p>
+          <Form.Item
+                    help={this.state.username.message}
+                    validateStatus={this.state.username.status}
+          >
+            <label>Choose your username</label>
+            <Input value={this.state.username.value} onChange={this.handleUsernameChange} />
+          </Form.Item>
+          <Form.Item
+                    help={this.state.password.message}
+                    validateStatus={this.state.password.status}
+          >
+            <label>Set a password</label>
+            <Input value={this.state.password.value} onChange={this.handlePasswordChange} />
+          </Form.Item>
+          <Form.Item
+                    help={this.state.firstName.message}
+                    validateStatus={this.state.firstName.status}
+          >
+            <label>First Name</label>
+            <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange} />
+          </Form.Item>
+          <Form.Item
+                    help={this.state.lastName.message}
+                    validateStatus={this.state.lastName.status}
+          >
+            <label>Sure Name</label>
+            <Input value={this.state.lastName.value} onChange={this.handleLastNameChange} />
+          </Form.Item>
+          <Form.Item
+                    help={this.state.email.message}
+                    validateStatus={this.state.email.status}
+          >
+            <label>Email</label>
+            <Input value={this.state.email.value} onChange={this.handleEmailChange}/>
+          </Form.Item>
+          <p>By proceeding to create a Nested account, you are agreeing to our <a href="#">Terms and Conditions</a>.</p>
+          <Button type="primary" onClick={this.submit} style={{width: '100%'}} disabled={this.state.submitting}>
+            <b>{this.state.submitting ? 'Submitting...' : 'Finish'}</b>
+          </Button>
+        </div>
       </Form>
     );
   }

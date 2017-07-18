@@ -184,7 +184,7 @@ class PhoneInput extends React.Component<IProps, IState> {
                 value={this.state.code}
           />
           <Input
-                style={{ width: 'auto' }}
+                style={{ width: '100%' }}
                 defaultValue={this.props.phone}
                 onChange={this.handlePhoneChange}
                 value={this.state.phone}

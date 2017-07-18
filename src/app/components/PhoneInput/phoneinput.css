@@ -1361,6 +1361,7 @@
   margin: 0;
 }
 .phoneNumber {
+  display: flex!important;
   margin-bottom: 8px;
 }
 .phoneNumber input{
