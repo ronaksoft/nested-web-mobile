@@ -87,7 +87,8 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.country.id, e.target.value, this.state.phone);
+      const country = this.state.country ? this.state.country.id : null;
+      this.props.onChange(country, e.target.value, this.state.phone);
     }
   }
 
@@ -108,7 +109,8 @@ class PhoneInput extends React.Component<IProps, IState> {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.country.id, this.state.code, e.target.value);
+      const country = this.state.country ? this.state.country.id : null;
+      this.props.onChange(country, this.state.code, e.target.value);
     }
   };
 

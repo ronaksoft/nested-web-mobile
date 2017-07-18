@@ -27,7 +27,7 @@ interface IProps {
   params: IParams;
 }
 
-const CODE_REGEX = /^[0-9]{0,6}$/;
+const CODE_REGEX = /^[0-9]{6}$/;
 class Verify extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
   constructor(props: any) {
@@ -62,7 +62,7 @@ class Verify extends React.Component<IProps, IState> {
       };
     }
 
-    if (CODE_REGEX.test(value)) {
+    if (!CODE_REGEX.test(value)) {
       return {
         status: 'error',
         message: 'Invalid',
