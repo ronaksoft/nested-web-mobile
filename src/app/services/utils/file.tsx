@@ -32,17 +32,17 @@ class FileUtil {
     return FileUtil.getUrl(id, UrlType.View);
   }
 
-  public static getDownloadUrl(id: string) {
-    return FileUtil.getUrl(id, UrlType.Download);
+  public static getDownloadUrl(id: string, token: string) {
+    return FileUtil.getUrl(id, UrlType.Download, token);
   }
 
-  private static getUrl(id: string, type: UrlType) {
+  private static getUrl(id: string, type: UrlType, token?: string) {
     const sessionKey = AAA.getInstance().getCredentials().sk;
     switch (type) {
       case UrlType.Download:
-        return `${Configurations.STORE.URL}/view/${sessionKey}/${id}/`;
+        return `${Configurations.STORE.URL}/download/${sessionKey}/${id}/${token}`;
       default:
-        return `${Configurations.STORE.URL}/download/${sessionKey}/${id}/`;
+        return `${Configurations.STORE.URL}/view/${sessionKey}/${id}/`;
     }
   }
 

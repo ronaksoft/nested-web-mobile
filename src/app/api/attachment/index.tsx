@@ -3,7 +3,11 @@ import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
 import Api from 'api';
 import Configuration from 'config';
 import AAA from 'services/aaa';
-import IUploadMission from './interfaces/IUploadMission';
+import {
+  IUploadMission,
+  IGetDownloadTokenRequest,
+  IGetDownloadTokenResponse,
+} from './interfaces';
 import IResponse from 'services/server/interfaces/IResponse';
 
 class AttachmentApi {
@@ -100,6 +104,15 @@ class AttachmentApi {
 
         xhr.send(formData);
       }, reject);
+    });
+  }
+
+  public static getDownloadToken(data: IGetDownloadTokenRequest) {
+    return new Promise((resolve, reject) => {
+      return Api.getInstance().request({
+        cmd: 'file/get_download_token',
+        data,
+      }).then((response: IGetDownloadTokenResponse) => resolve(response.token), reject);
     });
   }
 }
