@@ -90,8 +90,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           {/*<button onClick={this.next.bind(this, '')}>next</button>
           <button onClick={this.prev.bind(this, '')}>prev</button>*/}
         </div>
-        <Hammer onSwipe={this.onSwipe.bind(this, '')} direction="DIRECTION_ALL"
-        >
+        <Hammer onSwipe={this.onSwipe.bind(this, '')} direction="DIRECTION_ALL">
           <div>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
@@ -122,7 +121,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             )}
           </div>
           <a onClick={this.props.onClose}>
-            <IcoN size={24} name={'attach24'}/>
+            <IcoN size={24} name={'downloads24White'}/>
           </a>
         </div>
       </div>
