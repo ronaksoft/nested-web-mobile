@@ -62,7 +62,15 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.indexOfAttachment = this.getIndexOfAttachment();
     this.haveNext = this.indexOfAttachment < this.props.attachments.length - 1;
     this.havePrev = this.indexOfAttachment <= this.props.attachments.length - 1 && this.indexOfAttachment > 0;
-    console.log('inIt', this.indexOfAttachment, this.haveNext, this.havePrev);
+    if ( document.getElementById('current') ) {
+      document.getElementById('current').style.transform = '';
+    }
+    if ( document.getElementById('next') ) {
+      document.getElementById('next').style.transform = '';
+    }
+    if ( document.getElementById('prv') ) {
+      document.getElementById('prv').style.transform = '';
+    }
 }
 
   public componentWillReceiveProps(newProps: IProps) {
@@ -240,7 +248,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         </div>
         <Hammer id="current" onPan={this.onPan.bind(this, '')} onPanEnd={this.onPanEnd.bind(this, '')}
         onPanStart={this.onPanStart.bind(this, '')} direction="DIRECTION_ALL">
-          <div>
+          <div className={style.currentItem}>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
             <ImageThumbnail attachment={this.state.selectedAttachment}/>
