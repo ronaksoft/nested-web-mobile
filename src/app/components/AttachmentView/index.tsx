@@ -11,7 +11,6 @@ import FileUtil from 'services/utils/file';
 import {message} from 'antd';
 
 const style = require('./attachmentview.css');
-
 interface IProps {
   attachments: IPostAttachment[];
   selectedAttachment?: IPostAttachment | null;
@@ -25,7 +24,11 @@ interface IState {
 }
 
 export default class AttachmentView extends React.Component<IProps, IState> {
-
+  private haveNext: boolean;
+  private havePrev: boolean;
+  private indexOfAttachment: number;
+  private panStart: boolean;
+  private panDistance: number;
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -33,14 +36,11 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       attachments: this.props.attachments,
       downloadUrl: '',
     };
-
+    this.inIt();
     this.setDownloadUrl = this.setDownloadUrl.bind(this);
   }
 
   public componentDidMount() {
-    console.log('====================================');
-    console.log(this.state.selectedAttachment);
-    console.log('====================================');
     this.setDownloadUrl(this.state.selectedAttachment._id);
   }
 
@@ -58,10 +58,18 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       });
   }
 
+  public inIt() {
+    this.indexOfAttachment = this.getIndexOfAttachment();
+    this.haveNext = this.indexOfAttachment < this.props.attachments.length - 1;
+    this.havePrev = this.indexOfAttachment <= this.props.attachments.length - 1 && this.indexOfAttachment > 0;
+    console.log('inIt', this.indexOfAttachment, this.haveNext, this.havePrev);
+}
+
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({
       attachments: newProps.attachments,
     });
+    this.inIt();
   }
 
   private getIndexOfAttachment() {
@@ -79,9 +87,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     } else if (this.props.attachments.length - 1 > indexOfAttachment) {
       next = this.state.attachments[indexOfAttachment + 1];
     }
-
     this.setState({selectedAttachment: next});
     this.setDownloadUrl(next._id);
+    this.inIt();
   }
 
   private prev() {
@@ -93,31 +101,130 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     } else {
       next = this.state.attachments[this.state.attachments.length - 1];
     }
-
+    this.inIt();
     this.setState({selectedAttachment: next});
     this.setDownloadUrl(next._id);
   }
 
-  private onSwipe(event: any, props: any) {
+  // private onSwipe(event: any, props: any) {
+  //   console.log(props, event);
+  //   if (props.direction === 2) {
+  //     // this.next();
+  //   } else if (props.direction === 4) {
+  //     // this.prev();
+  //   }
+  // }
+
+  private onPan(event: any, props: any) {
     console.log(props, event);
-    if (props.direction === 2) {
-      this.next();
-    } else if (props.direction === 4) {
-      this.prev();
+    // const toLeft = props.direction === 2;
+    // const toRight = props.direction === 4;
+
+    const indexOfAttachment = this.getIndexOfAttachment();
+    const haveNext = indexOfAttachment < this.props.attachments.length - 1;
+    const havePrev = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
+    let trailed = props.deltaX / window.innerWidth;
+
+    this.panDistance = trailed;
+
+    if ( haveNext && this.panDistance < 0 ) {
+      console.log('go Next');
+      trailed = 1 + trailed;
+      trailed = trailed * 100;
+      document.getElementById('next').style.transform = 'translateX(' + trailed + '%)';
+      document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
+    if ( havePrev && this.panDistance > 0 ) {
+      console.log('go Previous');
+      trailed = (1 - trailed) * -100;
+      document.getElementById('prv').style.transform = 'translateX(' + trailed + '%)';
+      document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
+    }
+  }
+
+  private onPanStart(event: any, props: any) {
+    console.log('onPanStart', props, event);
+    this.panStart = true;
+  }
+
+  private onPanEnd(event: any, props: any) {
+    console.log('onPanEnd', props, event);
+    if ( this.haveNext && this.panDistance < 0 ) {
+      console.log('go Next');
+      let trailed = this.panDistance;
+      trailed = 1 + trailed;
+      trailed = trailed * 100;
+      if ( trailed < 70 ) {
+        this.next();
+      }
+    }
+    if ( this.havePrev && this.panDistance > 0 ) {
+      console.log('go Previous');
+      let trailed = this.panDistance;
+      trailed = (1 - trailed) * -100;
+      if ( trailed > -70 ) {
+        this.prev();
+      }
+    }
+    document.getElementById('current').style.transform = '';
+    if ( document.getElementById('next') ) {
+      document.getElementById('next').style.transform = '';
+    }
+    if ( document.getElementById('prv') ) {
+      document.getElementById('prv').style.transform = '';
+    }
+    this.panDistance = 0;
   }
 
   private download(e: any) {
     if (!this.state.downloadUrl) {
       message.error('We are not able to serve the file, try again later.');
-
       e.preventDefault();
     }
   }
 
   public render() {
     const indexOfAttachment = this.getIndexOfAttachment();
-
+    const next = indexOfAttachment < this.props.attachments.length - 1;
+    const prv = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
+    let prvElement;
+    let nextElement;
+    if ( prv ) {
+      prvElement = (
+        <main id="prv" className={style.prvItem}>
+          {(this.state.attachments[indexOfAttachment - 1].type === AttachmentType.GIF ||
+            this.state.attachments[indexOfAttachment - 1].type === AttachmentType.IMAGE) &&
+          <ImageThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+          }
+          {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.VIDEO &&
+          <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+          }
+          {this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.GIF &&
+          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.IMAGE &&
+          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.VIDEO &&
+          <OtherThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+          }
+        </main>
+      );
+    }
+    if ( next ) {
+      nextElement = (
+        <main id="next" className={style.nextItem}>
+          {(this.state.attachments[indexOfAttachment + 1].type === AttachmentType.GIF ||
+            this.state.attachments[indexOfAttachment + 1].type === AttachmentType.IMAGE) &&
+          <ImageThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          }
+          {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.VIDEO &&
+          <VideoThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          }
+          {this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.GIF &&
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.IMAGE &&
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO &&
+          <OtherThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          }
+        </main>
+      );
+    }
     return (
       <div
         id={'attachment-view'}
@@ -130,11 +237,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           <span>
             {indexOfAttachment + 1} of {this.state.attachments.length}
           </span>
-          {/*<button onClick={this.next.bind(this, '')}>next</button>
-          <button onClick={this.prev.bind(this, '')}>prev</button>*/}
         </div>
-        <Hammer onSwipe={this.onSwipe.bind(this, '')} direction="DIRECTION_ALL"
-        >
+        <Hammer id="current" onPan={this.onPan.bind(this, '')} onPanEnd={this.onPanEnd.bind(this, '')}
+        onPanStart={this.onPanStart.bind(this, '')} direction="DIRECTION_ALL">
           <div>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
@@ -165,9 +270,11 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             )}
           </div>
           <a onClick={this.download} href={this.state.downloadUrl}>
-            <IcoN size={24} name={'attach24'}/>
+            <IcoN size={24} name={'downloads24White'}/>
           </a>
         </div>
+        {prv && prvElement}
+        {next && nextElement}
       </div>
     );
   }

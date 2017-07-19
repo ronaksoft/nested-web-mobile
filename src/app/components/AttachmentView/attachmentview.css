@@ -81,3 +81,23 @@
   justify-content: center;
   align-items: center
 }
+.nextItem {
+  position: absolute;
+  width: 100vw;
+  height: calc(100vh - 116px);
+  right: -24px;
+  top: 56px;
+  transform: translateX(+100%);
+  display: flex;
+  align-items: center;
+}
+.prvItem {
+  position: absolute;
+  width: 100vw;
+  height: calc(100vh - 116px);
+  left: -24px;
+  top: 56px;
+  transform: translateX(-100%);
+  display: flex;
+  align-items: center;
+}
