@@ -376,9 +376,11 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div className={privateStyle.loadMore}>
-          <Button onClick={loadMore}>Load More</Button>
-        </div>
+        (
+          <div className={privateStyle.loadMore}>
+            <Button onClick={loadMore}>Load More</Button>
+          </div>
+        )
         }
       </div>
     );

@@ -16,6 +16,7 @@ import SyncActivity from '../../../../services/syncActivity/index';
 import AccountApi from '../../../../api/account/index';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
+
 const privateStyle = require('../../private.css');
 
 const style = require('../posts.css');
@@ -286,9 +287,11 @@ class FeedByActivity extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div className={privateStyle.loadMore}>
-          <Button onClick={loadMore}>Load More</Button>
-        </div>
+        (
+          <div className={privateStyle.loadMore}>
+            <Button onClick={loadMore}>Load More</Button>
+          </div>
+        )
         }
       </div>
     );

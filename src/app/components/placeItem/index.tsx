@@ -92,7 +92,7 @@ class PlaceItem extends React.Component<IProps, IState> {
     if (place.picture.x32.length > 0) {
       img = (
         <img className={style.picture}
-             src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture[picDim]}`}/>
+             src={`${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture[picDim]}`}/>
       );
     } else {
       img = (

@@ -190,9 +190,11 @@ class Notifications extends React.Component<IProps, IState> {
         </div>
         <div className={style.notificationWrp}>
           {this.state.notifications.map((notification) =>
-            (<div onClick={this.readNotif.bind(this, notification)}>
-              <NotificationItem key={notification._id} notification={notification}/>
-            </div>))}
+            (
+              <div onClick={this.readNotif.bind(this, notification)}>
+                <NotificationItem key={notification._id} notification={notification}/>
+              </div>
+            ))}
           <div className={privateStyle.loadMore}>
             <Button onClick={this.getNotificationBefore.bind(this, false)}>Load More</Button>
           </div>

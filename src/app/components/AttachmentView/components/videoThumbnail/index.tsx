@@ -19,7 +19,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
   public render() {
     const {attachment} = this.props;
     const src =
-      `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+      `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
       `${attachment.thumbs.pre}`;
     return (
       <li>

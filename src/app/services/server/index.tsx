@@ -19,7 +19,7 @@ class Server {
   constructor() {
     console.log('Start Server instance');
     this.socket = new Socket({
-      server: CONFIG.WEBSOCKET.URL,
+      server: CONFIG().WEBSOCKET.URL,
       pingPongTime: 10000,
       onMessage: this.response.bind(this),
     });
@@ -37,7 +37,7 @@ class Server {
 
     const socketRequest: any = {
       ...req,
-      _cver: CONFIG.APP_VERSION,
+      _cver: CONFIG().APP_VERSION,
       _cid: this.cid,
     };
 

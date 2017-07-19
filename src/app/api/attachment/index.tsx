@@ -32,7 +32,7 @@ class AttachmentApi {
 
   public static upload(file: File, type: string): Promise<IUploadMission> {
     const sessionKey = AAA.getInstance().getCredentials().sk;
-    const storeUrl = Configuration.STORE.URL;
+    const storeUrl = Configuration().STORE.URL;
     const formData = new FormData();
     const xhr = new XMLHttpRequest();
 

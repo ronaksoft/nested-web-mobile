@@ -253,6 +253,9 @@ class Feed extends React.Component<IProps, IState> {
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
         <Loading active={this.state.loadingAfter}/>
+        {this.state.loadingAfter &&
+        <div>Loading new posts...</div>
+        }
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>

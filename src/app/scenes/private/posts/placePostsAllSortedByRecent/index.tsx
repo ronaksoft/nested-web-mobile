@@ -15,6 +15,7 @@ import {NewBadge} from '../../../../components/NewBadge/index';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActivity from '../../../../services/syncActivity/index';
+
 const privateStyle = require('../../private.css');
 
 const style = require('../posts.css');
@@ -357,9 +358,9 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
         <NewBadge onClick={this.showNewPosts.bind(this, '')}
-                    text="New Post"
-                    count={this.state.newPostCount}
-                    visibility={this.state.newPostCount > 0}/>
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
         <Loading active={this.state.loadingAfter}/>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
@@ -375,9 +376,11 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div className={privateStyle.loadMore}>
-          <Button onClick={loadMore}>Load More</Button>
-        </div>
+        (
+          <div className={privateStyle.loadMore}>
+            <Button onClick={loadMore}>Load More</Button>
+          </div>
+        )
         }
       </div>
     );
