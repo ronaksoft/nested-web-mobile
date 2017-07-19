@@ -36,6 +36,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       attachments: this.props.attachments,
       downloadUrl: '',
     };
+    this.onPan = this.onPan.bind(this);
+    this.onPanStart = this.onPanStart.bind(this);
+    this.onPanEnd = this.onPanEnd.bind(this);
     this.inIt();
     this.setDownloadUrl = this.setDownloadUrl.bind(this);
   }
@@ -123,8 +126,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   //   }
   // }
 
-  private onPan(event: any, props: any) {
-    console.log(props, event);
+  private onPan(props: any) {
     // const toLeft = props.direction === 2;
     // const toRight = props.direction === 4;
 
@@ -136,29 +138,24 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.panDistance = trailed;
 
     if ( haveNext && this.panDistance < 0 ) {
-      console.log('go Next');
       trailed = 1 + trailed;
       trailed = trailed * 100;
       document.getElementById('next').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
     if ( havePrev && this.panDistance > 0 ) {
-      console.log('go Previous');
       trailed = (1 - trailed) * -100;
       document.getElementById('prv').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
   }
 
-  private onPanStart(event: any, props: any) {
-    console.log('onPanStart', props, event);
+  private onPanStart() {
     this.panStart = true;
   }
 
-  private onPanEnd(event: any, props: any) {
-    console.log('onPanEnd', props, event);
+  private onPanEnd() {
     if ( this.haveNext && this.panDistance < 0 ) {
-      console.log('go Next');
       let trailed = this.panDistance;
       trailed = 1 + trailed;
       trailed = trailed * 100;
@@ -167,7 +164,6 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       }
     }
     if ( this.havePrev && this.panDistance > 0 ) {
-      console.log('go Previous');
       let trailed = this.panDistance;
       trailed = (1 - trailed) * -100;
       if ( trailed > -70 ) {
@@ -246,8 +242,8 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             {indexOfAttachment + 1} of {this.state.attachments.length}
           </span>
         </div>
-        <Hammer id="current" onPan={this.onPan.bind(this, '')} onPanEnd={this.onPanEnd.bind(this, '')}
-        onPanStart={this.onPanStart.bind(this, '')} direction="DIRECTION_ALL">
+        <Hammer id="current" onPan={this.onPan} onPanEnd={this.onPanEnd}
+        onPanStart={this.onPanStart} direction="DIRECTION_ALL">
           <div className={style.currentItem}>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
