@@ -1,3 +1,20 @@
+.verify > div {
+  margin-bottom: 8px;
+}
 .verifyCode{
   margin-top: 0!important;
+}
+.item {
+  height: 44px;
+  margin: 0!important;
+  display: flex;
+  align-items: center;
+}
+.item a{
+  color: rgba(50,61,71,1);
+}
+.item span{
+  color: rgba(50,61,71,.72);
+  margin-left: 10px;
+  font-style: italic;
 }

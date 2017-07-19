@@ -165,7 +165,7 @@ class Verify extends React.Component<IProps, IState> {
     return (
       <Form>
         <h2>Create an account</h2>
-        <div className={publicStyle.publicForm}>
+        <div className={[publicStyle.publicForm, style.verify].join(' ')}>
           <p className={publicStyle.formParagraph}>We've sent a verification code via SMS to
             &nbsp;<Link
                 to={`/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
@@ -184,7 +184,7 @@ class Verify extends React.Component<IProps, IState> {
                   onChange={this.handleVerificationCodeChange}
             />
           </Form.Item>
-          <div>
+          <div className={style.item}>
             <Waiting
                     time={60}
                     trigger={this.state.sendTextWaiting}
@@ -195,7 +195,7 @@ class Verify extends React.Component<IProps, IState> {
               </a>
             </Waiting>
           </div>
-          <div>
+          <div className={style.item}>
             <Waiting
                     time={180}
                     trigger={this.state.callPhoneWaiting}

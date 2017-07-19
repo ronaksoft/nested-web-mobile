@@ -1,9 +1,10 @@
  import * as React from 'react';
 // import PlaceApi from '../../api/place';
 import { debounce } from 'lodash';
-import {Input, Button} from 'antd';
+import {Input, Button, message} from 'antd';
 import { PlaceChips } from 'components';
 import {IChipsItem} from 'components/Chips';
+import IPlace from 'api/place/interfaces/IPlace';
 import SearchApi from 'api/search';
 import FileUtil from 'services/utils/file';
 
@@ -74,6 +75,22 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       const array = this.state.suggests;
       this.insertChip(array[0]);
     }
+
+    if (event.keyCode === 32 || event.keyCode === 188) {
+      event.preventDefault();
+
+      const firstSuggestItem = this.state.suggests[0];
+
+      if (firstSuggestItem && firstSuggestItem._id === this.state.input) {
+        this.insertChip(this.state.suggests[0]);
+      } else if (this.state.input && this.state.input.length > 3) {
+        this.insertChip({
+          _id: this.state.input,
+          name: null,
+          picture: null,
+        });
+      }
+    }
   }
   // fill and update suggest area
   private fillSuggests(query: string): Promise<any> {
@@ -90,18 +107,26 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         keyword: query,
         limit: 13,
       }).then((response) => {
-        let placesCount: number = response.places.length < 3 ? response.places.length : 3;
-        const recipientsCount: number = response.recipients.length < 3 ? response.recipients.length : 3;
+
+        let placesCount: number = 2;
+        let recipientsCount: number = 1;
+
+        const places: IPlace[] = response.places.filter((i) => {
+          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
+        });
+
+        const recipients: string[] = response.recipients.filter((i) => {
+          return this.state.selectedItems.findIndex((s) => s._id === i) === -1;
+        });
 
         // we must have just 3 items to suggest
         // and the 3rd item should be a recipient
-        if (recipientsCount > 0) {
-          placesCount = 2;
+        if (recipients.length === 0) {
+          recipientsCount = 0;
+          placesCount = 3;
         }
 
-        const items: IChipsItem[] = response.places.filter((i) => {
-          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
-        }).map((i) => {
+        const items: IChipsItem[] = places.slice(0, placesCount).map((i) => {
           const item: IChipsItem = {
             _id: i._id,
             name: i.name,
@@ -109,23 +134,19 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
           };
 
           return item;
-        }).slice(0, placesCount).concat(response.recipients.filter((i) => {
-          return this.state.selectedItems.findIndex((s) => s._id === i) === -1;
-        }).map((i) => {
+        }).concat(recipients.slice(0, recipientsCount).map((i) => {
           const item: IChipsItem = {
             _id: i,
-            name: i,
+            name: null,
             picture: null,
           };
 
           return item;
-        }).slice(0, recipientsCount));
+        }));
 
         resolve(items);
-      }, (error) => {
-        console.log('====================================');
-        console.log(error);
-        console.log('====================================');
+      }, () => {
+        message.error('Could not suggest any recipients right now');
       });
     });
   }
@@ -148,14 +169,18 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 
   private insertChip = (item: IChipsItem) => {
+    if (this.state.selectedItems.findIndex((i) => i._id === item._id) > -1) {
+      return;
+    }
+
     const items = [...this.state.selectedItems, item];
 
     this.props.onSelectedItemsChanged(items);
     this.setState({
       selectedItems: items,
       input: null,
+      suggests: [],
     });
-    this.fillSuggests(this.state.input);
   }
 
   private handleInputFocus = () => {
@@ -198,8 +223,16 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         onClick={this.insertChip.bind(this, item)}>
           <img src={this.getPicture(item)} alt=""/>
           <div>
-            <p dangerouslySetInnerHTML={{ __html: this.mark(item.name, this.state.input) }}/>
-            <span dangerouslySetInnerHTML={{ __html: this.mark(item._id, this.state.input) }} />
+            {
+              item.name && (
+                <p dangerouslySetInnerHTML={{ __html: this.mark(item.name, this.state.input) }}/>
+              )
+            }
+            {
+              item._id && (
+                <span dangerouslySetInnerHTML={{ __html: this.mark(item._id, this.state.input) }} />
+              )
+            }
           </div>
         </li>
       );
