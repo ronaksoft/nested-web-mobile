@@ -98,23 +98,25 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     } else if (this.props.attachments.length - 1 > indexOfAttachment) {
       next = this.state.attachments[indexOfAttachment + 1];
     }
-    this.setState({selectedAttachment: next});
+    this.setState({selectedAttachment: next}, () => {
+      this.inIt();
+    });
     this.setDownloadUrl(next._id);
-    this.inIt();
   }
 
   private prev() {
     const indexOfAttachment = this.getIndexOfAttachment();
-    let next: IPostAttachment = null;
+    let prev: IPostAttachment = null;
 
     if (indexOfAttachment > 0) {
-      next = this.state.attachments[indexOfAttachment - 1];
+      prev = this.state.attachments[indexOfAttachment - 1];
     } else {
-      next = this.state.attachments[this.state.attachments.length - 1];
+      prev = this.state.attachments[this.state.attachments.length - 1];
     }
-    this.inIt();
-    this.setState({selectedAttachment: next});
-    this.setDownloadUrl(next._id);
+    this.setState({selectedAttachment: prev}, () => {
+      this.inIt();
+    });
+    this.setDownloadUrl(prev._id);
   }
 
   // private onSwipe(event: any, props: any) {

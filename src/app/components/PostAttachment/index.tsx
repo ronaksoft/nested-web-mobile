@@ -28,7 +28,6 @@ export default class PostAttachment extends React.Component<IProps, IState> {
   }
 
   private showAttachment(attachment: IPostAttachment) {
-    console.log('show');
     this.setState({
       selectedAttachment: attachment,
       showAttachmentView: true,
