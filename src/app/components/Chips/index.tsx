@@ -46,9 +46,11 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
   }
 
   private getPicture(item: IChipsItem) {
-    return item.picture.x64
-            ? FileUtil.getViewUrl(item.picture.x64)
-            : unknownPicture;
+    if (item && item.picture && item.picture.x64) {
+      return FileUtil.getViewUrl(item.picture.x64);
+    }
+
+    return unknownPicture;
   }
 
   public render() {
@@ -56,7 +58,7 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
       <a key={this.props.item._id} onClick={this.itemSelected.bind(this, '')}
       className={this.state.active ? style.placechips + ' ' + style.selectedItem : style.placechips}>
         <img src={this.getPicture(this.props.item)} alt=""/>
-        {this.props.item.name}
+        {this.props.item.name || this.props.item._id}
       </a>
     );
   }
