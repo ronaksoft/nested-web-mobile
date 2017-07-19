@@ -75,6 +75,22 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       const array = this.state.suggests;
       this.insertChip(array[0]);
     }
+
+    if (event.keyCode === 32 || event.keyCode === 188) {
+      event.preventDefault();
+
+      const firstSuggestItem = this.state.suggests[0];
+
+      if (firstSuggestItem && firstSuggestItem._id === this.state.input) {
+        this.insertChip(this.state.suggests[0]);
+      } else if (this.state.input && this.state.input.length > 3) {
+        this.insertChip({
+          _id: this.state.input,
+          name: null,
+          picture: null,
+        });
+      }
+    }
   }
   // fill and update suggest area
   private fillSuggests(query: string): Promise<any> {
@@ -153,14 +169,18 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 
   private insertChip = (item: IChipsItem) => {
+    if (this.state.selectedItems.findIndex((i) => i._id === item._id) > -1) {
+      return;
+    }
+
     const items = [...this.state.selectedItems, item];
 
     this.props.onSelectedItemsChanged(items);
     this.setState({
       selectedItems: items,
       input: null,
+      suggests: [],
     });
-    this.fillSuggests(this.state.input);
   }
 
   private handleInputFocus = () => {

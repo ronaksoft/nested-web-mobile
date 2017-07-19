@@ -118,7 +118,7 @@ class Register extends React.Component<IProps, IState> {
       });
     }
 
-    if (value.length < 5) {
+    if (value.length < 4) {
       return Promise.resolve({
         status: 'error',
         message: 'The username is too short',
