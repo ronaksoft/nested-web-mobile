@@ -6,6 +6,7 @@ var postcssNext = require('postcss-cssnext');
 var stylelint = require('stylelint');
 var ManifestPlugin = require('webpack-manifest-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const lessToJs = require('less-vars-to-js');
 const themeVariables = lessToJs(fs.readFileSync(path.join(path.resolve('./src/app'), 'ant-theme-vars.less'), 'utf8'));
@@ -115,6 +116,7 @@ var config = {
   },
 
   plugins: [
+    new HtmlWebpackPlugin(),
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
