@@ -29,11 +29,6 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
   }
 
   public componentDidMount() {
-    this.setState({
-      titlePopup: false,
-      iconIPopup: false,
-      iconIIPopup: false,
-    });
     browserHistory.listen(() => {
       this.closeAll();
     });

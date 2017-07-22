@@ -9,6 +9,8 @@ const style = require('./invitationItem.css');
 interface IInvitationItemProps {
   item: any;
   key: string;
+  onAccept?: () => void;
+  onDecline?: () => void;
 }
 
 interface IInvitationItemState {
@@ -30,7 +32,25 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
       });
   }
 
-  private closeModal() {
+  private handleAccept = () => {
+    this.setState({
+      modal: false,
+    });
+    if (this.props.onAccept) {
+      this.props.onAccept();
+    }
+  }
+
+  private handleDecline = () => {
+    this.setState({
+      modal: false,
+    });
+    if (this.props.onDecline) {
+      this.props.onDecline();
+    }
+  }
+
+  private handleDismiss = () => {
     this.setState({
       modal: false,
     });
@@ -61,7 +81,17 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
         </div>
         <hr className={style.hrDark}/>
         <hr className={style.hrLight}/>
-        {this.state.modal && <Invitation inv={this.props.item} onClose={this.closeModal.bind(this, '')}/>}
+        {
+          this.state.modal &&
+          (
+            <Invitation
+                        inv={this.props.item}
+                        onAccept={this.handleAccept}
+                        onDecline={this.handleDecline}
+                        onDismiss={this.handleDismiss}
+            />
+          )
+        }
     </li>
     );
   }

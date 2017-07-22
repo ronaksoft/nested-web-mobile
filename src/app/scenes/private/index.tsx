@@ -92,7 +92,6 @@ class Private extends React.Component<IProps, IState> {
   private getNotificationCounts() {
     this.notificationApi.getCount()
       .then((counts: INotificationCountResponse) => {
-        console.error(counts);
         this.props.setNotificationCount(counts);
       });
   }
@@ -132,18 +131,31 @@ class Private extends React.Component<IProps, IState> {
     this.unListenChangeRoute();
   }
 
-  public render() {
-    const layout = (
+  public createLayout = () => {
+    return (
       <div className={style.container}>
         <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={this.state.notificationsCount}/>
         {this.props.children}
       </div>
     );
+  }
+
+  public render() {
+    const credentials = AAA.getInstance().getCredentials();
+    const hasCredentials = !!(credentials.sk && credentials.ss);
+
     return (
       <div>
-        {layout}
-        {this.state.sidebarOpen &&
-        <Sidebar closeSidebar={this.closeSidebar}/>
+        {
+          hasCredentials &&
+          (
+            <div>
+              {this.createLayout()}
+              {this.state.sidebarOpen &&
+              <Sidebar closeSidebar={this.closeSidebar}/>
+              }
+            </div>
+          )
         }
       </div>
     );

@@ -25,15 +25,11 @@ class PlaceChips extends React.Component<IChipsProps, IChipsState> {
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      active : false,
+    };
   }
 
-  public componentDidMount() {
-    this.setState(
-      {
-        active : false,
-      },
-    );
-  }
   public componentWillReceiveProps(nextProps) {
     this.setState(
       {

@@ -57,10 +57,12 @@ class PhoneInput extends React.Component<IProps, IState> {
     if (props.autoLocate && !props.country) {
       this.findGeoLocation().then((location: IGeoLocation) => {
         const country = this.getCountryById(location.country);
-        this.setState({
-          country,
-          code: country.code,
-         });
+        if (country && country.id) {
+          this.setState({
+            country,
+            code: country.code,
+          });
+        }
       });
     }
 
@@ -122,15 +124,19 @@ class PhoneInput extends React.Component<IProps, IState> {
    * @memberof PhoneInput
    */
   private findGeoLocation(): Promise<IGeoLocation> {
-    return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-      req.addEventListener('load', () => {
-        resolve(JSON.parse(req.responseText));
+    if (process.env.BROWSER) {
+      return new Promise((resolve, reject) => {
+        const req = new XMLHttpRequest();
+        req.addEventListener('load', () => {
+          resolve(JSON.parse(req.responseText));
+        });
+        req.addEventListener('error', reject);
+        req.open('GET', IP_LOCATION_URL);
+        req.send();
       });
-      req.addEventListener('error', reject);
-      req.open('GET', IP_LOCATION_URL);
-      req.send();
-    });
+    } else {
+      return Promise.resolve(null);
+    }
   }
 
   private handleCountrySelect(country: ICountry) {
