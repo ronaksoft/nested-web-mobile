@@ -1,3 +1,12 @@
+/**
+ * @auther robzizo < me@robzizo.ir >
+ * Document By : robzizo
+ * Date of documantion : 22/07/2017
+ * Review by : -
+ * Date of review : -
+ * Represents the NewBadge component.
+ * Component gets the data from parent.
+ */
 import * as React from 'react';
 
 const style = require('./newbadge.css');
@@ -16,10 +25,29 @@ interface IState {
   count: number;
 }
 
+/**
+ * This class renders an fixed element at bottom of window that shows new push is recieved
+ * @class NewBadge
+ * @extends {React.Component<IProps, IState>}
+ */
 class NewBadge extends React.Component<IProps, IState> {
 
+  /** constructor
+   * Creates an instance of NewBadge.
+   * @param {object} props
+   * @memberof NewBadge
+   */
   constructor(props: any) {
     super(props);
+
+    /**
+     * read the data from props and set to the state
+     * @type {object}
+     * @property {string} text the text for echo in badge
+     * @property {function} onClick badge function reference
+     * @property {boolean} visibility render condition
+     * @property {number} count the count of new recieved activities
+     */
     this.state = {
       text: this.props.text,
       onClick: this.props.onClick,
@@ -28,6 +56,11 @@ class NewBadge extends React.Component<IProps, IState> {
     };
   }
 
+  /**
+   * props data maybe changes during the run time and need to update state
+   * @param {IProps} newProps
+   * @memberof NewBadge
+   */
   public componentWillReceiveProps(newProps: IProps) {
 
     this.setState({
@@ -38,6 +71,11 @@ class NewBadge extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof NewBadge
+   */
   public render() {
     return (
       <div>
