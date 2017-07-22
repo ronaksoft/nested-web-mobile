@@ -23,14 +23,15 @@
 }
 .navbar a span{
   position: absolute;
-  right: 0;
-  top: 0;
-  min-width: 16px;
+  right: 0px;
+  top: 0px;
+  min-width: 20px;
   border-radius: 20px;
   background-color: #FF6464;
   text-align: center;
   color: white;
-  height: 16px;
+  height: 20px;
+  line-height: 20px;
   text-align: center
 }
 .navbar a i{

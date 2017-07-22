@@ -58,7 +58,7 @@
 }
 .rightItems {
   /*width: 104px;*/
-  padding: 0 8px;
+  /* padding: 0 8px; */
   flex: none;
   display: flex;
   justify-content: space-between;
