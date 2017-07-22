@@ -40,8 +40,10 @@ export default class AAA {
    * @memberof AAA
    */
   public setCredentials(credential: any) {
-    Cookies.set('nss', credential._ss);
-    Cookies.set('nsk', credential._sk);
+    if (typeof window !== 'undefined') {
+      Cookies.set('nss', credential._ss);
+      Cookies.set('nsk', credential._sk);
+    }
     this.nss = credential._ss;
     this.nsk = credential._sk;
   }
@@ -54,8 +56,10 @@ export default class AAA {
   public clearCredentials(): void {
     this.nss = null;
     this.nsk = null;
-    Cookies.set('nss');
-    Cookies.set('nsk');
+    if (typeof window !== 'undefined') {
+      Cookies.set('nss');
+      Cookies.set('nsk');
+    }
   }
 
   /**
@@ -63,8 +67,10 @@ export default class AAA {
    * @memberof AAA
    */
   private constructor() {
-    this.nss = Cookies.get('nss');
-    this.nsk = Cookies.get('nsk');
+    if (typeof window !== 'undefined') {
+      this.nss = Cookies.get('nss');
+      this.nsk = Cookies.get('nsk');
+    }
   }
 
 }
