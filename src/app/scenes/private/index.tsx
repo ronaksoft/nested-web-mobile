@@ -92,7 +92,6 @@ class Private extends React.Component<IProps, IState> {
   private getNotificationCounts() {
     this.notificationApi.getCount()
       .then((counts: INotificationCountResponse) => {
-        console.error(counts);
         this.props.setNotificationCount(counts);
       });
   }

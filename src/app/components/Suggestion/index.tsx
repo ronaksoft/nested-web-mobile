@@ -29,16 +29,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      suggests: [],
+      selectedItems: props.selectedItems || [],
+      activeItem: null,
+      input: null,
+    };
     this.debouncedFillSuggests = debounce(this.fillSuggests, 372); // Prevents the call stack and wasting resources
     this.searchApi = new SearchApi();
-  }
-
-  public componentDidMount() {
-    this.setState({
-      suggests: [],
-      selectedItems: this.props.selectedItems || [],
-      activeItem: null,
-    });
   }
 
   public load(items: IChipsItem[]) {
