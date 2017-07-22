@@ -26,7 +26,7 @@ interface IState {
 }
 
 /**
- * This class renders an fixed element at bottom of window that shows new push is recieved
+ * This class renders a fixed element at bottom of window that shows new push is recieved
  * @class NewBadge
  * @extends {React.Component<IProps, IState>}
  */
