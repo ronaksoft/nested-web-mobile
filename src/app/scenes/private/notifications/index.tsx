@@ -43,24 +43,34 @@ interface IProps {
   setNotificationCount: (counts: INotificationCountResponse) => {};
 }
 
+/**
+ * Notifications class : gets the notification items and switch render per differ to the notification item
+ * and holds the whole page data or even actions
+ * @class Notifications
+ * @extends {React.Component<IProps, IState>}
+ */
 class Notifications extends React.Component<IProps, IState> {
   private requestLimit: number = 20;
   // private startTouchPoint: number = 0;
   // private isInTop: boolean = true;
-// setting initial states
 
   /**
+   * Constructor
    * Creates an instance of Notifications.
    * binds functions by `this`.
    * Notifictions is member of props.
    * Notifictions is gotten from redux. its possible we have notifications in redux store and we
    * can fill notification state with initial value
-   * @param {any} props
+   * @param {object} props
    * @memberof Notifications
    */
   constructor(props) {
     super(props);
     this.handleRefresh = this.handleRefresh.bind(this);
+    /**
+     * @type {object}
+     * @property {string} notifications notification items
+     */
     this.state = {
       notifications: this.props.notifications,
     };
@@ -73,10 +83,10 @@ class Notifications extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
 
-    // recieve notification befor now
+    // recieve notification before now
     this.getNotificationBefore(true);
 
-    // resets the notifications counter by api call
+    // resets the notifications counter by Api call
     const notificationApi = new NotificationApi();
     notificationApi.resetCounter();
 
@@ -96,7 +106,6 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * Gets the notification items from server before latest notification item time or now
-   * 
    * @private
    * @param {boolean} saveInStore for saving the notification items in redux store
    * @memberof Notifications
@@ -136,7 +145,6 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * Gets the notification items from server after certain time
-   * 
    * @private
    * @memberof Notifications
    */
@@ -185,7 +193,6 @@ class Notifications extends React.Component<IProps, IState> {
   //   }
   // }
 
-  
   /**
    * function gets the newest notification items
    * use function for pull to refresh action
@@ -286,7 +293,7 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * renders the component
-   * @returns JSX element
+   * @returns {ReactElement} markup
    * @memberof Notifications
    */
   public render() {
