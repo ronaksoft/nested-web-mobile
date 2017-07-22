@@ -1,3 +1,14 @@
+/**
+ * @file scenes/Signin/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @description Authenticates the user using the given username and password and stores the user data
+ *              Documented by:          Soroush Torkzadeh
+ *              Date of documentation:  2017-07-22
+ *              Reviewed by:            -
+ *              Date of review:         -
+ *
+ */
+
 import * as React from 'react';
 import {Input, Button} from 'antd';
 import {Link, browserHistory} from 'react-router';
@@ -8,7 +19,6 @@ import AccountApi from 'api/account';
 import {IUser, ILoginResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
 
-// const style = require('./style.css');
 const publicStyle = require('../public.css');
 
 interface IState {
@@ -24,8 +34,21 @@ interface IProps {
   setLogout: () => {};
 }
 
+/**
+ *
+ *
+ * @class Signin
+ * @classdesc Authenticates user with the provided username and password
+ * @extends {React.Component<IProps, IState>}
+ */
 class Signin extends React.Component<IProps, IState> {
   private accountApi: AccountApi = new AccountApi();
+  /**
+   * Creates an instance of Signin.
+   * @param {*} props
+   * @memberof Signin
+   */
+  // TODO: Use IProps as `props` type
   constructor(props: any) {
     super(props);
 
@@ -36,14 +59,17 @@ class Signin extends React.Component<IProps, IState> {
       inProgress: false,
     };
 
+    // Binds `this` (the component context) as these functions context
     this.submit = this.submit.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
   }
 
   /**
-   * Authenticate the user with the given username and password
-   *
+   * @function submit
+   * @description Authenticates and registers a new session using the provided username and password and
+   * Puts the user data in `store.app` if he/she has been authenticated successfully
+   * @borrows {AccountApi.login, md5}
    * @private
    * @returns
    * @memberof Signin
@@ -53,6 +79,8 @@ class Signin extends React.Component<IProps, IState> {
       return;
     }
 
+    // Prevents clicking on "Sign in" button multiple times
+    // if authenticating is already in progress and is taking longer than usual
     this.setState({
       inProgress: true,
     });
@@ -61,11 +89,21 @@ class Signin extends React.Component<IProps, IState> {
       uid: this.state.username,
       pass: md5(this.state.password),
     }).then((response: ILoginResponse) => {
+
+      // Replaces the previous credentials that have been stored inside `AAA` service
       AAA.getInstance().setCredentials(response);
+
+      // Puts the authenticated user data in `store.app` reducer
       this.props.setLogin(response.account);
+
+      // Navigates to the default route which is `/feed`
       browserHistory.push('/');
     }, (error) => {
+
+      // TODO: Warn the user if the authentication was unsuccessful with an appropriate reason
       console.log(error);
+
+      // Enables "Sign in" button. This lets the user try again
       this.setState({
         inProgress: false,
       });
@@ -73,7 +111,8 @@ class Signin extends React.Component<IProps, IState> {
   }
 
   /**
-   * Set username on user input
+   * @function handleUsernameChange
+   * @description Set username on user input
    *
    * @private
    * @param {*} e
@@ -88,7 +127,8 @@ class Signin extends React.Component<IProps, IState> {
   }
 
   /**
-   * Set password on user input
+   * @function handlePasswordChange
+   * @description Set password on user input
    *
    * @private
    * @param {*} e
@@ -102,8 +142,14 @@ class Signin extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @function render
+   * @description Renders the component
+   *
+   * @returns
+   * @memberof Signin
+   */
   public render() {
-    // const { getFieldDecorator } = this.props.form;
     return (
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
@@ -133,10 +179,23 @@ class Signin extends React.Component<IProps, IState> {
 
 }
 
+/**
+ * @function mapStateToProps
+ * @description Provides `store.app.isLogin` from the store to identify whether he/she is loged-in or not
+ *
+ * @param {any} store
+ */
 const mapStateToProps = (store) => ({
   isLogin: store.app.isLogin,
 });
 
+/**
+ * @function mapDispatchToProps
+ * @description Provides `login` and `logout` actions through `props`
+ *
+ * @param {any} dispatch
+ * @returns
+ */
 const mapDispatchToProps = (dispatch) => {
   return {
     setLogin: (user: IUser) => {
