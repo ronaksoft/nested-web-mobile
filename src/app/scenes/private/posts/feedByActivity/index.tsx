@@ -10,6 +10,14 @@ import ArrayUntiles from '../../../../services/untils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
+import {Loading} from '../../../../components/Loading/index';
+import {NewBadge} from '../../../../components/NewBadge/index';
+import SyncActivity from '../../../../services/syncActivity/index';
+import AccountApi from '../../../../api/account/index';
+import IActivity from '../../../../api/activity/interfaces/IActivitiy';
+import SyncActions from '../../../../services/syncActivity/syncActions';
+
+const privateStyle = require('../../private.css');
 
 const style = require('../posts.css');
 
@@ -30,10 +38,15 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
+  newPostCount: number;
 }
 
 class FeedByActivity extends React.Component<IProps, IState> {
   private postApi: PostApi;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
+  private favoritePlacesId = [];
+  private newPostsIds = [];
 
   constructor(props: IProps) {
     super(props);
@@ -42,6 +55,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
+      newPostCount: 0,
     };
   }
 
@@ -60,6 +74,72 @@ class FeedByActivity extends React.Component<IProps, IState> {
         200);
     }
 
+    const accountApi = new AccountApi();
+    accountApi.getFavoritePlaces()
+      .then((placesId: string[]) => {
+        this.favoritePlacesId = placesId;
+      });
+
+    if (this.props.currentPost) {
+      setTimeout(() => {
+          window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
+        },
+        200);
+    }
+
+    this.syncActivityListeners.push(
+      this.syncActivity.openAllChannel(
+        (activity: IActivity) => {
+          switch (activity.action) {
+            case SyncActions.COMMENT_ADD:
+            case SyncActions.COMMENT_REMOVE:
+              return this.addCommentToPostActivity(activity);
+            case SyncActions.POST_ADD:
+              return this.addNewPostActivity(activity);
+            default :
+              return;
+          }
+        },
+      ));
+
+  }
+
+  private addNewPostActivity(activity: IActivity) {
+    if (this.favoritePlacesId.filter((placeId) => (placeId === activity.place_id)).length === 0 &&
+      this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+      this.newPostsIds.push(activity.post_id);
+      this.setState({
+        newPostCount: this.newPostsIds.length,
+      });
+    }
+  }
+
+  private addCommentToPostActivity(activity: IActivity) {
+
+    const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
+
+    if (indexOfPost > -1) {
+      let posts;
+      posts = JSON.parse(JSON.stringify(this.state.posts));
+
+      this.postApi.get({post_id: activity.post_id})
+        .then((post: IPost) => {
+          posts[indexOfPost].counters = post.counters;
+          this.setState({
+            posts,
+          });
+          this.props.setPosts(posts);
+        });
+    }
+  }
+
+  private showNewPosts() {
+    this.props.setPosts([]);
+    this.getPost();
+    this.newPostsIds = [];
+    this.setState({
+      newPostCount: 0,
+    });
   }
 
   private getPost(fromNow?: boolean, after?: number) {
@@ -177,17 +257,17 @@ class FeedByActivity extends React.Component<IProps, IState> {
 
     return (
       <div className={style.container}>
+        <NewBadge onClick={this.showNewPosts.bind(this, '')}
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        {this.state.loadingAfter &&
-        <div>Loading new posts...</div>
-        }
+        <Loading active={this.state.loadingAfter}/>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
-        {this.state.loadingBefore &&
-        <div>Loading...</div>
-        }
+        <Loading active={this.state.loadingBefore}/>
         {
           !this.state.reachedTheEnd &&
           !this.state.loadingAfter &&
@@ -207,7 +287,11 @@ class FeedByActivity extends React.Component<IProps, IState> {
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&
-        <div><Button onClick={loadMore}>Load More</Button></div>
+        (
+          <div className={privateStyle.loadMore}>
+            <Button onClick={loadMore}>Load More</Button>
+          </div>
+        )
         }
       </div>
     );

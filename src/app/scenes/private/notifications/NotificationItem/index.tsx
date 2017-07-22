@@ -19,69 +19,73 @@ interface IProps {
   notification: INotification;
 }
 
-class NotificationItem extends React.Component<IProps, any> {
+interface IState {
+  notification: INotification;
+}
+
+class NotificationItem extends React.Component<IProps, IState> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      notification: this.props.notification,
+    };
+  }
+
+  public componentDidMount() {
+    this.setState({
+      notification: this.props.notification,
+    });
+  }
+
+  public componentWillReceiveProps(newProps: IProps) {
+    this.setState({
+      notification: newProps.notification,
+    });
+  }
+
   public render() {
-    switch (this.props.notification.type) {
+    const notification = this.state.notification;
+    switch (notification.type) {
       case INotificationTypes.COMMENT:
         return (
-          <div>
-            <Comment notification={this.props.notification}/>
-          </div>
+          <Comment notification={notification}/>
         );
       case INotificationTypes.DEMOTED:
         return (
-          <div>
-            <Demoted notification={this.props.notification}/>
-          </div>
+          <Demoted notification={notification}/>
         );
       case INotificationTypes.INVITE:
         return (
-          <div>
-            <Invite notification={this.props.notification}/>
-          </div>
+          <Invite notification={notification}/>
         );
       case INotificationTypes.INVITE_RESPOND:
         return (
-          <div>
-            <InviteRespond notification={this.props.notification}/>
-          </div>
+          <InviteRespond notification={notification}/>
         );
       case INotificationTypes.FRIEND_JOINED:
         return (
-          <div>
-            <Joined notification={this.props.notification}/>
-          </div>
+          <Joined notification={notification}/>
         );
       case INotificationTypes.YOU_JOINED:
         return (
-          <div>
-            <YouJoined notification={this.props.notification}/>
-          </div>
+          <YouJoined notification={notification}/>
         );
       case INotificationTypes.MENTION:
         return (
-          <div>
-            <Mention notification={this.props.notification}/>
-          </div>
+          <Mention notification={notification}/>
         );
       case INotificationTypes.NEW_SESSION:
-        console.log(this.props.notification);
         return (
-          <div>
-            <NewSession notification={this.props.notification}/>
-          </div>
+          <NewSession notification={notification}/>
         );
       case INotificationTypes.PROMOTED:
         return (
-          <div>
-            <Promoted notification={this.props.notification}/>
-          </div>
+          <Promoted notification={notification}/>
         );
       case INotificationTypes.PLACE_SETTINGS_CHANGED:
         return (
-          <div>
-            <PlaceSettingsChanged notification={this.props.notification}/>
-          </div>
+          <PlaceSettingsChanged notification={notification}/>
         );
       default:
         return null;

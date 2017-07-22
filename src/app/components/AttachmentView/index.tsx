@@ -36,6 +36,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       attachments: this.props.attachments,
       downloadUrl: '',
     };
+    this.onPan = this.onPan.bind(this);
+    this.onPanStart = this.onPanStart.bind(this);
+    this.onPanEnd = this.onPanEnd.bind(this);
     this.inIt();
     this.setDownloadUrl = this.setDownloadUrl.bind(this);
   }
@@ -62,7 +65,15 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.indexOfAttachment = this.getIndexOfAttachment();
     this.haveNext = this.indexOfAttachment < this.props.attachments.length - 1;
     this.havePrev = this.indexOfAttachment <= this.props.attachments.length - 1 && this.indexOfAttachment > 0;
-    console.log('inIt', this.indexOfAttachment, this.haveNext, this.havePrev);
+    if ( document.getElementById('current') ) {
+      document.getElementById('current').style.transform = '';
+    }
+    if ( document.getElementById('next') ) {
+      document.getElementById('next').style.transform = '';
+    }
+    if ( document.getElementById('prv') ) {
+      document.getElementById('prv').style.transform = '';
+    }
 }
 
   public componentWillReceiveProps(newProps: IProps) {
@@ -87,23 +98,25 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     } else if (this.props.attachments.length - 1 > indexOfAttachment) {
       next = this.state.attachments[indexOfAttachment + 1];
     }
-    this.setState({selectedAttachment: next});
+    this.setState({selectedAttachment: next}, () => {
+      this.inIt();
+    });
     this.setDownloadUrl(next._id);
-    this.inIt();
   }
 
   private prev() {
     const indexOfAttachment = this.getIndexOfAttachment();
-    let next: IPostAttachment = null;
+    let prev: IPostAttachment = null;
 
     if (indexOfAttachment > 0) {
-      next = this.state.attachments[indexOfAttachment - 1];
+      prev = this.state.attachments[indexOfAttachment - 1];
     } else {
-      next = this.state.attachments[this.state.attachments.length - 1];
+      prev = this.state.attachments[this.state.attachments.length - 1];
     }
-    this.inIt();
-    this.setState({selectedAttachment: next});
-    this.setDownloadUrl(next._id);
+    this.setState({selectedAttachment: prev}, () => {
+      this.inIt();
+    });
+    this.setDownloadUrl(prev._id);
   }
 
   // private onSwipe(event: any, props: any) {
@@ -115,8 +128,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   //   }
   // }
 
-  private onPan(event: any, props: any) {
-    console.log(props, event);
+  private onPan(props: any) {
     // const toLeft = props.direction === 2;
     // const toRight = props.direction === 4;
 
@@ -128,29 +140,24 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.panDistance = trailed;
 
     if ( haveNext && this.panDistance < 0 ) {
-      console.log('go Next');
       trailed = 1 + trailed;
       trailed = trailed * 100;
       document.getElementById('next').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
     if ( havePrev && this.panDistance > 0 ) {
-      console.log('go Previous');
       trailed = (1 - trailed) * -100;
       document.getElementById('prv').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
   }
 
-  private onPanStart(event: any, props: any) {
-    console.log('onPanStart', props, event);
+  private onPanStart() {
     this.panStart = true;
   }
 
-  private onPanEnd(event: any, props: any) {
-    console.log('onPanEnd', props, event);
+  private onPanEnd() {
     if ( this.haveNext && this.panDistance < 0 ) {
-      console.log('go Next');
       let trailed = this.panDistance;
       trailed = 1 + trailed;
       trailed = trailed * 100;
@@ -159,7 +166,6 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       }
     }
     if ( this.havePrev && this.panDistance > 0 ) {
-      console.log('go Previous');
       let trailed = this.panDistance;
       trailed = (1 - trailed) * -100;
       if ( trailed > -70 ) {
@@ -238,9 +244,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             {indexOfAttachment + 1} of {this.state.attachments.length}
           </span>
         </div>
-        <Hammer id="current" onPan={this.onPan.bind(this, '')} onPanEnd={this.onPanEnd.bind(this, '')}
-        onPanStart={this.onPanStart.bind(this, '')} direction="DIRECTION_ALL">
-          <div>
+        <Hammer id="current" onPan={this.onPan} onPanEnd={this.onPanEnd}
+        onPanStart={this.onPanStart} direction="DIRECTION_ALL">
+          <div className={style.currentItem}>
             {(this.state.selectedAttachment.type === AttachmentType.GIF ||
               this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
             <ImageThumbnail attachment={this.state.selectedAttachment}/>

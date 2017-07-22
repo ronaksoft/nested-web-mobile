@@ -19,15 +19,17 @@ export default class ImageThumbnail extends React.Component<IProps, IState> {
   public render() {
     const {attachment} = this.props;
     const src =
-      `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+      `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
       `${attachment.thumbs.pre}`;
     return (
-      <li>
+      <div>
         <img src={src}
              style={{
                width: '100%',
+               maxHeight: 'calc(100% - 116px)',
+               objectFit: 'contain',
              }}/>
-      </li>
+      </div>
     );
   }
 }

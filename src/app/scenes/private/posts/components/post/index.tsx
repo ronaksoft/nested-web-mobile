@@ -48,11 +48,13 @@ class Post extends React.Component<IProps, IState> {
       });
     } else {
       const postApi = new PostApi();
-      postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id)
+      postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
+          post.post_read = true;
           this.setState({
             post,
           });
+          this.updatePostsInStore('post_read', true);
         });
       window.scrollTo(0, 0);
     }
@@ -84,7 +86,7 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
-  private leave = () => {
+  private leave() {
     browserHistory.goBack();
   }
 

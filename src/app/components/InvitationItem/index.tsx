@@ -43,7 +43,7 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
     if (place.picture.length > 0) {
         img = (
             <img className={style.picture}
-            src={`${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}`}/>
+            src={`${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture}`}/>
         );
     } else {
         img = (

@@ -40,9 +40,9 @@ class FileUtil {
     const sessionKey = AAA.getInstance().getCredentials().sk;
     switch (type) {
       case UrlType.Download:
-        return `${Configurations.STORE.URL}/download/${sessionKey}/${id}/${token}`;
+        return `${Configurations().STORE.URL}/download/${sessionKey}/${id}/${token}`;
       default:
-        return `${Configurations.STORE.URL}/view/${sessionKey}/${id}/`;
+        return `${Configurations().STORE.URL}/view/${sessionKey}/${id}/`;
     }
   }
 

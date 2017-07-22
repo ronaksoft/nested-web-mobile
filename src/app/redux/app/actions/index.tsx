@@ -2,7 +2,7 @@ import {} from '../IAppStore';
 import * as ActionTypes from './types';
 import IUser from '../../../api/account/interfaces/IUser';
 import {IAppAction} from '../IAppStore';
-import INotificationCountRequest from '../../../api/notification/interfaces/INotificationCountResponse';
+import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../../api/post/interfaces/IPost';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IComposeState from 'api/post/interfaces/IComposeState';
@@ -40,7 +40,7 @@ export function logout(): IAppAction {
   };
 }
 
-export function setNotificationCount(counts: INotificationCountRequest): IAppAction {
+export function setNotificationCount(counts: INotificationCountResponse): IAppAction {
   return {
     type: ActionTypes.APP_NOTIFICATION_COUNT,
     payload: counts,

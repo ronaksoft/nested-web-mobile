@@ -23,7 +23,7 @@ export default class ImageSingle extends React.Component<IProps, IState> {
     const width: number = attachment.width < window.innerWidth ? attachment.width : window.innerWidth - 32;
     const height: number = (attachment.height / attachment.width) * width;
     const src =
-      `${CONFIG.STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+      `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
       `${attachment.thumbs.pre}`;
     return (
       <div onClick={this.props.onclick.bind(this, attachment)}>

@@ -47,18 +47,15 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     super(props);
     this.state = {
       places: [],
-    };
-  }
-
-  public componentWillMount() {
-    this.setState({
-      places: [],
       invitations: [],
       sidebarPlacesUnreads: {
         placesUnreadCounts: {},
         placesUnreadChildrens: {},
       },
-    });
+    };
+  }
+
+  public componentDidMount() {
     this.PlaceApi = new PlaceApi();
     this.getMyPlaces();
     this.getInvitations();

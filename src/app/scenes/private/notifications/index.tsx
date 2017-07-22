@@ -5,9 +5,11 @@ import {INotificationData} from '../../../api/notification/interfaces/INotificat
 import INotification from 'api/notification/interfaces/INotification';
 import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
-import {setNotification} from '../../../redux/app/actions/index';
+import {setNotification, setNotificationCount} from '../../../redux/app/actions/index';
 import {Button} from 'antd';
 import {IcoN} from 'components';
+import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
+
 const style = require('./notifications.css');
 const privateStyle = require('../private.css');
 
@@ -27,7 +29,8 @@ interface IState {
 interface IProps {
   setNotification: (notifications: INotification[]) => {};
   notifications: INotification[];
-  notificationsCount: number;
+  notificationsCount: INotificationCountResponse;
+  setNotificationCount: (counts: INotificationCountResponse) => {};
 }
 
 class Notifications extends React.Component<IProps, IState> {
@@ -41,6 +44,18 @@ class Notifications extends React.Component<IProps, IState> {
     this.state = {
       notifications: this.props.notifications,
     };
+  }
+
+  public componentDidMount() {
+    this.getNotificationBefore(true);
+    const notificationApi = new NotificationApi();
+    notificationApi.resetCounter();
+    setTimeout(() => {
+      let counter;
+      counter = JSON.parse(JSON.stringify(this.props.notificationsCount));
+      counter.unread_notifications = 0;
+      this.props.setNotificationCount(counter);
+    }, 1000);
   }
 
   private getNotificationBefore(saveInStore: boolean) {
@@ -86,10 +101,6 @@ class Notifications extends React.Component<IProps, IState> {
     });
   }
 
-  public componentDidMount() {
-    this.getNotificationBefore(true);
-  }
-
   // public componentWillUnmount() {
   //   ;
   // }
@@ -106,6 +117,41 @@ class Notifications extends React.Component<IProps, IState> {
     // do some async code here
     resolve();
     this.getNotificationAfter();
+  }
+
+  private readAll() {
+    const notificationApi = new NotificationApi();
+    notificationApi.markAllRead();
+    const notifs = this.state.notifications.map((notif: INotification) => {
+      let newNotif;
+      newNotif = JSON.parse(JSON.stringify(notif));
+      newNotif.read = true;
+      return newNotif;
+    });
+    this.props.setNotification(notifs);
+
+    this.setState({
+      notifications: notifs,
+    });
+  }
+
+  private readNotif(notification: INotification) {
+    const notificationApi = new NotificationApi();
+    notificationApi.markAsRead({notification_id: notification._id});
+    const notifs = this.state.notifications.map((notif: INotification) => {
+      if (notification._id !== notif._id) {
+        return notif;
+      }
+      let newNotif;
+      newNotif = JSON.parse(JSON.stringify(notif));
+      newNotif.read = true;
+      return newNotif;
+    });
+    this.props.setNotification(notifs);
+
+    this.setState({
+      notifications: notifs,
+    });
   }
 
   // private onTouchStart() {
@@ -138,17 +184,20 @@ class Notifications extends React.Component<IProps, IState> {
       <div>
         <div className={style.notificationHead}>
           <h2>Notifications</h2>
-          <a>
+          <a onClick={this.readAll.bind(this, '')}>
             <IcoN size={24} name="listCheck24"/>
           </a>
         </div>
         <div className={style.notificationWrp}>
           {this.state.notifications.map((notification) =>
-            (<NotificationItem key={notification._id} notification={notification}/>))
-          }
+            (
+              <div onClick={this.readNotif.bind(this, notification)}>
+                <NotificationItem key={notification._id} notification={notification}/>
+              </div>
+            ))}
           <div className={privateStyle.loadMore}>
             <Button onClick={this.getNotificationBefore.bind(this, false)}>Load More</Button>
-          </div>    
+          </div>
         </div>
       </div>
     );
@@ -164,6 +213,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setNotification: (notifications: INotification[]) => {
       dispatch(setNotification(notifications));
+    },
+    setNotificationCount: (counts: INotificationCountResponse) => {
+      dispatch(setNotificationCount(counts));
     },
   };
 };

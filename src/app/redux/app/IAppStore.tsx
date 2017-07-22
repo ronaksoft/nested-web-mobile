@@ -1,6 +1,6 @@
 import IUser from '../../api/account/interfaces/IUser';
 import INotificationResponse from '../../api/notification/interfaces/INotificationRequest';
-import INotificationCountRequest from '../../api/notification/interfaces/INotificationCountResponse';
+import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../api/post/interfaces/IPost';
 import ISidebarPlace from '../../api/place/interfaces/ISidebarPlace';
 import IUnreadPlace from '../../api/place/interfaces/IUnreadPlace';
@@ -12,7 +12,7 @@ export interface IAppStore {
   user: IUser | null;
   userPlaces: string[];
   notifications: INotificationResponse[];
-  notificationsCount: INotificationCountRequest;
+  notificationsCount: INotificationCountResponse;
   posts: IPost[];
   postsRoute: string;
   sidebarPlaces: ISidebarPlace[];
@@ -23,6 +23,6 @@ export interface IAppStore {
 
 export interface IAppAction {
   type: string;
-  payload?: IPost | IPost[] | INotificationCountRequest | INotificationResponse[] | IUser | number | boolean | string
+  payload?: IPost | IPost[] | INotificationCountResponse | INotificationResponse[] | IUser | number | boolean | string
     | IComposeState;
 }
