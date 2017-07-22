@@ -222,12 +222,25 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     return false;
   }
 
+  private handleInvitationAccept = () => {
+    this.getMyPlaces();
+    this.getInvitations();
+  }
+
+  private handleInvitationDecline = () => {
+    this.getInvitations();
+  }
+
   public render() {
     const placeDoms = [];
     const invDoms = [];
     this.state.invitations.forEach((item, i) => {
       const invDom = (
-        <InvitationItem key={i + 'nc'} item={item}/>
+        <InvitationItem key={i + 'nc'}
+                        item={item}
+                        onAccept={this.handleInvitationAccept}
+                        onDecline={this.handleInvitationDecline}
+        />
       );
       invDoms.push(invDom);
     });

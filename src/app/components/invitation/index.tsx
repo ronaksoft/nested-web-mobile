@@ -1,12 +1,15 @@
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {PlaceItem, IcoN} from 'components';
+import InvitationApi from 'api/invitation';
 
 const style = require('./invitation.css');
 
 interface IProps {
   inv: any;
-  onClose: () => void;
+  onAccept: () => void;
+  onDecline: () => void;
+  onDismiss: () => void;
 }
 
 interface IState {
@@ -14,19 +17,36 @@ interface IState {
 }
 
 class Invitation extends React.Component<IProps, IState> {
+  private invitationApi: InvitationApi;
   constructor(props: any) {
     super(props);
     this.state = {
       place: null,
     };
+
+    this.invitationApi = new InvitationApi();
   }
 
-  public accept() {
-    console.log('accept');
+  private accept = () => {
+    this.invitationApi.respond({
+      invite_id: this.props.inv._id,
+      response: 'accept',
+    }).then(() => {
+      if (this.props.onAccept) {
+        this.props.onAccept();
+      }
+    });
   }
 
-  public decline() {
-    console.log('decline');
+  private decline = () => {
+    this.invitationApi.respond({
+      invite_id: this.props.inv._id,
+      response: 'ignore',
+    }).then(() => {
+      if (this.props.onDecline) {
+        this.props.onDecline();
+      }
+    });
   }
 
   public render() {
@@ -42,7 +62,7 @@ class Invitation extends React.Component<IProps, IState> {
             <div className={style.devider}/>
             <button className={style.btnGreen} onClick={this.accept}>Accept</button>
         </div>
-        <div className={style.close} onClick={this.props.onClose}>
+        <div className={style.close} onClick={this.props.onDismiss}>
             <IcoN size={24} name={'xcross24'}/>
         </div>
       </div>
