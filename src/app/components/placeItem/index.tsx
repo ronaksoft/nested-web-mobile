@@ -1,3 +1,13 @@
+/**
+ * @file component/PlaceItem/index.tsx
+ * @author robzizo < me@robzizo.ir >
+ * @description Represents the place Picture for view rendering of place picture.
+ *              Component get requiered data from Api call.
+ *              Documented by:          robzizo
+ *              Date of documentation:  2017-07-23
+ *              Reviewed by:            -
+ *              Date of review:         -
+ */
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {placeAdd} from '../../redux/places/actions/index';
@@ -32,7 +42,21 @@ interface IState {
   place: IPlace | null;
 }
 
+/**
+ * create place picture for render view.
+ * parent give pass the place Id and component gets the
+ * picture of place from Api call
+ * @class PlaceItem
+ * @extends {React.Component<IProps, IState>}
+ */
 class PlaceItem extends React.Component<IProps, IState> {
+
+  /**
+   * @constructor
+   * Creates an instance of PlaceItem.
+   * @param {object} props
+   * @memberof PlaceItem
+   */
   constructor(props: any) {
     super(props);
     this.state = {
@@ -40,27 +64,44 @@ class PlaceItem extends React.Component<IProps, IState> {
     };
   }
 
+  /**
+   * Try to Get place from redux store if its not stored before
+   * Calls the Api and store it in redux store
+   * @func componentDidMount
+   * @memberof PlaceItem
+   */
   public componentDidMount() {
+    // search resdux store for any place have the same same id with props id
     const place = this.props.places.filter((place: IPlace) => {
       return place._id === this.props.place_id;
     });
 
+    // determine place is stored in redux already
     if (place.length > 0) {
       this.setState({
         place: place[0],
       });
     } else {
+      // Define the place Api
       const placeApi = new PlaceApi();
+      // call place Api for get place obj of the passed place Id
       placeApi.get({place_id: this.props.place_id})
         .then((p: IPlace) => {
           this.setState({
             place: p,
           });
+          // store place in redux store
           this.props.placeAdd(p);
         });
     }
   }
 
+  /**
+   * @function render
+   * @description Renders the component
+   * @returns {ReactElement} markup
+   * @memberof PlaceItem
+   */
   public render() {
     const {place} = this.state;
 
@@ -73,8 +114,17 @@ class PlaceItem extends React.Component<IProps, IState> {
       size,
     } = this.props;
 
+    /**
+     * @yields {string} appropriate key for picture object
+     */
     const picDim = size > 32 ? 'x64' : 'x32';
+
+    /**
+     * @yields {string} css size valie
+     */
     const sizePX = size.toString(10) + 'px';
+
+    // image Jsx style
     const imageStyle = {
       display: 'flex',
       borderRadius,
@@ -84,10 +134,10 @@ class PlaceItem extends React.Component<IProps, IState> {
       oveflow: 'hidden',
     };
 
-    if (size) {
-      imageStyle.width = settings.width = size;
-      imageStyle.height = settings.height = size;
-    }
+    /**
+     * determine the place image source
+     * @yields image Jsx element
+     */
     let img;
     if (place.picture.x32.length > 0) {
       img = (
@@ -108,11 +158,21 @@ class PlaceItem extends React.Component<IProps, IState> {
   }
 }
 
+/**
+ * redux store mapper
+ * @param {any} redux store
+ * @returns store item object
+ */
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   places: store.places.places,
   place_id: ownProps.place_id,
 });
 
+/**
+ * reducer actions functions mapper
+ * @param {any} dispatch reducer dispacther
+ * @returns reducer actions object
+ */
 const mapDispatchAction = (dispatch) => {
   return {
     placeAdd: (place: IPlace) => dispatch(placeAdd(place)),
