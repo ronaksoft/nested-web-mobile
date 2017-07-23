@@ -1,8 +1,8 @@
- import * as React from 'react';
+import * as React from 'react';
 // import PlaceApi from '../../api/place';
-import { debounce } from 'lodash';
+import {debounce} from 'lodash';
 import {Input, Button, message} from 'antd';
-import { PlaceChips } from 'components';
+import {PlaceChips} from 'components';
 import {IChipsItem} from 'components/Chips';
 import IPlace from 'api/place/interfaces/IPlace';
 import SearchApi from 'api/search';
@@ -58,6 +58,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
     this.debouncedFillSuggests(event.currentTarget.value);
   }
+
   // Calling on evry input key down
   private keyDownInputVal(event) {
     event.persist();
@@ -90,6 +91,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       }
     }
   }
+
   // fill and update suggest area
   private fillSuggests(query: string): Promise<any> {
     return this.getSuggests(query).then((items: IChipsItem[]) => {
@@ -218,17 +220,17 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     const listItems = this.state.suggests.map((item) => {
       return (
         <li key={item._id}
-        onClick={this.insertChip.bind(this, item)}>
+            onClick={this.insertChip.bind(this, item)}>
           <img src={this.getPicture(item)} alt=""/>
           <div>
             {
               item.name && (
-                <p dangerouslySetInnerHTML={{ __html: this.mark(item.name, this.state.input) }}/>
+                <p dangerouslySetInnerHTML={{__html: this.mark(item.name, this.state.input)}}/>
               )
             }
             {
               item._id && (
-                <span dangerouslySetInnerHTML={{ __html: this.mark(item._id, this.state.input) }} />
+                <span dangerouslySetInnerHTML={{__html: this.mark(item._id, this.state.input)}}/>
               )
             }
           </div>
@@ -238,7 +240,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     const recipients = this.state.selectedItems.map((item) => {
       return (
         <PlaceChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
-        onChipsClick={this.handleChipsClick} item={item} />
+                    onChipsClick={this.handleChipsClick} item={item}/>
       );
     });
     return (
@@ -249,10 +251,10 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
           </span>
           {recipients}
           <Input
-                onChange={tempFunctionChange}
-                onKeyDown={tempFunctionKeydown}
-                onFocus={this.handleInputFocus}
-                value={this.state.input}
+            onChange={tempFunctionChange}
+            onKeyDown={tempFunctionKeydown}
+            onFocus={this.handleInputFocus}
+            value={this.state.input}
           />
         </div>
         {
