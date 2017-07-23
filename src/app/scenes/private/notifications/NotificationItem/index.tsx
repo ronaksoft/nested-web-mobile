@@ -68,18 +68,25 @@ class NotificationItem extends React.Component<IProps, IState> {
   }
 
   /**
-   * Creates an instance of Notifications
-   * @param newProps
+   * updates the state object when the parent changes the props
+   * @param {IProps} newProps
+   * @memberof NotificationItem
    */
   public componentWillReceiveProps(newProps: IProps) {
+    /**
+     * read the data from props and set to the state
+     * @type {object}
+     * @property {boolean} active show condition for element
+     */
     this.setState({
       notification: newProps.notification,
     });
   }
   /**
-   * renders the component
+   * @function render
+   * @description Renders the component
    * @returns {ReactElement} markup
-   * @memberof Notifications
+   * @memberof Loading
    */
   public render() {
     const notification = this.state.notification;
