@@ -1,5 +1,13 @@
- import * as React from 'react';
-// import PlaceApi from '../../api/place';
+/**
+ * @file component/Suggestion/index.tsx
+ * @author robzizo < me@robzizo.ir >
+ * @description Represents the suggestion component for select item from suggests from api call.
+ *              Documented by:          robzizo
+ *              Date of documentation:  2017-07-23
+ *              Reviewed by:            -
+ *              Date of review:         -
+ */
+import * as React from 'react';
 import { debounce } from 'lodash';
 import {Input, Button, message} from 'antd';
 import { PlaceChips } from 'components';
@@ -23,19 +31,55 @@ interface ISuggestState {
   input: string;
 }
 
+/**
+ *
+ * @class Suggestion
+ * @classdesc get suggestions and handle selecting them and notify parent
+ * @extends {React.Component<ISuggestProps, ISuggestState>}
+ */
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
+
+  /**
+   * Define the `debouncedFillSuggests` to get suggestions appropriated to the query
+   * @private
+   */
   private debouncedFillSuggests: (val: string) => void;
+
+  /**
+   * Define the `searchApi`
+   * @private
+   */
   private searchApi: SearchApi;
 
+  /**
+   * @constructor
+   * Creates an instance of Suggestion.
+   * @param {ISuggestProps} props
+   * @memberof Suggestion
+   */
   constructor(props: any) {
     super(props);
+
+    /**
+     * Initial state object
+     * @default
+     * @type {object}
+     * @property {array} suggests - list of suggested items from server
+     * @property {array} selectedItems - selected items from suggests
+     * @property {objecy} activeItem - a item is foussed and selected
+     * @property {objecy} input - input value ( model )
+     */
     this.state = {
       suggests: [],
       selectedItems: props.selectedItems || [],
       activeItem: null,
       input: null,
     };
+
+    // assign debouncedFillSuggests
     this.debouncedFillSuggests = debounce(this.fillSuggests, 372); // Prevents the call stack and wasting resources
+
+    // assign searchApi
     this.searchApi = new SearchApi();
   }
 
@@ -45,23 +89,52 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * clears the suggested items array
+   * @function clearSuggests
+   * @memberof Suggestion
+   */
   public clearSuggests = () => {
     this.setState({
       suggests: [],
     });
   }
 
-  // Calling on evry change in input
+  /**
+   * this function calls after any change in component input and
+   * call the `debouncedFillSuggests` to fill suggests list
+   * @function handleInputChange
+   * @private
+   * @param {any} event 
+   * @memberof Suggestion
+   */
   private handleInputChange(event) {
     this.setState({
       input: event.currentTarget.value,
     });
     this.debouncedFillSuggests(event.currentTarget.value);
   }
-  // Calling on evry input key down
+
+  /**
+   * determine which key is pressed and make proper decesion
+   * @example back space in empty input, remove last selected item
+   * @function keyDownInputVal
+   * @private
+   * @param {any} event
+   * @memberof Suggestion
+   */
   private keyDownInputVal(event) {
     event.persist();
+    /**
+     * @const val - input value
+     * @type string
+     */
     const val = event.currentTarget.value;
+
+    /**
+     * removes the last selected item whenever the input is empty and
+     * the backspace key is pressed.
+     */
     if (event.key === 'Backspace' && val.length === 0) {
       const array = this.state.selectedItems;
       array.splice(this.state.selectedItems.length - 1, 1);
@@ -69,6 +142,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         selectedItems: array,
       });
     }
+
+    /**
+     * adds first suggest to selected items on enter key press whenever the
+     * input is filled
+     */
     if (event.key === 'Enter' && val.length > 0) {
       const array = this.state.suggests;
       this.insertChip(array[0]);
@@ -90,7 +168,15 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       }
     }
   }
-  // fill and update suggest area
+
+  /**
+   * calls `getSuggests` function and set suggests items in component state
+   * @private
+   * @async
+   * @param {string} query
+   * @returns {Promise<any>}
+   * @memberof Suggestion
+   */
   private fillSuggests(query: string): Promise<any> {
     return this.getSuggests(query).then((items: IChipsItem[]) => {
       this.setState({
@@ -99,6 +185,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * get suggests items from api call
+   * @private
+   * @async
+   * @param {string} query
+   * @returns {Promise<any>}
+   * @memberof Suggestion
+   */
   private getSuggests(query: string): Promise<any> {
     return new Promise((resolve) => {
       this.searchApi.searchForCompose({
@@ -149,6 +243,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * bold the search query in suggested item text
+   * @private
+   * @param {string} text
+   * @param {string} keyword
+   * @returns {string}
+   * @memberof Suggestion
+   */
   private mark = (text: string, keyword: string): string => {
     if (!keyword) {
       return text;
@@ -166,7 +268,16 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     return text.replace(keyword, `<b>${keyword}</b>`);
   }
 
+  /**
+   * insert the chips to selected items and updates state also notifies parent
+   * @private
+   * @param {IChipsItem} item
+   * @memberof Suggestion
+   */
   private insertChip = (item: IChipsItem) => {
+    /**
+     * prevent to add multiple an item
+     */
     if (this.state.selectedItems.findIndex((i) => i._id === item._id) > -1) {
       return;
     }
@@ -181,6 +292,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * register handler for input focus in component
+   * removes the active state of all chips and calls `fillSuggests`
+   * @private
+   * @memberof Suggestion
+   */
   private handleInputFocus = () => {
     this.setState({
       activeItem: null,
@@ -188,6 +305,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     this.fillSuggests(this.state.input);
   }
 
+  /**
+   * register handler for clicking on chips
+   * set active state to chips and make other chipss diactive
+   * @private
+   * @memberof Suggestion
+   */
   private handleChipsClick = (item: IChipsItem) => {
     this.setState({
       activeItem: item,
@@ -195,6 +318,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * remove active item from selected items
+   * @private
+   * @memberof Suggestion
+   */
   private removeItem = () => {
     const index = this.state.selectedItems.indexOf(this.state.activeItem);
     const items = [...this.state.selectedItems.slice(0, index), ...this.state.selectedItems.slice(index + 1)];
@@ -205,16 +333,44 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  /**
+   * get picture of item
+   * @returns {string}
+   * @private
+   * @memberof Suggestion
+   */
   private getPicture = (item: IChipsItem) => {
     return item.picture && item.picture.x64
       ? FileUtil.getViewUrl(item.picture.x64)
       : unknownPicture;
   }
 
+  /**
+   * @function render
+   * @description Renders the component
+   * @returns {ReactElement} markup
+   * @memberof Suggestion
+   * @lends Suggestion
+   */
   public render() {
     // tempFunctions for binding this and pass TSX hint
+
+    /**
+     * @const tempFunctionChange binds `this` to function
+     * @type function
+     */
     const tempFunctionChange = this.handleInputChange.bind(this);
+
+    /**
+     * @const tempFunctionKeydown binds `this` to function
+     * @type function
+     */
     const tempFunctionKeydown = this.keyDownInputVal.bind(this);
+
+    /**
+     * @const listItems - render Jsx elements of suggestions
+     * @type Tsx element
+     */
     const listItems = this.state.suggests.map((item) => {
       return (
         <li key={item._id}
@@ -235,6 +391,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         </li>
       );
     });
+
+    /**
+     * @const recipients - render Jsx elements of selected items
+     * @type Tsx element
+     */
     const recipients = this.state.selectedItems.map((item) => {
       return (
         <PlaceChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
@@ -247,6 +408,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
           <span>
             With:
           </span>
+          {/* selected Items */}
           {recipients}
           <Input
                 onChange={tempFunctionChange}
@@ -255,6 +417,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
                 value={this.state.input}
           />
         </div>
+        {/* suggestion Items */}
         {
           this.state.suggests.length > 0 &&
           (
@@ -263,6 +426,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
             </ul>
           )
         }
+        {/* element for actions on active item */}
         { this.state.activeItem &&
         (
           <div className={style.selectItemControl}>

@@ -131,8 +131,8 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
     const place = this.props.item.place;
 
     /**
-     * @const place the invited place
-     * @type IPlace
+     * @const inviter user
+     * @type IUser
      */
     const inviter = this.props.item.inviter;
     let img;
