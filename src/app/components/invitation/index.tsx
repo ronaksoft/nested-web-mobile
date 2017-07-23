@@ -2,11 +2,11 @@
  * @file component/invitation/index.tsx
  * @author robzizo < me@robzizo.ir >
  * @description Represents the invitation modal component. Component gets the
- *              requiered data from its parent.
+ *              required data from its parent.
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-22
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            sina
+ *              Date of review:         2017-07-23
  */
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
@@ -54,11 +54,12 @@ class Invitation extends React.Component<IProps, IState> {
       place: null,
     };
 
+    // assign invitation api
     this.invitationApi = new InvitationApi();
   }
 
   /**
-   * Documented as Invitation.accpet
+   * Documented as Invitation.accept
    * @func
    * @desc invitation accept method and notify parent of the action
    * @private
