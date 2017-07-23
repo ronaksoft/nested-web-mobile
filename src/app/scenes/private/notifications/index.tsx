@@ -55,7 +55,7 @@ class Notifications extends React.Component<IProps, IState> {
   // private isInTop: boolean = true;
 
   /**
-   * Constructor
+   * @constructor
    * Creates an instance of Notifications.
    * binds functions by `this`.
    * Notifictions is member of props.
@@ -67,6 +67,7 @@ class Notifications extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.handleRefresh = this.handleRefresh.bind(this);
+
     /**
      * @type {object}
      * @property {string} notifications notification items
@@ -79,6 +80,7 @@ class Notifications extends React.Component<IProps, IState> {
   /**
    * after mounting the component , recieve the notifications from api call and set it in redux store.
    * when the user seen the notifications scene need to notify the server and reset notification counter
+   * @func componentDidMount
    * @memberof Notifications
    */
   public componentDidMount() {
@@ -207,7 +209,7 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * Mark all notification items as seen
-   * 
+   *
    * @private
    * @memberof Notifications
    */
@@ -236,7 +238,7 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * mark as read notification item
-   * 
+   *
    * @private
    * @param {INotification} notification
    * @memberof Notifications

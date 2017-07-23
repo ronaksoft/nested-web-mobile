@@ -38,7 +38,8 @@ class Invitation extends React.Component<IProps, IState> {
 
   /**
    * Creates an instance of Invitation.
-   * @param {*} props
+   * @constructor
+   * @param {object} props
    * @memberof Invitation
    */
   constructor(props: any) {
@@ -57,6 +58,7 @@ class Invitation extends React.Component<IProps, IState> {
   }
 
   /**
+   * Documented as Invitation.accpet
    * @func
    * @desc invitation accept method and notify parent of the action
    * @private
@@ -74,6 +76,7 @@ class Invitation extends React.Component<IProps, IState> {
   }
 
   /**
+   * Documented as Invitation.decline
    * @func
    * @desc invitation decline method and notify parent of the action
    * @private
@@ -95,6 +98,7 @@ class Invitation extends React.Component<IProps, IState> {
    * @description Renders the component
    * @returns {ReactElement} markup
    * @memberof Invitation
+   * @lends Invitation
    */
   public render() {
     return (

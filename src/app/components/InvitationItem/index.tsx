@@ -17,7 +17,7 @@ import {IcoN, Invitation} from 'components';
 const style = require('./invitationItem.css');
 
 interface IInvitationItemProps {
-  item: any;
+  item: any; // TODO define interface of item
   key: string;
   onAccept?: () => void;
   onDecline?: () => void;
@@ -35,13 +35,14 @@ interface IInvitationItemState {
 class InvitationItem extends React.Component<IInvitationItemProps, IInvitationItemState> {
 
   /**
-   * Constructor
+   * @constructor
    * Creates an instance of InvitationItem.
    * @param {object} props
    * @memberof InvitationItem
    */
   constructor(props: any) {
     super(props);
+
     /**
      * read the data from props and set to the state
      * @type {object}
@@ -64,7 +65,8 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
   }
 
   /**
-   * accept the invitation request
+   * Register a handler function to be called whenever this invitation accepted
+   * in related component
    * @private
    * @memberof InvitationItem
    */
@@ -82,7 +84,8 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
   }
 
   /**
-   * decline the invitation request
+   * Register a handler function to be called whenever this invitation declined
+   * in related component
    * @private
    * @memberof InvitationItem
    */
@@ -115,17 +118,24 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
    * @description Renders the component
    * @returns {ReactElement} markup
    * @memberof InvitationItem
+   * @lends InvitationItem
    */
   public render() {
 
-    // the invited place
+    /**
+     * @namespace
+     * place - the invited place
+     * inviter - the user object of the inviter
+     * img - image of place in sidebar invistation JSX element
+     */
     const place = this.props.item.place;
-
-    // the user object of the inviter
     const inviter = this.props.item.inviter;
-
-    // image of place in sidebar invistation JSX element
     let img;
+
+    /**
+     * generate the place picture JSX elemeng and the url.
+     * use a placeholder for places without picture
+     */
     if (place.picture.length > 0) {
         img = (
             <img className={style.picture}
@@ -136,9 +146,10 @@ class InvitationItem extends React.Component<IInvitationItemProps, IInvitationIt
             <IcoN size={24} name={'absentPlace24'}/>
         );
     }
+
     return (
       <li key={this.props.key}>
-        {/* on click item opens the invitation modal */}
+        {/* on click invitation item the invitation modal appears */}
         <div className={style.place} onClick={this.inivtationModal.bind(this, '')}>
             {img}
             <div>

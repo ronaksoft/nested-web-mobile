@@ -33,10 +33,10 @@ interface INavbarState {
 class Navbar extends React.Component<INavbarProps, INavbarState> {
 
   /**
-   * constructor
-   * Creates an instance of NewBadge.
-   * @param {object} props
-   * @memberof NewBadge
+   * Creates an instance of Navbar.
+   * @constructor
+   * @param {object} props - react props
+   * @memberof Navbar
    */
   constructor(props: any) {
     super(props);
@@ -53,18 +53,24 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   }
 
   /**
-   * if the parent provided data changes need to reassign the states value
+   * reaction to changes from provided data of parent
    * @param {INavbarProps} newProps
    * @memberof Navbar
    */
   public componentWillReceiveProps(newProps: INavbarProps) {
 
+    /**
+     * Counts of unread notifications from props
+     * @type {object}
+     * @property {number} notifCount the number of unseen notifications
+     */
     this.setState({
       notifCount: newProps.notifCount,
     });
   }
 
   /**
+   * Documented as Navbar.goToNotification
    * navigate user to notification scene or if already in notification scene
    * it navigates to the feed
    * @private
@@ -88,6 +94,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    * @description Renders the component
    * @returns {ReactElement} markup
    * @memberof Navbar
+   * @lends Navbar
    */
   public render() {
     return (
