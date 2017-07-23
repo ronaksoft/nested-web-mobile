@@ -37,24 +37,21 @@ class YouJoined extends React.Component <IProps, any> {
   public render() {
     const notification = this.props.notification;
     return (
-      {/* link to the Place which an account is adding to it */}
       <Link to={`message/${notification.place_id}`}
-      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
-        {/* using UserAvatar component for rendering user's avatar */}
+            className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+        {/* using UserAvatar component for rendering usre avatar */}
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
             <p>
-              {/* using FullName component for rendering user's full name */}
-            <b><FullName user_id={this.props.notification.actor_id}/></b>
-            <span> added you to </span>
-              {/* using PlaceName component for rendering Place's name */}
-            <b><PlaceName place_id={this.props.notification.place_id}/>. </b>
-              {/* using untils service for rendering correct time */}
+              {/* using FullName component for rendering Place full name */}
+              <b><FullName user_id={this.props.notification.actor_id}/></b>
+              <span> added you to </span>
+              {/* using PlaceName component for rendering Place name */}
+              <b><PlaceName place_id={this.props.notification.place_id}/>. </b>
               <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>
-          {/* using IcoN component from Ant library for rendering add Place icon */}
           <IcoN size={16} name={'addToPlace16'}/>
         </div>
       </Link>
