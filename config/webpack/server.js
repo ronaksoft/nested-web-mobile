@@ -62,7 +62,7 @@ var config = {
         test: /\.css$/,
         loaders: [
           'isomorphic-style-loader',
-          'css-loader?modules&importLoaders=2&localIdentName=[local]___[hash:base64:5]'
+          'css-loader?modules&importLoaders=10&localIdentName=[local]___[hash:base64:5]'
         ]
       }
     ]
