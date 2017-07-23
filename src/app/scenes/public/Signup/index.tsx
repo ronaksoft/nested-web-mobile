@@ -2,15 +2,13 @@
  * @file scenes/Signup/index.tsx
  * @author Soroush Torkzadeh <sorousht@nested.com>
  * @desc Creates an account in 3 steps. This component is just a container
- *       for SubmitPhone, Verify and Register components and does not have
- *       any important logic about registration process       
- *              Documented by:          Soroush Torkzadeh
- *              Date of documentation:  2017-07-22
- *              Reviewed by:            -
- *              Date of review:         -
- *
+ * for SubmitPhone, Verify and Register components and does not have
+ * any important logic about registration process
+ * Documented by: Soroush Torkzadeh
+ * Date of documentation:  2017-07-22
+ * Reviewed by:            -
+ * Date of review:         -
  */
-
 
 import * as React from 'react';
 import SubmitPhone from './SubmitPhone';
@@ -32,7 +30,6 @@ class Signup extends React.Component<any, any> {
   /**
    * @function render
    * @desc Renders the component
-   *
    * @returns
    * @memberof Signup
    */

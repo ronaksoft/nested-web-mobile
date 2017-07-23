@@ -207,7 +207,6 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * Mark all notification items as seen
-   * 
    * @private
    * @memberof Notifications
    */
@@ -236,7 +235,6 @@ class Notifications extends React.Component<IProps, IState> {
 
   /**
    * mark as read notification item
-   * 
    * @private
    * @param {INotification} notification
    * @memberof Notifications
