@@ -2,7 +2,7 @@
  * @file component/PlaceItem/index.tsx
  * @author robzizo < me@robzizo.ir >
  * @description Represents the place Picture for view rendering of place picture.
- *              Component get requiered data from Api call.
+ *              Component get requiered data directly from store or api call.
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-23
  *              Reviewed by:            -
@@ -64,6 +64,7 @@ class PlaceItem extends React.Component<IProps, IState> {
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof PlaceItem
+   * @override
    */
   public componentDidMount() {
     // search resdux store for any place have the same same id with props id
@@ -96,6 +97,8 @@ class PlaceItem extends React.Component<IProps, IState> {
    * @description Renders the component
    * @returns {ReactElement} markup
    * @memberof PlaceItem
+   * @override
+   * @generator
    */
   public render() {
     const {place} = this.state;
