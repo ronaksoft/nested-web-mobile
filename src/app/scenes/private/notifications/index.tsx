@@ -23,19 +23,20 @@ import INotificationCountResponse from '../../../api/notification/interfaces/INo
 const style = require('./notifications.css');
 const privateStyle = require('../private.css');
 
-// import PullRefresh from 'react-pullrefresh';
-
-// custom renderer
-// const renderWaitingComponent = () => {
-//   return <div style={{backgroundColor: '#00f', color: '#fff'}}>waiting</div>;
-// };
-// const renderPullingComponent = (props, step) => {
-//   return <div style={{backgroundColor: '#f00', color: '#fff'}}>{step + '/' + props.max}</div>;
-// };
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   notifications: INotification[];
 }
 
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   setNotification: (notifications: INotification[]) => {};
   notifications: INotification[];
@@ -44,9 +45,9 @@ interface IProps {
 }
 
 /**
- * Notifications class : gets the notification items and switch render per differ to the notification item
- * and holds the whole page data or even actions
  * @class Notifications
+ * @classdesc gets the notification items and switch render per differ to the notification item
+ * and holds the whole page data or even actions
  * @extends {React.Component<IProps, IState>}
  */
 class Notifications extends React.Component<IProps, IState> {
@@ -69,6 +70,7 @@ class Notifications extends React.Component<IProps, IState> {
     this.handleRefresh = this.handleRefresh.bind(this);
 
     /**
+     * @default
      * @type {object}
      * @property {string} notifications notification items
      */
@@ -82,6 +84,7 @@ class Notifications extends React.Component<IProps, IState> {
    * when the user seen the notifications scene need to notify the server and reset notification counter
    * @func componentDidMount
    * @memberof Notifications
+   * @override
    */
   public componentDidMount() {
 
@@ -181,19 +184,6 @@ class Notifications extends React.Component<IProps, IState> {
       });
     });
   }
-
-  // public componentWillUnmount() {
-  //   ;
-  // }
-
-  // private onSwipe(props: any, event: any) {
-  //   console.log(event, props);
-  //   if (event.direction === 8) {
-  //     this.getNotificationAfter();
-  //   } else if (event.direction === 16) {
-  //     this.getNotificationBefore(false);
-  //   }
-  // }
 
   /**
    * function gets the newest notification items
@@ -297,6 +287,8 @@ class Notifications extends React.Component<IProps, IState> {
    * renders the component
    * @returns {ReactElement} markup
    * @memberof Notifications
+   * @override
+   * @generator
    */
   public render() {
     return (
