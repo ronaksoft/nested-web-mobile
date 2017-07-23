@@ -18,11 +18,6 @@ import AAA from '../../services/aaa/index';
 import CONFIG from '../../config';
 
 const style = require('./placeItem.css');
-const settings = {
-  height: 24,
-  width: 24,
-  radius: 0,
-};
 
 interface IOwnProps {
   place_id: string;
