@@ -71,14 +71,14 @@ class FileUtil {
    * @function getUrl
    * @desc Generates a download/view url of a file
    * The difference between download and view url is the last part of url. A download url
-   * ends with a download token wich is obviously required to download a file. A view url 
+   * ends with a download token wich is obviously required to download a file. A view url
    * does not have a token at the end and ends with the file universal Id
    * @private
    * @static
-   * @param {string} id 
-   * @param {UrlType} type 
-   * @param {string} [token] 
-   * @returns 
+   * @param {string} id
+   * @param {UrlType} type
+   * @param {string} [token]
+   * @returns {string}
    * @memberof FileUtil
    */
   private static getUrl(id: string, type: UrlType, token?: string) {
@@ -191,7 +191,7 @@ class FileUtil {
    * @function getType
    * @desc Finds a file type based on mimetype
    * @static
-   * @param {string} mimetype 
+   * @param {string} mimetype
    * @returns {string}
    * @memberof FileUtil
    */
@@ -211,8 +211,8 @@ class FileUtil {
    * @desc Returns a file extension using the file name
    * e.g. "foo.txt" => "txt"
    * @static
-   * @param {string} fileName 
-   * @returns 
+   * @param {string} fileName
+   * @returns {string}
    * @memberof FileUtil
    */
   public static getSuffix(fileName: string) {
@@ -234,7 +234,7 @@ class FileUtil {
    * @desc Returns a file name without extiension
    * e.g. "foo.txt" => "foo"
    * @static
-   * @param {string} fileName 
+   * @param {string} fileName
    * @returns {string}
    * @memberof FileUtil
    */
@@ -258,7 +258,7 @@ class FileUtil {
    * e.g. "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
    * @borrows getType
    * @static
-   * @param {File} file 
+   * @param {File} file
    * @returns  {string}
    * @memberof FileUtil
    */

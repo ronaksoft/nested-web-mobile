@@ -39,7 +39,7 @@ class Unique {
    * @function getInstance
    * @desc Creates or returns the instance of the class.
    * @static
-   * @returns 
+   * @returns {Unique}
    * @memberof Unique
    */
   public static getInstance() {
@@ -53,7 +53,7 @@ class Unique {
   /**
    * @function get
    * @desc Generates a new unique number
-   * @returns 
+   * @returns {number}
    * @memberof Unique
    */
   public get() {
