@@ -1,3 +1,13 @@
+/**
+ * @file component/sidebar/index.tsx
+ * @author robzizo < me@robzizo.ir >
+ * @description Sidebar accessibility is like hamburguer menu from navbar component. and acts like
+ *              a navigator. Component gets required data from redux Store or server Api
+ *              Documented by:          robzizo
+ *              Date of documentation:  2017-07-24
+ *              Reviewed by:            -
+ *              Date of review:         -
+ */
 import * as React from 'react';
 import * as Hammer from 'react-hammerjs';
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
@@ -11,42 +21,136 @@ import FileUtil from 'services/utils/file';
 import {message} from 'antd';
 
 const style = require('./attachmentview.css');
+
+/**
+ * @name IProps
+ * @interface IProps for component initials data
+ * This interface pass the required parameters to component.
+ * @type {object}
+ * @property {Array<IPostAttachment>} attachments - list of attachments
+ * @property {IPostAttachment} selectedAttachment - selected attachment
+ * @property {function} onClose - close attachment view
+ */
 interface IProps {
   attachments: IPostAttachment[];
   selectedAttachment?: IPostAttachment | null;
   onClose: () => void;
 }
 
+/**
+ * @name IState
+ * @interface IState for component reactive Elements
+ * @type {object}
+ * @property {Array<IPostAttachment>} attachments - list of attachments
+ * @property {IPostAttachment} selectedAttachment - selected attachment
+ * @property {string} downloadUrl -  download url of selected attachment
+ */
 interface IState {
-  selectedAttachment: IPostAttachment;
   attachments: IPostAttachment[];
+  selectedAttachment: IPostAttachment;
   downloadUrl: string;
 }
 
+/**
+ * @class AttachmentView
+ * @classdesc view modal of all attachments
+ * @extends {React.Component<IProps, IState>}
+ * @requires [<IcoN>]
+ */
 export default class AttachmentView extends React.Component<IProps, IState> {
+
+  /**
+   * determine the selected attachment is last attachment or not
+   * @name haveNext
+   * @private
+   * @type {boolean}
+   * @memberof AttachmentView
+   */
   private haveNext: boolean;
+
+  /**
+   * determine the selected attachment is first attachment or not
+   * @name havePrev
+   * @private
+   * @type {boolean}
+   * @memberof AttachmentView
+   */
   private havePrev: boolean;
+
+  /**
+   * index of selected attachment in attachments
+   * @name indexOfAttachment
+   * @private
+   * @type {number}
+   * @memberof AttachmentView
+   */
   private indexOfAttachment: number;
+
+  /**
+   * Start flag for paning
+   * @name panStart
+   * @private
+   * @type {boolean}
+   * @memberof AttachmentView
+   */
   private panStart: boolean;
+
+  /**
+   * pan distance
+   * @name panDistance
+   * @private
+   * @type {number}
+   * @memberof AttachmentView
+   */
   private panDistance: number;
+
+  /**
+   * @constructor
+   * Creates an instance of Sidebar.
+   * @param {IProps} props
+   * @memberof AttachmentView
+   */
   constructor(props: IProps) {
     super(props);
+
+    /**
+     * @default
+     * @type {IState}
+     */
     this.state = {
       selectedAttachment: this.props.selectedAttachment,
       attachments: this.props.attachments,
       downloadUrl: '',
     };
+
+    // Binds `this` (the component context) as these functions context
     this.onPan = this.onPan.bind(this);
     this.onPanStart = this.onPanStart.bind(this);
     this.onPanEnd = this.onPanEnd.bind(this);
-    this.inIt();
     this.setDownloadUrl = this.setDownloadUrl.bind(this);
+
+    /**
+     * call 'inIt' for set initial state of component
+     */
+    this.inIt();
   }
 
+  /**
+   * After mounting component, it calls `AttachmentView.setDownloadUrl`
+   * @override
+   * @function componentDidMount
+   * @memberof AttachmentView
+   */
   public componentDidMount() {
     this.setDownloadUrl(this.state.selectedAttachment._id);
   }
 
+  /**
+   * generates download url of attachment and update component state `downloadUrl` property
+   * @function setDownloadUrl
+   * @param {string} id
+   * @memberof AttachmentView
+   */
   public setDownloadUrl(id: string): void {
       AttachmentApi.getDownloadToken({
         universal_id: id,
@@ -61,10 +165,17 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       });
   }
 
+  /**
+   * determine some initial state for component like `AttachmentView.indexOfAttacment` and `AttachmentView.haveNext`
+   * @public
+   * @memberof AttachmentView
+   */
   public inIt() {
     this.indexOfAttachment = this.getIndexOfAttachment();
     this.haveNext = this.indexOfAttachment < this.props.attachments.length - 1;
     this.havePrev = this.indexOfAttachment <= this.props.attachments.length - 1 && this.indexOfAttachment > 0;
+
+    // reset the style attribiutes on each initialize
     if ( document.getElementById('current') ) {
       document.getElementById('current').style.transform = '';
     }
@@ -74,8 +185,14 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     if ( document.getElementById('prv') ) {
       document.getElementById('prv').style.transform = '';
     }
-}
+  }
 
+  /**
+   * updateing state on any change in passed data
+   * @override
+   * @function componentWillReceiveProps
+   * @memberof AttachmentView
+   */
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({
       attachments: newProps.attachments,
@@ -83,6 +200,12 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.inIt();
   }
 
+  /**
+   * get the index of selected attachment in attachments
+   * @private
+   * @returns {number}
+   * @memberof AttachmentView
+   */
   private getIndexOfAttachment() {
     const indexOfAttachment = this.state.attachments.findIndex((attachment: IPostAttachment) => {
       return attachment._id === this.state.selectedAttachment._id;
@@ -90,9 +213,18 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     return indexOfAttachment;
   }
 
+  /**
+   * change the selected Attachment to next attachment of last selected attachment
+   * , initilize component and regenerate Downloadurl
+   * @private
+   * @returns {number}
+   * @memberof AttachmentView
+   */
   private next() {
     const indexOfAttachment = this.getIndexOfAttachment();
     let next: IPostAttachment = null;
+
+    // if its last attachment, select first item of attachments as selected
     if (this.state.attachments.length - 1 === indexOfAttachment) {
       next =  this.state.attachments[0];
     } else if (this.props.attachments.length - 1 > indexOfAttachment) {
@@ -104,10 +236,18 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.setDownloadUrl(next._id);
   }
 
+  /**
+   * change the selected Attachment to prevous attachment of last selected attachment
+   * , initilize component and regenerate Downloadurl
+   * @private
+   * @returns {number}
+   * @memberof AttachmentView
+   */
   private prev() {
     const indexOfAttachment = this.getIndexOfAttachment();
     let prev: IPostAttachment = null;
 
+    // if its first attachment, select last item of attachments as selected
     if (indexOfAttachment > 0) {
       prev = this.state.attachments[indexOfAttachment - 1];
     } else {
@@ -128,17 +268,49 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   //   }
   // }
 
-  private onPan(props: any) {
-    // const toLeft = props.direction === 2;
-    // const toRight = props.direction === 4;
+  /**
+   * Calls on pan move
+   * Set pan distance in percents of screen width and assign it to `AttachmentView.panDistance`
+   * @event
+   * @private
+   * @param {*} event
+   * @memberof AttachmentView
+   */
+  private onPan(event: any) {
 
+    /**
+     * @name indexOfAttachment
+     * @const
+     * @type {number}
+     */
     const indexOfAttachment = this.getIndexOfAttachment();
+
+    /**
+     * @name haveNext
+     * @const
+     * @type {bolean}
+     */
     const haveNext = indexOfAttachment < this.props.attachments.length - 1;
+
+    /**
+     * @name havePrev
+     * @const
+     * @type {bolean}
+     */
     const havePrev = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
-    let trailed = props.deltaX / window.innerWidth;
+
+    /**
+     * @name trailed
+     * @var
+     * @type {number}
+     */
+    let trailed = event.deltaX / window.innerWidth;
 
     this.panDistance = trailed;
 
+    /**
+     * translate the DOMS accordingly to the trailed distance
+     */
     if ( haveNext && this.panDistance < 0 ) {
       trailed = 1 + trailed;
       trailed = trailed * 100;
@@ -152,10 +324,23 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * Calls on pan start
+   * @event
+   * @private
+   * @memberof AttachmentView
+   */
   private onPanStart() {
     this.panStart = true;
   }
 
+  /**
+   * Calls on pan end and calculate the pan distance to set next or previous attachment as selected
+   * pan distance more than 30% of screen width slected attachment changes to next/previous item
+   * @event
+   * @private
+   * @memberof AttachmentView
+   */
   private onPanEnd() {
     if ( this.haveNext && this.panDistance < 0 ) {
       let trailed = this.panDistance;
@@ -172,6 +357,8 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         this.prev();
       }
     }
+
+    /** resert vars and elements style  */
     document.getElementById('current').style.transform = '';
     if ( document.getElementById('next') ) {
       document.getElementById('next').style.transform = '';
@@ -182,6 +369,13 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.panDistance = 0;
   }
 
+  /**
+   * @function
+   * @throws We are not able to serve the file, try again later.
+   * @private
+   * @param {*} e 
+   * @memberof AttachmentView
+   */
   private download(e: any) {
     if (!this.state.downloadUrl) {
       message.error('We are not able to serve the file, try again later.');
@@ -189,10 +383,37 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof AttachmentView
+   * @override
+   * @generator
+   */
   public render() {
+
+    /**
+     * @name indexOfAttachment
+     * @const
+     * @type {number}
+     */
     const indexOfAttachment = this.getIndexOfAttachment();
+
+    /**
+     * @name next
+     * @const
+     * @type {boolean}
+     */
     const next = indexOfAttachment < this.props.attachments.length - 1;
+
+    /**
+     * @name prv
+     * @const
+     * @type {boolean}
+     */
     const prv = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
+
+    /** Define variables for previous and next elements */
     let prvElement;
     let nextElement;
     if ( prv ) {
@@ -236,7 +457,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         id={'attachment-view'}
         className={style.attachmentView}
       >
+        {/* Attachment view navbar */}
         <div className={style.navigation}>
+          {/* Attachment view close button */}
           <a onClick={this.props.onClose}>
             <IcoN size={24} name={'xcross24White'}/>
           </a>
@@ -275,6 +498,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
               </span>
             )}
           </div>
+          {/* Attachment view download button */}
           <a onClick={this.download} href={this.state.downloadUrl}>
             <IcoN size={24} name={'downloads24White'}/>
           </a>
