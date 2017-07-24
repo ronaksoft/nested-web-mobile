@@ -14,7 +14,6 @@ import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';
 
-
 interface IOwnProps {
   /**
    * @property user_id
@@ -48,7 +47,6 @@ interface IUserItemProps {
    */
   accountAdd: (user: IUser) => {};
 }
-
 
 interface IState {
   /**
