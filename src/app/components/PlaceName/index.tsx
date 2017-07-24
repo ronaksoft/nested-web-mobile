@@ -57,7 +57,7 @@ class PlaceName extends React.Component<IProps, IState> {
      * read the data from props and set to the state and
      * setting initial state
      * @type {object}
-     * @property {boolean} active show condition for element
+     * @property {string}
      */
     this.state = {
       place: null,
