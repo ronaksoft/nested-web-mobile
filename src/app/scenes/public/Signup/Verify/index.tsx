@@ -5,6 +5,7 @@ import AccountApi from 'api/account';
 import Waiting from './Waiting';
 import ValidationStatus from '../ValidationStatus';
 import IValidationResult from '../IValidationResult';
+
 const style = require('./verify.css');
 const publicStyle = require('../../public.css');
 
@@ -30,8 +31,10 @@ interface IProps {
 }
 
 const CODE_REGEX = /^[0-9]{6}$/;
+
 class Verify extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
+
   constructor(props: any) {
     super(props);
 
@@ -99,7 +102,7 @@ class Verify extends React.Component<IProps, IState> {
       code: this.state.verificationCode,
       vid: this.props.params.vid,
     }).then(() => {
-      const nextStepRoute = '/signup/register/:country/:code/:phone/:vid'
+      const nextStepRoute = '/m/signup/register/:country/:code/:phone/:vid'
         .replace(':country', this.props.params.country)
         .replace(':code', this.props.params.code)
         .replace(':phone', this.props.params.phone)
@@ -150,11 +153,11 @@ class Verify extends React.Component<IProps, IState> {
   }
 
   private handleResendWaitFinish = () => {
-    this.setState({ sendTextWaiting: false });
+    this.setState({sendTextWaiting: false});
   }
 
   private handleCallWaitFinish = () => {
-    this.setState({ callPhoneWaiting: false });
+    this.setState({callPhoneWaiting: false});
   }
 
   public componentDidMount() {
@@ -168,28 +171,28 @@ class Verify extends React.Component<IProps, IState> {
         <div className={[publicStyle.publicForm, style.verify].join(' ')}>
           <p className={publicStyle.formParagraph}>We've sent a verification code via SMS to
             &nbsp;<Link
-                to={`/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
-                {`+${this.props.params.code} ${this.props.params.phone}`}
+              to={`/m/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
+              {`+${this.props.params.code} ${this.props.params.phone}`}
             </Link>
-           &nbsp;Check your phone and enter the code below:
+            &nbsp;Check your phone and enter the code below:
           </p>
           <Form.Item
-                    validateStatus={this.state.validateStatus}
-                    help={this.state.validationMessage}
+            validateStatus={this.state.validateStatus}
+            help={this.state.validationMessage}
           >
             <label>Verification code</label>
             <Input className={style.verifyCode}
-                  id="verificationCode"
-                  value={this.state.verificationCode}
-                  onChange={this.handleVerificationCodeChange}
+                   id="verificationCode"
+                   value={this.state.verificationCode}
+                   onChange={this.handleVerificationCodeChange}
             />
           </Form.Item>
           <div className={style.item}>
             <Waiting
-                    time={60}
-                    trigger={this.state.sendTextWaiting}
-                    onFinish={this.handleResendWaitFinish}
-                    message="wait...">
+              time={60}
+              trigger={this.state.sendTextWaiting}
+              onFinish={this.handleResendWaitFinish}
+              message="wait...">
               <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
                 {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
               </a>
@@ -197,10 +200,10 @@ class Verify extends React.Component<IProps, IState> {
           </div>
           <div className={style.item}>
             <Waiting
-                    time={180}
-                    trigger={this.state.callPhoneWaiting}
-                    onFinish={this.handleCallWaitFinish}
-                    message="wait...">
+              time={180}
+              trigger={this.state.callPhoneWaiting}
+              onFinish={this.handleCallWaitFinish}
+              message="wait...">
               <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
                 {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
               </a>

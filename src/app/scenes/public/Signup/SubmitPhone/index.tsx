@@ -81,7 +81,7 @@ class Phone extends React.Component<any, IState> {
       phone: phoneNumber,
     }).then((data) => {
 
-      const nextStepRoute = '/signup/verify/:country/:code/:phone/:vid'
+      const nextStepRoute = '/m/signup/verify/:country/:code/:phone/:vid'
         .replace(':country', this.country)
         .replace(':code', this.code)
         .replace(':phone', this.phone)
@@ -115,7 +115,7 @@ class Phone extends React.Component<any, IState> {
                       phone={this.props.params.phone}
                       country={this.props.params.country}/>
           </Form.Item>
-          <p className={publicStyle.detail}>Have an account? <Link to="/signin">Sign in</Link></p>
+          <p className={publicStyle.detail}>Have an account? <Link to="/m/signin">Sign in</Link></p>
           <Button type="primary" className={publicStyle.submit} onClick={this.submit}>
             <b>Next</b>
           </Button>

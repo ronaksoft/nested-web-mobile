@@ -213,12 +213,12 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
   }
 
   private gotoPlacePostsAllSortedByRecentPost = () => {
-    browserHistory.push(`/places/${this.currentPlaceId}/messages`);
+    browserHistory.push(`/m/places/${this.currentPlaceId}/messages`);
   }
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/message/${post._id}`);
+    browserHistory.push(`/m/message/${post._id}`);
   }
 
   public render() {

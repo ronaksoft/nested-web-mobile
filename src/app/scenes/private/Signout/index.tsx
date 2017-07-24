@@ -34,7 +34,7 @@ class Signout extends React.Component<IProps, {}> {
   public componentWillReceiveProps(newProbs: IProps) {
     if (newProbs.isLogin === false) {
       AAA.getInstance().clearCredentials();
-      browserHistory.push('/signin');
+      browserHistory.push('/m/signin');
       window.location.reload();
     }
   }

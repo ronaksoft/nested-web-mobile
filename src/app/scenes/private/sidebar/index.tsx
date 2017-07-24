@@ -267,19 +267,19 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           </div>
           <ul className={style.sidebarActions}>
             <li>
-              <Link to={`/feed`}>
+              <Link to={`/m/feed`}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             <li>
-              <Link to={`/bookmarks`}>
+              <Link to={`/m/bookmarks`}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             <li>
-              <Link to={`/shared`}>
+              <Link to={`/m/shared`}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -305,7 +305,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               </a>
             </li>
             <li>
-              <Link to={`/signout`}>
+              <Link to={`/m/signout`}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>

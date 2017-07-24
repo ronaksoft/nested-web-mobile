@@ -40,7 +40,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
         {!this.props.place.isChildren &&
         <hr className={style.hrLight}/>
         }
-        <Link to={`/places/${this.props.place.id}/messages`} activeClassName="active">
+        <Link to={`/m/places/${this.props.place.id}/messages`} activeClassName="active">
           <div className={style.place}>
             {placeIndent}
             <PlaceItem place_id={this.props.place.id} size={24} borderRadius="3px"/>

@@ -124,7 +124,7 @@ class Feed extends React.Component<IProps, IState> {
   }
 
   private gotoFeedByActivity() {
-    browserHistory.push(`/feed/latest-activity`);
+    browserHistory.push(`/m/feed/latest-activity`);
   }
 
   private getPost(fromNow?: boolean, after?: number) {
@@ -208,7 +208,7 @@ class Feed extends React.Component<IProps, IState> {
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/message/${post._id}`);
+    browserHistory.push(`/m/message/${post._id}`);
   }
 
   public render() {

@@ -65,7 +65,7 @@ class Private extends React.Component<IProps, IState> {
 
     if (!credential.sk || !credential.ss) {
       aaa.clearCredentials();
-      browserHistory.push('/signin');
+      browserHistory.push('/m/signin');
       return;
     }
 
@@ -85,7 +85,7 @@ class Private extends React.Component<IProps, IState> {
       this.props.setLogin(response.account);
     }, () => {
       aaa.clearCredentials();
-      browserHistory.push('/signin');
+      browserHistory.push('/m/signin');
     });
   }
 

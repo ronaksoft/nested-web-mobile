@@ -352,7 +352,7 @@ class Register extends React.Component<IProps, IState> {
         lname: this.state.lastName.value,
         email: this.state.email.value,
       }).then(() => {
-        browserHistory.push('/signin');
+        browserHistory.push('/m/signin');
       }, () => {
         this.setState({
           submitting: false,
