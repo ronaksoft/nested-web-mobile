@@ -14,43 +14,54 @@ import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';
 
-/**
- *
- * @implements
- * @interface IOwnProps
- * (Describe proprtie)
- */
 interface IOwnProps {
+  /**
+   * @property user_id
+   * @desc Includes user_id users
+   * @type {string}
+   * @memberof IOwnProps
+   */
   user_id: string;
 }
 
-/**
- *
- * @implements
- * @interface IProps
- * (Describe proprtie)
- */
 interface IUserItemProps {
+  /**
+   * @property user_id
+   * @desc Includes user_id users
+   * @type {string}
+   * @memberof IUserItemProps
+   */
   user_id: string;
+  /**
+   * @property accounts
+   * @desc Includes array of IUser's objects
+   * @type {array}
+   * @memberof IUserItemProps
+   */
   accounts: IUser[];
+  /**
+   * @property accountAdd
+   * @desc Includes account add function
+   * @type {function}
+   * @memberof IUserItemProps
+   */
   accountAdd: (user: IUser) => {};
 }
 
-/**
- *
- * @implements
- * @interface IState
- * (Describe proprtie)
- */
 interface IState {
+  /**
+   * @property user
+   * @desc Includes data of each Users
+   * @type {object}
+   * @memberof IState
+   */
   user: IUser | null;
 }
 
 /**
- * renders the FullName element
  * @class FullName
+ * @classdesc Component renders the FullName html element as an span
  * @extends {React.Component<IProps, IState>}
- * (add @classdesc and define return html elemnt (span) )
  */
 class FullName extends React.Component<IUserItemProps, IState> {
 
@@ -61,14 +72,12 @@ class FullName extends React.Component<IUserItemProps, IState> {
    * @memberof FullName
    */
   constructor(props: any) {
-
+    super(props);
     /**
      * read the data from props and set to the state and
      * setting initial state
      * @type {object}
-     * ( wrong document position )
      */
-    super(props);
     this.state = {
       user: null,
     };
@@ -79,7 +88,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof FullName
-   * ( add @override )
+   * @override
    */
   public componentDidMount() {
     // search redux store for any user which has the same id with `user_id`
