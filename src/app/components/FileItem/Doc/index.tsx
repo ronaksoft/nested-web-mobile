@@ -18,7 +18,6 @@ const style = require('../FileItem.css');
  * @implements
  * @interface IProps
  */
-inter
 interface IProps {
   file: IFile;
 }

@@ -52,7 +52,7 @@ class Files extends React.Component<{}, IState> {
    * @generator
    */
   public render() {
-    // setting static data for fileTypes 
+    // setting static data for fileTypes
     const fileTypes: IFile[] = [
       {
         id: 'PDF',
