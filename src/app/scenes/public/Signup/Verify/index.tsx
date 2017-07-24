@@ -9,8 +9,8 @@
  *
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-24
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-07-24
  *
  */
 
@@ -129,16 +129,22 @@ interface IProps {
    */
   params: IParams;
 }
+
 // A valid verification code matches this regular expression. It should be just numbers and a length of exactly 6
 const CODE_REGEX = /^[0-9]{6}$/;
+
 /**
  * @class Verify
- * @desc The component visualizes the 2nd step of registration. A user writes the verification code that was sent to him
- * in the previous step. The user is also able to request a call or another SMS if he/she have not received an SMS yet.
+ * @classdesc The component visualizes the 2nd step of registration. A user writes the verification code that was sent
+ * to him in the previous step. The user is also able to request a call or another SMS if he/she have not received an
+ * SMS yet.
  * @extends {React.Component<IProps, IState>}
  */
 class Verify extends React.Component<IProps, IState> {
+  /** (Need Doc) */
   private accountApi: AccountApi;
+
+  /** (Need Doc) */
   constructor(props: any) {
     super(props);
 
@@ -157,8 +163,8 @@ class Verify extends React.Component<IProps, IState> {
 
   /**
    * @function handleVerificationCodeChange
-   * @desc Stores and vlidates the value of verification code input on every change
-   * @borrows validateVerificationCode
+   * @desc Stores and validates the value of verification code input on every change
+   * @borrows Verify.validateVerificationCode
    * @private
    * @memberof Verify
    */
@@ -219,6 +225,11 @@ class Verify extends React.Component<IProps, IState> {
     return true;
   }
 
+  /**
+   * (need doc)
+   * @private
+   * @memberof Verify
+   */
   private submit = () => {
     if (!this.validate()) {
       return;
@@ -315,11 +326,18 @@ class Verify extends React.Component<IProps, IState> {
    * @function componentDidMount
    * @desc Creates an instance of AccountApi
    * @memberof Verify
+   * @override
    */
   public componentDidMount() {
+    /** define accountApi */
     this.accountApi = new AccountApi();
   }
 
+  /**
+   * (need doc)
+   * @returns
+   * @memberof Verify
+   */
   public render() {
     return (
       <Form>

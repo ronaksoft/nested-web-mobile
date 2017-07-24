@@ -1,3 +1,12 @@
+/**
+ * @file component/FileItem/index.tsx
+ * @auther naamesteh < naemabadei.shayesteh@gmail.com >
+ * @desc This file renders File Items by their types.
+ * Document By : naamesteh
+ * Date of documantion : 07/24/2017
+ * Review by : -
+ * Date of review : -
+ */
 import * as React from 'react';
 import {Pdf} from './Pdf';
 import {Doc} from './Doc';
@@ -8,9 +17,28 @@ import {Oth} from './Oth';
 import IFile from './IFile';
 
 interface IProps {
+  /**
+   * @property file
+   * @desc Includes file as an object of files data
+   * @type {object}
+   * @memberof IProps
+   */
   file: IFile;
 }
+
+/**
+ * renders the FileItem element
+ * @class FileItem
+ * @extends {React.Component<IProps, any>}
+ */
 class FileItem extends React.Component<IProps, any> {
+  /**
+   * @function render
+   * @description Renders the component
+   * @returns {ReactElement} markup
+   * @memberof FileItem
+   * @generator
+   */
   public render() {
     if (this.props.file.type === 'Pdf') {
       return (

@@ -15,32 +15,53 @@ import PostApi from '../../api/post/index';
 import {connect} from 'react-redux';
 
 interface IOwnProps {
+  /**
+   * @property post_id
+   * @desc Includes `post_id` of posts
+   * @type {string}
+   * @memberof IOwnProps
+   */
   post_id: string;
 }
 
-/**
- *
- * @implements
- * @interface IProps
- */
 interface IProps {
+  /**
+   * @property post_id
+   * @desc Includes `post_id` of posts
+   * @type {string}
+   * @memberof IProps
+   */
   post_id: string;
+  /**
+   * @property posts
+   * @desc Includes posts as an array of IPost
+   * @type {array}
+   * @memberof IProps
+   */
   posts: IPost[];
+  /**
+   * @property postAdd
+   * @desc Includes postAdd as a function
+   * @type {function}
+   * @memberof IProps
+   */
   postAdd: (post: IPost) => {};
 }
 
-/**
- *
- * @implements
- * @interface IState
- */
 interface IState {
+  /**
+   * @property post
+   * @desc Includes data of each post
+   * @type {object}
+   * @memberof IState
+   */
   post: IPost | null;
 }
 
 /**
  * renders the PostSubject element
  * @class PostSubject
+ * @classdesc Component renders the PostSubject html element as an span
  * @extends {React.Component<IProps, IState>}
  */
 class PostSubject extends React.Component<IProps, IState> {
@@ -67,27 +88,39 @@ class PostSubject extends React.Component<IProps, IState> {
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof PostSubject
+   * @override
    */
   public postDidMount() {
-    // search redux store for any post which has the same id with props id
+    /**
+     * search redux store for any post which has the same id with props id
+     */
     const posts = this.props.posts.filter((post: IPost) => {
       return post._id === this.props.post_id;
     });
-    // determine post is stored in redux already
+    /**
+     * determine post is stored in redux already
+     */
     if (posts.length > 0) {
       this.setState({
         post: posts[0],
       });
     } else {
-      // Define the post Api
+      /**
+       * define the post Api
+       */
       const postApi = new PostApi();
-      // call post Api for get post obj of the passed post Id
+      /**
+       * call post Api for get posts
+       * recieve posts with declared `post_id`
+       */
       postApi.get({post_id: this.props.post_id})
         .then((post: IPost) => {
           this.setState({
             post,
           });
-          // store post in redux store
+          /**
+           * store post in redux store
+           */
           this.props.postAdd(post);
         });
     }

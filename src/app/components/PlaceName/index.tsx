@@ -15,31 +15,51 @@ import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
 
 interface IOwnProps {
+  /**
+   * @property place_id
+   * @desc Includes `place_id` of places
+   * @type {string}
+   * @memberof IOwnProps
+   */
   place_id: string;
 }
 
-/**
- *
- * @implements
- * @interface IProps
- */
 interface IProps {
+  /**
+   * @property place_id
+   * @desc Includes `place_id` of places
+   * @type {string}
+   * @memberof IProps
+   */
   place_id: string;
+  /**
+   * @property places
+   * @desc Includes places as an array of IPlace
+   * @type {array}
+   * @memberof IProps
+   */
   places: IPlace[];
+  /**
+   * @property placeAdd
+   * @desc Includes `placeAdd` os a function
+   * @type {function}
+   * @memberof IProps
+   */
   placeAdd: (place: IPlace) => {};
 }
 
-/**
- *
- * @implements
- * @interface IState
- */
 interface IState {
+  /**
+   * @property place
+   * @desc Includes data of each place
+   * @type {object}
+   * @memberof IState
+   */
   place: IPlace | null;
 }
 /**
- * renders the PlaceName element
  * @class PlaceName
+ * @classdesc Component renders the PlaceName html element as an span
  * @extends {React.Component<IProps, IState>}
  */
 class PlaceName extends React.Component<IProps, IState> {
@@ -65,30 +85,44 @@ class PlaceName extends React.Component<IProps, IState> {
   }
 
   /**
-   *
+   * @function setPlace
+   * @private
    * @param placeId
    */
   private setPlace(placeId) {
-    // search resdux store for any place have the same id with props id
+    /**
+     * search resdux store for any place have the same id with props id
+     */
     const place = this.props.places.filter((place: IPlace) => {
       return place._id === placeId;
     });
-    // determine place is stored in redux already
+    /**
+     * determine place is stored in redux already
+     */
     if (place.length > 0) {
       this.setState({
         place: place[0],
       });
     } else {
-      // define the place Api class
+      /**
+       * define the place Api class
+       */
       const placeApi = new PlaceApi();
-      // call place Api for get place obj of the passed place Id
+      /**
+       * call place Api for get places
+       * recieve places with declared `place_id`
+       */
       placeApi.get({place_id: placeId})
         .then((p: IPlace) => {
-          // Update state with new place array
+          /**
+           * Update state with new place array
+           */
           this.setState({
             place: p,
           });
-          // store place in redux store
+          /**
+           * store place in redux store
+           */
           this.props.placeAdd(p);
         });
     }
@@ -106,6 +140,7 @@ class PlaceName extends React.Component<IProps, IState> {
    * after mounting the component , recieve the places from api call and set it in redux store.
    * @func componentDidMount
    * @memberof PlaceName
+   * @override
    */
   public componentDidMount() {
     this.setPlace(this.props.place_id);

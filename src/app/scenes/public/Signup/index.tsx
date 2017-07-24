@@ -6,8 +6,8 @@
  * any important logic about registration process
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-22
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robizo
+ * Date of review:        2017-07-24
  */
 
 import * as React from 'react';
@@ -18,10 +18,10 @@ const publicStyle = require('../public.css');
 
 /**
  * @class Signup
- * @desc Creates a new account in 3 steps:
- *          1. Submit phone number
- *          2. Verify phone number
- *          3. Enter account information
+ * @classdesc Creates a new account in 3 steps:
+ *            1. Submit phone number
+ *            2. Verify phone number
+ *            3. Enter account information
  *       These 3 steps are defined as child routes of this component
  *
  * @extends {React.Component<any, any>}
