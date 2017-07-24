@@ -1,3 +1,12 @@
+/**
+ * @file component/PlaceName/index.tsx
+ * @auther naamesteh < naemabadei.shayesteh@gmail.com >
+ * @desc This file renders the Place name.
+ * Document By : naamesteh
+ * Date of documantion : 07/23/2017
+ * Review by : -
+ * Date of review : -
+ */
 import * as React from 'react';
 import IPlace from '../../api/place/interfaces/IPlace';
 import {placeAdd} from '../../redux/places/actions/index';
@@ -17,15 +26,37 @@ interface IProps {
 interface IState {
   place: IPlace | null;
 }
-
+/**
+ * renders the PlaceName element
+ * @class PlaceName
+ * @extends {React.Component<IProps, IState>}
+ */
 class PlaceName extends React.Component<IProps, IState> {
+
+  /**
+   * Constructor
+   * Creates an instance of PlaceName.
+   * @param {IProps} props
+   * @memberof PlaceName
+   */
   constructor(props: any) {
     super(props);
+
+    /**
+     * read the data from props and set to the state and
+     * setting initial state
+     * @type {object}
+     * @property {boolean} active show condition for element
+     */
     this.state = {
       place: null,
     };
   }
 
+  /**
+   *
+   * @param placeId
+   */
   private setPlace(placeId) {
     const place = this.props.places.filter((place: IPlace) => {
       return place._id === placeId;

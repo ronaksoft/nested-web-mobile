@@ -1,3 +1,13 @@
+/**
+ * @auther naamsteh < naemabadei.shayesteh@gmail.com >
+ * @auther sina < ehosseiniir@gmail.com >
+ * Document By : naamesteh
+ * Date of documantion : 22/07/2017
+ * Review by : -
+ * Date of review : -
+ * This file renders the notification Items.
+ * Component renders each notification item component by its type.
+ */
 import * as React from 'react';
 import Comment from './Comment';
 import Demoted from './Demoted';
@@ -12,38 +22,80 @@ import PlaceSettingsChanged from './PlaceSettingsChanged';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
-
-// const style = require('../NotificationItem.css');
-
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   notification: INotification;
 }
-
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   notification: INotification;
 }
-
+/**
+ * NotificationItem class : gets the notification items and switch render per differ to the notification item
+ * and holds the whole page data or even actions
+ * @class NotificationItem
+ * @extends {React.Component<IProps, IState>}
+ */
 class NotificationItem extends React.Component<IProps, IState> {
-
+  /**
+   * Constructor
+   * Creates an instance of Notifications.
+   * Notifictions is member of props.
+   * Notifictions is gotten from redux. its possible we have notifications in redux store and we
+   * can fill notification state with initial value
+   * @param props
+   */
   constructor(props: IProps) {
     super(props);
+    // setting initial states
+    /**
+     * @type {object}
+     * @property {string} notifications notification items
+     */
     this.state = {
       notification: this.props.notification,
     };
   }
-
+  /**
+   * after mounting the component , recieve the notifications from api call and set it in redux store.
+   * when the user seen the notifications scene need to notify the server and reset notification counter
+   * @memberof Notifications
+   */
   public componentDidMount() {
     this.setState({
       notification: this.props.notification,
     });
   }
 
+  /**
+   * updates the state object when the parent changes the props
+   * @param {IProps} newProps
+   * @memberof NotificationItem
+   */
   public componentWillReceiveProps(newProps: IProps) {
+    /**
+     * read the data from props and set to the state
+     * @type {object}
+     * @property {boolean} active show condition for element
+     */
     this.setState({
       notification: newProps.notification,
     });
   }
-
+  /**
+   * @function render
+   * @description Renders the component
+   * @returns {ReactElement} markup
+   * @memberof Loading
+   */
   public render() {
     const notification = this.state.notification;
     switch (notification.type) {

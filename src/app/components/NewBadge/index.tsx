@@ -1,11 +1,12 @@
 /**
- * @auther robzizo < me@robzizo.ir >
- * Document By : robzizo
- * Date of documantion : 22/07/2017
- * Review by : -
- * Date of review : -
- * Represents the NewBadge component.
- * Component gets the data from parent.
+ * @file component/NewBadge/index.tsx
+ * @author robzizo < me@robzizo.ir >
+ * @description Represents the NewBadge component. Component gets the
+ *              requiered data from its parent.
+ *              Documented by:          robzizo
+ *              Date of documentation:  2017-07-22
+ *              Reviewed by:            -
+ *              Date of review:         -
  */
 import * as React from 'react';
 
