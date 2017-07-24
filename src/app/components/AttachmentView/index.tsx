@@ -373,7 +373,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @function
    * @throws We are not able to serve the file, try again later.
    * @private
-   * @param {*} e 
+   * @param {*} e
    * @memberof AttachmentView
    */
   private download(e: any) {
