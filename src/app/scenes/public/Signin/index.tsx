@@ -4,8 +4,8 @@
  * @description Authenticates the user using the given username and password and stores the user data
  *              Documented by:          Soroush Torkzadeh
  *              Date of documentation:  2017-07-22
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            robzizo
+ *              Date of review:         2017-07-24
  *
  */
 
@@ -39,9 +39,10 @@ interface IProps {
  *
  * @class Signin
  * @classdesc Authenticates user with the provided username and password
- * @extends {React.Component<IProps, IState>}
+ * @extends {React.Component<IProps, IState>}\
  */
 class Signin extends React.Component<IProps, IState> {
+  // ( document on assigns and defines )
   private accountApi: AccountApi = new AccountApi();
   /**
    * Creates an instance of Signin.
