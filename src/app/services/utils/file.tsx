@@ -1,11 +1,34 @@
+/**
+ * @file utils/file.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc A bunch of tools that are require to work with files
+ * @export {FileUtil}
+ * Documented by: Soroush Torkzadeh
+ * Date of documentation:  2017-07-22
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import AAA from 'services/aaa';
 import Configurations from 'config';
 
+/**
+ * @enum {number}
+ * @desc Differebt types of file url
+ * Xrexes provides two different types of url to view and download a file. to find out
+ * more about these types, please refer to `getUrl` method.
+ * @see getUrl
+ */
 enum UrlType {
   View = 0,
-    Download = 1,
+  Download = 1,
 }
-
+/**
+ * @const UploadTypes
+ * Upload type should be specified when you are going to create an upload url. If you want to know
+ * more about upload types, take a look at `api/attachment/index.tsx`
+ * @see api/attachment/index.tsx
+ */
 const UploadTypes = {
   GIF: 'gif',
   FILE: 'file',
@@ -16,6 +39,10 @@ const UploadTypes = {
   PROFILE_PIC: 'profile_pic',
 };
 
+/**
+ * @const FileTypes
+ * @desc The different file types which are defined by Xrexes, based on a file mimetype.
+ */
 const FileTypes = {
   IMAGE: 'image',
   GIF: 'gif',
@@ -27,6 +54,10 @@ const FileTypes = {
   OTHER: 'other',
 };
 
+/**
+ * @class FileUtil
+ * @desc A set of utilities to work with files
+ */
 class FileUtil {
   public static getViewUrl(id: string) {
     return FileUtil.getUrl(id, UrlType.View);
@@ -36,6 +67,20 @@ class FileUtil {
     return FileUtil.getUrl(id, UrlType.Download, token);
   }
 
+  /**
+   * @function getUrl
+   * @desc Generates a download/view url of a file
+   * The difference between download and view url is the last part of url. A download url
+   * ends with a download token wich is obviously required to download a file. A view url
+   * does not have a token at the end and ends with the file universal Id
+   * @private
+   * @static
+   * @param {string} id
+   * @param {UrlType} type
+   * @param {string} [token]
+   * @returns {string}
+   * @memberof FileUtil
+   */
   private static getUrl(id: string, type: UrlType, token?: string) {
     const sessionKey = AAA.getInstance().getCredentials().sk;
     switch (type) {
@@ -46,6 +91,13 @@ class FileUtil {
     }
   }
 
+  /**
+   * @const groups
+   * @desc A list of the ssuported file types with mimetypes
+   * @private
+   * @static
+   * @memberof FileUtil
+   */
   private static groups = [{
       type: FileTypes.ARCHIVE,
       mimetypes: [
@@ -135,6 +187,14 @@ class FileUtil {
     },
   ];
 
+  /**
+   * @function getType
+   * @desc Finds a file type based on mimetype
+   * @static
+   * @param {string} mimetype
+   * @returns {string}
+   * @memberof FileUtil
+   */
   public static getType(mimetype: string) {
     if (!mimetype) {
       return '';
@@ -142,9 +202,19 @@ class FileUtil {
 
     const type = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
 
+    // TODO: Check if type is null
     return type.type || FileTypes.OTHER;
   }
 
+  /**
+   * @function getSuffix
+   * @desc Returns a file extension using the file name
+   * e.g. "foo.txt" => "txt"
+   * @static
+   * @param {string} fileName
+   * @returns {string}
+   * @memberof FileUtil
+   */
   public static getSuffix(fileName: string) {
     if (!fileName) {
       return '';
@@ -159,6 +229,15 @@ class FileUtil {
     return fileName.substr(index + 1);
   }
 
+  /**
+   * @function removeSuffix
+   * @desc Returns a file name without extiension
+   * e.g. "foo.txt" => "foo"
+   * @static
+   * @param {string} fileName
+   * @returns {string}
+   * @memberof FileUtil
+   */
   public static removeSuffix(fileName: string) {
     if (!fileName) {
       return '';
@@ -173,6 +252,16 @@ class FileUtil {
     return fileName.substr(0, index);
   }
 
+  /**
+   * @function getUploadType
+   * @desc Find the given file upload type based on the file type
+   * e.g. "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
+   * @borrows getType
+   * @static
+   * @param {File} file
+   * @returns  {string}
+   * @memberof FileUtil
+   */
   public static getUploadType(file: File) {
     const group = FileUtil.getType(file.type);
 
