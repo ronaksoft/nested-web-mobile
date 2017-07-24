@@ -105,7 +105,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * call the `debouncedFillSuggests` to fill suggests list
    * @function handleInputChange
    * @private
-   * @param {any} event 
+   * @param {any} event
    * @memberof Suggestion
    */
   private handleInputChange(event) {
