@@ -11,12 +11,13 @@ import * as React from 'react';
 import {FileItem} from 'components/FileItem';
 import IFile from '../../../components/FileItem/IFile';
 
-/**
- *
- * @implements
- * @interface IState
- */
 interface IState {
+  /**
+   * @property items
+   * @desc Includes arrays of data
+   * @type {array}
+   * @memberof IState
+   */
   items: any[];
 }
 

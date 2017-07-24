@@ -17,7 +17,7 @@ import {connect} from 'react-redux';
 interface IOwnProps {
   /**
    * @property user_id
-   * @desc Includes user_id users
+   * @desc Includes user_id of users
    * @type {string}
    * @memberof IOwnProps
    */
@@ -27,7 +27,7 @@ interface IOwnProps {
 interface IUserItemProps {
   /**
    * @property user_id
-   * @desc Includes user_id users
+   * @desc Includes user_id of users
    * @type {string}
    * @memberof IUserItemProps
    */
@@ -91,25 +91,35 @@ class FullName extends React.Component<IUserItemProps, IState> {
    * @override
    */
   public componentDidMount() {
-    // search redux store for any user which has the same id with `user_id`
+    /**
+     * search redux store for any user which has the same id with `user_id`
+     */
     const user = this.props.accounts.filter((user: IUser) => {
       return user._id === this.props.user_id;
     });
-    // determine user is stored in redux already
+    /**
+     * determine user is stored in redux already
+     */
     if (user.length > 0) {
       this.setState({
         user: user[0],
       });
     } else {
-      // define the account Api
+      /**
+       * define the account Api
+       */
       const accountApi = new AccountApi();
-      // Get account fro `accountApi` with declared `account_id`
+      /**
+       * Get account fro `accountApi` with declared `account_id`
+       */
       accountApi.get({account_id: this.props.user_id})
         .then((account: IUser) => {
           this.setState({
             user: account,
           });
-          // store account in redux store
+          /**
+           * store account in redux store
+           */
           this.props.accountAdd(account);
         });
     }

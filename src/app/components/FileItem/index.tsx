@@ -16,12 +16,13 @@ import {Vid} from './Vid';
 import {Oth} from './Oth';
 import IFile from './IFile';
 
-/**
- *
- * @implements
- * @interface IProps
- */
 interface IProps {
+  /**
+   * @property file
+   * @desc Includes file as an object of files data
+   * @type {object}
+   * @memberof IProps
+   */
   file: IFile;
 }
 
