@@ -1,7 +1,8 @@
 /**
  * @file component/PlaceName/index.tsx
  * @auther naamesteh < naemabadei.shayesteh@gmail.com >
- * @desc This file renders the Place name.
+ * @desc This file renders the Place name where we need it.
+ * in this component we store place in redux.
  * Document By : naamesteh
  * Date of documantion : 07/23/2017
  * Review by : -
@@ -17,12 +18,22 @@ interface IOwnProps {
   place_id: string;
 }
 
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   place_id: string;
   places: IPlace[];
   placeAdd: (place: IPlace) => {};
 }
 
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   place: IPlace | null;
 }
@@ -67,9 +78,12 @@ class PlaceName extends React.Component<IProps, IState> {
         place: place[0],
       });
     } else {
+      // define the place Api class
       const placeApi = new PlaceApi();
+      // recieve places with declared `place_id`
       placeApi.get({place_id: placeId})
         .then((p: IPlace) => {
+          // Update state with new place array
           this.setState({
             place: p,
           });
@@ -77,19 +91,31 @@ class PlaceName extends React.Component<IProps, IState> {
         });
     }
   }
-
+  /**
+   * updates the state object when the parent changes the props
+   * @param {IProps} newProps
+   * @memberof PlaceName
+   */
   public componentWillReceiveProps(newProps: IProps) {
     this.setPlace(newProps.place_id);
   }
 
+  /**
+   * after mounting the component , recieve the places from api call and set it in redux store.
+   * @func componentDidMount
+   * @memberof PlaceName
+   */
   public componentDidMount() {
     this.setPlace(this.props.place_id);
   }
-
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof PlaceName
+   * @generator
+   */
   public render() {
-
     const {place} = this.state;
-
     if (!place) {
       return null;
     }
@@ -98,12 +124,20 @@ class PlaceName extends React.Component<IProps, IState> {
     );
   }
 }
-
+/**
+ * redux store mapper
+ * @param store
+ * @param ownProps
+ */
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   places: store.places.places,
   place_id: ownProps.place_id,
 });
-
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
 const mapDispatchAction = (dispatch) => {
   return {
     placeAdd: (place: IPlace) => dispatch(placeAdd(place)),

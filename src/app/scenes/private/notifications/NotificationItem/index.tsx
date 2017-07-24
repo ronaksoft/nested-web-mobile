@@ -66,7 +66,6 @@ class NotificationItem extends React.Component<IProps, IState> {
   }
   /**
    * after mounting the component , recieve the notifications from api call and set it in redux store.
-   * when the user seen the notifications scene need to notify the server and reset notification counter
    * @memberof Notifications
    */
   public componentDidMount() {
