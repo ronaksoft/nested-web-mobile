@@ -1,13 +1,39 @@
+/**
+ * @file component/FileItem/Doc/index.tsx
+ * @auther naamesteh < naemabadei.shayesteh@gmail.com >
+ * @desc This file renders Documents file types.
+ * Document By : naamesteh
+ * Date of documantion : 07/24/2017
+ * Review by : -
+ * Date of review : -
+ */
 import * as React from 'react';
 import {Checkbox} from 'antd';
 import IFile from '../IFile';
 
 const style = require('../FileItem.css');
 
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   file: IFile;
 }
+
+/**
+ * renders the Doc element
+ * @class Doc
+ * @extends {React.Component<IProps, any>}
+ */
 class Doc extends React.Component <IProps, any> {
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof Doc
+   * @generator
+   */
   public render() {
     return (
       <div className={style.fileContainer}>

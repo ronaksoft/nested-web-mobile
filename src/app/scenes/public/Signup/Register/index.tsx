@@ -1,3 +1,18 @@
+/**
+ * @file scenes/Signup/Register/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc In the 3rd and the final step of registration, User enters his/her account
+ *       information. All user inputs will be validated and the component checks
+ *       the provided username to be available. At last the user clicks on "Finish"
+ *       button and completes the registration flow.
+ *
+ * Documented by:          Soroush Torkzadeh
+ * Date of documentation:  2017-07-22
+ * Reviewed by:            -
+ * Date of review:         -
+ *
+ */
+
 import * as React from 'react';
 import {browserHistory} from 'react-router';
 import {Input, Button, Form} from 'antd';
@@ -8,6 +23,8 @@ import IValidationResult from '../IValidationResult';
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
 
+// These regular expressions are defined separately
+// to give the user better hints in writing a username
 const VALID_CHAR_REGEX = /^[a-zA-Z0-9-.]+$/;
 const DOT_REGEX = /\./;
 const SEQUENCE_DASHES_REGEX = /--/;
@@ -35,12 +52,22 @@ interface IProps {
   params: IParams;
 }
 
+/**
+ * @class Register
+ * @desc The registration form wich is the 3rd and the last child route in /signup
+ *       Providing country, code, phone and vid as props are required for the component
+ *
+ * @class Register
+ * @extends {React.Component<IProps, IState>}
+ */
 class Register extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
 
   constructor() {
     super();
 
+    // We declared an object that implements `IValidatableField` for every field of
+    // registration form to handle the form validation
     this.state = {
       username: {
         message: null,
@@ -71,10 +98,27 @@ class Register extends React.Component<IProps, IState> {
     };
   }
 
+  /**
+   * @function componentDidMount
+   * @desc Creates a new instance of AccountApi when the component has been mounted
+   *
+   * @memberof Register
+   * @public
+   */
   public componentDidMount() {
     this.accountApi = new AccountApi();
   }
 
+  /**
+   * @function validateUsername
+   * @desc Validates the given username by matching 9 rules. The username availability will be checked
+   *       by asking server, If it passes all the ruls. Now you must have figured out why the function
+   *       returns a Promise!
+   *
+   * @private
+   * @memberof Register
+   * @returns {Promise<IValidationResult>}
+   */
   private validateUsername = (value?: string): Promise<IValidationResult> => {
     if (!value) {
       return Promise.resolve({
@@ -118,6 +162,8 @@ class Register extends React.Component<IProps, IState> {
       });
     }
 
+    // At this moment the username characters are valid and
+    // we have to check its length to be between 4 and 32
     if (value.length < 4) {
       return Promise.resolve({
         status: 'error',
@@ -132,6 +178,7 @@ class Register extends React.Component<IProps, IState> {
       });
     }
 
+    // Set state to validating right before checking the username avaialibility
     const intermediateState: IValidatableField = {
       message: null,
       status: 'validating',
@@ -162,6 +209,14 @@ class Register extends React.Component<IProps, IState> {
 
   }
 
+  /**
+   * @function handleUsernameChange
+   * @desc Sets the new username and validate it
+   *
+   * @param {*} e
+   * @private
+   * @memberof Register
+   */
   private handleUsernameChange = (e: any) => {
     this.setState({
       username: Object.assign(this.state.username, {value: e.target.value}),
@@ -174,6 +229,15 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function validatePassword
+   * @desc Checks the provided password length to be betwwen 6 and 128
+   *
+   * @param {string?} value
+   * @private
+   * @memberof Register
+   * @return {Promise<IValidationResult>}
+   */
   private validatePassword = (value?: string): Promise<IValidationResult> => {
     if (!value) {
       return Promise.resolve({
@@ -202,6 +266,13 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function handlePasswordChange
+   * @desc Sets the new value of password and validates it
+   * @param {*} e
+   * @private
+   * @memberof Register
+   */
   private handlePasswordChange = (e: any) => {
     this.setState({
       password: Object.assign(this.state.password, {value: e.target.value}),
@@ -214,6 +285,14 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function validateFirstName
+   * @desc Checks the provided firstname not to be empty and be less than 35 characters
+   * @param {string?} value
+   * @private
+   * @memberof Register
+   * @return {Promise<IValidationResult>}
+   */
   private validateFirstName = (value?: string): Promise<IValidationResult> => {
     if (!value) {
       return Promise.resolve({
@@ -235,6 +314,13 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function handleFirstNameChange
+   * @desc Sets the new value of firstname and validates it
+   * @private
+   * @memberof Register
+   * @return
+   */
   private handleFirstNameChange = (e: any) => {
     this.setState({
       firstName: Object.assign(this.state.firstName, {value: e.target.value}),
@@ -247,6 +333,14 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function validateLastName
+   * @desc Checks the provided lastname not to be empty and be less than 35 characters
+   * @param {string?} value
+   * @private
+   * @memberof Register
+   * @return {Promise<IValidationResult>}
+   */
   private validateLastName = (value?: string): Promise<IValidationResult> => {
     if (!value) {
       return Promise.resolve({
@@ -268,6 +362,13 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function handleLastNameChange
+   * @desc Sets the new value of lastname and validates it
+   * @private
+   * @memberof Register
+   * @return
+   */
   private handleLastNameChange = (e: any) => {
     this.setState({
       lastName: Object.assign(this.state.lastName, {value: e.target.value}),
@@ -280,6 +381,13 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function validateEmail
+   * @desc Validates the given email by checking its length and matching a proven regex
+   * @private
+   * @memberof Register
+   * @return Promise<IValidationResult>
+   */
   private validateEmail = (value?: string): Promise<IValidationResult> => {
     if (value && value.length > 256) {
       return Promise.resolve({
@@ -301,6 +409,13 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function handleEmailChange
+   * @desc Sets the new value of email and validates it
+   * @param {*} e
+   * @private
+   * @memberof Register
+   */
   private handleEmailChange = (e: any) => {
     this.setState({
       email: Object.assign(this.state.email, {value: e.target.value}),
@@ -313,6 +428,16 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function validate
+   * @desc Validates the whole form usign all of the validation functions and
+   *       sets the result of validations for evry single filed of the form.
+   *       The callback will be called with a boolean value that indicates the result of action
+   *       when the all validations finish
+   * @param {(isValid: boolean) => void} callback
+   * @private
+   * @memberof Register
+   */
   private validate = (callback: (isValid: boolean) => void): void => {
     Promise.all([
       this.validateUsername(this.state.username.value),
@@ -333,15 +458,25 @@ class Register extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function submit
+   * @desc Submits the form and sends the account information to finilize the registration process
+   * @borrows AccountApi.register, md5
+   * @private
+   * @memberof Register
+   */
   private submit = () => {
     this.validate((isValid) => {
       if (!isValid) {
         return;
       }
 
+      // Changes "Finish" button state to "submitting" to prevent hiting again
+      // while the process is already in progress
       this.setState({
         submitting: true,
       });
+
       this.accountApi.register({
         vid: this.props.params.vid,
         country: this.props.params.country,
@@ -352,8 +487,11 @@ class Register extends React.Component<IProps, IState> {
         lname: this.state.lastName.value,
         email: this.state.email.value,
       }).then(() => {
+        // Goes to signin page if the registeration was successfull
+        // TODO: Login the user automatically and go to default state (/feed)
         browserHistory.push('/signin');
       }, () => {
+        // Enable the button again and let the user to try once more!
         this.setState({
           submitting: false,
         });

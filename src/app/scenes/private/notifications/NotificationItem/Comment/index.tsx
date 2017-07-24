@@ -26,6 +26,11 @@ import {Link} from 'react-router';
 
 const style = require('../NotificationItem.css');
 
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   notification: INotification;
 }

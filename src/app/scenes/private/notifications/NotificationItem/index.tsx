@@ -22,11 +22,19 @@ import PlaceSettingsChanged from './PlaceSettingsChanged';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
-
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   notification: INotification;
 }
-
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   notification: INotification;
 }
@@ -50,7 +58,7 @@ class NotificationItem extends React.Component<IProps, IState> {
     // setting initial states
     /**
      * @type {object}
-     * @property {string} notifications notification items
+     * @property {string} notification items
      */
     this.state = {
       notification: this.props.notification,
@@ -58,8 +66,7 @@ class NotificationItem extends React.Component<IProps, IState> {
   }
   /**
    * after mounting the component , recieve the notifications from api call and set it in redux store.
-   * when the user seen the notifications scene need to notify the server and reset notification counter
-   * @memberof Notifications
+   * @memberof NotificationItem
    */
   public componentDidMount() {
     this.setState({
@@ -76,7 +83,7 @@ class NotificationItem extends React.Component<IProps, IState> {
     /**
      * read the data from props and set to the state
      * @type {object}
-     * @property {boolean} active show condition for element
+     * @property {string}
      */
     this.setState({
       notification: newProps.notification,
@@ -86,7 +93,7 @@ class NotificationItem extends React.Component<IProps, IState> {
    * @function render
    * @description Renders the component
    * @returns {ReactElement} markup
-   * @memberof Loading
+   * @memberof NotificationItem
    */
   public render() {
     const notification = this.state.notification;
