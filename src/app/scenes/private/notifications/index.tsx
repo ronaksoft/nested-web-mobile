@@ -72,7 +72,7 @@ class Notifications extends React.Component<IProps, IState> {
     /**
      * @default
      * @type {object}
-     * @property {string} notifications notification items
+     * @property {string} notifications - notification items
      */
     this.state = {
       notifications: this.props.notifications,
