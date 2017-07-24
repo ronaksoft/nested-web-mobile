@@ -8,7 +8,7 @@ import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
-import {browserHistory} from 'react-router';
+import {browserHistory, Link} from 'react-router';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -152,12 +152,12 @@ class Post extends React.Component<IProps, IState> {
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
-            <a>
+            <Link to={`/forward/${post._id}`}>
               <IcoN size={24} name="forward16"/>
-            </a>
-            <a>
+            </Link>
+            <Link to={`/reply/${post._id}`}>
               <IcoN size={24} name="reply24"/>
-            </a>
+            </Link>
             {/*<a>
               <IcoN size={24} name="more24"/>
             </a>*/}
