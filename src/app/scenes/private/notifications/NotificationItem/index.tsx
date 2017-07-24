@@ -22,20 +22,24 @@ import PlaceSettingsChanged from './PlaceSettingsChanged';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
-/**
- *
- * @implements
- * @interface IProps
- */
+
 interface IProps {
+  /**
+   * @property notification
+   * @desc Includes notification as an object of notification data
+   * @type {object}
+   * @memberof IProps
+   */
   notification: INotification;
 }
-/**
- *
- * @implements
- * @interface IState
- */
+
 interface IState {
+  /**
+   * @property notification
+   * @desc Includes notification as an object of notification data
+   * @type {object}
+   * @memberof IState
+   */
   notification: INotification;
 }
 /**
@@ -55,9 +59,9 @@ class NotificationItem extends React.Component<IProps, IState> {
    */
   constructor(props: IProps) {
     super(props);
-    // setting initial states
     /**
      * @type {object}
+     * @desc setting initial states
      * @property {string} notification items
      */
     this.state = {

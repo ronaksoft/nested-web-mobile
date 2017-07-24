@@ -14,39 +14,66 @@ import {commentAdd} from '../../redux/comments/actions/index';
 import CommentApi from '../../api/comment/index';
 import {connect} from 'react-redux';
 
-/**
- *
- * @implements
- * @interface IOwnProps
- */
 interface IOwnProps {
+  /**
+   * @property comment_id
+   * @desc Includes `comment_id` of comments
+   * @type {string}
+   * @memberof IOwnProps
+   */
   comment_id: string;
+  /**
+   * @property post_id
+   * @desc Includes `post_id` of posts
+   * @type {string}
+   * @memberof IOwnProps
+   */
   post_id: string;
 }
 
-/**
- *
- * @implements
- * @interface IProps
- */
 interface IProps {
+  /**
+   * @property post_id
+   * @desc Includes `post_id` of posts
+   * @type {string}
+   * @memberof IProps
+   */
   post_id: string;
+  /**
+   * @property comment_id
+   * @desc Includes `comment_id` of users
+   * @type {string}
+   * @memberof IProps
+   */
   comment_id: string;
+  /**
+   * @property comments
+   * @desc Includes comments as an array of IComment
+   * @type {array}
+   * @memberof IProps
+   */
   comments: IComment[];
+  /**
+   * @property commentAdd
+   * @desc Includes commentAdd as a function
+   * @type {function}
+   * @memberof IProps
+   */
   commentAdd: (comment: IComment) => {};
 }
 
-/**
- *
- * @implements
- * @interface IState
- */
 interface IState {
+  /**
+   * @property comment
+   * @desc Includes comment as an object of comment's data
+   * @type {object}
+   * @memberof IState
+   */
   comment: IComment | null;
 }
 /**
- * renders the PostSubject element
  * @class CommentBody
+ * @classdesc Component renders the CommentBody html element as an span
  * @extends {React.Component<IProps, IState>}
  */
 class CommentBody extends React.Component<IProps, IState> {
@@ -72,22 +99,31 @@ class CommentBody extends React.Component<IProps, IState> {
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof CommentBody
+   * @override
    */
   public componentDidMount() {
-    // search redux store for any comment which has the same id with props id
+    /**
+     * search redux store for any comment which has the same id with props id
+     */
     const comments = this.props.comments.filter((comment: IComment) => {
       return comment._id === this.props.comment_id;
     });
-    // determine comment is stored in redux already
+    /**
+     * determine comment is stored in redux already
+     */
     if (comments.length > 0) {
       this.setState({
         comment: comments[0],
       });
     } else {
-      // define the comment Api
+      /**
+       * define the comment Api
+       */
       const commentApi = new CommentApi();
-      // call comment Api for get comments
-      // recieve comments with declared `comment_id` and `post_id`
+      /**
+       * call comment Api for get comments
+       * recieve comments with declared `comment_id` and `post_id`
+       */
       commentApi.get(
         {
           comment_id: this.props.comment_id,
@@ -97,7 +133,9 @@ class CommentBody extends React.Component<IProps, IState> {
           this.setState({
             comment,
           });
-          // store comment in redux store
+          /**
+           * store comment in redux store
+           */
           this.props.commentAdd(comment);
         });
     }
