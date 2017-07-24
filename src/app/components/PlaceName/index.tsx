@@ -69,10 +69,11 @@ class PlaceName extends React.Component<IProps, IState> {
    * @param placeId
    */
   private setPlace(placeId) {
+    // search resdux store for any place have the same id with props id
     const place = this.props.places.filter((place: IPlace) => {
       return place._id === placeId;
     });
-
+    // determine place is stored in redux already
     if (place.length > 0) {
       this.setState({
         place: place[0],
@@ -80,13 +81,14 @@ class PlaceName extends React.Component<IProps, IState> {
     } else {
       // define the place Api class
       const placeApi = new PlaceApi();
-      // recieve places with declared `place_id`
+      // call place Api for get place obj of the passed place Id
       placeApi.get({place_id: placeId})
         .then((p: IPlace) => {
           // Update state with new place array
           this.setState({
             place: p,
           });
+          // store place in redux store
           this.props.placeAdd(p);
         });
     }
