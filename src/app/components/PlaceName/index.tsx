@@ -81,7 +81,8 @@ class PlaceName extends React.Component<IProps, IState> {
     } else {
       // define the place Api class
       const placeApi = new PlaceApi();
-      // call place Api for get place obj of the passed place Id
+      // call place Api for get places
+      // recieve places with declared `place_id`
       placeApi.get({place_id: placeId})
         .then((p: IPlace) => {
           // Update state with new place array

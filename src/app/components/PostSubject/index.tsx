@@ -14,6 +14,11 @@ import {postAdd} from '../../redux/posts/actions/index';
 import PostApi from '../../api/post/index';
 import {connect} from 'react-redux';
 
+/**
+ *
+ * @implements
+ * @interface IOwnProps
+ */
 interface IOwnProps {
   post_id: string;
 }
@@ -79,9 +84,10 @@ class PostSubject extends React.Component<IProps, IState> {
         post: posts[0],
       });
     } else {
-      // Define the post Api
+      // define the post Api
       const postApi = new PostApi();
-      // call post Api for get post obj of the passed post Id
+      // call post Api for get posts
+      // recieve posts with declared `post_id`
       postApi.get({post_id: this.props.post_id})
         .then((post: IPost) => {
           this.setState({
