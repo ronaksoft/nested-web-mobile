@@ -1,21 +1,58 @@
+/**
+ * @file component/scenes/private/files/index.tsx
+ * @auther naamesteh < naemabadei.shayesteh@gmail.com >
+ * @desc This file renders all file item types.
+ * Document By : naamesteh
+ * Date of documantion : 07/24/2017
+ * Review by : -
+ * Date of review : -
+ */
 import * as React from 'react';
 import {FileItem} from 'components/FileItem';
 import IFile from '../../../components/FileItem/IFile';
 
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   items: any[];
 }
 
+/**
+ * renders the Files element
+ * @class Files
+ * @extends {React.Component<{}, IState>}
+ */
 class Files extends React.Component<{}, IState> {
-// setting initial states
-  constructor(props: {}) {
+
+  /**
+   * Constructor
+   * Creates an instance of Files.
+   * @param {IProps} props
+   * @memberof Files
+   */
+    constructor(props: {}) {
     super(props);
+    /**
+     * read the data from props and set to the state and
+     * setting initial state
+     * @type {object}
+     * @property {string}
+     */
     this.state = {
       items: [],
     };
   }
-
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof Files
+   * @generator
+   */
   public render() {
+    // setting static data for fileTypes 
     const fileTypes: IFile[] = [
       {
         id: 'PDF',

@@ -14,6 +14,11 @@ import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
 
+/**
+ *
+ * @implements
+ * @interface IOwnProps
+ */
 interface IOwnProps {
   place_id: string;
 }
