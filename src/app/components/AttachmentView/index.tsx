@@ -1,5 +1,5 @@
 /**
- * @file component/sidebar/index.tsx
+ * @file component/AttachmentView/index.tsx
  * @author robzizo < me@robzizo.ir >
  * @description Sidebar accessibility is like hamburguer menu from navbar component. and acts like
  *              a navigator. Component gets required data from redux Store or server Api

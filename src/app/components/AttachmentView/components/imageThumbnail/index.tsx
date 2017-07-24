@@ -1,5 +1,5 @@
 /**
- * @file component/sidebar/index.tsx
+ * @file component/Attachmentview/components/imageThumbnail/index.tsx
  * @author robzizo < me@robzizo.ir >
  * @description specially renders images preview
  *              Documented by:          robzizo
@@ -19,7 +19,6 @@ import CONFIG from '../../../../config';
  * @type {object}
  * @property {IPostAttachment} attachment
  */
-
 interface IProps {
   attachment: IPostAttachment;
 }
@@ -54,8 +53,9 @@ export default class ImageThumbnail extends React.Component<IProps, IState> {
 
   /**
    * renders the component with max height of 100% - attachment view materials height ( 116px )
+   * @function
    * @returns {ReactElement} markup
-   * @memberof AttachmentView
+   * @memberof ImageThumbnail
    * @override
    * @generator
    */
