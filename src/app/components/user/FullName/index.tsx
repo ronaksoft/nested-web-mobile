@@ -5,8 +5,8 @@
  * in this component we store accounts in redux. Component get requiered data directly from store or api call.
  * Document By : naamesteh
  * Date of documantion : 07/24/2017
- * Review by : -
- * Date of review : -
+ * Review by : robzizo
+ * Date of review : 07/24/2017
  */
 import * as React from 'react';
 import IUser from '../../../api/account/interfaces/IUser';
@@ -18,6 +18,7 @@ import {connect} from 'react-redux';
  *
  * @implements
  * @interface IOwnProps
+ * (Describe proprtie)
  */
 interface IOwnProps {
   user_id: string;
@@ -27,6 +28,7 @@ interface IOwnProps {
  *
  * @implements
  * @interface IProps
+ * (Describe proprtie)
  */
 interface IUserItemProps {
   user_id: string;
@@ -38,6 +40,7 @@ interface IUserItemProps {
  *
  * @implements
  * @interface IState
+ * (Describe proprtie)
  */
 interface IState {
   user: IUser | null;
@@ -47,6 +50,7 @@ interface IState {
  * renders the FullName element
  * @class FullName
  * @extends {React.Component<IProps, IState>}
+ * (add @classdesc and define return html elemnt (span) )
  */
 class FullName extends React.Component<IUserItemProps, IState> {
 
@@ -62,6 +66,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
      * read the data from props and set to the state and
      * setting initial state
      * @type {object}
+     * ( wrong document position )
      */
     super(props);
     this.state = {
@@ -74,6 +79,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof FullName
+   * ( add @override )
    */
   public componentDidMount() {
     // search redux store for any user which has the same id with `user_id`
@@ -88,8 +94,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
     } else {
       // define the account Api
       const accountApi = new AccountApi();
-      // call post Api for get accounts
-      // recieve account with declared `account_id`
+      // Get account fro `accountApi` with declared `account_id`
       accountApi.get({account_id: this.props.user_id})
         .then((account: IUser) => {
           this.setState({
