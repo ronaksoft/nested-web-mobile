@@ -78,7 +78,6 @@ interface IState {
   /**
    * @property callingPhone
    * @desc Indicates requesting for a call is in progress
-   * 
    * @type {boolean}
    * @memberof IState
    */
@@ -118,7 +117,6 @@ interface IState {
 /**
  * @interface IProps
  * @desc The properties that component receives
- * 
  * @interface IProps
  */
 interface IProps {
