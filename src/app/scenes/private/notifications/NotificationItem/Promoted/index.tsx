@@ -19,7 +19,11 @@ import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
-
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   notification: INotification;
 }

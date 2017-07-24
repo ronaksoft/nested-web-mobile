@@ -22,11 +22,19 @@ import PlaceSettingsChanged from './PlaceSettingsChanged';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
-
+/**
+ *
+ * @implements
+ * @interface IProps
+ */
 interface IProps {
   notification: INotification;
 }
-
+/**
+ *
+ * @implements
+ * @interface IState
+ */
 interface IState {
   notification: INotification;
 }
