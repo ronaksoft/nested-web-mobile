@@ -1,3 +1,14 @@
+/**
+ * @file scenes/private/compose/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.me>
+ * @description This component is designed to give you the ability to share posts.
+ * This component contains an intelligent suggest that helps to find targets and a file
+ * uploader that lets you upload multiple files at the same time.
+ * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
+ * Date of documentation:  2017-07-24
+ * Reviewed by:            -
+ * Date of review:         -
+ */
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
 import {Suggestion, IcoN} from 'components';
@@ -18,30 +29,121 @@ const confirm = Modal.confirm;
 const style = require('./compose.css');
 const styleNavbar = require('../../../components/navbar/navbar.css');
 
+/**
+ * @interface IParams
+ * @desc Interface of parameters that React-Router provides through props
+ */
 interface IParams {
+  /**
+   * @property replyId
+   * @desc A post Id that the message is going to be a reply to it
+   * @type {string}
+   * @memberof IParams
+   */
   replyId?: string;
+  /**
+   * @property forwardId
+   * @desc A post Id that the message is going to forward from
+   * @type {string}
+   * @memberof IParams
+   */
   forwardId?: string;
+  /**
+   * @prop placeId
+   * @desc The message should be shared with a place with the given Id
+   * @type {string}
+   * @memberof IParams
+   */
   placeId?: string;
 }
 
+/**
+ * @interface IComposeProps
+ * @desc Interface of the component properties
+ */
 interface IComposeProps {
   attachModal?: boolean;
+  /**
+   * @prop params
+   * @desc The parameters that React Router provides
+   * @type {IParams}
+   * @memberof IComposeProps
+   */
   params: IParams;
+  /**
+   * @prop draft
+   * @desc The post draft the redux provides through the component properties
+   * @type {IComposeState}
+   * @memberof IComposeProps
+   */
   draft: IComposeState;
+  /**
+   * @prop setDraft
+   * @desc Stores a copy of message based on IComposeState interface
+   * @memberof IComposeProps
+   */
   setDraft: (model: IComposeState) => void;
+  /**
+   * @prop unsetDraft
+   * @desc Clears the stored draft in redux
+   * @memberof IComposeProps
+   */
   unsetDraft: () => void;
 }
 
 class Compose extends React.Component<IComposeProps, IComposeState> {
+  /**
+   * @prop attachments
+   * @desc Reference of `AttachmentList` component
+   * @private
+   * @type {AttachmentList}
+   * @memberof Compose
+   */
   private attachments: AttachmentList;
+  /**
+   * @prop targets
+   * @desc Reference of `Suggestion` component
+   * @private
+   * @type {Suggestion}
+   * @memberof Compose
+   */
   private targets: Suggestion;
+  /**
+   * @prop postApi
+   * @desc An instance of PostApi
+   * @private
+   * @type {PostApi}
+   * @memberof Compose
+   */
   private postApi: PostApi;
+  /**
+   * @prop file
+   * @desc Html input of file type
+   * @private
+   * @type {HTMLInputElement}
+   * @memberof Compose
+   */
   private file: HTMLInputElement;
+
+  /**
+   * @prop mediaMode
+   * @desc The user can upload an attachment as a file or media. We use this flag
+   * to identify which upload button has been clicked.
+   * @private
+   * @type {boolean}
+   * @memberof Compose
+   */
   private mediaMode: boolean;
 
+  /**
+   * Creates an instance of Compose.
+   * @param {IComposeProps} props
+   * @memberof Compose
+   */
   constructor(props: IComposeProps) {
     super(props);
 
+    // An empty compose page state
     const defaultState: IComposeState = {
       attachments: [],
       targets: [],
@@ -52,15 +154,25 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       composeOption: false,
       attachModal: false,
     };
+
+    // A post draft is a copy of the component state in redux.
+
     this.state = props.draft || defaultState;
   }
 
+  /**
+   * @func componentDidMount
+   * @desc Loads the post with a given Id in the route parametetrs.
+   * The new post can be a reply to or forwared from the target post.
+   * @memberof Compose
+   */
   public componentDidMount() {
     this.postApi = new PostApi();
     if (this.props.params.replyId || this.props.params.forwardId) {
       this.postApi.get({
         post_id: this.props.params.replyId || this.props.params.forwardId,
       }).then((post: IPost) => {
+        // Setting to reply the message by loading the recipients and subject of the target post.
         if (this.props.params.replyId) {
 
           const targets = post.post_places.map((i) => {
@@ -89,6 +201,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           this.targets.load(targets);
 
         } else {
+          // Setting to forward the message by loading the post subject, body and attachments
           const attachments = post.post_attachments.map((i: IPostAttachment) => {
             const attachment: IAttachment = {
               universal_id: i._id,
@@ -133,10 +246,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
-   * set body in state
-   *
+   * @param handleBodyChange
+   * @desc Updates body in the component state
    * @private
    * @memberof Compose
+   * @param {*} e
    */
   private handleBodyChange = (e: any) => {
     this.setState({
@@ -145,10 +259,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
-   * set subject in state
-   *
+   * @function handleSubjectChange
+   * @desc Updates subject in the component state
    * @private
    * @memberof Compose
+   * @param {*} e
    */
   private handleSubjectChange = (e: any) => {
     this.setState({
@@ -157,10 +272,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
-   * keep reference of AttachmentList component
-   *
+   * @func referenceAttachments
+   * @desc Keeps reference of AttachmentList component
    * @private
    * @memberof Compose
+   * @param {AttachmentList} value
    */
   private referenceAttachments = (value: AttachmentList) => {
     this.attachments = value;
@@ -173,19 +289,33 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
-   * keep reference of Suggestion component
-   *
+   * @func referenceTargets
+   * @desc Keeps reference of Suggestion component
    * @private
    * @memberof Compose
+   * @param {Suggestion} value
    */
   private referenceTargets = (value: Suggestion) => {
     this.targets = value;
   }
 
+  /**
+   * @func referenceFile
+   * @desc Keep reference of HtmlInputElement component
+   * @private
+   * @memberof Compose
+   * @param {HTMLInputElement} value
+   */
   private referenceFile = (value: HTMLInputElement) => {
     this.file = value;
   }
 
+  /**
+   * @func allowComment
+   * @desc Toggles allow comment on/off in the component state
+   * @private
+   * @memberof Compose
+   */
   private allowComment = () => {
     this.setState({
       allowComment: !this.state.allowComment,
@@ -193,12 +323,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
-   * Validate and send the post
-   *
+   * @func send
+   * @desc Validates and sends the post
    * @private
    * @memberof Compose
    */
   private send = () => {
+    // Validation
     if (this.state.targets.length === 0) {
       message.error('No target is specified');
 
@@ -218,6 +349,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
       return;
     }
+
+    // Sending the post
 
     this.setState({
       sending: true,
@@ -252,16 +385,35 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     });
   }
 
+  /**
+   * @func draft
+   * @desc Save the current state of the component
+   * @private
+   * @memberof Compose
+   */
   private draft = () => {
     this.props.setDraft(this.state);
     browserHistory.goBack();
   }
 
+  /**
+   * @func discard
+   * @desc Removes the stored copy of state
+   * @private
+   * @memberof Compose
+   */
   private discard = () => {
     this.props.unsetDraft();
     browserHistory.goBack();
   }
 
+  /**
+   * @func leave
+   * @desc Redirects to the previous route, but warns the user if there are uploading file or
+   * asks him/her to keep a draft before leaving the page.
+   * @private
+   * @memberof Compose
+   */
   private leave = () => {
     if (this.attachments.isUploading()) {
       confirm({
@@ -296,22 +448,51 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     }
   }
 
+  /**
+   * @func handleAttachmentsChange
+   * @desc Updates the component state with a new list of attachments
+   * @private
+   * @memberof Compose
+   * @param {IAttachment[]} items
+   */
   private handleAttachmentsChange = (items: IAttachment[]) => {
     this.setState({
       attachments: items,
     });
   }
 
+  /**
+   *
+   * @func handleTargetsChanged
+   * @desc Updates the component state with a new list of targets
+   * @private
+   * @memberof Compose
+   * @param {IChipsItem[]} items
+   */
   private handleTargetsChanged = (items: IChipsItem[]) => {
     this.setState({
       targets: items,
     });
   }
 
+  /**
+   * @func upload
+   * @desc Uploads the given file using AttchamnetList component upload method
+   * @param {*} e
+   * @private
+   * @memberof Compose
+   */
   private upload = (e: any) => {
     this.attachments.upload(e, this.mediaMode);
   }
 
+  /**
+   * @func selectFile
+   * @desc Opens a file browser to select a file
+   * @private
+   * @memberof Compose
+   * @param {boolean} isMedia
+   */
   private selectFile = (isMedia: boolean) => {
     return () => {
       this.file.click();
@@ -322,6 +503,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     };
   }
 
+  /**
+   * @func render
+   * @desc Renders the component
+   * @returns
+   * @memberof Compose
+   */
   public render() {
     return (
       <div className={style.compose}>
