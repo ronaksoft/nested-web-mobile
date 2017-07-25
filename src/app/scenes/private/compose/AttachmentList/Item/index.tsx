@@ -1,3 +1,14 @@
+/**
+ * @file scenes/private/compose/AttachmentList/Item/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @description Creates an attachment Item view
+ * @export AttachmentItem
+ * Documented by:          Soroush Torkzadeh
+ * Date of documentation:  2017-07-25
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import * as React from 'react';
 import FileUtil from 'services/utils/file';
 const style = require('./style.css');
@@ -6,10 +17,38 @@ import Mode from './mode';
 import {IcoN} from 'components';
 import {Progress} from 'antd';
 
+/**
+ * @interface IProps
+ * @desc A contract for the component properties
+ * @interface IProps
+ */
 interface IProps {
+  /**
+   * @prop item
+   * @desc The attachment model 
+   * @type {IAttachmentItem}
+   * @memberof IProps
+   */
   item: IAttachmentItem;
+  /**
+   * @prop picture
+   * @desc Picture of the selected File. A thumbnail image will be created on selecting an image
+   * @type {string}
+   * @memberof IProps
+   */
   picture?: string;
+  /**
+   * @prop onRemove
+   * @desc An event that will be triggered on the component remove button click
+   * @memberof IProps
+   */
   onRemove?: (item: IAttachmentItem) => void;
+  /**
+   * @prop id
+   * @desc A unique id for the component
+   * @type {number}
+   * @memberof IProps
+   */
   id: number;
 }
 
@@ -24,9 +63,15 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  */
 class AttachmentItem extends React.Component<IProps, IState> {
+  /**
+   * Creates an instance of AttachmentItem.
+   * @param {IProps} props 
+   * @memberof AttachmentItem
+   */
   constructor(props: IProps) {
     super(props);
 
+    // Sets default value for the component state
     this.state = {
       progress: 0,
     };
@@ -45,6 +90,12 @@ class AttachmentItem extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @func render
+   * @desc Renders the component
+   * @returns 
+   * @memberof AttachmentItem
+   */
   public render() {
     const handleRemoveClick = () => {
       if (this.props.onRemove) {
