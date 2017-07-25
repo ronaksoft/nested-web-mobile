@@ -1,8 +1,7 @@
 /**
  * @file component/AttachmentView/index.tsx
  * @author robzizo < me@robzizo.ir >
- * @description Sidebar accessibility is like hamburguer menu from navbar component. and acts like
- *              a navigator. Component gets required data from redux Store or server Api
+ * @description Attachment view modal which accessable by clicking on attachments or files
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-24
  *              Reviewed by:            -
@@ -53,7 +52,8 @@ interface IState {
 
 /**
  * @class AttachmentView
- * @classdesc view modal of all attachments
+ * @classdesc view modal of all attachments. render component differs in different type of attachments
+ * attachment
  * @extends {React.Component<IProps, IState>}
  * @requires [<IcoN>]
  */
@@ -371,7 +371,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
 
   /**
    * @function
-   * @throws We are not able to serve the file, try again later.
+   * @throws {notLoaded} We are not able to serve the file, try again later.
    * @private
    * @param {*} e
    * @memberof AttachmentView

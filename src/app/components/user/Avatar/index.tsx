@@ -1,3 +1,13 @@
+/**
+ * @file component/user/Avatar/index.tsx
+ * @author sina < sinaa@nested.me >
+ * @description user Avatars render component.
+ *              component use required data from redux store or serverApi
+ *              Documented by:          robzizo
+ *              Date of documentation:  2017-07-25
+ *              Reviewed by:            -
+ *              Date of review:         -
+ */
 import * as React from 'react';
 import AAA from '../../../services/aaa/index';
 import CONFIG from '../../../config';
@@ -6,9 +16,22 @@ import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';
 
+/**
+ * its window function and need to be declared to stop tslint undiefiend error
+ * @param {string} s - url
+ * @returns {string}
+ */
 declare function unescape(s: string): string;
 
 const style = require('./userItem.css');
+
+/**
+ * default style for render element
+ * @name settings
+ * @const
+ * @default
+ * @type {css}
+ */
 const settings = {
   textColor: '#ffffff',
   height: 24,
@@ -18,6 +41,13 @@ const settings = {
   fontFamily: 'HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica, Arial,Lucida Grande, sans-serif',
   radius: 0,
 };
+
+/**
+ * coler palette for user initials background oclor
+ * @name defaultColors
+ * @const
+ * @type {String[]}
+ */
 const defaultColors = [
   '#F44336',
   '#E91E63',
@@ -36,6 +66,14 @@ const defaultColors = [
   '#FF5722',
   '#607D8B',
 ];
+
+/**
+ * text element inside user initial attribiutes
+ * @name textAtts
+ * @const
+ * @default
+ * @type {css}
+ */
 const textAtts = {
   'y': '50%',
   'x': '50%',
@@ -45,6 +83,14 @@ const textAtts = {
   'font-family': settings.fontFamily,
   'text-anchor': 'middle',
 };
+
+/**
+ * user initial element attribiutes
+ * @name textAtts
+ * @const
+ * @default
+ * @type {css}
+ */
 const svgAtts = {
   'xmlns': 'http://www.w3.org/2000/svg',
   'pointer-events': 'none',
@@ -58,6 +104,17 @@ interface IOwnProps {
   size: any;
 }
 
+/**
+ * @name IUserItemProps
+ * @interface IUserItemProps for component initials data
+ * This interface pass the required parameters to component.
+ * @type {object}
+ * @property {string} user_id - id of user should be rendering
+ * @property {string} borderRadius - style for render element
+ * @property {any} size - style for render element
+ * @property {Array<IUser>} accounts - accounts stored in redux store
+ * @property {function} accountAdd - add account in redux store
+ */
 interface IUserItemProps {
   user_id: string;
   borderRadius: string;
@@ -66,18 +123,48 @@ interface IUserItemProps {
   accountAdd: (user: IUser) => {};
 }
 
+/**
+ * @name IState
+ * @interface IState for component reactive Elements
+ * @type {object}
+ * @property {IUser} user
+ */
 interface IState {
   user: IUser | null;
 }
 
+/**
+ * @class UserAvatarComponent
+ * @classdesc component renders the created user initial or user avatar if exists
+ * @extends {React.Component<IUserItemProps, IState>}
+ */
 class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
+
+  /**
+   * @constructor
+   * Creates an instance of Sidebar.
+   * @param {any} props
+   * @memberof UserAvatarComponent
+   */
   constructor(props: any) {
     super(props);
+
+    /**
+     * @default initial state of component to prevent errors
+     */
     this.state = {
       user: null,
     };
   }
 
+  /**
+   * Try to Get user from redux store if its not stored before
+   * Calls the Api and store it in redux store
+   * @func componentDidMount
+   * @memberof PlaceItem
+   * @override
+   * @borrows accountApi
+   */
   public componentDidMount() {
     const user = this.props.accounts.filter((user: IUser) => {
       return user._id === this.props.user_id;
@@ -88,6 +175,13 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
         user: user[0],
       });
     } else {
+
+    /**
+     * Define accountApi
+     * @name accountApi
+     * @const
+     * @type {object}
+     */
       const accountApi = new AccountApi();
       accountApi.get({account_id: this.props.user_id})
         .then((account: IUser) => {
@@ -100,7 +194,14 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
 
   }
 
-  private getIndexStr(username: string) {
+  /**
+   * Calculate sum of all string character charCode
+   * @private
+   * @param {string} username
+   * @returns {function} UserAvatarComponent.getInitialValue
+   * @memberof UserAvatarComponent
+   */
+  private getIndexStr(username: string): string {
     let value = 0;
 
     for (let i = 0; i < username.length; i++) {
@@ -110,6 +211,13 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
 
   }
 
+  /**
+   * calculate a number between 0 and 16 to select an item from color palette
+   * @private
+   * @param {number} value sum of all username chars charcode.
+   * @returns {number} number between 0 and 16
+   * @memberof UserAvatarComponent
+   */
   private getInitialValue(value: number) {
     let sum = 0;
 
@@ -125,18 +233,41 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
     }
   }
 
+  /**
+   * @function render
+   * @description Renders the component
+   * @returns {ReactElement} markup
+   * @memberof UserAvatarComponent
+   * @override
+   * @generator
+   */
   public render() {
+
+    /**
+     * define borderRadius and size
+     */
     const {
       borderRadius = '100%',
       size,
     } = this.props;
 
+    /**
+     * @name user
+     * @const
+     * @type {IUser}
+     */
     const {user} = this.state;
 
     if (!user) {
       return null;
     }
 
+    /**
+     * element class name differs to different sizes
+     * @name imageClass
+     * @const
+     * @type {string}
+     */
     let imageClass;
     switch (size) {
       case 20:
@@ -152,6 +283,12 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
         imageClass = 'ImageHolder-avatar';
     }
 
+    /**
+     * css size value
+     * @name sizePX
+     * @const
+     * @type {string}
+     */
     const sizePx = size.toString(10) + 'px';
 
     const imageStyle = {
@@ -162,6 +299,12 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       height: sizePx,
     };
 
+    /**
+     * css style for inner element
+     * @name innerStyle
+     * @const
+     * @type {object}
+     */
     const innerStyle = {
       lineHeight: sizePx,
       display: 'flex',
@@ -169,6 +312,12 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       borderRadius,
     };
 
+    /**
+     * css style for imageholder element
+     * @name ImageHolder
+     * @const
+     * @type {object}
+     */
     const ImageHolder = {
       width: sizePx,
       height: sizePx,
@@ -184,10 +333,35 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       imageStyle.height = settings.height = size;
     }
 
+    /**
+     * define image element
+     * @name imgDOM
+     * @var
+     * @type {jsxElement}
+     */
     let imgDOM;
+
+    /**
+     * image element class attribiute
+     * @name classes
+     * @const
+     * @type {Array<string>}
+     */
     const classes = [style.UserAvatar];
+
+    /**
+     * user fullname
+     * @name nameOfUser
+     * @const
+     * @type {string}
+     */
     const nameOfUser = `${user.fname} ${user.lname}`;
 
+    /**
+     * @name pictureId
+     * @var
+     * @type {string || null}
+     */
     let pictureId = null;
 
     if (this.props.size <= 32) {
@@ -198,6 +372,11 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       pictureId = user.picture.x128;
     }
 
+    /**
+     * assign a jsx element for image element
+     * if user avatar images is not exists.
+     * if user avatar image not uploaded creates a svg image (user initials)
+     */
     if (pictureId) {
       imgDOM = (
         <img className={style.UserAvatarImp} style={imageStyle}
@@ -267,6 +446,11 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
   }
 }
 
+/**
+ * redux store mapper
+ * @param {any} redux store
+ * @returns store item object
+ */
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   accounts: store.accounts.accounts,
   user_id: ownProps.user_id,
@@ -274,6 +458,11 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   size: ownProps.size,
 });
 
+/**
+ * reducer actions functions mapper
+ * @param {any} dispatch reducer dispacther
+ * @returns reducer actions object
+ */
 const mapDispatchAction = (dispatch) => {
   return {
     accountAdd: (account: IUser) => dispatch(accountAdd(account)),
