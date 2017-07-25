@@ -296,7 +296,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         with_children: true,
       };
       this.PlaceApi.getAllPlaces(params)
-        .then((response: IPlace) => {
+        .then((response: IPlace[]) => {
 
           /**
            * Sort Places Array by Place Ids
