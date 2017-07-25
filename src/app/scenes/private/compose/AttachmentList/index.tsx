@@ -1,3 +1,14 @@
+/**
+ * @file scenes/private/compose/AttachmentList/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @description A list of attachment items in bottom of compose page
+ * @export AttachmentList
+ * Documented by:          Soroush Torkzadeh
+ * Date of documentation:  2017-07-25
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import * as React from 'react';
 import Item from './Item';
 import {Progress} from 'antd';
@@ -14,21 +25,90 @@ import IProgress from './IProgress';
 const style = require('./attachmentList.css');
 import FileUtil from 'services/utils/file';
 
+/**
+ * @interface IProps
+ * @desc The component properties contract
+ */
 interface IProps {
+  /**
+   * @prop file
+   * @desc A javascript file. The component starts uploading, On receiving a new file.
+   * @type {File}
+   * @memberof IProps
+   */
   file?: File;
+  /**
+   * @prop items
+   * @desc The list items
+   * @type {IAttachment[]}
+   * @memberof IProps
+   */
   items: IAttachment[];
+  /**
+   * @prop onItemsChanged
+   * @desc An event that will be triggered on removing/adding an item.
+   * The new list of items will be given as `items` in args
+   * @memberof IProps
+   */
   onItemsChanged: (items: IAttachment[]) => void;
 }
 
+/**
+ * @desc The component state contract
+ * @interface IState
+ */
 interface IState {
+  /**
+   * @prop items
+   * @desc A local copy of attachment items
+   * @type {IAttachmentItem[]}
+   * @memberof IState
+   */
   items: IAttachmentItem[];
+  /**
+   * @prop isExpanded
+   * @desc The component is collapsed by default. Once you click on expand button,
+   * the items list reveals. We use this flag to switch between expanded/collapse views.
+   * @type {boolean}
+   * @memberof IState
+   */
   isExpanded: boolean;
 }
 
+/**
+ * @interface IUploadItem
+ * @desc Interface of an upload item. Once a file upload begins, we push an
+ * IUploadItem to `this.uploads` to keep reference of the files while are uploading.
+ * The localy generated  thumbnail image, upload abort function and a unique Id are
+ * what we keep in adition to the javascript file.
+ */
 interface IUploadItem {
+  /**
+   * @prop id
+   * @desc A unique Id
+   * @type {number}
+   * @memberof IUploadItem
+   */
   id: number;
+  /**
+   * @prop file
+   * @desc The given javascript file
+   * @type {File}
+   * @memberof IUploadItem
+   */
   file: File;
+  /**
+   * @prop abort
+   * @desc A function that stops the file upload
+   * @memberof IUploadItem
+   */
   abort: () => void;
+  /**
+   * @prop thumb
+   * @desc A thumbnail image that is generated client-side for image files
+   * @type {*}
+   * @memberof IUploadItem
+   */
   thumb: any;
 }
 
@@ -39,7 +119,19 @@ interface IUploadItem {
  * @extends {React.Component<IProps, IState>}
  */
 class AttachmentList extends React.Component<IProps, IState> {
+  /**
+   * @prop uploads
+   * @desc A list of uploading items
+   * @private
+   * @type {IUploadItem[]}
+   * @memberof AttachmentList
+   */
   private uploads: IUploadItem[];
+  /**
+   * Creates an instance of AttachmentList.
+   * @param {IProps} props
+   * @memberof AttachmentList
+   */
   constructor(props: IProps) {
     super(props);
 
@@ -52,6 +144,13 @@ class AttachmentList extends React.Component<IProps, IState> {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
+  /**
+   * @func load
+   * @desc Creates a list of `IAttachmentItem` from a list of `IAttachment`.
+   * The method has been used to pass a list of attachments to the component from the outside
+   * @param {IAttachment[]} attachments
+   * @memberof AttachmentList
+   */
   public load(attachments: IAttachment[]) {
     this.setState({
       items: attachments.map((attachment) => {
@@ -71,8 +170,8 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * Create an AttachmentItem using the provided Attachment model
-   *
+   * @func createItem
+   * @desc Create an AttachmentItem using the provided Attachment model
    * @private
    * @memberof AttachmentList
    */
@@ -85,8 +184,8 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * create an Item and upload the file
-   *
+   * @func upload
+   * @desc Creates an IAttachmentItem and upload the file
    * @public
    * @memberof AttachmentList
    */
@@ -121,13 +220,18 @@ class AttachmentList extends React.Component<IProps, IState> {
 
   }
 
+  /**
+   * @function abortAll
+   * @desc Aborts all uploads that are in progress
+   * @memberof AttachmentList
+   */
   public abortAll = () => {
     this.uploads.forEach((i) => i.abort);
   }
 
   /**
-   * send the file to Store service
-   *
+   * @func send
+   * @desc send the file to Store service
    * @private
    * @param {IAttachmentItem} item
    * @param {File} file
@@ -146,7 +250,8 @@ class AttachmentList extends React.Component<IProps, IState> {
         loaded,
       });
       mission.onAbort = () => this.onUploadAbort(item);
-
+      // Creates a thumbnail image for the file and adds an `IUploadItem`
+      // to the list of uploading files
       this.getFileThumbnail(file).then((thumb) => {
         const uploadItem: IUploadItem = {
           abort: mission.abort,
@@ -162,8 +267,9 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * set the Item status to failed
-   *
+   * @func onUploadError
+   * @desc Updates an item state on facing an error in upload
+   * @param {IAttachmentItem} item
    * @private
    * @memberof AttachmentList
    */
@@ -177,9 +283,10 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * set the Item status to aborted
-   *
+   * @func onUploadAbort
+   * @desc Updates the item status when a user aborts an upload intentially
    * @private
+   * @param {IAttachmentItem} item
    * @memberof AttachmentList
    */
   private onUploadAbort = (item: IAttachmentItem) => {
@@ -192,10 +299,10 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * set the Item status to finished and set the Attachment model
-   * that Store service returns in response
-   *
+   * @desc Updates an attachment status and model on finish
    * @private
+   * @param {IAttachmentItem} item
+   * @param {attachment} attachment
    * @memberof AttachmentList
    */
   private onUploadFinish = (item: IAttachmentItem, attachment: IAttachment) => {
@@ -217,9 +324,11 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * set the item progress
-   *
+   * @func onUploadProgress
+   * @desc Updates an item progress
    * @private
+   * @param {IAttachmentItem} item
+   * @param {IProgress} progress
    * @memberof AttachmentList
    */
   private onUploadProgress = (item: IAttachmentItem, progress: IProgress) => {
@@ -231,10 +340,11 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * create a thumbnail picture if the provided file is an image.
+   * @func getFileThumbnail
+   * @desc Creates a thumbnail picture if the provided file is an image.
    * otherwise, returns a default image
-   *
    * @private
+   * @param {File} file
    * @memberof AttachmentList
    */
   private getFileThumbnail = (file: File) => {
@@ -250,8 +360,8 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * remove the file and abort the action if the file upload is in progress
-   *
+   * @func handleRemove
+   * @desc Removes the file and aborts the action if the file upload is in progress
    * @private
    * @param {IAttachmentItem} item
    * @memberof AttachmentList
@@ -275,8 +385,8 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
-   * switch between expanded and collapsed mode
-   *
+   * @desc Switches between expanded and collapsed mode
+   * @func toggleView
    * @private
    * @memberof AttachmentList
    */
@@ -286,14 +396,32 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @func get
+   * @desc Returns th list of IAttachmentItem. The function is defined
+   * to be accessible from the component outside
+   * @memberof AttachmentList
+   */
   public get = () => {
     return this.state.items;
   }
 
+  /**
+   * @desc Checks if has an uploading file in the list or not. The function is defined
+   * to be accessible from the component outside
+   * @func isUploading
+   * @memberof AttachmentList
+   */
   public isUploading = () => {
     return this.state.items.some((i) => i.uploading);
   }
 
+  /**
+   * @function render
+   * @desc Renders the component
+   * @returns
+   * @memberof AttachmentList
+   */
   public render() {
     const renderItem = (item: IAttachmentItem) => {
       const upload = this.uploads.find((u) => u.id === item.id);
@@ -352,6 +480,7 @@ class AttachmentList extends React.Component<IProps, IState> {
       }
     };
 
+    // The component must be hidden if there is not any item in the list
     if (this.state.items.length === 0) {
       return (
       null

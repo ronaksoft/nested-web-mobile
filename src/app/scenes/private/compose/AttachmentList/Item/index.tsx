@@ -25,7 +25,7 @@ import {Progress} from 'antd';
 interface IProps {
   /**
    * @prop item
-   * @desc The attachment model 
+   * @desc The attachment model
    * @type {IAttachmentItem}
    * @memberof IProps
    */
@@ -65,7 +65,7 @@ interface IState {
 class AttachmentItem extends React.Component<IProps, IState> {
   /**
    * Creates an instance of AttachmentItem.
-   * @param {IProps} props 
+   * @param {IProps} props
    * @memberof AttachmentItem
    */
   constructor(props: IProps) {
@@ -93,7 +93,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
   /**
    * @func render
    * @desc Renders the component
-   * @returns 
+   * @returns
    * @memberof AttachmentItem
    */
   public render() {
