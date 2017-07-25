@@ -55,7 +55,7 @@ interface IProps {
   comments: IComment[];
   /**
    * @property commentAdd
-   * @desc Includes commentAdd as a function
+   * @desc Includes commentAdd as a function that Adds comment to redux store
    * @type {function}
    * @memberof IProps
    */

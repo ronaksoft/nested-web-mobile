@@ -41,7 +41,7 @@ interface IProps {
   posts: IPost[];
   /**
    * @property postAdd
-   * @desc Includes postAdd as a function
+   * @desc Includes postAdd as a function that Adds post to redux store
    * @type {function}
    * @memberof IProps
    */

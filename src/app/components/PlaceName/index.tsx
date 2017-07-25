@@ -41,7 +41,7 @@ interface IProps {
   places: IPlace[];
   /**
    * @property placeAdd
-   * @desc Includes `placeAdd` os a function
+   * @desc Includes `placeAdd` os a function that Adds Place to redux store
    * @type {function}
    * @memberof IProps
    */
