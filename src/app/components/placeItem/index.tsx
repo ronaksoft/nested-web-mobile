@@ -101,28 +101,47 @@ class PlaceItem extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
+    /**
+     * @name place
+     * @const
+     * @type {object}
+     */
     const {place} = this.state;
 
     if (!place) {
       return null;
     }
 
+    /**
+     * define borderRadius and size
+     */
     const {
       borderRadius,
       size,
     } = this.props;
 
     /**
-     * @yields {string} appropriate key for picture object
+     * appropriate key for picture object
+     * @name picDim
+     * @const
+     * @type {string}
      */
     const picDim = size > 32 ? 'x64' : 'x32';
 
     /**
-     * @yields {string} css size valie
+     * css size value
+     * @name sizePX
+     * @const
+     * @type {string}
      */
     const sizePX = size.toString(10) + 'px';
 
-    // image Jsx style
+    /**
+     * css style for image
+     * @name imageStyle
+     * @const
+     * @type {object}
+     */
     const imageStyle = {
       display: 'flex',
       borderRadius,
@@ -133,8 +152,10 @@ class PlaceItem extends React.Component<IProps, IState> {
     };
 
     /**
-     * determine the place image source
-     * @yields image Jsx element
+     * generates the place image source
+     * @name img
+     * @var
+     * @type {jsxElement}
      */
     let img;
     if (place.picture.x32.length > 0) {
