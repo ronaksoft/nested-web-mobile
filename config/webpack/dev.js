@@ -31,7 +31,7 @@ var config = {
 
   output: {
     path: path.resolve('./build/public'),
-    publicPath: '/public/',
+    publicPath: '/m/public/',
     filename: 'js/[name].js',
     pathinfo: true
   },
