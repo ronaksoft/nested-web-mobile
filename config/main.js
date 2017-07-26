@@ -13,9 +13,10 @@ var config = {
       titleTemplate: 'barbar-vortigern: %s',
       meta: [
         { charset: 'utf-8' },
+        { name: 'theme-color', content: '#323D47' },
         { 'http-equiv': 'x-ua-compatible', content: 'ie=edge' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
-        { name: 'description', content: 'React Redux Typescript' },
+        { name: 'description', content: 'Nested' },
       ]
     }
   }
