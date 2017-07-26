@@ -1,13 +1,55 @@
+/**
+ * @file services/aaa.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @description Authentication-Authorization-Accounting
+ * The name is too big for a service that manages the authenticated user data
+ * Documented by:          Soroush Torkzadeh
+ * Date of documentation:  2017-07-25
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import * as Cookies from 'cookies-js';
 
+/**
+ * @class AAA
+ * @desc A signletone class that stores the authenticated user data
+ * @export
+ */
 export default class AAA {
+  /**
+   * @prop instance
+   * @desc An instance of AAA.
+   * @private
+   * @static
+   * @type {AAA}
+   * @memberof AAA
+   */
   private static instance: AAA;
+
+  /**
+   * @prop nss
+   * @desc Stands for Nested Session Secret. This is for authentication and does not work without `nsk`.
+   * @private
+   * @type {string}
+   * @memberof AAA
+   * @see nsk
+   */
   private nss: string;
+  /**
+   * @prop nsk
+   * @desc Stands for Nested Session Key. You usually find this key with `nss` and both are required to authentication.
+   * @private
+   * @type {string}
+   * @memberof AAA
+   * @see nss
+   */
   private nsk: string;
 
   /**
-   * Returns the instance of AAA
-   *
+   * @func getInstance
+   * @desc The class constructor is private. This method creates an instance of AAA once
+   * and returns the instance everytime you call it
    * @static
    * @returns
    * @memberof AAA
@@ -21,8 +63,8 @@ export default class AAA {
   }
 
   /**
-   * Get the user credentials
-   *
+   * @func getCredentials
+   * @desc Get the user credentials
    * @returns
    * @memberof AAA
    */
@@ -34,8 +76,8 @@ export default class AAA {
   }
 
   /**
-   * Set the user credentials
-   *
+   * @func setCredentials
+   * @desc Set the user credentials cookies
    * @param {*} credential
    * @memberof AAA
    */
@@ -49,8 +91,8 @@ export default class AAA {
   }
 
   /**
-   * Clear the stored credentials
-   *
+   * @func clearCredentials
+   * @desc Clear the stored credentials
    * @memberof AAA
    */
   public clearCredentials(): void {
@@ -63,7 +105,7 @@ export default class AAA {
   }
 
   /**
-   * Creates an instance of AAA.
+   * @desc Creates an instance of AAA.
    * @memberof AAA
    */
   private constructor() {

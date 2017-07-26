@@ -1,3 +1,7 @@
+/**
+ * @enum SocketState
+ * @desc Describes a socket connection state
+ */
 enum SocketState {
     CONNECTING = 0,
     OPEN = 1,
