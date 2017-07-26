@@ -1,12 +1,31 @@
+/**
+ * Determines client device properties
+ * @export
+ * @class Client
+ */
 export default class Client {
   private constructor() {
 
   }
 
+  /**
+   * adopt the browser name and version from `navigator.platform`
+   * @static
+   * @returns {string} client browser
+   * @memberof Client
+   * @function
+   */
   public static getBrowser() {
     return navigator.platform.split(' ')[0];
   }
 
+  /**
+   * adopt os properties from navigator object of window
+   * @static
+   * @returns {string} Client OS
+   * @memberof Client
+   * @function
+   */
   public static getOS() {
     const ua = navigator.userAgent;
     let tem;
@@ -30,9 +49,22 @@ export default class Client {
     return M[0].toLowerCase();
   }
 
+  /**
+   * adopt device name from navigator object of window
+   * @static
+   * @returns {string} device name
+   * @memberof Client
+   * @function
+   */
   public static getDevice() {
+    // definde device name
     let deviceName = '';
 
+    /**
+     * checks device belongs which company
+     * @const
+     * @type {object}
+     */
     const isMobile = {
       Android: () => {
         return navigator.userAgent.match(/Android/i);
@@ -70,6 +102,9 @@ export default class Client {
       },
     };
 
+    /**
+     * Assign device name
+     */
     if (isMobile.Datalogic()) {
       deviceName = 'Datalogic';
     } else if (isMobile.Bluebird()) {

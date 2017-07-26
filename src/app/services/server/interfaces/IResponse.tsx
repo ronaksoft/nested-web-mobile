@@ -1,9 +1,8 @@
 import IErrorResponseData from './IErrorResponseData';
 interface IResponse {
     _reqid ?: string | number;
-    data : IErrorResponseData | {};
+    data: IErrorResponseData | {};
     status: string;
 }
 
 export default IResponse;
-
