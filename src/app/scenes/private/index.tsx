@@ -112,7 +112,7 @@ class Private extends React.Component<IProps, IState> {
 
   public sampleF = () => {
     console.log('nothing');
-    browserHistory.push('/feed');
+    browserHistory.push('/m/feed');
   }
 
   public closeSidebar = () => {

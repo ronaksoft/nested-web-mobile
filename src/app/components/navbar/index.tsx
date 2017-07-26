@@ -78,9 +78,9 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    */
   private goToNotification() {
     if (this.state.notificationOpen) {
-      browserHistory.push('/feed');
+      browserHistory.push('/m/feed');
     } else {
-      browserHistory.push('/notifications');
+      browserHistory.push('/m/notifications');
     }
 
     // update the state to new enviorment
