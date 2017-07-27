@@ -159,7 +159,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
       if (firstSuggestItem && firstSuggestItem._id === this.state.input) {
         this.insertChip(this.state.suggests[0]);
-      } else if (this.state.input && this.state.input.length > 3) {
+      } else if (this.state.input && this.state.input.length > 1) {
         this.insertChip({
           _id: this.state.input,
           name: null,

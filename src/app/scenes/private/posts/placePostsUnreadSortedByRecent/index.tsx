@@ -32,7 +32,7 @@ const style = require('../posts.css');
  * @interface IProps
  */
 interface IProps {
-    /**
+  /**
    * @property postsRoute
    * @desc  posts route that the message is going to it
    * @type {string}
@@ -101,7 +101,7 @@ interface IProps {
  * @interface IState
  */
 interface IState {
-   /**
+  /**
    * @property posts
    * @desc  list of posts (IPost) that stored in redux store
    * @type {array<IPost>}
@@ -383,7 +383,7 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
    * @func gotoPost
    * @desc Go to the post page and set the last post in store
    * @private
-   * @param {IPost} post 
+   * @param {IPost} post
    * @memberof PlacePostsUnreadSortedByRecent
    */
   private gotoPost(post: IPost) {
