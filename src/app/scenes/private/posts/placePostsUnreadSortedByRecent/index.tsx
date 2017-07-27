@@ -1,3 +1,12 @@
+/**
+ * @file scenes/private/posts/placePostsUnreadSortedByRecent/index.tsx
+ * @author sina hosseini <ehosseiniir@gmail.com>
+ * @description This component is designed for rendering unseen posts of a place.
+ * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
+ * Date of documentation:  2017-07-27
+ * Reviewed by:            --
+ * Date of review:         --
+ */
 import * as React from 'react';
 import {OptionsMenu, PlaceName} from '../../../../components';
 import {connect} from 'react-redux';
@@ -19,27 +28,121 @@ import {NewBadge} from 'components/NewBadge';
 const privateStyle = require('../../private.css');
 
 const style = require('../posts.css');
-
+/**
+ * @interface IProps
+ */
 interface IProps {
+    /**
+   * @property postsRoute
+   * @desc  posts route that the message is going to it
+   * @type {string}
+   * @memberof IProps
+   */
   postsRoute: string;
+  /**
+   * @property routing
+   * @desc routing state receive from react-router-redux
+   * @type {any}
+   * @memberof IProps
+   */
+  // fixme:: set type
   routing: any;
+  /**
+   * @property posts
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
+   * @memberof IProps
+   */
   posts: IPost[];
+  /**
+   * @property currentPost
+   * @desc object of current post
+   * @type {IPost | null}
+   * @memberof IProps
+   */
   currentPost: IPost | null;
+  /**
+   * @property setPosts
+   * @desc setPosts action which store a list of IPost objects in redux store
+   * @type {function}
+   * @memberof IProps
+   */
   setPosts: (posts: IPost[]) => {};
+  /**
+   * @property setPostsRoute
+   * @desc setPostsRoute action which store route of stored posts in redux store
+   * @type {function}
+   * @memberof IProps
+   */
   setPostsRoute: (route: string) => {};
+  /**
+   * @property setCurrentPost
+   * @desc  setCurrentPost action which store current post in redux store
+   * @type {function}
+   * @memberof IProps
+   */
   setCurrentPost: (post: IPost) => {};
+  /**
+   * @property params
+   * @desc parameters that received from route (react-router)
+   * @type {any}
+   * @memberof IProps
+   */
   params?: any;
+  /**
+   * @property location
+   * @desc location object that received from react-router
+   * @type {any}
+   * @memberof IProps
+   */
   location: any;
 }
-
+/**
+ * @interface IState
+ */
 interface IState {
+   /**
+   * @property posts
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
+   * @memberof IState
+   */
   posts: IPost[];
+  /**
+   * @property loadingAfter
+   * @desc  display loading in top if `loadingAfter` in post list is true
+   * @type {boolean}
+   * @memberof IState
+   */
   loadingAfter: boolean;
+  /**
+   * @property loadingBefore
+   * @desc  display loading in bottom if `loadingBefore` in post list is true
+   * @type {boolean}
+   * @memberof IState
+   */
   loadingBefore: boolean;
+  /**
+   * @property reachedTheEnd
+   * @desc hide loading  if `reachedTheEnd` is true
+   * @type {boolean}
+   * @memberof IState
+   */
   reachedTheEnd: boolean;
+  /**
+   * @property newPostCount
+   * @desc display new post count badge when receive a new post
+   * @type {boolean}
+   * @memberof IState
+   */
   newPostCount: number;
 }
 
+/**
+ * @class PlacePostsUnreadSortedByRecent
+ * @classdesc Component renders the Place unread posts by recent post
+ * @extends {React.Component<IProps, IState>}
+ */
 class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
   private postApi: PostApi;
   private currentPlaceId: string | null;
@@ -47,8 +150,18 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
   private syncActivityListeners = [];
   private newPostsIds = [];
 
+  /**
+   * Creates an instance of PlacePostsUnreadSortedByRecent.
+   * @param {*} props
+   * @memberof PlacePostsUnreadSortedByRecent
+   */
   constructor(props: IProps) {
     super(props);
+    /**
+     * read the data from props and set to the state and
+     * setting initial state
+     * @type {object}
+     */
     this.currentPlaceId = this.props.params.placeId;
     this.state = {
       posts: this.props.location.pathname === this.props.postsRoute ? this.props.posts : [],
@@ -58,7 +171,12 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       newPostCount: 0,
     };
   }
-
+  /**
+   * @function addNewPostActivity
+   * @desc add new post by activity sort
+   * @param {IActivity} activity
+   * @private
+   */
   private addNewPostActivity(activity: IActivity) {
     if (this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
       this.newPostsIds.push(activity.post_id);
@@ -67,7 +185,12 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       });
     }
   }
-
+  /**
+   * @function addCommentToPostActivity
+   * @desc add comment to post activity sort
+   * @param {IActivity} activity
+   * @private
+   */
   private addCommentToPostActivity(activity: IActivity) {
 
     const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
@@ -86,7 +209,11 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
         });
     }
   }
-
+  /**
+   * @function showNewPosts
+   * @desc display new posts
+   * @private
+   */
   private showNewPosts() {
     this.props.setPosts([]);
     this.newPostsIds = [];
@@ -100,7 +227,11 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
     }, 1000);
 
   }
-
+  /**
+   * @desc updates the state object when the parent changes the props
+   * @param {IProps} newProps
+   * @memberof PlacePostsUnreadSortedByRecent
+   */
   public componentWillReceiveProps(newProps: IProps) {
     if (newProps.params.placeId !== this.currentPlaceId) {
       this.currentPlaceId = this.props.params.placeId;
@@ -111,14 +242,29 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       this.setState({posts: newProps.posts});
     }
   }
-
+  /**
+   * Component Did Mount
+   * @desc Get post from redux store
+   * Calls the Api and store it in redux store
+   * @func componentDidMount
+   * @memberof PlacePostsUnreadSortedByRecent
+   * @override
+   */
   public componentDidMount() {
     if (this.props.params.placeId) {
       this.currentPlaceId = this.props.params.placeId;
     }
+
+    /**
+     * define the Post Api
+     */
     this.postApi = new PostApi();
     this.getPost(true);
 
+    /**
+     * handle window scroll in current post after user return from a post view page
+     * (by going to a post view page, selected post will store in `currentPost`)
+     */
     if (this.props.currentPost) {
       setTimeout(() => {
           window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
@@ -144,7 +290,14 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       ));
 
   }
-
+  /**
+   * @function getPost
+   * @desc Get posts with declared limits and `before` timestamp of
+   * the latest post item in state, otherwise the current timestamp.
+   * @param {boolean} fromNow receive post from now (set Date.now for `before`)
+   * @param {number} after after timestamp
+   * @private
+   */
   private getPost(fromNow?: boolean, after?: number) {
     let params: IPostsListRequest;
     if (fromNow === true) {
@@ -203,7 +356,13 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
         });
       });
   }
-
+  /**
+   * @function getOffset
+   * @desc Get offset of post by `id` of html element
+   * @param {string} id, id of html element
+   * @returns {{left: number, top: number}}
+   * @private
+   */
   private getOffset(id: string) {
     const el = document.getElementById(id).getBoundingClientRect();
     return {
@@ -211,16 +370,32 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
       top: el.top + window.scrollY,
     };
   }
-
-  private gotoPlacePostsAllSortedByRecentPost = () => {
+  /**
+   * @function gotoPlacePostsUnreadSortedByRecentPost
+   * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
+   * @param {IPost} post
+   * @private
+   */
+  private gotoPlacePostsUnreadSortedByRecentPost = () => {
     browserHistory.push(`/m/places/${this.currentPlaceId}/messages`);
   }
-
+  /**
+   * @func gotoPost
+   * @desc Go to the post page and set the last post in store
+   * @private
+   * @param {IPost} post 
+   * @memberof PlacePostsUnreadSortedByRecent
+   */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
     browserHistory.push(`/m/message/${post._id}`);
   }
-
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof addCommentToPostActivity
+   * @generator
+   */
   public render() {
     const leftItem = {
       name: <PlaceName place_id={this.currentPlaceId}/>,
@@ -276,7 +451,7 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
             isChecked: false,
           },
           {
-            onClick: this.gotoPlacePostsAllSortedByRecentPost,
+            onClick: this.gotoPlacePostsUnreadSortedByRecentPost,
             name: 'All',
             isChecked: false,
           },
@@ -368,13 +543,20 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
     );
   }
 }
-
+/**
+ * redux store mapper
+ * @param store
+ */
 const mapStateToProps = (store) => ({
   postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,
 });
-
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
 const mapDispatchToProps = (dispatch) => {
   return {
     setPosts: (posts: IPost[]) => {
