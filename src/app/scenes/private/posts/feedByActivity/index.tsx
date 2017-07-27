@@ -214,11 +214,11 @@ class FeedByActivity extends React.Component<IProps, IState> {
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/message/${post._id}`);
+    browserHistory.push(`/m/message/${post._id}`);
   }
 
   private gotoFeed() {
-    browserHistory.push('/feed');
+    browserHistory.push('/m/feed');
   }
 
   public render() {

@@ -6,7 +6,7 @@ import rootReducer from './reducers';
 import { IStore } from './IStore';
 const createLogger = require('redux-logger');
 
-export function configureStore(history, initialState?: IStore): Redux.Store<IStore> {
+export function configureStore(history, initialState?: IStore): Redux.Store<any> {
 
   const middlewares: Redux.Middleware[] = [
     routerMiddleware(history),
