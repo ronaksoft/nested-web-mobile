@@ -1,5 +1,5 @@
 /**
- * @file scenes/private/posts/bookmarked/index.tsx
+ * @file scenes/private/posts/feed/index.tsx
  * @author sina hosseini <ehosseiniir@gmail.com>
  * @description This component is designed for rendering posts which are bookmarked.
  * Documented by:          Shayesteh Naeimabadi <naamesteh@nested.me>
@@ -327,7 +327,7 @@ class Feed extends React.Component<IProps, IState> {
     // set get post limit
     // FIXME:: set limit from config
     params.limit = 20;
-    // call get bookmarked posts
+    // call get Favorite posts
     this.postApi.getFavoritePosts(params)
       .then((response: IPostsListResponse) => {
         // if length of received post is less than limit, set `reachedTheEnd` as true
