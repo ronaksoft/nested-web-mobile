@@ -237,6 +237,7 @@ export default class PostApi {
    * @memberof PostApi
    */
   public getComments(params: ICommentListRequest): Promise<any> {
+    // TODO: Move to api/comment
     return this.api.request({
       cmd: 'post/get_comments',
       data: params,
