@@ -259,6 +259,8 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
+   * @function getOffset
+   * @desc Get offset of posts by `id`
    * @param id
    * @returns {{left: number, top: number}}
    * @private
@@ -272,6 +274,8 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
+   * @function gotoPost
+   * @desc Go to posts route by `post_id`
    * @param post
    * @private
    */
