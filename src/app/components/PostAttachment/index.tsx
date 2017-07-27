@@ -1,11 +1,11 @@
 /**
  * @file component/PostAttachment/index.tsx
- * @author sina < sinaa@nested.me >
- * @description view component for attachments inside post card
+ * @author sina < ehosseinir@gmail.com >
+ * @description view component to show attachments inside post card and control single view of each attachment
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-25
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            sina
+ *              Date of review:         2017-07-27
  */
 import * as React from 'react';
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
@@ -23,9 +23,14 @@ const style = require('./postattachment.css');
  * @interface IProps for component initials data
  * This interface pass the required parameters to component.
  * @type {object}
- * @property {Array<IPostAttachment>} attachments - list of attachments
  */
 interface IProps {
+  /**
+   * @property {Array<IPostAttachment>} attachments - list of attachments
+   * @desc routing state receive from react-router-redux
+   * @type {array<IPostAttachment>}
+   * @memberof IProps
+   */
   attachments: IPostAttachment[];
 }
 
@@ -33,11 +38,22 @@ interface IProps {
  * @name IState
  * @interface IState for component reactive Elements
  * @type {object}
- * @property {IPostAttachment} selectedAttachment -
- * @property {boolean} showAttachmentView - a flag for AttachmentView active state
  */
 interface IState {
+  /**
+   * @property selectedAttachment
+   * @desc selected attachment to show
+   * @type {IPostAttachment | null}
+   * @memberof IState
+   */
   selectedAttachment: IPostAttachment | null;
+
+  /**
+   * @property showAttachmentView
+   * @desc a flag for AttachmentView active state
+   * @type {boolean}
+   * @memberof IState
+   */
   showAttachmentView: boolean;
 }
 
@@ -108,8 +124,8 @@ export default class PostAttachment extends React.Component<IProps, IState> {
      * @type {boolean}
      */
     const singleImage = this.props.attachments.length === 1 &&
-    ( this.props.attachments[0].type === AttachmentType.IMAGE ||
-    this.props.attachments[0].type === AttachmentType.GIF );
+      ( this.props.attachments[0].type === AttachmentType.IMAGE ||
+        this.props.attachments[0].type === AttachmentType.GIF );
     return (
       <div>
         {/* attachments thumbnail */}
@@ -122,18 +138,18 @@ export default class PostAttachment extends React.Component<IProps, IState> {
                   case AttachmentType.IMAGE:
                     return (
                       <ImageThumbnail onclick={this.showAttachment.bind(this, attachment)}
-                                          attachment={attachment}/>
+                                      attachment={attachment}/>
                     );
                   case AttachmentType.VIDEO:
                     return (
                       <VideoThumbnail onclick={this.showAttachment.bind(this, attachment)}
-                                          fullWidth={this.props.attachments.length === 1}
-                                          attachment={attachment}/>
+                                      fullWidth={this.props.attachments.length === 1}
+                                      attachment={attachment}/>
                     );
                   default:
                     return (
                       <OtherThumbnail onclick={this.showAttachment.bind(this, attachment)}
-                                          attachment={attachment}/>
+                                      attachment={attachment}/>
                     );
                 }
               })}
@@ -144,14 +160,14 @@ export default class PostAttachment extends React.Component<IProps, IState> {
         {singleImage && (
           <div className={style.singleImage}>
             <ImageSingle onclick={this.showAttachment.bind(this, this.props.attachments[0])}
-              attachment={this.props.attachments[0]}/>
+                         attachment={this.props.attachments[0]}/>
           </div>
         )}
         {/* Attachments modal view component */}
         {this.state.showAttachmentView && (
-        <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
-                        selectedAttachment={this.state.selectedAttachment}
-                        attachments={this.props.attachments}/>
+          <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
+                          selectedAttachment={this.state.selectedAttachment}
+                          attachments={this.props.attachments}/>
         )}
       </div>
     );
