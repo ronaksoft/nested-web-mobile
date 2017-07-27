@@ -117,21 +117,21 @@ interface IState {
   posts: IPost[];
   /**
    * @property loadingAfter
-   * @desc  display loading button in top if `loadingAfter` in post list is true
+   * @desc  display loading in top if `loadingAfter` in post list is true
    * @type {boolean}
    * @memberof IState
    */
   loadingAfter: boolean;
   /**
    * @property loadingBefore
-   * @desc  display loading button in bottom if `loadingBefore` in post list is true
+   * @desc  display loading in bottom if `loadingBefore` in post list is true
    * @type {boolean}
    * @memberof IState
    */
   loadingBefore: boolean;
   /**
    * @property reachedTheEnd
-   * @desc hide loading button if `reachedTheEnd` is true
+   * @desc hide loading if `reachedTheEnd` is true
    * @type {boolean}
    * @memberof IState
    */
@@ -401,6 +401,7 @@ class Shared extends React.Component<IProps, IState> {
     const loadMore = this.getPost.bind(this);
     /**
      * @name leftItem
+     * @desc setting of left Item
      * @const
      * @type {object}
      */
@@ -411,6 +412,7 @@ class Shared extends React.Component<IProps, IState> {
     };
     /**
      * @name rightMenu
+     * @desc setting of right menu
      * @const
      * @type {array}
      */
