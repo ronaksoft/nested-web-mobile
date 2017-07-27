@@ -315,13 +315,21 @@ class Bookmarked extends React.Component<IProps, IState> {
    */
   public render() {
     const loadMore = this.getPost.bind(this);
-
+    /**
+     * @name leftItem
+     * @const
+     * @type {object}
+     */
     const leftItem = {
       name: 'Bookmarked',
       type: 'title',
       menu: [],
     };
-
+    /**
+     * @name rightMenu
+     * @const
+     * @type {array}
+     */
     const rightMenu = [];
 
     return (
@@ -371,12 +379,12 @@ class Bookmarked extends React.Component<IProps, IState> {
  * redux store mapper
  * @param store
  */
-
 const mapStateToProps = (store) => ({
   postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,
 });
+
 /**
  * reducer actions functions mapper
  * @param dispatch
