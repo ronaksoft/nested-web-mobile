@@ -38,6 +38,9 @@ node_modules
 # TypeScript
 typings
 
+# Genrated documents
+doc
+
 # JetBrains
 .idea
 .awcache
