@@ -1,36 +1,125 @@
+/**
+ * @file scenes/private/posts/components/comment/index.tsx
+ * @author Sina Hosseini <ehosseiniir@gmail.com>
+ * @description A comment-board component
+ * @export CommentsBoard
+ * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
+ * Date of documentation:  2017-07-27
+ * Reviewed by:            -
+ * Date of review:         -
+ */
 import * as React from 'react';
-import PostApi from '../../../../../api/post/index';
-import IComment from '../../../../../api/comment/interfaces/IComment';
+import PostApi from 'api/post/index';
+import IComment from 'api/comment/interfaces/IComment';
 import {UserAvatar, FullName} from 'components';
 import {Input} from 'antd';
-import CommentApi from '../../../../../api/comment/index';
-import ArrayUntiles from '../../../../../services/untils/array';
-import TimeUntiles from '../../../../../services/untils/time';
+import CommentApi from 'api/comment/index';
+import ArrayUntiles from 'services/untils/array';
+import TimeUntiles from 'services/untils/time';
 import {IcoN} from 'components';
-import IPost from '../../../../../api/post/interfaces/IPost';
-import SyncActivity from '../../../../../services/syncActivity/index';
-import SyncActions from '../../../../../services/syncActivity/syncActions';
+import IPost from 'api/post/interfaces/IPost';
+import SyncActivity from 'services/syncActivity/index';
+import SyncActions from 'services/syncActivity/syncActions';
 
 const style = require('./comment-board.css');
 
+/**
+ * @interface IProps
+ * @desc Interface of the component props
+ */
 interface IProps {
+  /**
+   * @prop post_id
+   * @desc The post Id
+   * @type {string}
+   * @memberof IProps
+   */
   post_id: string;
+  /**
+   * @prop post
+   * @desc The post that the comments belogs to
+   * @type {IPost}
+   * @memberof IProps
+   */
   post?: IPost;
+  /**
+   * @prop no_comment
+   * @desc Is commenting enabled on the post or not
+   * @type {boolean}
+   * @memberof IProps
+   */
   no_comment?: boolean;
 }
 
+/**
+ * @interface IState
+ * @desc Interface of the component state
+ */
 interface IState {
+  /**
+   * @prop comments
+   * @desc A list of comments on the board
+   * @type {IComment[]}
+   * @memberof IState
+   */
   comments: IComment[];
+  /**
+   * @prop sendingComment
+   * @desc Indicates that a comment
+   * @type {boolean}
+   * @memberof IState
+   */
   sendingComment: boolean;
+  /**
+   * @prop newCommentTxt
+   * @desc A new comment text
+   * @type {string}
+   * @memberof IState
+   */
   newCommentTxt: string;
 }
 
+/**
+ * @class CommentsBoard
+ * @desc A list of a post comment with a new comment input box
+ * @extends {React.Component<IProps, IState>}
+ */
 class CommentsBoard extends React.Component<IProps, IState> {
+  /**
+   * @prop postApi
+   * @desc A new instance of postApi
+   * @private
+   * @memberof CommentsBoard
+   */
   private postApi;
+  /**
+   * @prop syncActivity
+   * @desc An instance SyncActivity
+   * @private
+   * @memberof CommentsBoard
+   */
   private syncActivity = SyncActivity.getInstance();
+  /**
+   * @prop syncActivityListeners
+   * @desc The channels of activity which the component is listening to
+   * @private
+   * @memberof CommentsBoard
+   */
   private syncActivityListeners = [];
+  /**
+   * @prop hasBeforeComments
+   * @desc A flag to identify that the post has older comments or not
+   * @private
+   * @type {boolean}
+   * @memberof CommentsBoard
+   */
   private hasBeforeComments: boolean = true;
 
+  /**
+   * Creates an instance of CommentsBoard.
+   * @param {IProps} props
+   * @memberof CommentsBoard
+   */
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -43,6 +132,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
 
   }
 
+  /**
+   * @func componentDidMount
+   * @desc Whne the component has been mounted successfully, It retreives the post last 3 comments
+   * and opens a channel for getting notified for new comments.
+   * @memberof CommentsBoard
+   */
   public componentDidMount() {
     this.postApi = new PostApi();
     this.postApi.getComments({
@@ -82,6 +177,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func componentWillUnmount
+   * @desc Stops listening to the sync channels when the component is going to be destroyed
+   * @memberof CommentsBoard
+   */
   public componentWillUnmount() {
     // set sync listeners
     if (this.props.post) {
@@ -91,6 +191,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func getAfterComments
+   * @desc Get comments recursively while reaches the end
+   * @private
+   * @param {boolean} [scrollToBottom]
+   * @memberof CommentsBoard
+   */
   private getAfterComments(scrollToBottom?: boolean) {
     this.postApi.getComments({
       after: this.state.comments.length > 0 ?
@@ -117,6 +224,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
       });
   }
 
+  /**
+   * @func setScrollPositionOnId
+   * @desc Scrolls body into an element with the given Id
+   * @private
+   * @param {string} id
+   * @memberof CommentsBoard
+   */
   private setScrollPositionOnId(id: string) {
     const elementOffsetBottom = document.documentElement.scrollHeight - document.getElementById(id).offsetHeight;
 
@@ -127,6 +241,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
 
   }
 
+  /**
+   * @func getBeforeComments
+   * @desc Loads the comments that are older than the last comment of the board
+   * @private
+   * @memberof CommentsBoard
+   */
   private getBeforeComments() {
     this.postApi.getComments({
       before: this.state.comments[0].timestamp,
@@ -150,6 +270,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
       });
   }
 
+  /**
+   * @func addComment
+   * @desc Adds a new comment to the post and requests to get the recent comments to keep the board update.
+   * @private
+   * @memberof CommentsBoard
+   */
   private addComment() {
     this.setState({
       sendingComment: true,
@@ -167,6 +293,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @function handleChangeComment
+   * @desc Updates the new comment text in the component state
+   * @private
+   * @param {*} e
+   * @memberof CommentsBoard
+   */
   private handleChangeComment(e: any) {
 
     this.setState({
@@ -174,6 +307,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @func render
+   * @desc Renders the component
+   * @returns
+   * @memberof CommentsBoard
+   */
   public render() {
     return (
       <div className={style.commentBoard} id={'comment-board'}>
