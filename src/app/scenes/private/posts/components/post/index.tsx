@@ -152,10 +152,10 @@ class Post extends React.Component<IProps, IState> {
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
-            <Link to={`/forward/${post._id}`}>
+            <Link to={`/m/forward/${post._id}`}>
               <IcoN size={24} name="forward16"/>
             </Link>
-            <Link to={`/reply/${post._id}`}>
+            <Link to={`/m/reply/${post._id}`}>
               <IcoN size={24} name="reply24"/>
             </Link>
             {/*<a>

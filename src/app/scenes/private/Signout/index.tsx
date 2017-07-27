@@ -12,6 +12,7 @@ interface IProps {
 
 class Signout extends React.Component<IProps, {}> {
   private accountApi: AccountApi = new AccountApi();
+
   /**
    * Creates an instance of Signout.
    * @param {*} props

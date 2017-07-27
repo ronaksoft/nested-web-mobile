@@ -44,7 +44,7 @@ class Promoted extends React.Component <IProps, any> {
   public render() {
     const notification = this.props.notification;
     return (
-      <Link to={`message/${notification.place_id}`}
+      <Link to={`/m/message/${notification.place_id}`}
       className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>

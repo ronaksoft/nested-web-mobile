@@ -50,7 +50,7 @@ export default (
         <Route path="/m/404" component={NotFound}/>
         <Route path="/m/signin" component={Signin}/>
         <Route path="/m/signup" component={Signup}>
-          <IndexRoute component={SubmitPhone} />
+          <IndexRoute component={SubmitPhone}/>
           <Route path="/m/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>
           <Route path="/m/signup/verify/:country/:code/:phone/:vid" component={Verify}/>
           <Route path="/m/signup/register/:country/:code/:phone/:vid" component={Register}/>

@@ -152,7 +152,7 @@ class Bookmarked extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <Loading active={this.state.loadingAfter} />
+        <Loading active={this.state.loadingAfter}/>
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>

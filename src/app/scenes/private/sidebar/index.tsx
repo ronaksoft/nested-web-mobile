@@ -196,11 +196,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           const unreadChildrens = {};
           items.forEach((element) => {
 
-          /**
-           * Place Id
-           * @const pid
-           * @type {string}
-           */
+            /**
+             * Place Id
+             * @const pid
+             * @type {string}
+             */
             const pid: string = element.place_id;
 
             /** Assign Place unread counts to `unreadCounts` */
@@ -291,10 +291,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
        * @const params
        * @type {object}
        */
-      // TODO: define interface object of request
+        // TODO: define interface object of request
       const params = {
-        with_children: true,
-      };
+          with_children: true,
+        };
       this.PlaceApi.getAllPlaces(params)
         .then((response: IPlace[]) => {
 
@@ -424,11 +424,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           this.props.setSidebarPlaces(placesConjuctions);
         }, () => {
 
-        /**
-         * Get Unreads of Places
-         */
-        this.getUnreads();
-      });
+          /**
+           * Get Unreads of Places
+           */
+          this.getUnreads();
+        });
     }
   }
 

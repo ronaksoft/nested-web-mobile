@@ -27,6 +27,7 @@ interface IProps {
    */
   notification: INotification;
 }
+
 /**
  * @class Mention
  * @desc Creates Mention component:
@@ -43,7 +44,7 @@ class Mention extends React.Component <IProps, any> {
     const notification = this.props.notification;
     return (
       <Link to={`/m/message/${notification.post_id}`}
-      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+            className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
@@ -59,7 +60,7 @@ class Mention extends React.Component <IProps, any> {
               <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>
-        <IcoN size={16} name={'atsign16'}/>
+          <IcoN size={16} name={'atsign16'}/>
         </div>
       </Link>
     );
