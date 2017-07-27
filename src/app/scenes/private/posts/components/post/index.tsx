@@ -1,3 +1,13 @@
+/**
+ * @file scenes/private/posts/components/post/index.tsx
+ * @author Sina Hosseini <ehosseiniir@gmail.com>
+ * @description A post-card component
+ * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
+ * Date of documentation:  2017-07-27
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName} from 'components';
@@ -13,27 +23,89 @@ import {browserHistory, Link} from 'react-router';
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 
+/**
+ * @interface IOwnProps
+ * @desc The component owned properties
+ */
 interface IOwnProps {
+  /**
+   * @prop post
+   * @desc A post model
+   * @type {IPost}
+   * @memberof IOwnProps
+   */
   post?: IPost;
+  /**
+   * @prop routeParams
+   * @desc The parameters are given by React Router
+   * @type {*}
+   * @memberof IOwnProps
+   */
   routeParams?: any;
 }
 
+/**
+ * @interface IProps
+ * @desc The component properties including the owned and the props are provided by route and redux
+ */
 interface IProps {
   post: IPost;
+  /**
+   * @prop post
+   * @desc A post model
+   * @type {IPost}
+   * @memberof IProps
+   */
   currentPost: IPost;
+  /**
+   * @prop posts
+   * @desc The stored posts which are given by redux
+   * @type {IPost[]}
+   * @memberof IProps
+   */
   posts: IPost[];
+  /**
+   * @prop routeParams
+   * @desc The parameters which are provided by React Router
+   * @type {*}
+   * @memberof IProps
+   */
   routeParams: any;
+  /**
+   * @prop setPosts
+   * @desc Updates posts in store
+   * @memberof IProps
+   */
   setPosts: (posts: IPost[]) => {};
+  /**
+   * @prop setCurrentPost
+   * @desc Updates the last post in store
+   * @memberof IProps
+   */
   setCurrentPost: (post: IPost) => {};
 }
 
+/**
+ * @interface IState
+ * @desc Interface of the component state
+ */
 interface IState {
   post?: IPost | null;
 }
 
+/**
+ * @class Post
+ * @extends {React.Component<IProps, IState>}
+ * @desc A post-card component
+ */
 class Post extends React.Component<IProps, IState> {
   private inProgress: boolean;
 
+  /**
+   * Creates an instance of Post.
+   * @param {IProps} props
+   * @memberof Post
+   */
   constructor(props: IProps) {
     super(props);
     this.state = {};
@@ -41,6 +113,12 @@ class Post extends React.Component<IProps, IState> {
     this.state = {post: this.props.post};
   }
 
+  /**
+   * @func componentDidMount
+   * @desc Uses the provided post in props or asks server to get the post by
+   * the given `postId` parameter in route. Marks the post as read.
+   * @memberof Post
+   */
   public componentDidMount() {
     if (this.props.post) {
       this.setState({
@@ -60,6 +138,12 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func componentWillReceiveProps
+   * @desc Replaces the post in the component state with the new post in received props
+   * @param {IProps} newProps
+   * @memberof Post
+   */
   public componentWillReceiveProps(newProps: IProps) {
     if (this.props.post) {
       this.setState({
@@ -68,6 +152,14 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func updatePostsInStore
+   * @desc Updates a post property and replaces the post in store's posts
+   * @private
+   * @param {string} key
+   * @param {*} value
+   * @memberof Post
+   */
   private updatePostsInStore(key: string, value: any) {
 
     const posts = JSON.parse(JSON.stringify(this.props.posts));
@@ -86,10 +178,21 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func leave
+   * @desc Routes to the previous page
+   * @private
+   * @memberof Post
+   */
   private leave() {
     browserHistory.goBack();
   }
 
+  /**
+   * @func Pins/Unpins the post and updates the post in store's posts list
+   * @private
+   * @memberof Post
+   */
   private toggleBookmark() {
     // change pinned of post
     let post;
@@ -136,6 +239,12 @@ class Post extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @func render
+   * @desc Renders the component
+   * @returns
+   * @memberof Post
+   */
   public render() {
     const postView = !this.props.post;
     if (!this.state.post) {
@@ -224,6 +333,12 @@ class Post extends React.Component<IProps, IState> {
   }
 }
 
+/**
+ * @const mapStateToProps
+ * @desc Provides the required parts of store throught the component props
+ * @param {any} store
+ * @param {IOwnProps} ownProps
+ */
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   post: ownProps.post,
   currentPost: store.app.currentPost,
@@ -231,6 +346,11 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   routeParams: ownProps.routeParams,
 });
 
+/**
+ * @desc Provides the actions that updates store through the component props
+ * @const mapDispatchToProps
+ * @param {any} dispatch
+ */
 const mapDispatchToProps = (dispatch) => ({
   setPosts: (posts: IPost[]) => (dispatch(setPosts(posts))),
   setCurrentPost: (post: IPost) => (dispatch(setCurrentPost(post))),
