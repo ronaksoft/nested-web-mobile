@@ -212,20 +212,20 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
   }
 
   private gotoPlacePostsAllSortedByRecentPost = () => {
-    browserHistory.push(`/places/${this.currentPlaceId}/messages`);
+    browserHistory.push(`/m/places/${this.currentPlaceId}/messages`);
   }
 
   private gotoPlacePostsAllSortedByActivity = () => {
-    browserHistory.push(`/places/${this.currentPlaceId}/messages/latest-activity`);
+    browserHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
   }
 
   private gotoPlacePostsUnreadSortedByRecentPost = () => {
-    browserHistory.push(`/places/${this.currentPlaceId}/unread`);
+    browserHistory.push(`/m/places/${this.currentPlaceId}/unread`);
   }
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/message/${post._id}`);
+    browserHistory.push(`/m/message/${post._id}`);
   }
 
   public render() {

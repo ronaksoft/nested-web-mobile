@@ -44,6 +44,7 @@ interface IProps {
 class Signin extends React.Component<IProps, IState> {
   // ( document on assigns and defines )
   private accountApi: AccountApi = new AccountApi();
+
   /**
    * Creates an instance of Signin.
    * @param {*} props
@@ -98,7 +99,7 @@ class Signin extends React.Component<IProps, IState> {
       this.props.setLogin(response.account);
 
       // Navigates to the default route which is `/feed`
-      browserHistory.push('/');
+      browserHistory.push('/m/');
     }, (error) => {
 
       // TODO: Warn the user if the authentication was unsuccessful with an appropriate reason
@@ -155,24 +156,24 @@ class Signin extends React.Component<IProps, IState> {
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
           <img src={require('./logo.svg')} className={publicStyle.logo} alt="Nested"/>
-          <div className={publicStyle.filler} />
+          <div className={publicStyle.filler}/>
         </div>
         <h2>Sign in to Nested</h2>
         <div className={publicStyle.publicForm}>
-            <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
-            <br />
-            <Input
-                  type="password"
-                  placeholder="Password"
-                  value={this.state.password}
-                  onChange={this.handlePasswordChange}
-            />
-            <br />
-            <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
-            htmlType="submit" className={publicStyle.submit} onClick={this.submit}>
-              <b>Sign in</b>
-            </Button>
-          <p className={publicStyle.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
+          <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
+          <br/>
+          <Input
+            type="password"
+            placeholder="Password"
+            value={this.state.password}
+            onChange={this.handlePasswordChange}
+          />
+          <br/>
+          <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
+                  htmlType="submit" className={publicStyle.submit} onClick={this.submit}>
+            <b>Sign in</b>
+          </Button>
+          <p className={publicStyle.detail}>Don't have an account? <Link to="/m/signup">Create a new account</Link></p>
         </div>
       </div>
     );

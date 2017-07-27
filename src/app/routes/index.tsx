@@ -20,44 +20,44 @@ export default (
     <Router history={browserHistory}>
       <Route component={Private}>
         <IndexRoute component={Feed}/>
-        <Route path="/feed" component={Feed}/>
-        <Route path="/feed/latest-activity" component={FeedByActivity}/>
-        <Route path="/shared" component={Shared}/>
-        <Route path="/bookmarks" component={Bookmarked}/>
+        <Route path="/m/feed" component={Feed}/>
+        <Route path="/m/feed/latest-activity" component={FeedByActivity}/>
+        <Route path="/m/shared" component={Shared}/>
+        <Route path="/m/bookmarks" component={Bookmarked}/>
 
         {/* All post sorted by activity*/}
-        <Route path="/places/:placeId/messages" component={PlacePostsAllSortedByRecent}/>
+        <Route path="/m/places/:placeId/messages" component={PlacePostsAllSortedByRecent}/>
 
         {/* All recent post */}
-        <Route path="/places/:placeId/messages/latest-activity" component={PlacePostsAllSortedByActivity}/>
+        <Route path="/m/places/:placeId/messages/latest-activity" component={PlacePostsAllSortedByActivity}/>
 
         {/* Unread post sorted by activity*/}
-        <Route path="/places/:placeId/unread" component={PlacePostsUnreadSortedByRecent}/>
+        <Route path="/m/places/:placeId/unread" component={PlacePostsUnreadSortedByRecent}/>
 
-        <Route path="/places/:placeId/activities" component={Activities}/>
-        <Route path="/places/:placeId/files" component={Files}/>
-        <Route path="/messages/latest-activity" component={Activities}/>
-        <Route path="/message/:postId" component={Post}/>
-        <Route path="/notifications" component={Notifications}/>
-        <Route path="/compose" component={Compose}/>
-        <Route path="/reply/:replyId" component={Compose}/>
-        <Route path="/reply/:replyId/sender" component={Compose}/>
-        <Route path="/forward/:forwardId" component={Compose}/>
-        <Route path="/signout" component={Signout}/>
-        <Redirect from="/" to="/feed"/>
+        <Route path="/m/places/:placeId/activities" component={Activities}/>
+        <Route path="/m/places/:placeId/files" component={Files}/>
+        <Route path="/m/messages/latest-activity" component={Activities}/>
+        <Route path="/m/message/:postId" component={Post}/>
+        <Route path="/m/notifications" component={Notifications}/>
+        <Route path="/m/compose" component={Compose}/>
+        <Route path="/m/reply/:replyId" component={Compose}/>
+        <Route path="/m/reply/:replyId/sender" component={Compose}/>
+        <Route path="/m/forward/:forwardId" component={Compose}/>
+        <Route path="/m/signout" component={Signout}/>
+        <Redirect from="/" to="/m/feed"/>
       </Route>
       <Route component={Public}>
-        <Route path="/404" component={NotFound}/>
-        <Route path="/signin" component={Signin}/>
-        <Route path="/signup" component={Signup}>
-          <IndexRoute component={SubmitPhone} />
-          <Route path="/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>
-          <Route path="/signup/verify/:country/:code/:phone/:vid" component={Verify}/>
-          <Route path="/signup/register/:country/:code/:phone/:vid" component={Register}/>
+        <Route path="/m/404" component={NotFound}/>
+        <Route path="/m/signin" component={Signin}/>
+        <Route path="/m/signup" component={Signup}>
+          <IndexRoute component={SubmitPhone}/>
+          <Route path="/m/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>
+          <Route path="/m/signup/verify/:country/:code/:phone/:vid" component={Verify}/>
+          <Route path="/m/signup/register/:country/:code/:phone/:vid" component={Register}/>
         </Route>
         <Route path="*" component={NotFound}/>
       </Route>
-      <Redirect from="*" to="/404"/>
+      <Redirect from="*" to="/m/404"/>
     </Router>
   </Provider>
 );

@@ -37,7 +37,7 @@ var config = {
 
   output: {
     path: path.resolve('./build/public'),
-    publicPath: '/public/',
+    publicPath: '/m/public/',
     filename: 'js/[name].[chunkhash].js'
   },
 
@@ -65,7 +65,7 @@ var config = {
         loader: ExtractTextPlugin.extract({
           fallbackLoader: 'style-loader',
           loader: [
-            'css-loader?modules&importLoaders=2&localIdentName=[local]___[hash:base64:5]',
+            'css-loader?modules&importLoaders=10&localIdentName=[local]___[hash:base64:5]',
             'postcss-loader'
           ]
         })

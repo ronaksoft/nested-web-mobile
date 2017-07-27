@@ -78,9 +78,9 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    */
   private goToNotification() {
     if (this.state.notificationOpen) {
-      browserHistory.push('/feed');
+      browserHistory.push('/m/feed');
     } else {
-      browserHistory.push('/notifications');
+      browserHistory.push('/m/notifications');
     }
 
     // update the state to new enviorment
@@ -111,7 +111,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
           {this.state.notifCount > 0 && <span>{this.state.notifCount}</span>}
         </a>
         {/* open compose scene */}
-        <Link to="/compose">
+        <Link to="/m/compose">
           <IcoN size={24} name="compose24"/>
         </Link>
       </div>

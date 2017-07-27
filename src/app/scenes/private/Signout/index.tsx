@@ -12,6 +12,7 @@ interface IProps {
 
 class Signout extends React.Component<IProps, {}> {
   private accountApi: AccountApi = new AccountApi();
+
   /**
    * Creates an instance of Signout.
    * @param {*} props
@@ -34,7 +35,7 @@ class Signout extends React.Component<IProps, {}> {
   public componentWillReceiveProps(newProbs: IProps) {
     if (newProbs.isLogin === false) {
       AAA.getInstance().clearCredentials();
-      browserHistory.push('/signin');
+      browserHistory.push('/m/signin');
       window.location.reload();
     }
   }

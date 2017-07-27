@@ -20,6 +20,7 @@ import AccountApi from 'api/account';
 import * as md5 from 'md5';
 import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
+
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
 
@@ -489,7 +490,7 @@ class Register extends React.Component<IProps, IState> {
       }).then(() => {
         // Goes to signin page if the registeration was successfull
         // TODO: Login the user automatically and go to default state (/feed)
-        browserHistory.push('/signin');
+        browserHistory.push('/m/signin');
       }, () => {
         // Enable the button again and let the user to try once more!
         this.setState({
@@ -506,36 +507,36 @@ class Register extends React.Component<IProps, IState> {
         <div className={[publicStyle.publicForm, style.register].join(' ')}>
           <p>Hooray :) Please continue to complete your account information.</p>
           <Form.Item
-                    help={this.state.username.message}
-                    validateStatus={this.state.username.status}
+            help={this.state.username.message}
+            validateStatus={this.state.username.status}
           >
             <label>Choose your username</label>
-            <Input value={this.state.username.value} onChange={this.handleUsernameChange} />
+            <Input value={this.state.username.value} onChange={this.handleUsernameChange}/>
           </Form.Item>
           <Form.Item
-                    help={this.state.password.message}
-                    validateStatus={this.state.password.status}
+            help={this.state.password.message}
+            validateStatus={this.state.password.status}
           >
             <label>Set a password</label>
-            <Input value={this.state.password.value} onChange={this.handlePasswordChange} />
+            <Input value={this.state.password.value} onChange={this.handlePasswordChange}/>
           </Form.Item>
           <Form.Item
-                    help={this.state.firstName.message}
-                    validateStatus={this.state.firstName.status}
+            help={this.state.firstName.message}
+            validateStatus={this.state.firstName.status}
           >
             <label>First Name</label>
-            <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange} />
+            <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange}/>
           </Form.Item>
           <Form.Item
-                    help={this.state.lastName.message}
-                    validateStatus={this.state.lastName.status}
+            help={this.state.lastName.message}
+            validateStatus={this.state.lastName.status}
           >
             <label>Sure Name</label>
-            <Input value={this.state.lastName.value} onChange={this.handleLastNameChange} />
+            <Input value={this.state.lastName.value} onChange={this.handleLastNameChange}/>
           </Form.Item>
           <Form.Item
-                    help={this.state.email.message}
-                    validateStatus={this.state.email.status}
+            help={this.state.email.message}
+            validateStatus={this.state.email.status}
           >
             <label>Email</label>
             <Input value={this.state.email.value} onChange={this.handleEmailChange}/>

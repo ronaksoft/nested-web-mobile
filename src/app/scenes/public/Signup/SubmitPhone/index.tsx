@@ -21,6 +21,7 @@ import PhoneInput from 'components/PhoneInput';
 import {Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import IValidationResult from '../IValidationResult';
+
 const publicStyle = require('../../public.css');
 
 interface IState {
@@ -162,7 +163,7 @@ class Phone extends React.Component<any, IState> {
     }).then((data) => {
 
       // TODO: Use es6 string interpolation
-      const nextStepRoute = '/signup/verify/:country/:code/:phone/:vid'
+      const nextStepRoute = '/m/signup/verify/:country/:code/:phone/:vid'
         .replace(':country', this.country)
         .replace(':code', this.code)
         .replace(':phone', this.phone)
@@ -197,18 +198,18 @@ class Phone extends React.Component<any, IState> {
         <Form className={publicStyle.publicForm}>
           <p>To create an account with Nested, please enter your phone number.</p>
           <Form.Item
-                    validateStatus={this.state.validation.status}
-                    help={this.state.validation.message}
+            validateStatus={this.state.validation.status}
+            help={this.state.validation.message}
           >
             <PhoneInput
-                      onChange={this.handlePhoneChange}
-                      autoLocate={true}
-                      style={{width: '100%'}}
-                      code={this.props.params.code}
-                      phone={this.props.params.phone}
-                      country={this.props.params.country}/>
+              onChange={this.handlePhoneChange}
+              autoLocate={true}
+              style={{width: '100%'}}
+              code={this.props.params.code}
+              phone={this.props.params.phone}
+              country={this.props.params.country}/>
           </Form.Item>
-          <p className={publicStyle.detail}>Have an account? <Link to="/signin">Sign in</Link></p>
+          <p className={publicStyle.detail}>Have an account? <Link to="/m/signin">Sign in</Link></p>
           <Button type="primary" className={publicStyle.submit} onClick={this.submit}>
             <b>Next</b>
           </Button>

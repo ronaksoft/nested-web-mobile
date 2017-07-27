@@ -196,11 +196,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           const unreadChildrens = {};
           items.forEach((element) => {
 
-          /**
-           * Place Id
-           * @const pid
-           * @type {string}
-           */
+            /**
+             * Place Id
+             * @const pid
+             * @type {string}
+             */
             const pid: string = element.place_id;
 
             /** Assign Place unread counts to `unreadCounts` */
@@ -291,10 +291,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
        * @const params
        * @type {object}
        */
-      // TODO: define interface object of request
+        // TODO: define interface object of request
       const params = {
-        with_children: true,
-      };
+          with_children: true,
+        };
       this.PlaceApi.getAllPlaces(params)
         .then((response: IPlace[]) => {
 
@@ -424,11 +424,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           this.props.setSidebarPlaces(placesConjuctions);
         }, () => {
 
-        /**
-         * Get Unreads of Places
-         */
-        this.getUnreads();
-      });
+          /**
+           * Get Unreads of Places
+           */
+          this.getUnreads();
+        });
     }
   }
 
@@ -569,21 +569,21 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           <ul className={style.sidebarActions}>
             {/* Feed scene link */}
             <li>
-              <Link to={`/feed`}>
+              <Link to={`/m/feed`}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             {/* bookmarks scene link */}
             <li>
-              <Link to={`/bookmarks`}>
+              <Link to={`/m/bookmarks`}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             {/* Shared messages scene link */}
             <li>
-              <Link to={`/shared`}>
+              <Link to={`/m/shared`}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -611,7 +611,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             </li>
             {/* Logging out button */}
             <li>
-              <Link to={`/signout`}>
+              <Link to={`/m/signout`}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>
