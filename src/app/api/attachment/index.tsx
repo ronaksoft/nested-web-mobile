@@ -1,3 +1,14 @@
+/**
+ * @file api/attachment/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc Some tools that help you upload and download an attachment
+ * @export PlaceApi
+ * Documented by:         Soroush Torkzadeh
+ * Date of documentation: 2017-07-27
+ * Reviewed by:           -
+ * Date of review:        -
+ */
+
 import UploadType from './constants/UploadType';
 import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
 import Api from 'api';
@@ -10,7 +21,19 @@ import {
 } from './interfaces';
 import IResponse from 'services/server/interfaces/IResponse';
 
+/**
+ * @class AttachmentApi
+ * @desc A toolbox to help you work with files including upload and download
+ */
 class AttachmentApi {
+  /**
+   * @func getUploadToken
+   * @desc Requests for an upload token
+   * @private
+   * @static
+   * @returns {Promise<string>} 
+   * @memberof AttachmentApi
+   */
   private static getUploadToken(): Promise<string> {
     return new Promise((resolve, reject) => {
       Api.getInstance().request({
@@ -22,6 +45,20 @@ class AttachmentApi {
     });
   }
 
+  /**
+   * @func getUploadUrl
+   * @desc Generates an upload url by using the authenticated user session-key (sk),
+   * the given upload type and a new upload token. This method requests
+   * a new upload token on every call.
+   * @borrows getUploadToken
+   * @private
+   * @static
+   * @param {string} storeUrl 
+   * @param {string} type 
+   * @param {string} sk 
+   * @returns {Promise<string>} 
+   * @memberof AttachmentApi
+   */
   private static getUploadUrl(storeUrl: string, type: string, sk: string): Promise<string> {
     return new Promise((resolve, reject) => {
       this.getUploadToken().then((token: string) => {
@@ -30,12 +67,24 @@ class AttachmentApi {
     });
   }
 
+  /**
+   * @func upload
+   * @desc Uploads a file with progress and 
+   * @borrows AAA, getUploadUrl, XMLHttpRequest and FormData
+   * @borrows
+   * @static
+   * @param {File} file 
+   * @param {string} type 
+   * @returns {Promise<IUploadMission>} 
+   * @memberof AttachmentApi
+   */
   public static upload(file: File, type: string): Promise<IUploadMission> {
     const sessionKey = AAA.getInstance().getCredentials().sk;
     const storeUrl = Configuration().STORE.URL;
     const formData = new FormData();
     const xhr = new XMLHttpRequest();
 
+    // An upload mission is what the function returns and lets you have control over the file upload
     const mission: IUploadMission = {
       abort: () => {
         xhr.abort();
@@ -51,6 +100,7 @@ class AttachmentApi {
       this.getUploadUrl(storeUrl, type, sessionKey).then((url) => {
 
         xhr.open('POST', url, true);
+        // These request headers are required for talking to Xerxes
         xhr.setRequestHeader('Cache-Control', 'no-cache');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.setRequestHeader('X-File-Size', file.size.toString());
@@ -101,12 +151,22 @@ class AttachmentApi {
             mission.onAbort(e);
           }
         };
-
+        // The file upload starts on the function call. Maybe it would be better if
+        // do not start it automatically and defer by defining a method in
+        // the returning mission like `start`.
         xhr.send(formData);
       }, reject);
     });
   }
 
+  /**
+   * @func getDownloadToken
+   * @desc Requests for a download token. This method gets a new download token on each call
+   * @static
+   * @param {IGetDownloadTokenRequest} data 
+   * @returns 
+   * @memberof AttachmentApi
+   */
   public static getDownloadToken(data: IGetDownloadTokenRequest) {
     return new Promise((resolve, reject) => {
       return Api.getInstance().request({
