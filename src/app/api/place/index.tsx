@@ -39,8 +39,8 @@ export default class PlaceApi {
   /**
    * @func getAllPlaces
    * @desc Get all places that the authenticated user is a member
-   * @param {IAccountPlacesRequest} getAllPlacesRequest 
-   * @returns {Promise<any>} 
+   * @param {IAccountPlacesRequest} getAllPlacesRequest
+   * @returns {Promise<any>}
    * @memberof PlaceApi
    */
   public getAllPlaces(getAllPlacesRequest: IAccountPlacesRequest): Promise<any> {
@@ -57,8 +57,8 @@ export default class PlaceApi {
    * @func getUnreads
    * @desc Retrieves the place unread posts count. If you want to get the number of
    * unread posts in the place and all children, set `subs` to true
-   * @param {IGetUnreadsRequest} IGetUnreadsRequest 
-   * @returns {Promise<any>} 
+   * @param {IGetUnreadsRequest} IGetUnreadsRequest
+   * @returns {Promise<any>}
    * @memberof PlaceApi
    */
   public getUnreads(IGetUnreadsRequest: IGetUnreadsRequest): Promise<any> {
@@ -74,8 +74,8 @@ export default class PlaceApi {
   /**
    * @func get
    * @desc Requests for a place data. This API provides everything you need to know about the place
-   * @param {IGetRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IGetRequest} data
+   * @returns {Promise<any>}
    * @memberof PlaceApi
    */
   public get(data: IGetRequest): Promise<any> {
@@ -88,7 +88,7 @@ export default class PlaceApi {
   /**
    * @func getInvitations
    * @desc Retrieves a list of the given place pending invitations
-   * @returns {Promise<any>} 
+   * @returns {Promise<any>}
    * @memberof PlaceApi
    */
   public getInvitations(): Promise<any> {

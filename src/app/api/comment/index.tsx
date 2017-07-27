@@ -38,8 +38,8 @@ export default class CommentApi {
   /**
    * @func get
    * @desc Requests for some comments using the provided camma separated Ids
-   * @param {IGetCommentRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IGetCommentRequest} data
+   * @returns {Promise<any>}
    * @memberof CommentApi
    */
   public get(data: IGetCommentRequest): Promise<any> {
@@ -55,8 +55,8 @@ export default class CommentApi {
   /**
    * @func addComment
    * @desc Adds a new comment to a post
-   * @param {ISendCommentRequest} data 
-   * @returns 
+   * @param {ISendCommentRequest} data
+   * @returns
    * @memberof CommentApi
    */
   public addComment(data: ISendCommentRequest) {

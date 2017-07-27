@@ -38,8 +38,8 @@ export default class InvitationApi {
   /**
    * @func respond
    * @desc Accepts/Rejects an invitation based on the given response
-   * @param {IRespondInvitationRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IRespondInvitationRequest} data
+   * @returns {Promise<any>}
    * @memberof InvitationApi
    */
   public respond(data: IRespondInvitationRequest): Promise<any> {

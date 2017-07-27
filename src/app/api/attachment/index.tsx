@@ -31,7 +31,7 @@ class AttachmentApi {
    * @desc Requests for an upload token
    * @private
    * @static
-   * @returns {Promise<string>} 
+   * @returns {Promise<string>}
    * @memberof AttachmentApi
    */
   private static getUploadToken(): Promise<string> {
@@ -53,10 +53,10 @@ class AttachmentApi {
    * @borrows getUploadToken
    * @private
    * @static
-   * @param {string} storeUrl 
-   * @param {string} type 
-   * @param {string} sk 
-   * @returns {Promise<string>} 
+   * @param {string} storeUrl
+   * @param {string} type
+   * @param {string} sk
+   * @returns {Promise<string>}
    * @memberof AttachmentApi
    */
   private static getUploadUrl(storeUrl: string, type: string, sk: string): Promise<string> {
@@ -69,13 +69,13 @@ class AttachmentApi {
 
   /**
    * @func upload
-   * @desc Uploads a file with progress and 
+   * @desc Uploads a file with progress and
    * @borrows AAA, getUploadUrl, XMLHttpRequest and FormData
    * @borrows
    * @static
-   * @param {File} file 
-   * @param {string} type 
-   * @returns {Promise<IUploadMission>} 
+   * @param {File} file
+   * @param {string} type
+   * @returns {Promise<IUploadMission>}
    * @memberof AttachmentApi
    */
   public static upload(file: File, type: string): Promise<IUploadMission> {
@@ -163,8 +163,8 @@ class AttachmentApi {
    * @func getDownloadToken
    * @desc Requests for a download token. This method gets a new download token on each call
    * @static
-   * @param {IGetDownloadTokenRequest} data 
-   * @returns 
+   * @param {IGetDownloadTokenRequest} data
+   * @returns
    * @memberof AttachmentApi
    */
   public static getDownloadToken(data: IGetDownloadTokenRequest) {

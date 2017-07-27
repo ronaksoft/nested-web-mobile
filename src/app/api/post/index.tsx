@@ -36,9 +36,9 @@ export default class PostApi {
   /**
    * @func getPost
    * @desc Requests for a post data with full body
-   * @param {string} postId 
-   * @param {boolean} [markRead=false] 
-   * @returns 
+   * @param {string} postId
+   * @param {boolean} [markRead=false]
+   * @returns
    * @memberof PostApi
    */
   public getPost(postId: string, markRead: boolean = false) {
@@ -55,8 +55,8 @@ export default class PostApi {
   /**
    * @func pinPost
    * @desc Pin a post by the post Id
-   * @param {string} postId 
-   * @returns 
+   * @param {string} postId
+   * @returns
    * @memberof PostApi
    */
   public pinPost(postId: string) {
@@ -71,8 +71,8 @@ export default class PostApi {
   /**
    * @func unpinPost
    * @desc Unpin a post by the post Id
-   * @param {string} postId 
-   * @returns 
+   * @param {string} postId
+   * @returns
    * @memberof PostApi
    */
   public unpinPost(postId: string) {
@@ -87,8 +87,8 @@ export default class PostApi {
   /**
    * @func getFavoritePosts
    * @desc Retrieves the posts of places that where added to feed sorted by date
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getFavoritePosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -97,12 +97,12 @@ export default class PostApi {
       data: params,
     });
   }
-  
+
   /**
    * @func getFavoritePostsSortedByActivity
    * @desc Retrieves the posts of places that where added to feed sorted by recent activity
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getFavoritePostsSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -116,8 +116,8 @@ export default class PostApi {
   /**
    * @func getPlacePostsAllSortedByActivity
    * @desc Retrieves a list of the given place's posts sorted by latest activity
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getPlacePostsAllSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -131,8 +131,8 @@ export default class PostApi {
   /**
    * @func getPlacePostsAllSortedByRecent
    * @desc Retrieves a list of the given place's posts sorted by date
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getPlacePostsAllSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -145,7 +145,7 @@ export default class PostApi {
   /**
    * @func getPlacePostsUnreadSortedByRecent
    * @desc Retrieves unread posts of the given place sorted by date
-   * @param {IPostsListRequest} [params={limit: 10}] 
+   * @param {IPostsListRequest} [params={limit: 10}]
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
@@ -159,7 +159,7 @@ export default class PostApi {
   /**
    * @func getPlacePostsUnreadSortedByActivity
    * @desc Retrieves unread posts of the given place, sorted by latest activity
-   * @param {IPostsListRequest} [params={limit: 10}] 
+   * @param {IPostsListRequest} [params={limit: 10}]
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
@@ -174,8 +174,8 @@ export default class PostApi {
   /**
    * @func getBockmarkedPosts
    * @desc Retrieves bookmarked posts of the given place
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getBockmarkedPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -189,8 +189,8 @@ export default class PostApi {
   /**
    * @func getBockmarkedPosts
    * @desc Retrieves all sent posts
-   * @param {IPostsListRequest} [params={limit: 10}] 
-   * @returns {Promise<IPostsListResponse>} 
+   * @param {IPostsListRequest} [params={limit: 10}]
+   * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
   public getSentPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
@@ -203,8 +203,8 @@ export default class PostApi {
   /**
    * @func get
    * @desc Requests for a post data with full body
-   * @param {IGetPostRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IGetPostRequest} data
+   * @returns {Promise<any>}
    * @memberof PostApi
    */
   public get(data: IGetPostRequest): Promise<any> {
@@ -217,8 +217,8 @@ export default class PostApi {
   /**
    * @func send
    * @desc Shares a post with the specified targets
-   * @param {ISendRequest} data 
-   * @returns {Promise<ISendResponse>} 
+   * @param {ISendRequest} data
+   * @returns {Promise<ISendResponse>}
    * @memberof PostApi
    */
   public send(data: ISendRequest): Promise<ISendResponse> {
@@ -232,8 +232,8 @@ export default class PostApi {
   /**
    * @func getComments
    * @desc Retrieves a post comments. You can customize the result with both skip/limit and before/after
-   * @param {ICommentListRequest} params 
-   * @returns {Promise<any>} 
+   * @param {ICommentListRequest} params
+   * @returns {Promise<any>}
    * @memberof PostApi
    */
   public getComments(params: ICommentListRequest): Promise<any> {
