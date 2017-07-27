@@ -389,7 +389,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
   }
   /**
    * @function gotoPost
-   * @desc Go to pst route by its `post_id`
+   * @desc Go to post route by its `post_id`
    * @param {IPost} post
    * @private
    */
