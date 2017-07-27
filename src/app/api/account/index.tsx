@@ -1,7 +1,7 @@
 /**
  * @file api/account/index.tsx
  * @author Soroush Torkzadeh <sorousht@nested.com>
- * @desc Server APIs which are related to a user account 
+ * @desc Server APIs which are related to a user account
  * Documented by:           Soroush Torkzadeh
  * Date of documentation:   2017-07-26
  * Reviewed by:             -
@@ -27,7 +27,7 @@ import IPlace from '../place/interfaces/IPlace';
 
 /**
  * @class AccountApi
- * @desc Cyrus APIs which are related to a user account 
+ * @desc Cyrus APIs which are related to a user account
  * @export
  */
 export default class AccountApi {
@@ -44,8 +44,8 @@ export default class AccountApi {
   /**
    * @func recall
    * @desc Checks the given session-key (sk) and session-secret (ss) with Server
-   * @param {IRecallRequest} data 
-   * @returns {Promise<IRecallResponse>} 
+   * @param {IRecallRequest} data
+   * @returns {Promise<IRecallResponse>}
    * @memberof AccountApi
    */
   public recall(data: IRecallRequest): Promise<IRecallResponse> {
@@ -58,9 +58,9 @@ export default class AccountApi {
 
   /**
    * @func get
-   * @desc Retrieves the current user account data 
-   * @param {IGetRequest} data 
-   * @returns {Promise<any>} 
+   * @desc Retrieves the current user account data
+   * @param {IGetRequest} data
+   * @returns {Promise<any>}
    * @memberof AccountApi
    */
   public get(data: IGetRequest): Promise<any> {
@@ -73,7 +73,7 @@ export default class AccountApi {
   /**
    * @func getFavoritePlaces
    * @desc Returns a list of the current user favorite places
-   * @returns {Promise<string[]>} 
+   * @returns {Promise<string[]>}
    * @memberof AccountApi
    */
   public getFavoritePlaces(): Promise<string[]> {
@@ -89,8 +89,8 @@ export default class AccountApi {
   /**
    * @func login
    * @desc Registers a new session with the given username and password
-   * @param {ILoginRequest} data 
-   * @returns {Promise<ILoginResponse>} 
+   * @param {ILoginRequest} data
+   * @returns {Promise<ILoginResponse>}
    * @memberof AccountApi
    */
   public login(data: ILoginRequest): Promise<ILoginResponse> {
@@ -103,7 +103,7 @@ export default class AccountApi {
   /**
    * @func logout
    * @desc Removes (closes) the current user session
-   * @returns {Promise<any>} 
+   * @returns {Promise<any>}
    * @memberof AccountApi
    */
   public logout(): Promise<any> {
@@ -115,8 +115,8 @@ export default class AccountApi {
   /**
    * @desc Creates an account using a verification Id (vid) which should be verified before
    * @func register
-   * @param {IRegisterRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IRegisterRequest} data
+   * @returns {Promise<any>}
    * @memberof AccountApi
    * @see verifyCode
    */
@@ -130,8 +130,8 @@ export default class AccountApi {
   /**
    * @func getVerification
    * @desc Requests a verification code for the given phone number
-   * @param {IGetVerificationRequest} data 
-   * @returns {Promise<IGetVerificationResponse>} 
+   * @param {IGetVerificationRequest} data
+   * @returns {Promise<IGetVerificationResponse>}
    * @memberof AccountApi
    */
   public getVerification(data: IGetVerificationRequest): Promise<IGetVerificationResponse> {
@@ -144,8 +144,8 @@ export default class AccountApi {
   /**
    * @func phoneAvailable
    * @desc Check the phone number to be available for registration
-   * @param {IPhoneAvailableRequest} data 
-   * @returns {Promise<boolean>} 
+   * @param {IPhoneAvailableRequest} data
+   * @returns {Promise<boolean>}
    * @memberof AccountApi
    */
   public phoneAvailable(data: IPhoneAvailableRequest): Promise<boolean> {
@@ -158,8 +158,8 @@ export default class AccountApi {
   /**
    * @desc Asks Server whether the username is available for registration or not
    * @func usernameAvailable
-   * @param {IUsernameAvailable} data 
-   * @returns {Promise<boolean>} 
+   * @param {IUsernameAvailable} data
+   * @returns {Promise<boolean>}
    * @memberof AccountApi
    */
   public usernameAvailable(data: IUsernameAvailable): Promise<boolean> {
@@ -178,8 +178,8 @@ export default class AccountApi {
   /**
    * @func verifyCode
    * @desc Verifies the 6-digit code that was sent to the user
-   * @param {IVerifyCodeRequest} data 
-   * @returns {Promise<any>} 
+   * @param {IVerifyCodeRequest} data
+   * @returns {Promise<any>}
    * @memberof AccountApi
    */
   public verifyCode(data: IVerifyCodeRequest): Promise<any> {
@@ -192,8 +192,8 @@ export default class AccountApi {
   /**
    * @func sendText
    * @desc Sends an SMS to the given phone number
-   * @param {ISendTextRequest} data 
-   * @returns {Promise<any>} 
+   * @param {ISendTextRequest} data
+   * @returns {Promise<any>}
    * @memberof AccountApi
    */
   public sendText(data: ISendTextRequest): Promise<any> {
@@ -206,8 +206,8 @@ export default class AccountApi {
   /**
    * @func callPhone
    * @desc Requests a phone call for the given phone number to get the verification code
-   * @param {ICallPhoneRequest} data 
-   * @returns {Promise<any>} 
+   * @param {ICallPhoneRequest} data
+   * @returns {Promise<any>}
    * @memberof AccountApi
    */
   public callPhone(data: ICallPhoneRequest): Promise<any> {
