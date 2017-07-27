@@ -36,7 +36,7 @@ interface IProps {
   postsRoute: string;
   /**
    * @property routing
-   * @desc routing state (receive from react-router-redux
+   * @desc routing state receive from react-router-redux
    * @type {any}
    * @memberof IProps
    */
@@ -99,28 +99,28 @@ interface IProps {
 interface IState {
   /**
    * @property posts
-   * @desc  array of posts data objects
-   * @type {array}
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
    * @memberof IState
    */
   posts: IPost[];
   /**
    * @property loadingAfter
-   * @desc  loading posts after
+   * @desc  display loading button in top if `loadingAfter` in post list is true
    * @type {boolean}
    * @memberof IState
    */
   loadingAfter: boolean;
   /**
    * @property loadingBefore
-   * @desc  loading posts before
+   * @desc  display loading button in bottom if `loadingBefore` in post list is true
    * @type {boolean}
    * @memberof IState
    */
   loadingBefore: boolean;
   /**
    * @property reachedTheEnd
-   * @desc reached to end of posts
+   * @desc hide loading button if `reachedTheEnd` is true
    * @type {boolean}
    * @memberof IState
    */
@@ -157,7 +157,7 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
-   * updates the state object when the parent changes the props
+   * @desc updates the state object when the parent changes the props
    * @param {IProps} newProps
    * @memberof Bookmarked
    */
@@ -168,7 +168,6 @@ class Bookmarked extends React.Component<IProps, IState> {
 
   /**
    * Component Did Mount
-   *
    * @desc Get post from redux store
    * Calls the Api and store it in redux store
    * @func componentDidMount
@@ -283,6 +282,8 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
+   * @function getOffset
+   * @desc Get offset of post by `id` of html element
    * @param {string} id   id of html element
    * @returns {{left: number, top: number}}
    * @private
@@ -296,7 +297,9 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
-   * @param post
+   * @function gotoPost
+   * @desc Go to pst route by its `post_id`
+   * @param {IPost} post
    * @private
    */
   private gotoPost(post: IPost) {
@@ -324,12 +327,16 @@ class Bookmarked extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
+        {/* rendering Loading component in  `loadingAfter` case */}
         <Loading active={this.state.loadingAfter}/>
+        {/* after Loading component render posts list */}
         {this.state.posts.map((post: IPost) => (
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
+        {/* rendering Loading component in  `loadingBefore` case */}
         <Loading active={this.state.loadingBefore}/>
+        {/* rendering following text when there is no post */}
         {
           !this.state.reachedTheEnd &&
           !this.state.loadingAfter &&
@@ -341,11 +348,13 @@ class Bookmarked extends React.Component<IProps, IState> {
               <div>There's a bookmark icon on the upper-right corner of each post.</div>
               Click on it to save the post to be viewed later.
               <div>
+                {/* Try again button */}
                 <Button onClick={loadMore}>Try again</Button>
               </div>
             </div>
           )
         }
+        {/* rendering following text in `reachedTheEnd` case */}
         {this.state.reachedTheEnd &&
         <div>No more messages here!</div>
         }
