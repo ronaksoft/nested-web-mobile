@@ -16,6 +16,7 @@ import IAttachmentItem from './IAttachmentItem';
 import Mode from './mode';
 import {IcoN} from 'components';
 import {Progress} from 'antd';
+const EMPTY_PICTURE = require('../default.gif');
 
 /**
  * @interface IProps
@@ -117,7 +118,11 @@ class AttachmentItem extends React.Component<IProps, IState> {
                 )
               : (
                   <img
-                      src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                      src={
+                        this.props.item.model.thumbs.x64
+                          ? FileUtil.getViewUrl(this.props.item.model.thumbs.x64)
+                          : EMPTY_PICTURE
+                        }
                       alt={this.props.item.model.name}
                       style={{width: 40, height: 40}}
                   />
