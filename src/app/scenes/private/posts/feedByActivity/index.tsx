@@ -218,7 +218,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
   }
 
   private gotoFeed() {
-    browserHistory.push('/feed');
+    browserHistory.push('/m/feed');
   }
 
   public render() {
