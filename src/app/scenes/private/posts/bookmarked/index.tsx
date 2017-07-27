@@ -1,11 +1,11 @@
 /**
- * @bookmarked scenes/private/posts/bookmarked/index.tsx
+ * @file scenes/private/posts/bookmarked/index.tsx
  * @author sina hosseini <ehosseiniir@gmail.com>
  * @description This component is designed for rendering posts which are bookmarked.
  * Documented by:          Shayesteh Naeimabadi <naamesteh@nested.me>
  * Date of documentation:  2017-07-27
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            sina hosseini <ehosseiniir@gmail.com>
+ * Date of review:         2107-07-27
  */
 import * as React from 'react';
 import {OptionsMenu} from 'components';
@@ -36,61 +36,63 @@ interface IProps {
   postsRoute: string;
   /**
    * @property routing
-   * @desc routing
+   * @desc routing state (receive from react-router-redux
    * @type {any}
    * @memberof IProps
    */
+  // fixme:: set type
   routing: any;
   /**
    * @property posts
-   * @desc  array of posts data objects
-   * @type {array}
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
    * @memberof IProps
    */
   posts: IPost[];
   /**
    * @property currentPost
-   * @desc object of current post data
-   * @type {object}
+   * @desc object of current post
+   * @type {IPost | null}
    * @memberof IProps
    */
   currentPost: IPost | null;
   /**
    * @property setPosts
-   * @desc setPosts action which send posts based on IPost[] interface to store
+   * @desc setPosts action which store a list of IPost objects in redux store
    * @type {function}
    * @memberof IProps
    */
   setPosts: (posts: IPost[]) => {};
   /**
-   * @property postsRoute
-   * @desc setPostsRoute action which send posts's route based on route param to store
+   * @property setPostsRoute
+   * @desc setPostsRoute action which store route of stored posts in redux store
    * @type {function}
    * @memberof IProps
    */
   setPostsRoute: (route: string) => {};
   /**
    * @property setCurrentPost
-   * @desc  setCurrentPost action which send current post based on IPost[] interface to store
+   * @desc  setCurrentPost action which store current post in redux store
    * @type {function}
    * @memberof IProps
    */
   setCurrentPost: (post: IPost) => {};
   /**
    * @property params
-   * @desc params property
+   * @desc parameters that received from route (react-router)
    * @type {any}
    * @memberof IProps
    */
   params?: any;
   /**
    * @property location
-   * @desc location property
+   * @desc location object that received from react-router
    * @type {any}
    * @memberof IProps
    */
   location: any;
 }
+
 /**
  * @interface IState
  */
@@ -132,6 +134,7 @@ interface IState {
  */
 class Bookmarked extends React.Component<IProps, IState> {
   private postApi: PostApi;
+
   /**
    * Creates an instance of Bookmarked.
    * @param {*} props
@@ -145,22 +148,28 @@ class Bookmarked extends React.Component<IProps, IState> {
      * @type {object}
      */
     this.state = {
+      // if postsRoute is equal to current path, stored posts in redux set as component state posts
       posts: this.props.location.pathname === this.props.postsRoute ? this.props.posts : [],
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
     };
   }
+
   /**
    * updates the state object when the parent changes the props
    * @param {IProps} newProps
    * @memberof Bookmarked
    */
   public componentWillReceiveProps(newProps: IProps) {
+    // set state posts by received post from new props
     this.setState({posts: newProps.posts});
   }
+
   /**
-   * Get post from redux store
+   * Component Did Mount
+   *
+   * @desc Get post from redux store
    * Calls the Api and store it in redux store
    * @func componentDidMount
    * @memberof Bookmarked
@@ -173,7 +182,8 @@ class Bookmarked extends React.Component<IProps, IState> {
     this.postApi = new PostApi();
     this.getPost(true);
     /**
-     * handle window scroll in current post case
+     * handle window scroll in current post after user return from a post view page
+     * (by going to a post view page, selected post will store in `currentPost`)
      */
     if (this.props.currentPost) {
       setTimeout(() => {
@@ -186,10 +196,10 @@ class Bookmarked extends React.Component<IProps, IState> {
 
   /**
    * @function getPost
-   * @desc Get posts with declared limits and before timestamp of
+   * @desc Get posts with declared limits and `before` timestamp of
    * the latest post item in state, otherwise the current timestamp.
-   * @param fromNow
-   * @param after
+   * @param {boolean} fromNow receive post from now (set Date.now for `before`)
+   * @param {number} after after timestamp
    * @private
    */
   private getPost(fromNow?: boolean, after?: number) {
@@ -199,6 +209,7 @@ class Bookmarked extends React.Component<IProps, IState> {
       params = {
         before: Date.now(),
       };
+      // show bottom loading
       this.setState({
         loadingBefore: true,
       });
@@ -206,13 +217,18 @@ class Bookmarked extends React.Component<IProps, IState> {
       params = {
         after,
       };
+      // show top loading
       this.setState({
         loadingAfter: true,
       });
     } else {
+      // show bottom loading
       this.setState({
         loadingBefore: true,
       });
+      /**
+       * check state posts length for state `before` timestamp
+       */
       if (this.state.posts.length === 0) {
         params = {
           before: Date.now(),
@@ -223,25 +239,33 @@ class Bookmarked extends React.Component<IProps, IState> {
         };
       }
     }
+
+    // set get post limit
+    // FIXME:: set limit from config
     params.limit = 20;
+
+    // call get bookmarked posts
     this.postApi.getBockmarkedPosts(params)
       .then((response: IPostsListResponse) => {
 
+        // if length of received post is less than limit, set `reachedTheEnd` as true
         if (this.state.posts.length > 0 && response.posts.length < params.limit) {
           this.setState({
             reachedTheEnd: true,
           });
         }
+
         /**
-         * concat received post items with current items and unique array by identifiers
+         * concat received post items with current items and unique array by identifiers (`_id`)
          * and sorting the post items by date
-         * @type {any[]}
+         * @type {IPost[]}
          */
-        const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
+        const posts: IPost[] = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id')
           .sort((a: IPost, b: IPost) => {
             return b.timestamp - a.timestamp;
           });
 
+        // store current state post and route in redux store, if `fromNow` was true
         if (fromNow === true) {
           this.props.setPosts(posts);
           this.props.setPostsRoute(this.props.location.pathname);
@@ -259,9 +283,7 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
-   * @function getOffset
-   * @desc Get offset of posts by `id`
-   * @param id
+   * @param {string} id   id of html element
    * @returns {{left: number, top: number}}
    * @private
    */
@@ -274,8 +296,6 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
-   * @function gotoPost
-   * @desc Go to posts route by `post_id`
    * @param post
    * @private
    */
@@ -337,6 +357,7 @@ class Bookmarked extends React.Component<IProps, IState> {
     );
   }
 }
+
 /**
  * redux store mapper
  * @param store
