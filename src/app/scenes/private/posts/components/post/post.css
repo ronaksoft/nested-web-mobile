@@ -1,11 +1,12 @@
 .postCard {
-  border-bottom: 1px solid rgba(50,61,71,.16);
   overflow-x: hidden;
-  padding-bottom: 72px;
 }
-/* .postView  {
-   margin-bottom: 56px; 
-} */
+ .postView{
+  padding-bottom: 72px; 
+}
+ .postView  .postBody {
+  border-bottom: none;
+}
 .postCard hr{
   border-top: none;
   width: calc(100% - 32px);
@@ -52,8 +53,9 @@
 .postPin {
   opacity: .16;
 }
-/*.postBody {
-}*/
+.postBody {
+  border-bottom: 1px solid rgba(50,61,71,.16);   
+}
 .postBody h3{
   color: rgba(50,61,71,1);
   font-size: 16px;
