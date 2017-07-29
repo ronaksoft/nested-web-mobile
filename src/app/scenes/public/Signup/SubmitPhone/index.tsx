@@ -21,6 +21,8 @@ import PhoneInput from 'components/PhoneInput';
 import {Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import IValidationResult from '../../IValidationResult';
+import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
+import Failure from 'services/server/failure';
 
 const publicStyle = require('../../public.css');
 
@@ -170,8 +172,22 @@ class Phone extends React.Component<any, IState> {
         .replace(':vid', data.vid);
 
       browserHistory.push(nextStepRoute);
-    }, (error: any) => {
-      console.log(error);
+    }, (error: IErrorResponseData) => {
+      if (error.err_code === Failure.INVALID) {
+        this.setState({
+          validation: {
+            message: 'Invalid phone number',
+            status: 'error',
+          },
+        });
+      } else {
+        this.setState({
+          validation: {
+            message: 'An error has occured',
+            status: 'error',
+          },
+        });
+      }
     });
   }
 
