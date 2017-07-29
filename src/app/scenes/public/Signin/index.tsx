@@ -208,7 +208,6 @@ class Signin extends React.Component<IProps, IState> {
           </Form.Item>
           <Button
                   type="primary"
-                  disabled={this.state.username.status !== 'success' || this.state.password.status !== 'success'}
                   htmlType="submit" className={publicStyle.submit} onClick={this.submit}
           >
             <b>Sign in</b>
