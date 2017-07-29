@@ -13,7 +13,8 @@
 .attachmentBar {
   width: 100%;
   height: 108px;
-  overflow-x: auto;
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 .attachmentBar ul {
   display: flex;

@@ -20,6 +20,7 @@ import {IcoN} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
+import IUser from '../../../../../api/account/interfaces/IUser';
 
 const style = require('./comment-board.css');
 
@@ -49,6 +50,13 @@ interface IProps {
    * @memberof IProps
    */
   no_comment?: boolean;
+  /**
+   * @prop user
+   * @desc Logged in user for sending comment
+   * @type {IUser}
+   * @memberof IProps
+   */
+  user?: IUser;
 }
 
 /**
@@ -340,7 +348,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         ))}
         {!this.props.no_comment && (
           <div className={style.commentInput}>
-            <UserAvatar user_id={'robzizo'} size={24} borderRadius={'16px'}/>
+            <UserAvatar user_id={this.props.user._id} size={24} borderRadius={'16px'}/>
             <Input
               placeholder={'write your comment...'}
               value={this.state.newCommentTxt}

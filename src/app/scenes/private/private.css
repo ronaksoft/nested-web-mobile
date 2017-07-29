@@ -48,6 +48,11 @@
 }
 body {
   font-family: 'YekanBakh', 'OpenSans'!important;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+html {
+  overflow: hidden;
 }
 .container {
   padding-top: 56px;

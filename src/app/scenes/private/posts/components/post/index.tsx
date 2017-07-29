@@ -19,6 +19,7 @@ import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
+import IUser from '../../../../../api/account/interfaces/IUser';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -83,6 +84,12 @@ interface IProps {
    * @memberof IProps
    */
   setCurrentPost: (post: IPost) => {};
+  /**
+   * @prop user
+   * @desc Current loggedin user
+   * @memberof IProps
+   */
+  user: IUser;
 }
 
 /**
@@ -189,20 +196,33 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
+   * @func postPlaceClick
+   * @desc redirects to the clicked place posts
+   * @private
+   * @param {string} pid - place ID
+   * @memberof Post
+   */
+  private postPlaceClick(pid) {
+    browserHistory.push(`/m/places/${pid}/messages`);
+  }
+
+  /**
    * @func Pins/Unpins the post and updates the post in store's posts list
    * @private
    * @memberof Post
    */
   private toggleBookmark() {
+    arguments[1].stopPropagation();
+    arguments[1].preventDefault();
     // change pinned of post
     let post;
-    post = this.state.post;
+    post = JSON.parse(JSON.stringify(this.state.post));
     post.pinned = !post.pinned;
     this.setState({post});
 
     // create an PostApi and make api call based on post.pinned
     const postApi = new PostApi();
-    if (this.state.post.pinned) {
+    if (post.pinned) {
       postApi.pinPost(this.state.post._id)
         .then(() => {
           // set action is not in progress
@@ -237,6 +257,7 @@ class Post extends React.Component<IProps, IState> {
           this.setState({post});
         });
     }
+    return false;
   }
 
   /**
@@ -287,7 +308,7 @@ class Post extends React.Component<IProps, IState> {
           </p>
           {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
           <div className={post.pinned ? style.postPinned : style.postPin}
-               onClick={this.toggleBookmark.bind(this, '')}>
+               onClick={this.toggleBookmark.bind(this, event)}>
             {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
@@ -311,7 +332,11 @@ class Post extends React.Component<IProps, IState> {
             {postView && <a>Shared with:</a>}
             {post.post_places.map((place: IPlace, index: number) => {
               if (index < 2) {
-                return <span>{place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>;
+                return (
+                  <span onClick={this.postPlaceClick.bind(this, place._id)}>
+                    {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </span>
+                );
               }
             })}
             {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
@@ -325,9 +350,11 @@ class Post extends React.Component<IProps, IState> {
             </div>
           )}
         </div>
-        {!this.props.post &&
-        <CommentsBoard no_comment={this.state.post.no_comment} post_id={this.state.post._id} post={this.state.post}/>
-        }
+        {!this.props.post && (
+          <CommentsBoard no_comment={this.state.post.no_comment}
+          post_id={this.state.post._id} post={this.state.post}
+          user={this.props.user}/>
+        )}
       </div>
     );
   }
@@ -343,6 +370,7 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   post: ownProps.post,
   currentPost: store.app.currentPost,
   posts: store.app.posts,
+  user: store.app.user,
   routeParams: ownProps.routeParams,
 });
 

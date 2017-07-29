@@ -1,9 +1,11 @@
 .postCard {
-  border-bottom: 1px solid rgba(50,61,71,.16);
   overflow-x: hidden;
 }
-.postView  {
-  margin-bottom: 56px;
+ .postView{
+  padding-bottom: 72px; 
+}
+ .postView  .postBody {
+  border-bottom: none;
 }
 .postCard hr{
   border-top: none;
@@ -51,8 +53,9 @@
 .postPin {
   opacity: .16;
 }
-/*.postBody {
-}*/
+.postBody {
+  border-bottom: 1px solid rgba(50,61,71,.16);   
+}
 .postBody h3{
   color: rgba(50,61,71,1);
   font-size: 16px;
@@ -114,4 +117,9 @@
 .postBody .postFooter i{
   margin-right: 6px;
   margin-top: 1px;
+}
+.commentboxIllu {
+  height: 64px;
+  display: flex;
+  flex: none;
 }

@@ -36,6 +36,9 @@
   justify-content: center;
   margin-right: 8px;
 }
-.expanded i{
+.attachListAnchor i {
   transform: rotateZ(180deg);
+}
+.expanded i{
+  transform: rotateZ(0);
 }
