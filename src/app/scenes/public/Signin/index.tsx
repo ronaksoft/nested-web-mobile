@@ -10,7 +10,7 @@
  */
 
 import * as React from 'react';
-import {Input, Button} from 'antd';
+import {Input, Button, Form} from 'antd';
 import {Link, browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
@@ -18,14 +18,19 @@ import * as md5 from 'md5';
 import AccountApi from 'api/account';
 import {IUser, ILoginResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
+import IValidatableField from '../IValidatableField';
+import IValidationResult from '../IValidationResult';
+import Failure from 'services/server/failure';
 
 const publicStyle = require('../public.css');
+const signinStyle = require('./style.css');
 
 interface IState {
   isLogin: boolean;
-  username: string;
-  password: string;
+  username: IValidatableField;
+  password: IValidatableField;
   inProgress: boolean;
+  message: string;
 }
 
 interface IProps {
@@ -56,9 +61,18 @@ class Signin extends React.Component<IProps, IState> {
 
     this.state = {
       isLogin: false,
-      username: '',
-      password: '',
+      username: {
+        message: null,
+        status: null,
+        value: '',
+      },
+      password: {
+        message: null,
+        status: null,
+        value: '',
+      },
       inProgress: false,
+      message: null,
     };
 
     // Binds `this` (the component context) as these functions context
@@ -81,6 +95,10 @@ class Signin extends React.Component<IProps, IState> {
       return;
     }
 
+    if (!this.validate()) {
+      return;
+    }
+
     // Prevents clicking on "Sign in" button multiple times
     // if authenticating is already in progress and is taking longer than usual
     this.setState({
@@ -88,8 +106,8 @@ class Signin extends React.Component<IProps, IState> {
     });
 
     this.accountApi.login({
-      uid: this.state.username,
-      pass: md5(this.state.password),
+      uid: this.state.username.value,
+      pass: md5(this.state.password.value),
     }).then((response: ILoginResponse) => {
 
       // Replaces the previous credentials that have been stored inside `AAA` service
@@ -99,11 +117,22 @@ class Signin extends React.Component<IProps, IState> {
       this.props.setLogin(response.account);
 
       // Navigates to the default route which is `/feed`
-      browserHistory.push('/m/');
+      browserHistory.push('/m');
     }, (error) => {
-
-      // TODO: Warn the user if the authentication was unsuccessful with an appropriate reason
       console.log(error);
+      if (error.err_code === Failure.INVALID) {
+        this.setState({
+          message: 'Invalid Username or Password',
+        });
+      } else if (error.err_code === Failure.ACCESS_DENIED && error.items[0] === 'disabled') {
+        this.setState({
+          message: 'Your account has been disabled! Contact Nested administrator to get more information.',
+        });
+      } else {
+        this.setState({
+          message: 'An error occurred in login. Please try again later',
+        });
+      }
 
       // Enables "Sign in" button. This lets the user try again
       this.setState({
@@ -121,11 +150,10 @@ class Signin extends React.Component<IProps, IState> {
    * @memberof Signin
    */
   private handleUsernameChange(e: any) {
-    if (this.state.username !== e.target.value) {
-      this.setState({
-        username: e.target.value,
-      });
-    }
+    const validationResult = this.validateUsername(e.target.value);
+    this.setState({
+      username: Object.assign({value: e.target.value}, validationResult),
+    });
   }
 
   /**
@@ -137,11 +165,10 @@ class Signin extends React.Component<IProps, IState> {
    * @memberof Signin
    */
   private handlePasswordChange(e: any) {
-    if (this.state.password !== e.target.value) {
-      this.setState({
-        password: e.target.value,
-      });
-    }
+    const validationResult = this.validatePassword(e.target.value);
+    this.setState({
+      password: Object.assign({value: e.target.value}, validationResult),
+    });
   }
 
   /**
@@ -159,26 +186,88 @@ class Signin extends React.Component<IProps, IState> {
           <div className={publicStyle.filler}/>
         </div>
         <h2>Sign in to Nested</h2>
-        <div className={publicStyle.publicForm}>
-          <Input placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/>
-          <br/>
-          <Input
-            type="password"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handlePasswordChange}
-          />
-          <br/>
-          <Button type="primary" disabled={this.state.username.length === 0 && this.state.password.length === 0}
-                  htmlType="submit" className={publicStyle.submit} onClick={this.submit}>
+        <Form className={[publicStyle.publicForm, signinStyle.signin].join(' ')}>
+          <Form.Item
+                    validateStatus={this.state.username.status}
+          >
+            <Input
+                  placeholder="Username"
+                  value={this.state.username.value}
+                  onChange={this.handleUsernameChange}
+            />
+          </Form.Item>
+          <Form.Item
+                    validateStatus={this.state.password.status}
+          >
+            <Input
+              type="password"
+              placeholder="Password"
+              value={this.state.password.value}
+              onChange={this.handlePasswordChange}
+            />
+          </Form.Item>
+          <Button
+                  type="primary"
+                  disabled={this.state.username.status !== 'success' || this.state.password.status !== 'success'}
+                  htmlType="submit" className={publicStyle.submit} onClick={this.submit}
+          >
             <b>Sign in</b>
           </Button>
           <p className={publicStyle.detail}>Don't have an account? <Link to="/m/signup">Create a new account</Link></p>
-        </div>
+          {
+            this.state.message &&
+            (
+              <Form.Item help={this.state.message} validateStatus="error" />
+            )
+          }
+        </Form>
       </div>
     );
   }
 
+  private validateUsername(value?: string): IValidationResult {
+    if (!value) {
+      return {
+        status: 'error',
+        message: 'Required',
+      } as IValidationResult;
+    }
+
+    return {
+      status: 'success',
+      message: null,
+    } as IValidationResult;
+  }
+
+  private validatePassword(value?: string): IValidationResult {
+    if (!value) {
+      return {
+        status: 'error',
+        message: 'Required',
+      } as IValidationResult;
+    }
+
+    return {
+      status: 'success',
+      message: null,
+    } as IValidationResult;
+  }
+
+  private validate(): boolean {
+    const usernameValidationResult = this.validateUsername(this.state.username.value);
+    const passwordValidationResult = this.validatePassword(this.state.password.value);
+    if (usernameValidationResult.status === 'success'
+      && passwordValidationResult.status === 'success') {
+      return true;
+    }
+
+    this.setState({
+      username: Object.assign(this.state.username, usernameValidationResult),
+      password: Object.assign(this.state.password, passwordValidationResult),
+    });
+
+    return false;
+  }
 }
 
 /**

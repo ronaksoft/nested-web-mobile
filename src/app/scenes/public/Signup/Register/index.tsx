@@ -18,8 +18,8 @@ import {browserHistory} from 'react-router';
 import {Input, Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import * as md5 from 'md5';
-import IValidatableField from '../IValidatableField';
-import IValidationResult from '../IValidationResult';
+import IValidatableField from '../../IValidatableField';
+import IValidationResult from '../../IValidationResult';
 
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
@@ -125,42 +125,42 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'required',
-      });
+      } as IValidationResult);
     }
 
     if (!VALID_CHAR_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'alphanumeric and dash(-) only',
-      });
+      } as IValidationResult);
     }
 
     if (DOT_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'dot(.) is not allowed',
-      });
+      } as IValidationResult);
     }
 
     if (SEQUENCE_DASHES_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'Sequence dashes (--) are not allowed',
-      });
+      } as IValidationResult);
     }
 
     if (START_WITH_DASH_AND_NUMBER_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'Do not start your username with a number (0-9) or a dash (-)',
-      });
+      } as IValidationResult);
     }
 
     if (END_WITH_DASH_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'Do not end your username with a dash (-)',
-      });
+      } as IValidationResult);
     }
 
     // At this moment the username characters are valid and
@@ -169,14 +169,14 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'The username is too short',
-      });
+      } as IValidationResult);
     }
 
     if (value.length > 32) {
       return Promise.resolve({
         status: 'error',
         message: 'The username is too long',
-      });
+      } as IValidationResult);
     }
 
     // Set state to validating right before checking the username avaialibility
@@ -244,27 +244,27 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'Required',
-      });
+      } as IValidationResult);
     }
 
     if (value.length < 6) {
       return Promise.resolve({
         status: 'error',
         message: 'Password must be at least 6 character',
-      });
+      } as IValidationResult);
     }
 
     if (value.length > 128) {
       return Promise.resolve({
         status: 'error',
         message: 'Password is too long',
-      });
+      } as IValidationResult);
     }
 
     return Promise.resolve({
       status: 'success',
       message: null,
-    });
+    } as IValidationResult);
   }
 
   /**
@@ -299,20 +299,20 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'Required',
-      });
+      } as IValidationResult);
     }
 
     if (value.length > 35) {
       return Promise.resolve({
         status: 'error',
         message: 'First name is too long',
-      });
+      } as IValidationResult);
     }
 
     return Promise.resolve({
       status: 'success',
       message: null,
-    });
+    } as IValidationResult);
   }
 
   /**
@@ -347,20 +347,20 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'Required',
-      });
+      } as IValidationResult);
     }
 
     if (value.length > 35) {
       return Promise.resolve({
         status: 'error',
         message: 'First name is too long',
-      });
+      } as IValidationResult);
     }
 
     return Promise.resolve({
       status: 'success',
       message: null,
-    });
+    } as IValidationResult);
   }
 
   /**
@@ -394,20 +394,20 @@ class Register extends React.Component<IProps, IState> {
       return Promise.resolve({
         status: 'error',
         message: 'Email is too long',
-      });
+      } as IValidationResult);
     }
 
     if (value && !EMAIL_REGEX.test(value)) {
       return Promise.resolve({
         status: 'error',
         message: 'Email is not valid',
-      });
+      } as IValidationResult);
     }
 
     return Promise.resolve({
       status: 'success',
       message: null,
-    });
+    } as IValidationResult);
   }
 
   /**

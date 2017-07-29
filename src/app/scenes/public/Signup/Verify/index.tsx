@@ -19,8 +19,8 @@ import {browserHistory, Link} from 'react-router';
 import {Input, Button, message, Form} from 'antd';
 import AccountApi from 'api/account';
 import Waiting from './Waiting';
-import ValidationStatus from '../ValidationStatus';
-import IValidationResult from '../IValidationResult';
+import ValidationStatus from '../../ValidationStatus';
+import IValidationResult from '../../IValidationResult';
 
 const style = require('./verify.css');
 const publicStyle = require('../../public.css');

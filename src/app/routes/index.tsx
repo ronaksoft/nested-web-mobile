@@ -21,6 +21,7 @@ export default (
       <Route component={Private}>
         <IndexRoute component={Feed}/>
         <Route path="/m/feed" component={Feed}/>
+        <Route path="/m" component={Feed}/>
         <Route path="/m/feed/latest-activity" component={FeedByActivity}/>
         <Route path="/m/shared" component={Shared}/>
         <Route path="/m/bookmarks" component={Bookmarked}/>

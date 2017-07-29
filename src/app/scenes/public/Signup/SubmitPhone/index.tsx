@@ -20,7 +20,7 @@ import {browserHistory, Link} from 'react-router';
 import PhoneInput from 'components/PhoneInput';
 import {Button, Form} from 'antd';
 import AccountApi from 'api/account';
-import IValidationResult from '../IValidationResult';
+import IValidationResult from '../../IValidationResult';
 
 const publicStyle = require('../../public.css');
 
