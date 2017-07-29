@@ -16,11 +16,13 @@
 
 import * as React from 'react';
 import {browserHistory, Link} from 'react-router';
-import {Input, Button, message, Form} from 'antd';
+import {Input, Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import Waiting from './Waiting';
 import ValidationStatus from '../../ValidationStatus';
 import IValidationResult from '../../IValidationResult';
+import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
+import Failure from 'services/server/failure';
 
 const style = require('./verify.css');
 const publicStyle = require('../../public.css');
@@ -246,8 +248,18 @@ class Verify extends React.Component<IProps, IState> {
         .replace(':vid', this.props.params.vid);
 
       browserHistory.push(nextStepRoute);
-    }, () => {
-      message.error('An error has occured in verifying your phone');
+    }, (error: IErrorResponseData) => {
+      if (error.err_code === Failure.INVALID) {
+        this.setState({
+          validateStatus: 'error',
+          validationMessage: 'Wrong code',
+        });
+      } else {
+        this.setState({
+          validateStatus: 'error',
+          validationMessage: 'An error has occured',
+        });
+      }
     });
   }
 
