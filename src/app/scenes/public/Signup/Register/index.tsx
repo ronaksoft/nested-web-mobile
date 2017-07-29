@@ -541,7 +541,10 @@ class Register extends React.Component<IProps, IState> {
             <label>Email</label>
             <Input value={this.state.email.value} onChange={this.handleEmailChange}/>
           </Form.Item>
-          <p>By proceeding to create a Nested account, you are agreeing to our <a href="#">Terms and Conditions</a>.</p>
+          <p>
+            By proceeding to create a Nested account, you are agreeing to our&nbsp;
+            <a href="https://help.nested.me/terms/index.html">Terms and Conditions</a>.
+          </p>
           <Button type="primary" onClick={this.submit} style={{width: '100%'}} disabled={this.state.submitting}>
             <b>{this.state.submitting ? 'Submitting...' : 'Finish'}</b>
           </Button>
