@@ -194,15 +194,17 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private toggleBookmark() {
+    arguments[1].stopPropagation();
+    arguments[1].preventDefault();
     // change pinned of post
     let post;
-    post = this.state.post;
+    post = JSON.parse(JSON.stringify(this.state.post));
     post.pinned = !post.pinned;
     this.setState({post});
 
     // create an PostApi and make api call based on post.pinned
     const postApi = new PostApi();
-    if (this.state.post.pinned) {
+    if (post.pinned) {
       postApi.pinPost(this.state.post._id)
         .then(() => {
           // set action is not in progress
@@ -237,6 +239,7 @@ class Post extends React.Component<IProps, IState> {
           this.setState({post});
         });
     }
+    return false;
   }
 
   /**
@@ -287,7 +290,7 @@ class Post extends React.Component<IProps, IState> {
           </p>
           {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
           <div className={post.pinned ? style.postPinned : style.postPin}
-               onClick={this.toggleBookmark.bind(this, '')}>
+               onClick={this.toggleBookmark.bind(this, event)}>
             {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>

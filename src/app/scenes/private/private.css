@@ -48,6 +48,10 @@
 }
 body {
   font-family: 'YekanBakh', 'OpenSans'!important;
+  overflow: auto;
+}
+html {
+  overflow: hidden;
 }
 .container {
   padding-top: 56px;
