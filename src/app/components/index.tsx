@@ -1,4 +1,3 @@
-export {Header} from './Header';
 export {Suggestion} from './Suggestion';
 export {PlaceChips} from './Chips/';
 export {OptionsMenu} from './OptionsMenu/';

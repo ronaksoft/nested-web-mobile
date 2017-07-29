@@ -9,11 +9,3 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.UserAvatar--light {
-  color: gray;
-}
-
-.UserAvatar--light .UserAvatarInner {
-  border: 1px solid lightgray;
-}

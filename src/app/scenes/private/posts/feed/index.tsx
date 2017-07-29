@@ -463,7 +463,7 @@ class Feed extends React.Component<IProps, IState> {
         }
         {/* after Loading component render posts list */}
         {this.state.posts.map((post: IPost) => (
-          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+          <div key={post._id + 'fdgdfgdf'} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
         {/* rendering Loading component in  `loadingBefore` case */}

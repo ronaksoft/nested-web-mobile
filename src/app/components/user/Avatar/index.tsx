@@ -430,7 +430,7 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
 
       const src = 'data:image/svg+xml;base64,' + svgHtml;
 
-      imgDOM = <img className={'UserAvatar--img'} style={imageStyle} src={src}/>;
+      imgDOM = <img style={imageStyle} src={src}/>;
 
     }
 

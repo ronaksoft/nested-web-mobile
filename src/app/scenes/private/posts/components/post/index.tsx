@@ -333,7 +333,7 @@ class Post extends React.Component<IProps, IState> {
             {post.post_places.map((place: IPlace, index: number) => {
               if (index < 2) {
                 return (
-                  <span onClick={this.postPlaceClick.bind(this, place._id)}>
+                  <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
                     {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
                 );

@@ -1,10 +1,10 @@
 .postCard {
   overflow-x: hidden;
 }
- .postView{
+.postView {
   padding-bottom: 72px; 
 }
- .postView  .postBody {
+.postView .postBody {
   border-bottom: none;
 }
 .postCard hr{
