@@ -1,10 +1,11 @@
 .postCard {
   border-bottom: 1px solid rgba(50,61,71,.16);
   overflow-x: hidden;
+  padding-bottom: 72px;
 }
-.postView  {
-  margin-bottom: 56px;
-}
+/* .postView  {
+   margin-bottom: 56px; 
+} */
 .postCard hr{
   border-top: none;
   width: calc(100% - 32px);
@@ -114,4 +115,9 @@
 .postBody .postFooter i{
   margin-right: 6px;
   margin-top: 1px;
+}
+.commentboxIllu {
+  height: 64px;
+  display: flex;
+  flex: none;
 }
