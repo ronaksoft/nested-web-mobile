@@ -8,31 +8,20 @@
  * Reviewed by:            -
  * Date of review:         -
  */
-
+import Failure from '../failure';
 
 /**
  * @interface IErrorResponseData
  * @desc Error response data
  */
 interface IErrorResponseData {
-  // TODO: Use an enum instaed of number.
   /**
    * @desc Cyrus error code that represents the reason of failure:
-   * (-1) UNAUTHORIZED
-   * (0) UNKNOWN
-   * (1) ACCESS_DENIED
-   * (2) UNAVAILABLE
-   * (3) INVALID
-   * (4) INCOMPLETE
-   * (5) DUPLICATE
-   * (6) LIMIT_REACHED
-   * (7) TIMEOUT
-   * (8) SESSION_EXPIRE
    * @prop err_code
-   * @type {number}
+   * @type {Failure}
    * @memberof IErrorResponseData
    */
-  err_code: number;
+  err_code: Failure;
   items: string[];
 }
 
