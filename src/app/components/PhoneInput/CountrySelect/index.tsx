@@ -67,9 +67,14 @@ export default class CountrySelect extends React.Component<IProps, IState> {
     if (!nextProps.selected) {
       return;
     }
+
     this.setState({
-      selectedId: nextProps.selected.id,
+      selectedId: nextProps.selected ? nextProps.selected.id : null,
     });
+
+    if (this.props.onSelected) {
+      this.props.onSelected(nextProps.selected);
+    }
   }
 
   public render() {

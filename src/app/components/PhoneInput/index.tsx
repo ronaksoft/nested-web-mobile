@@ -84,13 +84,16 @@ class PhoneInput extends React.Component<IProps, IState> {
       return;
     }
 
+    const country = this.getCountryByCode(e.target.value);
+
     this.setState({
       code: e.target.value,
+      country,
     });
 
     if (this.props.onChange) {
-      const country = this.state.country ? this.state.country.id : null;
-      this.props.onChange(country, e.target.value, this.state.phone);
+      const countryId = country && country.id ? country.id : null;
+      this.props.onChange(countryId, e.target.value, this.state.phone);
     }
   }
 
@@ -140,6 +143,10 @@ class PhoneInput extends React.Component<IProps, IState> {
   }
 
   private handleCountrySelect(country: ICountry) {
+    if (!country) {
+      return;
+    }
+
     if (this.state.code === country.code) {
       return;
     }
@@ -171,6 +178,10 @@ class PhoneInput extends React.Component<IProps, IState> {
     return Countries.find((item: ICountry) => matchIds(item.id, id));
   }
 
+  private getCountryByCode(code: string): ICountry {
+    return Countries.find((item: ICountry) => item.code === code);
+  }
+
   public render() {
     return (
       <div>
@@ -185,13 +196,11 @@ class PhoneInput extends React.Component<IProps, IState> {
           <Input
                 prefix="+"
                 style={{ width: 64, borderLeft: 0 }}
-                defaultValue={this.props.code}
                 onChange={this.handleCodeChange}
                 value={this.state.code}
           />
           <Input
                 style={{ width: '100%' }}
-                defaultValue={this.props.phone}
                 onChange={this.handlePhoneChange}
                 value={this.state.phone}
           />
