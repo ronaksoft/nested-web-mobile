@@ -20,8 +20,9 @@ export default (
     <Router history={browserHistory}>
       <Route component={Private}>
         <IndexRoute component={Feed}/>
+        <Redirect from="/" to="/m/feed" />
+        <Route path="/m" component={Feed} />
         <Route path="/m/feed" component={Feed}/>
-        <Route path="/m" component={Feed}/>
         <Route path="/m/feed/latest-activity" component={FeedByActivity}/>
         <Route path="/m/shared" component={Shared}/>
         <Route path="/m/bookmarks" component={Bookmarked}/>
@@ -45,7 +46,6 @@ export default (
         <Route path="/m/reply/:replyId/sender" component={Compose}/>
         <Route path="/m/forward/:forwardId" component={Compose}/>
         <Route path="/m/signout" component={Signout}/>
-        <Redirect from="/" to="/m/feed"/>
       </Route>
       <Route component={Public}>
         <Route path="/m/404" component={NotFound}/>
