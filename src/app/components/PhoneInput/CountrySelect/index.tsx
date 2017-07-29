@@ -1,3 +1,14 @@
+/**
+ * @file components/PhoneInput/CountrySelect/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc Country select component
+ * @export PlaceApi
+ * Documented by:         Soroush Torkzadeh
+ * Date of documentation: 2017-07-29
+ * Reviewed by:           -
+ * Date of review:        -
+ */
+
 import { Select } from 'antd';
 const Option = Select.Option;
 import Countries from '../Countries';
@@ -7,19 +18,53 @@ const style = require('../phoneinput.css');
 import * as React from 'react';
 import ICountry from '../ICountry';
 
+/**
+ * @interface IProps
+ * @desc The component properties
+ * 
+ */
 interface IProps {
+  /**
+   * @prop style
+   * @desc Styles you wanna apply to the component
+   * @type {{}}
+   * @memberof IProps
+   */
   style?: {};
+  /**
+   * @prop
+   * @desc Sets the country as the selected item
+   * @type {ICountry}
+   * @memberof IProps
+   */
   selected: ICountry;
+  /**
+   * @prop onSelected
+   * @desc An event to trigger when a country has been selected
+   * @memberof IProps
+   */
   onSelected: (country: ICountry) => void;
 }
 
 interface IState {
+  /**
+   * @desc The selected country Id
+   * @prop selectedId
+   * @type {string}
+   * @memberof IState
+   */
   selectedId?: string;
 }
 
+/**
+ * @class CountrySelect
+ * @desc A component for selecting a country between all countries
+ * @export
+ * @extends {React.Component<IProps, IState>}
+ */
 export default class CountrySelect extends React.Component<IProps, IState> {
   /**
-   * Creates an instance of CountrySelect.
+   * @desc Creates an instance of CountrySelect.
    * @param {IProps} props
    * @memberof CountrySelect
    */
@@ -34,8 +79,8 @@ export default class CountrySelect extends React.Component<IProps, IState> {
   }
 
   /**
-   * Triggers props.onSelected with the selected country
-   *
+   * @func handleChange
+   * @desc Triggers props.onSelected with the selected country
    * @private
    * @param {string} id
    * @memberof CountrySelect
@@ -50,6 +95,12 @@ export default class CountrySelect extends React.Component<IProps, IState> {
     }
   };
 
+  /**
+   * @func filterCountry
+   * @desc Filters countries by name
+   * @private
+   * @memberof CountrySelect
+   */
   private filterCountry = (input: string, option: any) => {
     const name = option.props.children[1].toLowerCase();
 
@@ -57,8 +108,8 @@ export default class CountrySelect extends React.Component<IProps, IState> {
   }
 
   /**
-   * Chose the selected country
-   *
+   * @func componentWillReceiveProps
+   * @desc Chose the selected country
    * @param {IProps} nextProps
    * @returns
    * @memberof CountrySelect
@@ -77,6 +128,12 @@ export default class CountrySelect extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * @Renders the component
+   * 
+   * @returns 
+   * @memberof CountrySelect
+   */
   public render() {
     const createCountry = (country: ICountry) => {
       return (
