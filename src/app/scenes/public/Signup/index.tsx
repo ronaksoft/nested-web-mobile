@@ -14,6 +14,7 @@ import * as React from 'react';
 import SubmitPhone from './SubmitPhone';
 import Register from './Register';
 import Verify from './Verify';
+import {Link} from 'react-router';
 
 const publicStyle = require('../public.css');
 
@@ -38,7 +39,9 @@ class Signup extends React.Component<any, any> {
     return (
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
-          <img src={require('./logo.svg')} className={publicStyle.logo} alt="Nested"/>
+          <Link to="/m/signin">
+            <img src={require('./logo.svg')} className={publicStyle.logo} alt="Nested"/>
+          </Link>
           <div className={publicStyle.filler}/>
         </div>
         {this.props.children}
