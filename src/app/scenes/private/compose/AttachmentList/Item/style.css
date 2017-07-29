@@ -12,6 +12,8 @@
   color: rgba(50,61,71,.4);
   white-space: nowrap;
   display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
   width: calc(100% - 40px);
 }
 .thumb {

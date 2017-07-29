@@ -195,6 +195,13 @@ class Post extends React.Component<IProps, IState> {
     browserHistory.goBack();
   }
 
+  /**
+   * @func postPlaceClick
+   * @desc redirects to the clicked place posts
+   * @private
+   * @param {string} pid - place ID
+   * @memberof Post
+   */
   private postPlaceClick(pid) {
     browserHistory.push(`/m/places/${pid}/messages`);
   }
