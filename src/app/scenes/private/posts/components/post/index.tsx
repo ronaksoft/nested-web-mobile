@@ -188,6 +188,10 @@ class Post extends React.Component<IProps, IState> {
     browserHistory.goBack();
   }
 
+  private postPlaceClick(pid) {
+    browserHistory.push(`/m/places/${pid}/messages`);
+  }
+
   /**
    * @func Pins/Unpins the post and updates the post in store's posts list
    * @private
@@ -314,7 +318,11 @@ class Post extends React.Component<IProps, IState> {
             {postView && <a>Shared with:</a>}
             {post.post_places.map((place: IPlace, index: number) => {
               if (index < 2) {
-                return <span>{place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>;
+                return (
+                  <span onClick={this.postPlaceClick.bind(this, place._id)}>
+                    {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </span>
+                );
               }
             })}
             {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
