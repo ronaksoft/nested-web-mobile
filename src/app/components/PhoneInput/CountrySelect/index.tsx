@@ -21,7 +21,7 @@ import ICountry from '../ICountry';
 /**
  * @interface IProps
  * @desc The component properties
- * 
+ *
  */
 interface IProps {
   /**
@@ -129,9 +129,8 @@ export default class CountrySelect extends React.Component<IProps, IState> {
   }
 
   /**
-   * @Renders the component
-   * 
-   * @returns 
+   * @func render
+   * @desc Renders the component
    * @memberof CountrySelect
    */
   public render() {

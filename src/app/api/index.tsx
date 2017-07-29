@@ -32,7 +32,7 @@ class Api {
    * @func getInstance
    * @desc Creates an instance of Api and keeps it singletonewhile the app is running
    * @static
-   * @returns {Api} 
+   * @returns {Api}
    * @memberof Api
    */
   public static getInstance(): Api {
@@ -45,7 +45,7 @@ class Api {
   /**
    * @func setHasCredential
    * @desc Sets value of hasCredential
-   * @param {boolean} value 
+   * @param {boolean} value
    * @memberof Api
    */
   public setHasCredential(value: boolean) {
@@ -55,7 +55,7 @@ class Api {
   /**
    * @func getHasCredential
    * @desc Returns value of hasCredential
-   * @returns 
+   * @returns
    * @memberof Api
    */
   public getHasCredential() {

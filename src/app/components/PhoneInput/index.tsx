@@ -1,3 +1,14 @@
+/**
+ * @file components/PhoneInput/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc A component that is designed to select your country and enter your phone number.
+ * @export PhoneInput
+ * @exports {ICountry}
+ * Documented by:         Soroush Torkzadeh
+ * Date of documentation: 2017-07-29
+ * Reviewed by:           -
+ * Date of review:        -
+ */
 import * as React from 'react';
 import {Input} from 'antd';
 const InputGroup = Input.Group;
@@ -6,21 +17,88 @@ import ICountry from './ICountry';
 import CountrySelect from './CountrySelect';
 const style = require('./phoneinput.css');
 
+/**
+ * @interface IProps
+ * @desc Properties of the component
+ */
 interface IProps {
+  /**
+   * @prop style
+   * @desc The styles that you want to be applied to the component
+   * @type {{}}
+   * @memberof IProps
+   */
   style?: {};
+  /**
+   * @prop autoLocate
+   * @desc A flag that enables auto locate faeture. By enabling this, The component
+   * finds your country and phone number prefix automatically
+   * @type {boolean}
+   * @memberof IProps
+   */
   autoLocate?: boolean;
+  /**
+   * @prop country
+   * @desc A country Id to be selected
+   * @type {string}
+   * @memberof IProps
+   */
   country?: string;
+  /**
+   * @prop code
+   * @desc A country code to be set in country-code input
+   * @type {string}
+   * @memberof IProps
+   */
   code?: string;
+  /**
+   * @prop phone
+   * @desc A phone number to be set in phone input
+   * @type {string}
+   * @memberof IProps
+   */
   phone?: string;
+  /**
+   * @prop onChange
+   * @desc An event that will be triggered when country, code or phone changes
+   * @memberof IProps
+   */
   onChange?: (country: string, code: string, phone: string) => void;
 }
 
+/**
+ * The component state
+ *
+ * @interface IState
+ */
 interface IState {
+  /**
+   * @prop country
+   * @desc The selected country
+   * @type {ICountry}
+   * @memberof IState
+   */
   country: ICountry;
+  /**
+   * @prop code
+   * @desc The selected country code
+   * @type {string}
+   * @memberof IState
+   */
   code: string;
+  /**
+   * @prop phone
+   * @desc The selected phone number
+   * @type {string}
+   * @memberof IState
+   */
   phone: string;
 }
 
+/**
+ * @interface IGeoLocation
+ * @desc Interface of ipinfo.io response
+ */
 interface IGeoLocation {
   ip: string;
   city: string;
@@ -29,11 +107,27 @@ interface IGeoLocation {
   loc: string;
   org: string;
 }
-
+/**
+ * @const IP_LOCATION_URL
+ * @desc Url of geolocation finder service
+ */
 const IP_LOCATION_URL = 'https://ipinfo.io/json';
+/**
+ * @const CODE_REGEX
+ * @desc A regex that validates country-code
+ */
 const CODE_REGEX = /^[0-9]{0,4}$/;
+/**
+ * @const PHONE_REGEX
+ * @desc A regex that validates phone-number
+ */
 const PHONE_REGEX = /^[0-9]{0,15}$/;
 
+/**
+ * @class PhoneInput
+ * @desc Choose your country and input your phone number using this component easily.
+ * @extends {React.Component<IProps, IState>}
+ */
 class PhoneInput extends React.Component<IProps, IState> {
   /**
    * Creates an instance of PhoneInput.
@@ -44,6 +138,7 @@ class PhoneInput extends React.Component<IProps, IState> {
     super();
     let country = null;
 
+    // Finds a country by country Id which is provided through props
     if (props.country) {
       country = this.getCountryById(props.country);
     }
@@ -54,6 +149,7 @@ class PhoneInput extends React.Component<IProps, IState> {
       country,
     };
 
+    // Finds the client location and country code
     if (props.autoLocate && !props.country) {
       this.findGeoLocation().then((location: IGeoLocation) => {
         const country = this.getCountryById(location.country);
@@ -142,6 +238,14 @@ class PhoneInput extends React.Component<IProps, IState> {
     }
   }
 
+  /**
+   * Updates the state with the selected country
+   *
+   * @private
+   * @param {ICountry} country
+   * @returns
+   * @memberof PhoneInput
+   */
   private handleCountrySelect(country: ICountry) {
     if (!country) {
       return;
@@ -178,10 +282,23 @@ class PhoneInput extends React.Component<IProps, IState> {
     return Countries.find((item: ICountry) => matchIds(item.id, id));
   }
 
+  /**
+   * Finds a country using the provided code
+   *
+   * @private
+   * @param {string} code
+   * @returns {ICountry}
+   * @memberof PhoneInput
+   */
   private getCountryByCode(code: string): ICountry {
     return Countries.find((item: ICountry) => item.code === code);
   }
 
+  /**
+   * Renders the component
+   *
+   * @memberof PhoneInput
+   */
   public render() {
     return (
       <div>
