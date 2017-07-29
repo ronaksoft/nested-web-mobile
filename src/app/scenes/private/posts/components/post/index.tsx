@@ -19,6 +19,7 @@ import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
+import IUser from '../../../../../api/account/interfaces/IUser';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -83,6 +84,12 @@ interface IProps {
    * @memberof IProps
    */
   setCurrentPost: (post: IPost) => {};
+  /**
+   * @prop user
+   * @desc Current loggedin user
+   * @memberof IProps
+   */
+  user: IUser;
 }
 
 /**
@@ -336,9 +343,11 @@ class Post extends React.Component<IProps, IState> {
             </div>
           )}
         </div>
-        {!this.props.post &&
-        <CommentsBoard no_comment={this.state.post.no_comment} post_id={this.state.post._id} post={this.state.post}/>
-        }
+        {!this.props.post && (
+          <CommentsBoard no_comment={this.state.post.no_comment}
+          post_id={this.state.post._id} post={this.state.post}
+          user={this.props.user}/>
+        )}
       </div>
     );
   }
@@ -354,6 +363,7 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   post: ownProps.post,
   currentPost: store.app.currentPost,
   posts: store.app.posts,
+  user: store.app.user,
   routeParams: ownProps.routeParams,
 });
 
