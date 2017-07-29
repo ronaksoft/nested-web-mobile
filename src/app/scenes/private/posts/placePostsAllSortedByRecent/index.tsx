@@ -16,7 +16,7 @@ import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
 import ArrayUntiles from '../../../../services/untils/array';
-import {Button} from 'antd';
+import {Button, Modal} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
 import {Loading} from '../../../../components/Loading/index';
@@ -24,6 +24,8 @@ import {NewBadge} from '../../../../components/NewBadge/index';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActivity from '../../../../services/syncActivity/index';
+import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
+import Failure from 'services/server/failure';
 
 const privateStyle = require('../../private.css');
 
@@ -367,6 +369,20 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
           loadingBefore: false,
           loadingAfter: false,
         });
+      }, (error: IErrorResponseData) => {
+        if (error.err_code === Failure.ACCESS_DENIED
+          || error.err_code === Failure.UNAVAILABLE
+          || error.err_code === Failure.INVALID) {
+          Modal.error({
+            title: 'Error',
+            content: 'Either the Place doesn\'t exist, or you haven\'t been permitted to enter the Place.',
+            okText: 'Return',
+            onOk: () => browserHistory.goBack(),
+          });
+        }
+        console.log('====================================');
+        console.log(error);
+        console.log('====================================');
       });
   }
   /**
