@@ -171,7 +171,6 @@
     "react-dom": "~15.4.2",
     "react-hammerjs": "^0.5.0",
     "react-helmet": "^5.0.3",
-    "react-pullrefresh": "^1.6.5",
     "react-redux": "^5.0.5",
     "react-router": "^3.0.2",
     "react-router-redux": "^4.0.7",
