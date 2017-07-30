@@ -100,10 +100,12 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
     `${attachment.thumbs.pre}/`;
     return (
       <li>
-        <video id="ali" width="100%" controls={true} preload="auto" poster={srcPoster}>
-          <source src={this.state.viewUrl} type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
+        {this.state.viewUrl && (
+          <video id="ali" width="100%" controls={true} preload="auto" poster={srcPoster}>
+            <source src={this.state.viewUrl} type="video/mp4" />
+            Your browser does not support HTML5 video.
+          </video>
+        )}
       </li>
     );
   }
