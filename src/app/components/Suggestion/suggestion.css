@@ -8,7 +8,7 @@
   min-height: 48px;
   border-bottom: 1px solid rgba(50,61,71,.16);
   flex-wrap: wrap;
-  padding: 0 16px;
+  padding: 6px 16px;
 }
 .input span {
   color: black;
@@ -16,12 +16,12 @@
   opacity: .4;
   /*padding-left: 16px;*/
   padding-right: 8px;
-  line-height: 48px;
+  line-height: 32px;
   font-size: 14px;
 }
 .input input {
   border: none;
-  height: 48px;
+  height: 32px;
   font-size: 14px;
   width: 128px;
   display: flex;
