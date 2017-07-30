@@ -305,22 +305,10 @@ class Private extends React.Component<IProps, IState> {
    */
   public render() {
 
-    /**
-     * @const credentials
-     * @type {object}
-     */
-    const credentials = AAA.getInstance().getCredentials();
-
-    /**
-     * @const hasCredentials
-     * @type {boolean}
-     */
-    const hasCredentials = !!(credentials.sk && credentials.ss);
-
     return (
       <div>
         {
-          hasCredentials &&
+          this.state.isLogin &&
           (
             <div>
               {this.createLayout()}

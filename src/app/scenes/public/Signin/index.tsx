@@ -15,6 +15,7 @@ import {Link, browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
 import * as md5 from 'md5';
+import Api from 'api';
 import AccountApi from 'api/account';
 import {IUser, ILoginResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
@@ -79,6 +80,9 @@ class Signin extends React.Component<IProps, IState> {
     this.submit = this.submit.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
+
+    // clear storage
+    localStorage.removeItem('nested.server.domain');
   }
 
   /**
@@ -105,40 +109,63 @@ class Signin extends React.Component<IProps, IState> {
       inProgress: true,
     });
 
+    if (this.state.username.value.indexOf('@') > -1) {
+      const usernameSplits = this.state.username.value.split('@');
+      const api = Api.getInstance();
+      api.reconfigEndPoints(usernameSplits[1])
+        .then(() => {
+          this.login();
+        })
+        .catch((r) => {
+          console.log(r);
+          this.setState({
+            message: 'Your provider is not valid!',
+            inProgress: false,
+          });
+        });
+    } else {
+      this.login();
+    }
+
+  }
+
+  private login() {
     this.accountApi.login({
-      uid: this.state.username.value,
+      uid: this.state.username.value.split('@')[0],
       pass: md5(this.state.password.value),
-    }).then((response: ILoginResponse) => {
+    })
+      .then((response: ILoginResponse) => {
 
-      // Replaces the previous credentials that have been stored inside `AAA` service
-      AAA.getInstance().setCredentials(response);
+          // Replaces the previous credentials that have been stored inside `AAA` service
+          AAA.getInstance().setCredentials(response);
 
-      // Puts the authenticated user data in `store.app` reducer
-      this.props.setLogin(response.account);
+          // Puts the authenticated user data in `store.app` reducer
+          this.props.setLogin(response.account);
 
-      // Navigates to the default route which is `/feed`
-      browserHistory.push('/m');
-    }, (error) => {
-      console.log(error);
-      if (error.err_code === Failure.INVALID) {
-        this.setState({
-          message: 'Invalid Username or Password',
+          // Navigates to the default route which is `/feed`
+          browserHistory.push('/m');
+        },
+        (error) => {
+          console.log(error);
+          if (error.err_code === Failure.INVALID) {
+            this.setState({
+              message: 'Invalid Username or Password',
+            });
+          } else if (error.err_code === Failure.ACCESS_DENIED && error.items[0] === 'disabled') {
+            this.setState({
+              message: 'Your account has been disabled! Contact Nested administrator to get more information.',
+            });
+          } else {
+            this.setState({
+              message: 'An error occurred in login. Please try again later',
+            });
+          }
+
+          // Enables "Sign in" button. This lets the user try again
+          this.setState({
+            inProgress: false,
+          });
         });
-      } else if (error.err_code === Failure.ACCESS_DENIED && error.items[0] === 'disabled') {
-        this.setState({
-          message: 'Your account has been disabled! Contact Nested administrator to get more information.',
-        });
-      } else {
-        this.setState({
-          message: 'An error occurred in login. Please try again later',
-        });
-      }
-
-      // Enables "Sign in" button. This lets the user try again
-      this.setState({
-        inProgress: false,
-      });
-    });
   }
 
   /**
@@ -188,16 +215,16 @@ class Signin extends React.Component<IProps, IState> {
         <h2>Sign in to Nested</h2>
         <Form className={[publicStyle.publicForm, signinStyle.signin].join(' ')}>
           <Form.Item
-                    validateStatus={this.state.username.status}
+            validateStatus={this.state.username.status}
           >
             <Input
-                  placeholder="Username"
-                  value={this.state.username.value}
-                  onChange={this.handleUsernameChange}
+              placeholder="Username"
+              value={this.state.username.value}
+              onChange={this.handleUsernameChange}
             />
           </Form.Item>
           <Form.Item
-                    validateStatus={this.state.password.status}
+            validateStatus={this.state.password.status}
           >
             <Input
               type="password"
@@ -207,8 +234,8 @@ class Signin extends React.Component<IProps, IState> {
             />
           </Form.Item>
           <Button
-                  type="primary"
-                  htmlType="submit" className={publicStyle.submit} onClick={this.submit}
+            type="primary"
+            htmlType="submit" className={publicStyle.submit} onClick={this.submit}
           >
             <b>Sign in</b>
           </Button>
@@ -216,7 +243,7 @@ class Signin extends React.Component<IProps, IState> {
           {
             this.state.message &&
             (
-              <Form.Item help={this.state.message} validateStatus="error" />
+              <Form.Item help={this.state.message} validateStatus="error"/>
             )
           }
         </Form>

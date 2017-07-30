@@ -49,11 +49,26 @@ export default class AccountApi {
    * @memberof AccountApi
    */
   public recall(data: IRecallRequest): Promise<IRecallResponse> {
-    return this.api.request({
-      cmd: 'session/recall',
-      data,
-      withoutQueue: true,
-    });
+
+    /**
+     * check if `nested.server.domain` did exist in local storage get configs for that domain and make recall request
+     */
+    if (localStorage.getItem('nested.server.domain')) {
+      return this.api.reconfigEndPoints(localStorage.getItem('nested.server.domain'))
+        .then(() => {
+          return this.api.request({
+            cmd: 'session/recall',
+            data,
+            withoutQueue: true,
+          });
+        });
+    } else {
+      return this.api.request({
+        cmd: 'session/recall',
+        data,
+        withoutQueue: true,
+      });
+    }
   }
 
   /**
