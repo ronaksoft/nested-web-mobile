@@ -11,6 +11,7 @@ import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
 import AAA from '../../../../services/aaa/index';
 import CONFIG from '../../../../config';
+import AttachmentApi from 'api/attachment';
 
 /**
  * @name IProps
@@ -27,10 +28,10 @@ interface IProps {
  * @name IState
  * @interface IState for component reactive Elements
  * @type {object}
- * @property {string} urlSrc - source url of image
+ * @property {viewUrl} viewUrl - source url of video
  */
 interface IState {
-  attachment: IPostAttachment;
+  viewUrl: string;
 }
 
 /**
@@ -40,7 +41,6 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  */
 export default class VideoThumbnail extends React.Component<IProps, IState> {
-
   /**
    * @constructor
    * Creates an instance of Sidebar.
@@ -49,6 +49,28 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
    */
   constructor(props) {
     super(props);
+    this.state = {
+      viewUrl : '',
+    };
+  }
+
+  private viewUrl() {
+    AttachmentApi.getDownloadToken({
+        universal_id: this.props.attachment._id,
+      }).then((token: string) => {
+        this.setState({
+          viewUrl : `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+              `${this.props.attachment._id}/${token}`,
+        });
+      });
+  }
+
+  public componentDidMount() {
+    this.viewUrl();
+    // this.refs.videoEl.load();
+    setTimeout(() => {
+      // $('#ali').load();
+    }, 1000);
   }
 
   /**
@@ -69,19 +91,19 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
     const {attachment} = this.props;
 
     /**
-     * @name src
-     * @const
+     * preview image
+     * @name srcPoster
+     * @var
      * @type {string}
      */
-    const src =
-      `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-      `${attachment.thumbs.pre}`;
+    const srcPoster: string = `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+    `${attachment.thumbs.pre}/`;
     return (
       <li>
-        <img src={src}
-             style={{
-               width: '100%',
-             }}/>
+        <video id="ali" width="100%" controls={true} preload="auto" poster={srcPoster}>
+          <source src={this.state.viewUrl} type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
       </li>
     );
   }
