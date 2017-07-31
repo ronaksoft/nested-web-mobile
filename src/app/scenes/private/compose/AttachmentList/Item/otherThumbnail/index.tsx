@@ -8,8 +8,9 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IComposeAttachment from '../../../../../../api/post/interfaces/IComposeAttachment';
-const style = require('../../composeAttachment.css');
+// import IComposeAttachment from '../../../../../../api/post/interfaces/IComposeAttachment';
+import IAttachmentItem from '../IAttachmentItem';
+const style = require('../composeAttachment.css');
 
 /**
  * @name IProps
@@ -20,8 +21,7 @@ const style = require('../../composeAttachment.css');
  * @property {function} onclick - callback click event to parent
  */
 interface IProps {
-  attachment: IComposeAttachment;
-  onclick: (attachment: IComposeAttachment) => void;
+  item: IAttachmentItem;
 }
 
 /**
@@ -31,7 +31,7 @@ interface IProps {
  * @property {IPostAttachment} attachment
  */
 interface IState {
-  attachment: IComposeAttachment;
+  item: IAttachmentItem;
 }
 
 /**
@@ -67,15 +67,15 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
      * @const
      * @type {object}
      */
-    const {attachment} = this.props;
+    const {item} = this.props;
     return (
       /** parent element define onClick function */
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
-        <div className={[style.attachmentHolder, style[attachment.type]].join(' ')}>
-          <div className={style.fileName}><p>{attachment.filename}</p></div>
+      <li key={item.id}>
+        <div className={[style.attachmentHolder, style[item.type]].join(' ')}>
+          <div className={style.fileName}><p>{item.name}</p></div>
           <div className={style.detail}>
             <p>{'extension'}</p>
-            <span className={style.attsize}>{attachment.size}</span>
+            <span className={style.attsize}>{item.size}</span>
           </div>
         </div>
       </li>

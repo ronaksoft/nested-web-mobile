@@ -13,10 +13,10 @@ import * as React from 'react';
 // import FileUtil from 'services/utils/file';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
-import OtherThumbnail from '../../../../../components/AttachmentView/components/otherThumbnail';
-import VideoThumbnail from '../../../../../components/AttachmentView/components/videoThumbnail';
+import OtherThumbnail from './otherThumbnail';
+import VideoThumbnail from './videoThumbnail';
 import UploadType from '../../../../../api/attachment/constants/UploadType';
-import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
+// import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
 import Mode from './mode';
 import {IcoN} from 'components';
 import {Progress} from 'antd';
@@ -43,7 +43,6 @@ interface IProps {
    * @type {array<IPostAttachment>}
    * @memberof IProps
    */
-  attachment: IComposeAttachment;
   /**
    * @prop picture
    * @desc Picture of the selected File. A thumbnail image will be created on selecting an image
@@ -105,8 +104,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
   }
 
   private renderItem() {
-    const attachment = this.props.attachment;
-    switch (attachment.type) {
+    const item = this.props.item;
+    console.log(111111, item);
+    switch (item.type) {
       case UploadType.GIF:
       case UploadType.IMAGE:
         return (
@@ -118,11 +118,11 @@ class AttachmentItem extends React.Component<IProps, IState> {
         );
       case UploadType.VIDEO:
         return (
-          <VideoThumbnail attachment={attachment}/>
+          <VideoThumbnail item={item}/>
         );
       default:
         return (
-          <OtherThumbnail attachment={attachment}/>
+          <OtherThumbnail item={item}/>
         );
     }
   }
@@ -143,7 +143,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
     return (
       <div className={style.item}>
         <span className={style.thumb}>
-               {    item.mode === Mode.UPLOAD && (
+               { item.mode === Mode.UPLOAD && (
                  this.renderItem()
                )
                }

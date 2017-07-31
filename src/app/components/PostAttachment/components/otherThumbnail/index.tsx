@@ -8,9 +8,8 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IAttachmentItem from '../IAttachmentItem';
-import AAA from '../../../../../../services/aaa/index';
-import CONFIG from '../../../../../../config';const style = require('../../postattachment.css');
+import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
+const style = require('../../postattachment.css');
 
 /**
  * @name IProps
@@ -21,8 +20,8 @@ import CONFIG from '../../../../../../config';const style = require('../../posta
  * @property {function} onclick - callback click event to parent
  */
 interface IProps {
-  attachment: IAttachmentItem;
-  onclick: (attachment: IAttachmentItem) => void;
+  attachment: IPostAttachment;
+  onclick: (attachment: IPostAttachment) => void;
 }
 
 /**
@@ -32,7 +31,7 @@ interface IProps {
  * @property {IPostAttachment} attachment
  */
 interface IState {
-  attachment: IAttachmentItem;
+  attachment: IPostAttachment;
 }
 
 /**

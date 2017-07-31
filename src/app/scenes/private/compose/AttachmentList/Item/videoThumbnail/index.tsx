@@ -8,33 +8,33 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IComposeAttachment from '../../../../../../api/post/interfaces/IComposeAttachment';
-import AAA from '../../../../../../services/aaa/index';
-import CONFIG from '../../../../../../config';
+import FileUtil from 'services/utils/file';
+// import IComposeAttachment from '../../../../../../api/post/interfaces/IComposeAttachment';
+import IAttachmentItem from '../IAttachmentItem';
+// import AAA from '../../../../../../services/aaa/index';
+// import CONFIG from '../../../../../../config';
 
 /**
  * @name IProps
  * @interface IProps for component initials data
  * This interface pass the required parameters to component.
  * @type {object}
- * @property {IPostAttachment} attachment - list of attachments
+ * @property {IAttachmentItem} attachment - list of attachments
  * @property {boolean} fullWidth - does it need to render thumbnail in full width of screen
- * @property {function} onclick - callback click event to parent
  */
 interface IProps {
-  attachment: IComposeAttachment;
+  item: IAttachmentItem;
   fullWidth?: boolean;
-  onclick: (attachment: IComposeAttachment) => void;
 }
 
 /**
  * @name IState
  * @interface IState for component reactive Elements
  * @type {object}
- * @property {IPostAttachment} attachment
+ * @property {IAttachmentItem} attachment
  */
 interface IState {
-  attachment: IComposeAttachment;
+  item: IAttachmentItem;
 }
 
 /**
@@ -71,22 +71,19 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @const
      * @type {object}
      */
-    const {attachment} = this.props;
+    const {item} = this.props;
 
     /**
      * @name src
      * @const
      * @type {string}
      */
-    const src =
-      `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-      `${this.props.fullWidth ? attachment.thumbs.pre : attachment.thumbs.x128}`;
     return (
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
-        <img src={src}
+      <li key={item.id}>
+        <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
              style={{
-               width: this.props.fullWidth ? '100%' : 'inherit',
-               height: this.props.fullWidth ? 'inherit' : '96px',
+               width: this.props.fullWidth ? '40px' : 'inherit',
+               height: this.props.fullWidth ? 'inherit' : '40px',
              }}/>
       </li>
     );
