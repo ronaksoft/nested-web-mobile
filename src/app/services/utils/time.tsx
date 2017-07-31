@@ -1,11 +1,39 @@
+/**
+ * @file utils/time.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc Tools for formatting a timestamp
+ * @export {TimeUntiles}
+ * Documented by: Soroush Torkzadeh
+ * Date of documentation:  2017-07-31
+ * Reviewed by:            -
+ * Date of review:         -
+ */
 import * as moment from 'moment';
 
+/**
+ * @class TimeUntiles
+ * @desc Formats a timestamp (usually provided by Cyrus) in full and dynamic formats
+ */
 class TimeUntiles {
 
+  /**
+   * @func full
+   * @desc Formats the given timestamp in full mode
+   * @param {number} timestamp
+   * @returns {string}
+   * @memberof TimeUntiles
+   */
   public full(timestamp: number) {
     return moment(timestamp).format('dddd, MMMM DD YYYY, HH:mm');
   }
 
+  /**
+   * @func dynamic
+   * @desc Formates the given timestamp dynamically
+   * @param {number} timestamp
+   * @returns {string}
+   * @memberof TimeUntiles
+   */
   public dynamic(timestamp: number) {
 
     const date = moment(timestamp);

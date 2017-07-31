@@ -12,7 +12,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';

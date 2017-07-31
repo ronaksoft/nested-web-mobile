@@ -16,8 +16,8 @@
  */
 import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
-import TimeUntiles from '../../../../../services/untils/time';
-import ArrayUntiles from '../../../../../services/untils/array';
+import TimeUntiles from '../../../../../services/utils/time';
+import ArrayUntiles from '../../../../../services/utils/array';
 import {IcoN, UserAvatar, FullName} from 'components';
 import CommentBody from '../../../../../components/CommentBody';
 import PostSubject from '../../../../../components/PostSubject';

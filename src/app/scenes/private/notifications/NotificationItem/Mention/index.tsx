@@ -12,7 +12,7 @@
 import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 
@@ -56,7 +56,7 @@ class Mention extends React.Component <IProps, any> {
               </b>:
               {/* rendering account id of notification */}
               <span><b> @{this.props.notification.account_id}.</b></span>
-              {/* using untils service component for rendering correct time */}
+              {/* using utils service component for rendering correct time */}
               <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>
