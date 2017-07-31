@@ -15,8 +15,6 @@ import AAA from 'services/aaa';
 import {browserHistory} from 'react-router';
 
 /**
- * 
- * 
  * @class Public
  * @classdesc This component renders the public scenes for not signed in users
  * @extends {React.Component<any, any>}
