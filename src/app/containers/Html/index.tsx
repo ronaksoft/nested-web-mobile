@@ -58,7 +58,7 @@ class Html extends React.Component<IHtmlProps, {}> {
         {head.script.toComponent()}
         <Helmet meta={appConfig.app.head.meta} title={appConfig.app.head.title}/>
         {renderStyles}
-        <link rel="shortcut icon" href="/m/favicon.ico"/>
+        <link rel="shortcut icon" href="/m/public/favicon.ico"/>
         <link rel="manifest" href="/m/public/manifest.json"/>
       </head>
       <body>

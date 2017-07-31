@@ -17,9 +17,9 @@ class ArrayUntiles {
   /**
    * Returns an array that duplicate objects has been removed.
    * The given key is used to determine the objects with the same values
-   * @param {any[]} array 
-   * @param {string} key 
-   * @returns {any[]} 
+   * @param {any[]} array
+   * @param {string} key
+   * @returns {any[]}
    * @memberof ArrayUntiles
    */
   public uniqueObjects(array: any[], key: string): any[] {
@@ -46,8 +46,8 @@ class ArrayUntiles {
   /**
    * @func uniqueArray
    * @desc Creates a new array form the given one without duplicate values
-   * @param {(string[] | number[])} array 
-   * @returns {any[]} 
+   * @param {(string[] | number[])} array
+   * @returns {any[]}
    * @memberof ArrayUntiles
    */
   public uniqueArray(array: string[] | number[]): any[] {
