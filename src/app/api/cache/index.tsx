@@ -1,10 +1,10 @@
 /**
  * @file api/cache/index.tsx
  * @author Hamidreza KK <hamidrezakks@gmail.com>
- * @desc All APIs are related to Post
- * @export PlaceApi
- * Documented by:         Hamidreza KK
- * Date of documentation: 2017-07-31
+ * @desc API value object cache
+ * @export ApiCache
+ * Documented by:         Soroush Torkzadeh
+ * Date of documentation: 2017-07-29
  * Reviewed by:           -
  * Date of review:        -
  */
@@ -12,95 +12,109 @@ import {IRequest, IResponse} from 'services/server';
 
 /**
  * @class ApiCache
- * @desc Base of all Api Cache classes
+ * @desc Base of all ApiCache classes
  */
 class ApiCache {
+  private static instance;
   private requestKeyList: any[] = [];
+  private pipeLength: number;
 
-  public constructor() {
+  private constructor() {
+    // start ApiCache service
+    this.pipeLength = 20;
   }
 
   /**
-   * @func observeRequest
-   * @desc Observe Api request for caching them like as a value object
-   * @param {IRequest} req, requestFunction
-   * @returns {Promise<any>}
+   * @func getInstance
+   * @desc Creates an instance of ApiCache and keeps it singletonewhile the app is running
+   * @static
+   * @returns {ApiCache}
    * @memberof ApiCache
    */
-  public observeRequest(req: IRequest, requestFunction): Promise<any> {
+  public static getInstance(): ApiCache {
+    if (!ApiCache.instance) {
+      ApiCache.instance = new ApiCache();
+    }
+    return ApiCache.instance;
+  }
+
+  private hasCache(key: string): number {
+    for (let i = 0; i < this.requestKeyList.length; i++) {
+      if (this.requestKeyList.length[i].key === key) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private getItem(key: string): any {
+    const index: number = this.hasCache(key);
+    if (index > -1) {
+      return this.requestKeyList[index];
+    } else {
+      return null;
+    }
+  }
+
+  public getRequstKey(req: IRequest): string {
     const requestKeyJson: any = {
       cmd: req.cmd,
       data: req.data,
     };
-    const requestKey: string = JSON.stringify(requestKeyJson);
-    if (!this.requestKeyList.hasOwnProperty(requestKey)) {
-      this.requestKeyList[requestKey] = {
-        request: [],
+    return JSON.stringify(requestKeyJson);
+  }
+
+  public observeRequest(req: IRequest): IResponse {
+    const requestKey: string = this.getRequstKey(req);
+    const response: IResponse = {
+      status: 'no-cache',
+      data: null,
+    };
+    const item = this.getItem(requestKey);
+    if (item === null) {
+      this.shortenRequestList();
+      this.requestKeyList.push({
+        key: requestKey,
+        param: req,
         response: null,
-        status: null,
-        resolve: true,
-      };
-      requestFunction().then((response: IResponse) => {
-        if (response.status === 'ok') {
-          this.requestKeyList[requestKey].response = response.data;
-          this.requestKeyList[requestKey].resolve = true;
-        } else {
-          this.requestKeyList[requestKey].response = response.data;
-          this.requestKeyList[requestKey].resolve = false;
-        }
-        this.requestKeyList[requestKey].status = response.status;
-        this.callAllPromisesByRequestKey(requestKey);
-      }).catch(() => {
-        // this.requestKeyList[requestKey].response = null;
-        // this.requestKeyList[requestKey].resolve = null;
-        this.callAllPromisesByRequestKey(requestKey);
       });
+      return response;
+    } else if (item.response === null) {
+      this.updateCachePosition(requestKey);
+      return response;
+    } else {
+      item.response._reqid = req._reqid;
+      item.response.status = 'cache';
+      return item.response;
     }
-
-    let internalResolve;
-    let internalReject;
-
-    const promise = new Promise((res, rej) => {
-      internalResolve = res;
-      internalReject = rej;
-    });
-
-    this.requestKeyList[requestKey].request.push({
-      param: req,
-      promise: {
-        resolve: internalResolve,
-        reject: internalReject,
-      },
-    });
-
-    return promise;
   }
 
-  /**
-   * @func callAllPromisesByRequestKey
-   * @desc call all promises by key request
-   * @param {string} requestKey
-   * @returns {void}
-   * @memberof ApiCache
-   */
-  private callAllPromisesByRequestKey(requestKey: string): any {
-    const requestList = this.requestKeyList[requestKey];
-    requestList.request.forEach((value) => {
-      const response: IResponse = {
-        _reqid: value.param._reqid,
-        status: requestList.status,
-        data: requestList.response,
-      };
-      if (requestList.resolve === true) {
-        value.promise.resolve(response.data);
-      } else if (requestList.resolve === null) {
-        value.promise.reject();
-      } else {
-        value.promise.reject(response.data);
-      }
-    });
-    delete this.requestKeyList[requestKey];
+  public setResponse(key: string, res: IResponse): void {
+    const index = this.hasCache(key);
+    if (index > -1) {
+      this.requestKeyList[index].response = res;
+    }
   }
+
+  private updateCachePosition(key: string): void {
+    const index = this.hasCache(key);
+    if (index > -1) {
+      this.moveToFront(index);
+    }
+  }
+
+  private moveToFront(index) {
+    let collection = this.requestKeyList;
+    collection = collection.splice(index, 1).concat(collection);
+    this.requestKeyList = collection;
+  }
+
+  private shortenRequestList() {
+    while (this.requestKeyList.length > this.pipeLength) {
+      this.requestKeyList.pop();
+    }
+  }
+
 }
 
 export default ApiCache;

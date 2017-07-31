@@ -77,7 +77,6 @@ class Api {
     };
     const requestKey: string = JSON.stringify(requestKeyJson);
     if (!this.requestKeyList.hasOwnProperty(requestKey)) {
-      console.log(requestKey);
       this.requestKeyList[requestKey] = {
         request: [],
         response: null,
