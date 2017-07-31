@@ -8,8 +8,7 @@
  * Reviewed by:           -
  * Date of review:        -
  */
-import {Server, IRequest} from 'services/server';
-import {IResponse} from 'services/server';
+import {Server, IRequest, IResponse} from 'services/server';
 import Unique from './../services/utils/unique';
 import {setNewConfig} from './../config';
 
@@ -23,6 +22,7 @@ class Api {
   private messageCanceller = null;
   private hasCredential: boolean = false;
   private syncActivityListeners: object = {};
+  private requestKeyList: any[] = [];
 
   private constructor() {
     // start api service
@@ -71,15 +71,90 @@ class Api {
    * @memberof Api
    */
   public request(req: IRequest): Promise<any> {
-    return new Promise((resolve, reject) => {
+    const requestKeyJson: any = {
+      cmd: req.cmd,
+      data: req.data,
+    };
+    const requestKey: string = JSON.stringify(requestKeyJson);
+    if (!this.requestKeyList.hasOwnProperty(requestKey)) {
+      console.log(requestKey);
+      this.requestKeyList[requestKey] = {
+        request: [],
+        response: null,
+        status: null,
+        resolve: true,
+      };
       this.getServer().request(req).then((response: IResponse) => {
         if (response.status === 'ok') {
-          resolve(response.data);
+          this.requestKeyList[requestKey].response = response.data;
+          this.requestKeyList[requestKey].resolve = true;
         } else {
-          reject(response.data);
+          this.requestKeyList[requestKey].response = response.data;
+          this.requestKeyList[requestKey].resolve = false;
         }
-      }).catch(reject);
+        console.log(response.data);
+        this.requestKeyList[requestKey].status = response.status;
+        this.callAllPromisesByRequestKey(requestKey);
+      }).catch(() => {
+        // this.requestKeyList[requestKey].response = null;
+        // this.requestKeyList[requestKey].resolve = null;
+        this.callAllPromisesByRequestKey(requestKey);
+      });
+    }
+
+    let internalResolve;
+    let internalReject;
+
+    const promise = new Promise((res, rej) => {
+      internalResolve = res;
+      internalReject = rej;
     });
+
+    this.requestKeyList[requestKey].request.push({
+      param: req,
+      promise: {
+        resolve: internalResolve,
+        reject: internalReject,
+      },
+    });
+
+    return promise;
+
+    // return new Promise((resolve, reject) => {
+    //   this.getServer().request(req).then((response: IResponse) => {
+    //     if (response.status === 'ok') {
+    //       resolve(response.data);
+    //     } else {
+    //       reject(response.data);
+    //     }
+    //   }).catch(reject);
+    // });
+  }
+
+  /**
+   * @func callAllPromisesByRequestKey
+   * @desc call all promises by key request
+   * @param {string} requestKey
+   * @returns {void}
+   * @memberof Api
+   */
+  private callAllPromisesByRequestKey(requestKey: string): any {
+    const requestList = this.requestKeyList[requestKey];
+    requestList.request.forEach((value) => {
+      const response: IResponse = {
+        _reqid: value.param._reqid,
+        status: requestList.status,
+        data: requestList.response,
+      };
+      if (requestList.resolve === true) {
+        value.promise.resolve(response.data);
+      } else if (requestList.resolve === null) {
+        value.promise.reject();
+      } else {
+        value.promise.reject(response.data);
+      }
+    });
+    delete this.requestKeyList[requestKey];
   }
 
   // TODO: Ask sina to explain these functions
