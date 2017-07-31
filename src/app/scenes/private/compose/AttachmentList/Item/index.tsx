@@ -10,13 +10,19 @@
  */
 
 import * as React from 'react';
-import FileUtil from 'services/utils/file';
+// import FileUtil from 'services/utils/file';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
+import OtherThumbnail from '../../../../../components/AttachmentView/components/otherThumbnail';
+import VideoThumbnail from '../../../../../components/AttachmentView/components/videoThumbnail';
+import UploadType from '../../../../../api/attachment/constants/UploadType';
+import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
 import Mode from './mode';
 import {IcoN} from 'components';
 import {Progress} from 'antd';
-const EMPTY_PICTURE = require('../default.gif');
+/*
+ const EMPTY_PICTURE = require('../default.gif');
+ */
 
 /**
  * @interface IProps
@@ -31,6 +37,13 @@ interface IProps {
    * @memberof IProps
    */
   item: IAttachmentItem;
+  /**
+   * @property {Array<IPostAttachment>} attachments - list of attachments
+   * @desc routing state receive from react-router-redux
+   * @type {array<IPostAttachment>}
+   * @memberof IProps
+   */
+  attachment: IComposeAttachment;
   /**
    * @prop picture
    * @desc Picture of the selected File. A thumbnail image will be created on selecting an image
@@ -91,6 +104,29 @@ class AttachmentItem extends React.Component<IProps, IState> {
     });
   }
 
+  private renderItem() {
+    const attachment = this.props.attachment;
+    switch (attachment.type) {
+      case UploadType.GIF:
+      case UploadType.IMAGE:
+        return (
+          <img
+            src={this.props.picture}
+            alt={this.props.item.name}
+            style={{width: 40, height: 40}}
+          />
+        );
+      case UploadType.VIDEO:
+        return (
+          <VideoThumbnail attachment={attachment}/>
+        );
+      default:
+        return (
+          <OtherThumbnail attachment={attachment}/>
+        );
+    }
+  }
+
   /**
    * @func render
    * @desc Renders the component
@@ -103,32 +139,15 @@ class AttachmentItem extends React.Component<IProps, IState> {
         this.props.onRemove(this.props.item);
       }
     };
-
+    const item = this.props.item;
     return (
       <div className={style.item}>
         <span className={style.thumb}>
-          {
-            this.props.item.mode === Mode.UPLOAD
-              ? (
-                  <img
-                      src={this.props.picture}
-                      alt={this.props.item.name}
-                      style={{width: 40, height: 40}}
-                  />
-                )
-              : (
-                  <img
-                      src={
-                        this.props.item.model.thumbs.x64
-                          ? FileUtil.getViewUrl(this.props.item.model.thumbs.x64)
-                          : EMPTY_PICTURE
-                        }
-                      alt={this.props.item.model.name}
-                      style={{width: 40, height: 40}}
-                  />
-                )
-          }
-        </span>
+               {    item.mode === Mode.UPLOAD && (
+                 this.renderItem()
+               )
+               }
+          </span>
         <div className={style.atachmentDetail}>
           <span className={style.name}>
             {

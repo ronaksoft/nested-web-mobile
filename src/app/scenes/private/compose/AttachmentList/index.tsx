@@ -15,6 +15,7 @@ import {Progress} from 'antd';
 import {IcoN} from 'components';
 import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
+import IComposeAttachment from '../../../../api/post/interfaces/IComposeAttachment';
 import AttachmentApi from 'api/attachment';
 import Unique from 'services/utils/unique';
 import Mode from './Item/mode';
@@ -423,12 +424,13 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @memberof AttachmentList
    */
   public render() {
-    const renderItem = (item: IAttachmentItem) => {
+    const renderItem = (item: IAttachmentItem, attachment: IComposeAttachment) => {
       const upload = this.uploads.find((u) => u.id === item.id);
       return (
           <Item
                 id={item.id}
                 item={item}
+                attachment={attachment}
                 key={item.id}
                 onRemove={this.handleRemove}
                 picture={upload ? upload.thumb : null}
