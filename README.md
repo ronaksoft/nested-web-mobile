@@ -175,10 +175,6 @@ $ npm run build:prod
 $ npm test
 ```
 
-# output documenations
-$ npm doc
-```
-
 For Windows users, we recommend using the shortcuts instead of setting environment variables because they work a little different on Windows.
 
 ## Notes
@@ -187,6 +183,11 @@ For Windows users, we recommend using the shortcuts instead of setting environme
 $ typings install dt~<package> --global --save
 # or if it's located on npm
 $ typings install <package> --save
+```
+
+# output documenations
+```bash
+$ npm doc
 ```
 
 ## Credits

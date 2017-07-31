@@ -1,8 +1,7 @@
 /**
  * @file api/notification/index.tsx
  * @author robzizo < me@robzizo.ir >
- * @description Sidebar accessibility is like hamburguer menu from navbar component. and acts like
- *              a navigator. Component gets required data from redux Store or server Api
+ * @description APIs are related to the notification
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-31
  *              Reviewed by:            -
