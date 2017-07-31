@@ -5,8 +5,8 @@
  * @export PlaceApi
  * Documented by:         Soroush Torkzadeh
  * Date of documentation: 2017-07-27
- * Reviewed by:           -
- * Date of review:        -
+ * Reviewed by:           robzizo
+ * Date of review:        2017-07-31
  */
 
 import UploadType from './constants/UploadType';
@@ -71,7 +71,6 @@ class AttachmentApi {
    * @func upload
    * @desc Uploads a file with progress and
    * @borrows AAA, getUploadUrl, XMLHttpRequest and FormData
-   * @borrows
    * @static
    * @param {File} file
    * @param {string} type
