@@ -1,7 +1,7 @@
 /**
- * @file component/PostAttachment/components/videoThumbnail/index.tsx
- * @author sina < sinaa@nested.me >
- * @description specially renders videos thumbnail
+ * @file component/PostAttachment/components/otherThumbnail/index.tsx
+ * @author sinaa < sinaa@nested.me >
+ * @description specially renders any type attachments except video and images inside post card
  *              Documented by:          robzizo
  *              Date of documentation:  2017-07-25
  *              Reviewed by:            -
@@ -9,7 +9,6 @@
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
-import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
@@ -17,48 +16,46 @@ const style = require('../composeAttachment.css');
  * @interface IProps for component initials data
  * This interface pass the required parameters to component.
  * @type {object}
- * @property {IAttachmentItem} attachment - list of attachments
- * @property {boolean} fullWidth - does it need to render thumbnail in full width of screen
+ * @property {IPostAttachment} attachment
+ * @property {function} onclick - callback click event to parent
  */
 interface IProps {
   item: IAttachmentItem;
-  fullWidth?: boolean;
 }
 
 /**
  * @name IState
  * @interface IState for component reactive Elements
  * @type {object}
- * @property {IAttachmentItem} attachment
+ * @property {IPostAttachment} attachment
  */
 interface IState {
   item: IAttachmentItem;
 }
 
 /**
- * TODO : render should like imageSingle component if full width is true
  * @export
- * @class VideoThumbnail
- * @classdesc render the thumbnails of video attachments
+ * @class OtherThumbnail
+ * @classdesc render the thumbnails of attachments
  * @extends {React.Component<IProps, IState>}
  */
-export default class AudioThumbnail extends React.Component<IProps, IState> {
+export default class ArchiveThumbnail extends React.Component<IProps, IState> {
 
   /**
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof ImageThumbnail
+   * @memberof OtherThumbnail
    */
   constructor(props) {
     super(props);
   }
 
   /**
-   * renders the video preview in post card
+   * renders the attachment element related to attachment type
    * @function
    * @returns {ReactElement} markup
-   * @memberof ImageThumbnail
+   * @memberof OtherThumbnail
    * @override
    * @generator
    */
@@ -70,32 +67,15 @@ export default class AudioThumbnail extends React.Component<IProps, IState> {
      * @type {object}
      */
     const {item} = this.props;
-
-    /**
-     * @name src
-     * @const
-     * @type {string}
-     */
     return (
       <div key={item.id}>
-        {
-          this.props.item.model &&
-          (
-            <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                 style={{width: 40, height: 40}}/>
-          )
-        }
-        {
-          !this.props.item.model && (
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' aud'}>
-                  AUD
+                <div className={style.fileBadge + ' rar'}>
+                  RAR
                 </div>
               </div>
             </div>
-          )
-        }
       </div>
     );
   }

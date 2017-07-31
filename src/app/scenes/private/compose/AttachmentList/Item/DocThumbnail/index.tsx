@@ -76,12 +76,14 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
      * @type {string}
      */
     return (
-      <div key={item.id} className={style.imageContainer}>
-        <div className={style.filesTypesImages}>
-          <div className={style.fileBadge + ' doc'}>
-            DOC
-          </div>
-        </div>
+      <div key={item.id}>
+            <div key={item.id} className={style.imageContainer}>
+              <div className={style.filesTypesImages}>
+                <div className={style.fileBadge + ' doc'}>
+                  DOC
+                </div>
+              </div>
+            </div>
       </div>
     );
   }

@@ -77,7 +77,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @type {string}
      */
     return (
-    <li key={item.id}>
+    <div key={item.id}>
       {
         this.props.item.model &&
         (
@@ -96,7 +96,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
         </div>
         )
       }
-    </li>
+    </div>
     );
   }
 }

@@ -9,7 +9,6 @@
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
-// import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
@@ -77,12 +76,14 @@ export default class PdfThumbnail extends React.Component<IProps, IState> {
      * @type {string}
      */
     return (
-      <div key={item.id} className={style.imageContainer}>
-        <div className={style.filesTypesImages}>
-          <div className={style.fileBadge + ' pdf'}>
-            PDF
-          </div>
-        </div>
+      <div key={item.id}>
+            <div key={item.id} className={style.imageContainer}>
+              <div className={style.filesTypesImages}>
+                <div className={style.fileBadge + ' pdf'}>
+                  PDF
+                </div>
+              </div>
+            </div>
       </div>
     );
   }

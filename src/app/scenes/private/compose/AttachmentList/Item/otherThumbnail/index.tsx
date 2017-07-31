@@ -9,6 +9,7 @@
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
+import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
@@ -68,13 +69,25 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
      */
     const {item} = this.props;
     return (
-      /** parent element define onClick function */
-      <div key={item.id} className={style.imageContainer}>
-        <div className={style.filesTypesImages}>
-          <div className={style.fileBadge + ' oth'}>
-            OTH
-          </div>
-        </div>
+      <div key={item.id}>
+        {
+          this.props.item.model &&
+          (
+            <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                 style={{width: 40, height: 40}}/>
+          )
+        }
+        {
+          !this.props.item.model && (
+            <div key={item.id} className={style.imageContainer}>
+              <div className={style.filesTypesImages}>
+                <div className={style.fileBadge + ' pdf'}>
+                  PDF
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
     );
   }

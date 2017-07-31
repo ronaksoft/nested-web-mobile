@@ -14,6 +14,7 @@ import * as React from 'react';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import OtherThumbnail from './otherThumbnail';
+import ArchiveThumbnail from './ArchiveThumbnail';
 import VideoThumbnail from './videoThumbnail';
 import AudioThumbnail from './AudThumbnail';
 import DocThumbnail from './DocThumbnail';
@@ -110,9 +111,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
   private renderThumbnail() {
     const item = this.props.item;
     const fileType = item.model ? item.model.type : FileUtil.getType(item.type);
-    console.log('-------------');
-    console.log('fileType', fileType);
-    console.log('-------------');
+    console.log(111111111, fileType);
     switch (fileType) {
       case AttachmentType.GIF:
       case AttachmentType.IMAGE:
@@ -125,108 +124,30 @@ class AttachmentItem extends React.Component<IProps, IState> {
         );
       case AttachmentType.VIDEO:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                  style={{width: 40, height: 40}}
-                />
-              )
-            }
-            {
-        !item.model && (
           <VideoThumbnail item={item}/>
-        )
-          }
-          </div>
         );
       case AttachmentType.AUDIO:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                  style={{width: 40, height: 40}}
-                />
-              )
-            }
-            {
-              !item.model && (
-                <AudioThumbnail item={item}/>
-              )
-            }
-          </div>
+          <AudioThumbnail item={item}/>
         );
       case AttachmentType.PDF:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                />
-              )
-            }
-            {
-              item.mode === Mode.UPLOAD && (
-                <PdfThumbnail item={item}/>
-              )
-            }
-          </div>
+          <PdfThumbnail item={item}/>
         );
       case AttachmentType.DOCUMENT:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                />
-              )
-            }
-            {
-              !item.model && (
-                <DocThumbnail item={item}/>
-              )
-            }
-          </div>
+          <DocThumbnail item={item}/>
         );
       case AttachmentType.ARCHIVE:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                />
-              )
-            }
-            {
-              !item.model && (
-                <OtherThumbnail item={item}/>
-              )
-            }
-          </div>
+          <ArchiveThumbnail item={item}/>
         );
-      default:
+      case AttachmentType.OTHER:
         return (
-          <div>
-            {
-              item.model && item.model.thumbs.x64 && (
-                <img
-                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                />
-              )
-            }
-        {
-          !item.model && (
-            <OtherThumbnail item={item}/>
-          )
-        }
-          </div>
+          <OtherThumbnail item={item}/>
       );
+      default:
+        return null;
     }
   }
 
