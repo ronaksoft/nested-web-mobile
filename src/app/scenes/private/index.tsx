@@ -32,6 +32,7 @@ import {IUser, IRecallResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
+import FCM from '../../services/fcm/index';
 
 const style = require('./private.css');
 
@@ -149,12 +150,42 @@ class Private extends React.Component<IProps, IState> {
      */
     const credential = aaa.getCredentials();
 
+    /**
+     * recall accountApi for validate local data and
+     * redirects to sign for invalid local data
+     */
+    const recall = (deviceToken?: string) => {
+      this.accountApi.recall({
+        _ss: credential.ss,
+        _sk: credential.sk,
+        _dt: deviceToken,
+      }).then((response: IRecallResponse) => {
+        this.setState({
+          isLogin: true,
+        });
+        this.props.setLogin(response.account);
+      }, () => {
+        aaa.clearCredentials();
+        browserHistory.push('/m/signin');
+      });
+    };
+
     /** clear credentials in some unexpected situations */
     if (!credential.sk || !credential.ss) {
       aaa.clearCredentials();
       browserHistory.push('/m/signin');
       return;
     }
+
+    // Config Firebase notification
+    const fcm = FCM.getInstance();
+    fcm.configFCM()
+      .then((deviceToken: string) => {
+        recall(deviceToken);
+      })
+      .catch(() => {
+        recall();
+      });
 
     /** determine use login state */
     if (this.props.isLogin && this.props.user) {
@@ -163,22 +194,6 @@ class Private extends React.Component<IProps, IState> {
       });
     }
 
-    /**
-     * recall accountApi for validate local data and
-     * redirects to sign for invalid local data
-     */
-    this.accountApi.recall({
-      _ss: credential.ss,
-      _sk: credential.sk,
-    }).then((response: IRecallResponse) => {
-      this.setState({
-        isLogin: true,
-      });
-      this.props.setLogin(response.account);
-    }, () => {
-      aaa.clearCredentials();
-      browserHistory.push('/m/signin');
-    });
   }
 
   /**
@@ -211,10 +226,10 @@ class Private extends React.Component<IProps, IState> {
     /** Assign notificationApi */
     this.notificationApi = new NotificationApi();
 
-     /** call the `handleAAA` to ensuring user is logged in */
+    /** call the `handleAAA` to ensuring user is logged in */
     this.handleAAA();
 
-     /** get unread notifications */
+    /** get unread notifications */
     this.getNotificationCounts();
 
     /**
@@ -305,22 +320,10 @@ class Private extends React.Component<IProps, IState> {
    */
   public render() {
 
-    /**
-     * @const credentials
-     * @type {object}
-     */
-    const credentials = AAA.getInstance().getCredentials();
-
-    /**
-     * @const hasCredentials
-     * @type {boolean}
-     */
-    const hasCredentials = !!(credentials.sk && credentials.ss);
-
     return (
       <div>
         {
-          hasCredentials &&
+          this.state.isLogin &&
           (
             <div>
               {this.createLayout()}
@@ -369,16 +372,7 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
-  Feed,
-  FeedByActivity,
-  Bookmarked,
-  Shared,
-  PlacePostsAllSortedByActivity,
-  PlacePostsAllSortedByRecent,
-  PlacePostsUnreadSortedByRecent,
-  Activities,
-  Files,
-  Notifications,
-  Compose,
+  Feed, FeedByActivity, Bookmarked, Shared, PlacePostsAllSortedByActivity,
+  PlacePostsAllSortedByRecent, PlacePostsUnreadSortedByRecent, Activities, Files, Notifications, Compose,
   Signout
 };

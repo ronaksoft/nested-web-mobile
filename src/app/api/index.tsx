@@ -11,21 +11,22 @@
 import {Server, IRequest} from 'services/server';
 import {IResponse} from 'services/server';
 import Unique from './../services/utils/unique';
+import {setNewConfig} from './../config';
 
 /**
  * @class Api
  * @desc Base of all Api classes
  */
 class Api {
-  private hasCredential: boolean = false;
   private static instance;
   private server;
-  private syncActivityListeners: object = {};
   private messageCanceller = null;
+  private hasCredential: boolean = false;
+  private syncActivityListeners: object = {};
 
   private constructor() {
-    this.syncActivityListeners = {};
     // start api service
+    this.syncActivityListeners = {};
   }
 
   /**
@@ -80,6 +81,7 @@ class Api {
       }).catch(reject);
     });
   }
+
   // TODO: Ask sina to explain these functions
   public addSyncActivityListener(callback: (syncObj: any) => void): any {
     const listenerId = 'listener_' + Unique.get();
@@ -107,6 +109,68 @@ class Api {
       this.messageCanceller = this.server.addMessageListener(this.callServerMessageListener.bind(this));
     }
     return this.server;
+  }
+
+  /**
+   * Get end point configs from /getConfig
+   * get configs from remote server and if response is `ok`, application config will be replace with new configs
+   *
+   * @param {string} domain Domain name
+   * @returns {Promise<any>}
+   */
+  public reconfigEndPoints(domain: string): Promise<any> {
+    const api = this;
+    return new Promise((resolve, reject) => {
+
+      // create request path
+      const getConfigUrl = `${window.location.protocol}://${window.location.host}/getConfig/${domain}`;
+
+      // create xhr request
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', getConfigUrl, true);
+      // These request headers are required for talking to Xerxes
+      xhr.setRequestHeader('Cache-Control', 'no-cache');
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          let newConfigs: any;
+
+          // try to parse response text
+          try {
+            newConfigs = JSON.parse(xhr.response);
+          } catch (e) {
+            reject();
+            return;
+          }
+
+          if (newConfigs.status === 'ok') {
+
+            // replace configs with new configs
+            setNewConfig(
+              domain,
+              newConfigs.data.cyrus.ws[0],
+              newConfigs.data.cyrus.http[0],
+              newConfigs.data.xerxes.http[0],
+            );
+
+            // close server socket and remove current server
+            api.server.socket.close();
+            api.server = null;
+
+            // store domain of new configs in local storage
+            localStorage.setItem('nested.server.domain', domain);
+            resolve();
+          } else {
+            reject();
+          }
+        } else {
+          reject();
+        }
+      };
+
+      xhr.send();
+
+    });
   }
 
 }
