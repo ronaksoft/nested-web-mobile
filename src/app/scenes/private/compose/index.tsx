@@ -6,8 +6,8 @@
  * uploader that lets you upload multiple files at the same time.
  * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
  * Date of documentation:  2017-07-24
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
  */
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
@@ -91,7 +91,11 @@ interface IComposeProps {
   unsetDraft: () => void;
 }
 
+/**
+ * (description is missed)
+ */
 class Compose extends React.Component<IComposeProps, IComposeState> {
+
   /**
    * @prop attachments
    * @desc Reference of `AttachmentList` component
@@ -100,6 +104,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private attachments: AttachmentList;
+
   /**
    * @prop targets
    * @desc Reference of `Suggestion` component
@@ -108,6 +113,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private targets: Suggestion;
+
   /**
    * @prop postApi
    * @desc An instance of PostApi
@@ -116,6 +122,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private postApi: PostApi;
+
   /**
    * @prop file
    * @desc Html input of file type
@@ -137,6 +144,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
   /**
    * Creates an instance of Compose.
+   * @constructor
    * @param {IComposeProps} props
    * @memberof Compose
    */
@@ -156,7 +164,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     };
 
     // A post draft is a copy of the component state in redux.
-
     this.state = props.draft || defaultState;
   }
 
@@ -228,19 +235,44 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     }
   }
 
+  /**
+   * toogle view toolbar of attachments
+   * @func attachTypeSelect
+   * @private
+   * @memberOf Compose
+   */
   private attachTypeSelect = () => {
     this.setState({
       attachModal: !this.state.attachModal,
     });
     this.targets.clearSuggests();
   }
+
+  /**
+   * register a handler for subject input focus
+   * @private
+   * @func subjectFocus
+   * @memberOf Compose
+   */
   private subjectFocus = () => {
     this.targets.clearSuggests();
   }
-  private bodyFocus = () => {
+
+  /**
+   * register a handler for body input focus
+   * @private
+   * @func bodyFocus
+   * @memberOf Compose
+   */  private bodyFocus = () => {
     this.targets.clearSuggests();
   }
 
+  /**
+   * register a handler for click on black overlay
+   * @private
+   * @func overlayClick
+   * @memberOf Compose
+   */ 
   private overlayClick = (event) => {
     event.stopPropagation();
   }
@@ -282,6 +314,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.attachments = value;
   }
 
+  /**
+   * @func composeOption
+   * @desc toggle the compose option popover
+   * @private
+   * @memberof Compose
+   * @param {AttachmentList} value
+   */
   private composeOption = () => {
     this.setState({
       composeOption: !this.state.composeOption,
@@ -512,6 +551,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public render() {
     return (
       <div className={style.compose}>
+        {/* specefic compose navbar */}
         <div className={styleNavbar.navbar}>
           <a onClick={this.leave}>
             <IcoN size={24} name="xcross24"/>
@@ -522,6 +562,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </a>
           <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
         </div>
+        {/* compose options popover */}
         {this.state.composeOption && (
           <div className={[style.composeOption, style.opened].join(' ')}>
             <ul>
@@ -534,13 +575,16 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             </ul>
           </div>
         )}
+        {/* compose options popover overlay */}
         {this.state.composeOption &&
         <div onClick={this.composeOption.bind(this, '')} className={style.overlay}/>
         }
+        {/* suggestion component for recipients */}
         <Suggestion ref={this.referenceTargets}
                     selectedItems={this.state.targets}
                     onSelectedItemsChanged={this.handleTargetsChanged}
         />
+        {/* Compose subject input */}
         <div className={style.subject}>
           <Input
             onFocus={this.subjectFocus}
@@ -548,14 +592,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             onChange={this.handleSubjectChange}
             value={this.state.subject}
           />
+          {/* attachment popover toggler */}
           <div onClick={this.attachTypeSelect}
                className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
             <div onClick={this.attachTypeSelect}>
               <IcoN size={24} name={'attach24'}/>
             </div>
+            {/* attachment popover overlay */}
             {this.state.attachModal &&
             <div onClick={this.overlayClick} className={style.overlay}/>
             }
+            {/* attachment buttons */}
             <div className={style.attachActions} onClick={this.overlayClick}>
               <div onClick={this.selectFile(true)}>
                 <IcoN size={24} name={'camera24'}/>
@@ -569,17 +616,20 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             </div>
           </div>
         </div>
+        {/* compose body */}
         <textarea
           onFocus={this.bodyFocus}
           placeholder="Write something…"
           onChange={this.handleBodyChange}
           value={this.state.body}
         />
+        {/* attachments uploading/uploaded list */}
         <AttachmentList
           onItemsChanged={this.handleAttachmentsChange}
           ref={this.referenceAttachments}
           items={this.state.attachments}
         />
+        {/* hidden input for attachment upload */}
         <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{display: 'none'}}/>
       </div>
     );
