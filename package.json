@@ -1,7 +1,7 @@
 {
-  "name": "vortigern",
-  "version": "0.1.2",
-  "description": "A universal boilerplate for building web applications w/ TypeScript, React, Redux and more.",
+  "name": "nested",
+  "version": "0.3.0",
+  "description": "Nested web application in order to mobile clients",
   "main": "build/server.js",
   "scripts": {
     "clean": "rimraf build",
@@ -16,41 +16,27 @@
     "lint": "tslint \"src/**/**.ts*\"",
     "doc": "typedoc --out ./doc ./src"
   },
-  "author": "Barbar Startup Factory <hey@barbar.com.tr>",
+  "author": "Ronak software group <ronak@nested.me>",
   "contributors": [
     {
-      "name": "Altay Aydemir",
-      "email": "altay.aydemir@gmail.com",
-      "url": "http://altayaydemir.com/"
+      "name": "-",
+      "email": "-@gmail.com",
+      "url": "http://-.com/"
     },
     {
-      "name": "Batuhan Icoz",
-      "email": "hey@batuhanicoz.com",
-      "url": "http://batuhanicoz.com/"
-    },
-    {
-      "name": "Omer Ufuk Efendioglu",
-      "email": "ufukomer@gmail.com",
-      "url": "http://ufukomer.com/"
-    },
-    {
-      "name": "Patrick Roza",
-      "email": "contact@patrickroza.com",
-      "url": "http://patrickroza.com/"
-    },
-    {
-      "name": "Ardani Rohman",
-      "email": "master.ardani@gmail.com",
-      "url": "http://ardani.github.io/"
+      "name": "Ali Mahmoodi J",
+      "email": "me@robzizo.ir",
+      "url": "http://robzizo.ir/"
     }
   ],
-  "homepage": "https://github.com/barbar/vortigern.git",
+  "homepage": "http://git.ronaksoftware.com/nested/web-mobile-app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/barbar/vortigern.git"
+    "url": "http://git.ronaksoftware.com/nested/web-mobile-app"
   },
   "bugs": {
-    "url": "https://github.com/barbar/vortigern/issues"
+    "url": "https://github.com/barbar/vortigern/issues",
+    "place": "https://webapp.nested.me/#/places/ronak.technical.webapp.bugs.web-mobile-beta-bugs/messages"
   },
   "keywords": [
     "react",
