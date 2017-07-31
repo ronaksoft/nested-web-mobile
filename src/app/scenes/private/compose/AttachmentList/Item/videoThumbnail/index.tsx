@@ -9,10 +9,8 @@
  */
 import * as React from 'react';
 import FileUtil from 'services/utils/file';
-// import IComposeAttachment from '../../../../../../api/post/interfaces/IComposeAttachment';
 import IAttachmentItem from '../IAttachmentItem';
-// import AAA from '../../../../../../services/aaa/index';
-// import CONFIG from '../../../../../../config';
+const style = require('../composeAttachment.css');
 
 /**
  * @name IProps
@@ -79,13 +77,26 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @type {string}
      */
     return (
-      <li key={item.id}>
-        <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-             style={{
-               width: this.props.fullWidth ? '40px' : 'inherit',
-               height: this.props.fullWidth ? 'inherit' : '40px',
-             }}/>
-      </li>
+    <li key={item.id}>
+      {
+        this.props.item.model &&
+        (
+          <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+             style={{width: 40, height: 40}}/>
+        )
+      }
+      {
+        !this.props.item.model && (
+        <div key={item.id} className={style.imageContainer}>
+          <div className={style.filesTypesImages}>
+            <div className={style.fileBadge + ' vid'}>
+              VID
+            </div>
+          </div>
+        </div>
+        )
+      }
+    </li>
     );
   }
 }

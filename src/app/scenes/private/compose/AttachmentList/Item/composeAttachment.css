@@ -1,123 +1,72 @@
-.singleImage {
-  padding: 0 16px;
-}
-.singleImage > div {
-  display: flex;
-  justify-content: center;
-}
-.singleImage img {
-  max-width: 100%;
-  height: inherit;
-  object-fit: contain;
-}
-.attachmentBar {
-  width: 100%;
-  height: 108px;
-  overflow-x: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-.attachmentBar ul {
-  display: flex;
-  flex-direction: row;
-}
-.attachmentBar ul li:first-child{
-  margin-left: 24px;
-}
-.attachmentBar ul li img {
-  margin-top: 4px;
-  margin-right: 10px;
+.fileBadge {
+  display: inline-block;
+  border: 1px solid #000;
+  border-radius: 3px;
+  width: 40px;
 }
 
-.attachmentHolder {
-  height: 108px;
-  width: 172px;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 12px 6px 12px;
-  word-wrap: break-word;
-  font-size: 11px;
+.filesTypesImages {
+  margin: 0 0 0 16px;
+  position: relative;
+}
+
+.imgContainer:after {
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  content: "";
+  border-radius: 3px;
+}
+
+.fileBadge {
+  text-align: center;
+  text-transform: uppercase;
+  height: 28px;
+  line-height: 20px;
+  padding: 4px;
   text-overflow: ellipsis;
   overflow: hidden;
-  background-size: cover;
-  background: url('../../../../../assets/icons/bg_attachment_other.svg') no-repeat;
-  color: #282828;
+  color: #000;
+  background: #fff;
+  font-weight: bold;
+  font-size: 9px;
 }
-.fileName {
+
+.fileBadge.archive {
+  border-color: #5A28BE;
+  color: #5A28BE;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.fileBadge.pdf {
+  border-color: #FA0032;
+  color: #FA0032;
+  font-weight: bold;
+}
+
+.fileBadge.doc {
+  border-color: #148CF0;
+  color: #148CF0;
+  font-weight: bold;
+}
+
+.fileBadge.aud, .fileBadge.vid, .fileBadge.img {
+  border-color: #3CC882;
+  color: #3CC882;
+  font-weight: bold;
+}
+
+.imageContainer {
   display: flex;
-  flex: 1;
   align-items: center;
-  height: 48px;
+  padding: 0 16px 0 0;
 }
-.fileName p {
-  font-size: 13px;
-  line-height: 16px;
-  color: black;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  max-height: 100%;
-  margin: 0;
-}
-.detail {
-  display: flex;
-  width: 100%;
-  height: 32px;
-  margin-bottom: 2px;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  padding-right: 48px;
-  font-size: 16px;
-}
-.detail p {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  margin: 0;
-  font-weight: 700;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.detail  span {
-  opacity: 0;
-  flex: none;
-  display: flex;
-  color: black;
-}
-.default,
-.gif,
-.other {
-  background: url('../../../../../assets/icons/bg_attachment_other.svg') no-repeat;
-  color: #282828;
-  box-shadow: 0 2px 4px rgba(40, 40, 40, .32);
-}
-.default .detail p,
-.gif .detail p,
-.other .detail p {
-  color: #282828;
-}
-.archive {
-  background: url('../../../../../assets/icons/bg_attachment_zip.svg') no-repeat;
-  color: #502D96;
-}
-.archive .detail p {
-  color: #502D96;
-}
-.DOC {
-  background: url('../../../../../assets/icons/bg_attachment_document.svg') no-repeat;
-  color: #2878CD;
-}
-.DOC .detail p {
-  color: #2878CD;
-}
-.PDF {
-  background: url('../../../../../assets/icons/bg_attachment_pdf.svg') no-repeat;
-  color: #CD2828;
-}
-.PDF .detail p {
-  color: #CD2828;
-}
-.audio {
-  background: url('../../../../../assets/icons/bg_attachment_audio.svg') no-repeat;
-  color: #28CD96;
-}
+
+
+
+

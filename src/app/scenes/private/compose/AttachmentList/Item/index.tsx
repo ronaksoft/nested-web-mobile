@@ -15,7 +15,11 @@ const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import OtherThumbnail from './otherThumbnail';
 import VideoThumbnail from './videoThumbnail';
-import UploadType from '../../../../../api/attachment/constants/UploadType';
+import AudioThumbnail from './AudThumbnail';
+import DocThumbnail from './DocThumbnail';
+import PdfThumbnail from './PdfThumbnail';
+import FileUtil from 'services/utils/file';
+import AttachmentType from '../../../../../api/attachment/constants/AttachmentType';
 // import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
 import Mode from './mode';
 import {IcoN} from 'components';
@@ -103,12 +107,15 @@ class AttachmentItem extends React.Component<IProps, IState> {
     });
   }
 
-  private renderItem() {
+  private renderThumbnail() {
     const item = this.props.item;
-    console.log(111111, item);
-    switch (item.type) {
-      case UploadType.GIF:
-      case UploadType.IMAGE:
+    const fileType = item.model ? item.model.type : FileUtil.getType(item.type);
+    console.log('-------------');
+    console.log('fileType', fileType);
+    console.log('-------------');
+    switch (fileType) {
+      case AttachmentType.GIF:
+      case AttachmentType.IMAGE:
         return (
           <img
             src={this.props.picture}
@@ -116,14 +123,110 @@ class AttachmentItem extends React.Component<IProps, IState> {
             style={{width: 40, height: 40}}
           />
         );
-      case UploadType.VIDEO:
+      case AttachmentType.VIDEO:
         return (
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                  style={{width: 40, height: 40}}
+                />
+              )
+            }
+            {
+        !item.model && (
           <VideoThumbnail item={item}/>
+        )
+          }
+          </div>
+        );
+      case AttachmentType.AUDIO:
+        return (
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                  style={{width: 40, height: 40}}
+                />
+              )
+            }
+            {
+              !item.model && (
+                <AudioThumbnail item={item}/>
+              )
+            }
+          </div>
+        );
+      case AttachmentType.PDF:
+        return (
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                />
+              )
+            }
+            {
+              item.mode === Mode.UPLOAD && (
+                <PdfThumbnail item={item}/>
+              )
+            }
+          </div>
+        );
+      case AttachmentType.DOCUMENT:
+        return (
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                />
+              )
+            }
+            {
+              !item.model && (
+                <DocThumbnail item={item}/>
+              )
+            }
+          </div>
+        );
+      case AttachmentType.ARCHIVE:
+        return (
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                />
+              )
+            }
+            {
+              !item.model && (
+                <OtherThumbnail item={item}/>
+              )
+            }
+          </div>
         );
       default:
         return (
-          <OtherThumbnail item={item}/>
-        );
+          <div>
+            {
+              item.model && item.model.thumbs.x64 && (
+                <img
+                  src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+                />
+              )
+            }
+        {
+          !item.model && (
+            <OtherThumbnail item={item}/>
+          )
+        }
+          </div>
+      );
     }
   }
 
@@ -139,13 +242,11 @@ class AttachmentItem extends React.Component<IProps, IState> {
         this.props.onRemove(this.props.item);
       }
     };
-    const item = this.props.item;
     return (
       <div className={style.item}>
         <span className={style.thumb}>
-               { item.mode === Mode.UPLOAD && (
-                 this.renderItem()
-               )
+               {
+   this.renderThumbnail()
                }
           </span>
         <div className={style.atachmentDetail}>
