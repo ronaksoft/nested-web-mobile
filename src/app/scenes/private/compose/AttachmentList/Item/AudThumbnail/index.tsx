@@ -90,7 +90,7 @@ export default class AudioThumbnail extends React.Component<IProps, IState> {
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
                 <div className={style.fileBadge + ' ' + style.fileBadgeAud}>
-                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
+                  AUD
                 </div>
               </div>
             </div>
