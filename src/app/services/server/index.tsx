@@ -14,8 +14,9 @@ import IErrorResponseData from './interfaces/IErrorResponseData';
 import AAA from './../aaa/index';
 import CONFIG from 'config';
 import {Socket, SocketState} from 'services/socket';
-import Client from 'services/client';
 import Unique from './../utils/unique';
+import * as platform from 'platform';
+import * as Cookies from 'cookies-js';
 
 const TIMEOUT_TIME = 24000;
 
@@ -337,17 +338,24 @@ class Server {
    * generates a client id
    * @private
    * @function
-   * @generator
    * @memberof Server
    * @returns {string}
    */
   private getClientId(): string {
-    const deviceName = Client.getDevice();
-    const device = deviceName ? 'mobile' : 'desktop';
-    const os = deviceName ? deviceName : Client.getOS();
-    const browser = Client.getBrowser();
+    let cid = null;
+    if (typeof window !== 'undefined') {
+      cid = Cookies.get('cid');
+    }
 
-    return ['web', device, browser, os].join('_');
+    if (!cid) {
+      cid = ['Web', 'mobile', platform.name, platform.os].join('_');
+    }
+
+    if (typeof window !== 'undefined') {
+      Cookies.set('cid', cid);
+    }
+
+    return cid;
   }
 
 }
