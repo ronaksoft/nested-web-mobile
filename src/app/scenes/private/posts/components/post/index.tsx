@@ -293,7 +293,7 @@ class Post extends React.Component<IProps, IState> {
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
       <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
-        {/* specefic navbar for post vie */}
+        {/* specefic navbar for post view */}
         {postView && (
           <div className={styleNavbar.navbar}>
             <a onClick={this.leave}>
@@ -381,7 +381,7 @@ class Post extends React.Component<IProps, IState> {
 
 /**
  * @const mapStateToProps
- * @desc Provides the required parts of store throught the component props
+ * @desc Provides the required parts of store through the component props
  * @param {any} store
  * @param {IOwnProps} ownProps
  */
