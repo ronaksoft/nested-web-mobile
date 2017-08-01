@@ -90,7 +90,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
         <div key={item.id} className={style.imageContainer}>
           <div className={style.filesTypesImages}>
             <div className={style.fileBadge + ' ' + style.fileBadgeVid}>
-              {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
+              VID
             </div>
           </div>
         </div>
