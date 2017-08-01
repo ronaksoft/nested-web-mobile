@@ -380,7 +380,7 @@ class Verify extends React.Component<IProps, IState> {
               trigger={this.state.sendTextWaiting}
               onFinish={this.handleResendWaitFinish}
               message="wait...">
-              <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
+              <a onClick={this.resend}>
                 {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
               </a>
             </Waiting>
