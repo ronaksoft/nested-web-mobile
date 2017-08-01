@@ -18,6 +18,7 @@ import ArchiveThumbnail from './ArchiveThumbnail';
 import VideoThumbnail from './videoThumbnail';
 import AudioThumbnail from './AudThumbnail';
 import DocThumbnail from './DocThumbnail';
+import ImageThumbnail from './ImageThumbnail';
 import PdfThumbnail from './PdfThumbnail';
 import FileUtil from 'services/utils/file';
 import AttachmentType from '../../../../../api/attachment/constants/AttachmentType';
@@ -121,11 +122,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
       case AttachmentType.GIF:
       case AttachmentType.IMAGE:
         return (
-          <img
-            src={this.props.picture}
-            alt={this.props.item.name}
-            style={{width: 40, height: 40}}
-          />
+          <ImageThumbnail item={item}/>
         );
       case AttachmentType.VIDEO:
         return (
