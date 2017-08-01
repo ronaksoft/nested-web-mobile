@@ -10,6 +10,7 @@
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
+import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
@@ -80,7 +81,7 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
                 <div className={style.fileBadge + ' ' + style.fileBadgeDoc}>
-                  DOCX
+                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
                 </div>
               </div>
             </div>

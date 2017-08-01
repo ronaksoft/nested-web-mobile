@@ -6,7 +6,7 @@
 }
 
 .filesTypesImages {
-  margin: 0 0 0 16px;
+  margin: 0 0 0 13px;
   position: relative;
 }
 
@@ -33,7 +33,7 @@
   color: #000;
   background: #fff;
   font-weight: bold;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .fileBadgeArchive {
