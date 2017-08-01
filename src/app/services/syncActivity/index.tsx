@@ -8,10 +8,10 @@
  * app components talk to this service. They tell the service what kind of activities
  * they look for and the service feeds them on receiving new activities.
  * @export {SyncActivity}
- * Documented by: Soroush Torkzadeh
+ * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-31
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import Api from '../../api/index';
@@ -35,7 +35,13 @@ interface IChanel {
   cb: (activity: IActivity) => void;
 }
 
+/**
+ * ( needs docs )
+ * @export
+ * @class SyncActivity
+ */
 export default class SyncActivity {
+  // ( needs docs )
   private static instance;
   private OPEN_ALL_CHANNEL: string = '_all_';
   private openChannelsStack: object = {};
@@ -48,6 +54,14 @@ export default class SyncActivity {
     // start Sync Activities
   }
 
+  /**
+   * @function getInstance
+   * @desc Creates or returns the instance of the class.
+   * @static
+   * @returns SyncActivity
+   * @public
+   * @memberof SyncActivity
+   */
   public static getInstance(): SyncActivity {
     if (!SyncActivity.instance) {
       SyncActivity.instance = new SyncActivity();
@@ -82,35 +96,37 @@ export default class SyncActivity {
   }
 
   /**
-   * close all open channels
-   *
+   * @function closeAllChannel
+   * @desc close all open channels
    * Sync service will not dispatch any sync event
-   *
+   * @public
+   * @memberOf SyncActivity
    */
   public closeAllChannel() {
     this.openChannelsStack = {};
   };
 
   /**
-   * Open all channel
-   *
+   * @function openAllChannel
    * Service doesn't filter activity by place Ids
-   *
    * @returns {string} chanel ID
+   * @memberOf SyncActivity
    */
   public openAllChannel(cb: (activity: IActivity) => void) {
     return this.openChannel(this.OPEN_ALL_CHANNEL, SyncActions.ALL_ACTIONS, cb);
   };
 
   /**
+   * @function dispatchActivityPushEvents
    * Dispatch sync event after received new sync-a
    *
    * 1. Check this sync-a push's placeId exist in open channel places
    * 2. Fetch activities after this.latestActivityTimestamp recursively
    * 3. Dispatch Sync Activity event with action_Id
    *
-   *
+   * @public
    * @param event           sync-a payload data
+   * @memberOf SyncActivity
    */
   public dispatchActivityPushEvents(syncObj: any): void {
     const filteredChannelsWithPlaceId = Object.keys(this.openChannelsStack).filter((channelUid: string): boolean => {
@@ -146,9 +162,12 @@ export default class SyncActivity {
   }
 
   /**
+   * @function guid
    * generate GUID
-   *
+   * ( needs docs )
    * @returns {string}
+   * @private
+   * @memberOf SyncActivity
    */
   private guid() {
     function s4() {
