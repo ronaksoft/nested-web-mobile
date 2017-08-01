@@ -107,10 +107,16 @@ class AttachmentItem extends React.Component<IProps, IState> {
       progress: progressValue,
     });
   }
+
+  /**
+   * @function
+   * @desc this function render each upload attachment view in compose page
+   * @returns {any}
+   * @private
+   */
   private renderThumbnail() {
     const item = this.props.item;
     const fileType = item.model ? item.model.type : FileUtil.getType(item.type);
-    console.log(111111111, fileType);
     switch (fileType) {
       case AttachmentType.GIF:
       case AttachmentType.IMAGE:
@@ -166,9 +172,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
       <div className={style.item}>
         <span className={style.thumb}>
                {
-   this.renderThumbnail()
+            this.renderThumbnail()
                }
-          </span>
+        </span>
         <div className={style.atachmentDetail}>
           <span className={style.name}>
             {
