@@ -9,6 +9,7 @@
  * Date of review:        -
  */
 import {Server, IRequest, IResponse} from 'services/server';
+import IRequestKeyList from './cache/interface/IRequestKeyList';
 import Unique from './../services/utils/unique';
 import {setNewConfig} from './../config';
 
@@ -22,7 +23,7 @@ class Api {
   private messageCanceller = null;
   private hasCredential: boolean = false;
   private syncActivityListeners: object = {};
-  private requestKeyList: any[] = [];
+  private requestKeyList: IRequestKeyList[] = [];
 
   private constructor() {
     // start api service
@@ -71,7 +72,7 @@ class Api {
    * @memberof Api
    */
   public request(req: IRequest): Promise<any> {
-    const requestKeyJson: any = {
+    const requestKeyJson: IRequest = {
       cmd: req.cmd,
       data: req.data,
     };
@@ -91,12 +92,11 @@ class Api {
           this.requestKeyList[requestKey].response = response.data;
           this.requestKeyList[requestKey].resolve = false;
         }
-        console.log(response.data);
         this.requestKeyList[requestKey].status = response.status;
         this.callAllPromisesByRequestKey(requestKey);
       }).catch(() => {
-        // this.requestKeyList[requestKey].response = null;
-        // this.requestKeyList[requestKey].resolve = null;
+        this.requestKeyList[requestKey].response = null;
+        this.requestKeyList[requestKey].resolve = null;
         this.callAllPromisesByRequestKey(requestKey);
       });
     }
