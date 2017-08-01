@@ -4,8 +4,8 @@
  * @description This component is designed for rendering posts which are bookmarked.
  * Documented by:          Shayesteh Naeimabadi <naamesteh@nested.me>
  * Date of documentation:  2017-07-27
- * Reviewed by:            --
- * Date of review:         --
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
  */
 import * as React from 'react';
 import {OptionsMenu} from 'components';
@@ -127,7 +127,7 @@ interface IState {
   loadingBefore: boolean;
   /**
    * @property reachedTheEnd
-   * @desc hide loading  if `reachedTheEnd` is true
+   * @desc hide loading if `reachedTheEnd` is true
    * @type {boolean}
    * @memberof IState
    */
@@ -147,6 +147,7 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  */
 class FeedByActivity extends React.Component<IProps, IState> {
+  // (Need documentation)
   private postApi: PostApi;
   private syncActivity = SyncActivity.getInstance();
   private syncActivityListeners = [];
@@ -176,6 +177,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
    * @desc updates the state object when the parent changes the props
    * @param {IProps} newProps
    * @memberof FeedByActivity
+   * @override
    */
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({posts: newProps.posts});
@@ -222,7 +224,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
         },
         200);
     }
-
+    // (need documentation)
     this.syncActivityListeners.push(
       this.syncActivity.openAllChannel(
         (activity: IActivity) => {
@@ -241,7 +243,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
   }
   /**
    * @function addNewPostActivity
-   * @desc add new post by activity sort
+   * @desc add new post by activity sort ( unclear )
    * @param {IActivity} activity
    * @private
    */
@@ -336,7 +338,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
         };
       }
     }
-    // set get post limit
+    // set get post limit ( unclear )
     // FIXME:: set limit from config
     params.limit = 20;
     // call get Favorite posts which sort by recent activity
