@@ -5,8 +5,8 @@
  * @export {TimeUntiles}
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-31
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 import * as moment from 'moment';
 
@@ -29,9 +29,9 @@ class TimeUntiles {
 
   /**
    * @func dynamic
-   * @desc Formates the given timestamp dynamically
+   * @desc Formates the given timestamp dynamically.
    * @param {number} timestamp
-   * @returns {string}
+   * @returns {string} Time related to now
    * @memberof TimeUntiles
    */
   public dynamic(timestamp: number) {
