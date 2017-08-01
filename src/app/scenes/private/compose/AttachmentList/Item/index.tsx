@@ -128,7 +128,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
       case AttachmentType.GIF:
       case AttachmentType.IMAGE:
         return (
-          <ImageThumbnail item={item}/>
+          <ImageThumbnail item={item} thumb={this.props.picture}/>
         );
       case AttachmentType.VIDEO:
         return (

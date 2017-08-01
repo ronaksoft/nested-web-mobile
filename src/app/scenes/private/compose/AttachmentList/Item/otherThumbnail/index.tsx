@@ -62,18 +62,14 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
    */
   public render() {
 
-    /**
-     * @name attachment
-     * @const
-     * @type {object}
-     */
     const {item} = this.props;
+    const name = item.model ? item.model.name : item.name;
     return (
       <div key={item.id}>
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
                 <div className={style.fileBadge}>
-                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
+                  {FileUtil.getSuffix(name).toUpperCase()}
                 </div>
               </div>
             </div>
