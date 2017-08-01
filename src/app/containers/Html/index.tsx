@@ -49,7 +49,7 @@ class Html extends React.Component<IHtmlProps, {}> {
         charSet="UTF-8"/>
     );
     return (
-      <html>
+      <html lang="en">
       <head>
         {head.base.toComponent()}
         {head.title.toComponent()}
@@ -58,7 +58,7 @@ class Html extends React.Component<IHtmlProps, {}> {
         {head.script.toComponent()}
         <Helmet meta={appConfig.app.head.meta} title={appConfig.app.head.title}/>
         {renderStyles}
-        <link rel="shortcut icon" href="/m/favicon.ico"/>
+        <link rel="shortcut icon" href="/m/public/favicon.ico"/>
         <link rel="manifest" href="/m/public/manifest.json"/>
       </head>
       <body>

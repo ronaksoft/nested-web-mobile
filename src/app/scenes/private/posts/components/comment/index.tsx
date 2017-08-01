@@ -5,8 +5,8 @@
  * @export CommentsBoard
  * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
  * Date of documentation:  2017-07-27
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
  */
 import * as React from 'react';
 import PostApi from 'api/post/index';
@@ -14,8 +14,8 @@ import IComment from 'api/comment/interfaces/IComment';
 import {UserAvatar, FullName} from 'components';
 import {Input} from 'antd';
 import CommentApi from 'api/comment/index';
-import ArrayUntiles from 'services/untils/array';
-import TimeUntiles from 'services/untils/time';
+import ArrayUntiles from 'services/utils/array';
+import TimeUntiles from 'services/utils/time';
 import {IcoN} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncActivity from 'services/syncActivity/index';
@@ -124,6 +124,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
   private hasBeforeComments: boolean = true;
 
   /**
+   * @constructor
    * Creates an instance of CommentsBoard.
    * @param {IProps} props
    * @memberof CommentsBoard
@@ -135,16 +136,17 @@ class CommentsBoard extends React.Component<IProps, IState> {
       sendingComment: false,
       newCommentTxt: '',
     };
-
+    // binds handleChangeComment by `this`.
     this.handleChangeComment = this.handleChangeComment.bind(this);
 
   }
 
   /**
    * @func componentDidMount
-   * @desc Whne the component has been mounted successfully, It retreives the post last 3 comments
+   * @desc When the component has been mounted successfully, It retreives the post last 3 comments
    * and opens a channel for getting notified for new comments.
    * @memberof CommentsBoard
+   * @override
    */
   public componentDidMount() {
     this.postApi = new PostApi();
@@ -189,6 +191,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @func componentWillUnmount
    * @desc Stops listening to the sync channels when the component is going to be destroyed
    * @memberof CommentsBoard
+   * @override
    */
   public componentWillUnmount() {
     // set sync listeners
@@ -320,6 +323,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @desc Renders the component
    * @returns
    * @memberof CommentsBoard
+   * @generator
    */
   public render() {
     return (

@@ -89,7 +89,7 @@ class Notifications extends React.Component<IProps, IState> {
   public componentDidMount() {
 
     // recieve notification before now
-    this.getNotificationBefore(true);
+    this.getNotificationBefore(true, true);
 
     // resets the notifications counter by Api call
     const notificationApi = new NotificationApi();
@@ -113,18 +113,19 @@ class Notifications extends React.Component<IProps, IState> {
    * Gets the notification items from server before latest notification item time or now
    * @private
    * @param {boolean} saveInStore for saving the notification items in redux store
+   * @param {boolean} getFromNow for force to get notifications from now.
    * @memberof Notifications
    */
-  private getNotificationBefore(saveInStore: boolean) {
+  private getNotificationBefore(saveInStore: boolean, getFromNow?: boolean) {
 
     // define the notification Api class
     const notificationApi = new NotificationApi();
 
-    // recieve notifications with declared limits and before timestamp of
+    // receive notifications with declared limits and before timestamp of
     // the latest notification item in state, otherwise the current timestamp.
     notificationApi.get({
       limit: this.requestLimit,
-      before: (this.state.notifications.length > 0) ?
+      before: getFromNow === true ? Date.now() : (this.state.notifications.length > 0) ?
         this.state.notifications[this.state.notifications.length - 1].timestamp : Date.now(),
     }).then((notificationsResponse: INotificationData) => {
 

@@ -15,7 +15,7 @@ import PostApi from '../../../../api/post/index';
 import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
-import ArrayUntiles from '../../../../services/untils/array';
+import ArrayUntiles from '../../../../services/utils/array';
 import {Button} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
@@ -436,7 +436,7 @@ class Shared extends React.Component<IProps, IState> {
           </div>))}
         {/* rendering Loading component in  `loadingBefore` case */}
         {this.state.loadingBefore &&
-        <div>Loading...</div>
+          <Loading active={true}/>
         }
         {/* rendering following text when there is no unseen post */}
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&

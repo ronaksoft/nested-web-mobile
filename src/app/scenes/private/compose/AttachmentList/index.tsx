@@ -5,8 +5,8 @@
  * @export AttachmentList
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import * as React from 'react';
@@ -15,6 +15,7 @@ import {Progress} from 'antd';
 import {IcoN} from 'components';
 import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
+// import IComposeAttachment from '../../../../api/post/interfaces/IComposeAttachment';
 import AttachmentApi from 'api/attachment';
 import Unique from 'services/utils/unique';
 import Mode from './Item/mode';
@@ -114,6 +115,11 @@ interface IUploadItem {
 
 /**
  * manage the Items list and file upload
+ *
+ * @class AttachmentList
+ * @extends {React.Component<IProps, IState>}
+ */
+/**
  *
  * @class AttachmentList
  * @extends {React.Component<IProps, IState>}

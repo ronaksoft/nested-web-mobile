@@ -5,8 +5,8 @@
  * in this component we store comments in redux. Component get requiered data directly from store or api call.
  * Document By : naamesteh
  * Date of documantion : 07/24/2017
- * Review by : -
- * Date of review : -
+ * Review by : robzizo
+ * Date of review : 07/31/2017
  */
 import * as React from 'react';
 import IComment from '../../api/comment/interfaces/IComment';
@@ -49,7 +49,7 @@ interface IProps {
   /**
    * @property comments
    * @desc Includes comments as an array of IComment
-   * @type {array}
+   * @type {array} ( not defined properly )
    * @memberof IProps
    */
   comments: IComment[];
@@ -65,8 +65,8 @@ interface IProps {
 interface IState {
   /**
    * @property comment
-   * @desc Includes comment as an object of comment's data
-   * @type {object}
+   * @desc Includes comment as an object of comment's data ( unclear )
+   * @type {object} ( not defined properly )
    * @memberof IState
    */
   comment: IComment | null;

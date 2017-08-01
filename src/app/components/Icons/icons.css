@@ -11,6 +11,7 @@
   width : 16px;
   display: inline-block;
   height : 16px;
+  flex: none;
 }
 .s8 {
   width : 8px;

@@ -5,8 +5,8 @@
  * The name is too big for a service that manages the authenticated user data
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import * as Cookies from 'cookies-js';
@@ -105,6 +105,7 @@ export default class AAA {
   }
 
   /**
+   * @constructor
    * @desc Creates an instance of AAA.
    * @memberof AAA
    */

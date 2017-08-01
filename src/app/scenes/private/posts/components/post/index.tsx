@@ -4,15 +4,15 @@
  * @description A post-card component
  * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
  * Date of documentation:  2017-07-27
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
  */
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName} from 'components';
+import {IcoN, UserAvatar, FullName, Loading} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
@@ -97,6 +97,10 @@ interface IProps {
  * @desc Interface of the component state
  */
 interface IState {
+  /**
+   * @prop post
+   * @memberof IState
+   */
   post?: IPost | null;
 }
 
@@ -106,6 +110,11 @@ interface IState {
  * @desc A post-card component
  */
 class Post extends React.Component<IProps, IState> {
+  /**
+   * define inProgress flag
+   * @property {boolean} inProgress
+   * @memberof Post
+   */
   private inProgress: boolean;
 
   /**
@@ -123,8 +132,9 @@ class Post extends React.Component<IProps, IState> {
   /**
    * @func componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
-   * the given `postId` parameter in route. Marks the post as read.
+   * the given `postId` parameter in route also Marks the post as read.
    * @memberof Post
+   * @override
    */
   public componentDidMount() {
     if (this.props.post) {
@@ -141,6 +151,8 @@ class Post extends React.Component<IProps, IState> {
           });
           this.updatePostsInStore('post_read', true);
         });
+
+      // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
   }
@@ -150,6 +162,7 @@ class Post extends React.Component<IProps, IState> {
    * @desc Replaces the post in the component state with the new post in received props
    * @param {IProps} newProps
    * @memberof Post
+   * @override
    */
   public componentWillReceiveProps(newProps: IProps) {
     if (this.props.post) {
@@ -212,6 +225,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private toggleBookmark() {
+    // arguments[1] is an event
     arguments[1].stopPropagation();
     arguments[1].preventDefault();
     // change pinned of post
@@ -265,17 +279,21 @@ class Post extends React.Component<IProps, IState> {
    * @desc Renders the component
    * @returns
    * @memberof Post
+   * @generator
    */
   public render() {
     const postView = !this.props.post;
     if (!this.state.post) {
-      return <div>Loading ...</div>;
+      return <Loading active={true}/>;
     }
 
     const {post} = this.state;
+
+    // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
       <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
+        {/* specefic navbar for post view */}
         {postView && (
           <div className={styleNavbar.navbar}>
             <a onClick={this.leave}>
@@ -350,6 +368,7 @@ class Post extends React.Component<IProps, IState> {
             </div>
           )}
         </div>
+        {/* renders the comments and comment input in post view */}
         {!this.props.post && (
           <CommentsBoard no_comment={this.state.post.no_comment}
           post_id={this.state.post._id} post={this.state.post}
@@ -362,7 +381,7 @@ class Post extends React.Component<IProps, IState> {
 
 /**
  * @const mapStateToProps
- * @desc Provides the required parts of store throught the component props
+ * @desc Provides the required parts of store through the component props
  * @param {any} store
  * @param {IOwnProps} ownProps
  */

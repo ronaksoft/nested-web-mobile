@@ -21,7 +21,7 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const Chalk = require('chalk');
-const favicon = require('serve-favicon');
+// const favicon = require('serve-favicon');
 
 const app = express();
 
@@ -46,10 +46,9 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(require('webpack-hot-middleware')(webpackCompiler));
 }
 
-app.use(favicon(path.join(__dirname, 'public/favicon.ico')));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(favicon(path.join(__dirname, 'public/favicon.ico')));
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/m/public', express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
   const location = req.url;

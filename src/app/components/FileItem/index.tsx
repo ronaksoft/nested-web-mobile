@@ -4,8 +4,8 @@
  * @desc This file renders File Items by their types.
  * Document By : naamesteh
  * Date of documantion : 07/24/2017
- * Review by : -
- * Date of review : -
+ * Review by : robzizo
+ * Date of review : 07/31/2017
  */
 import * as React from 'react';
 import {Pdf} from './Pdf';
@@ -20,7 +20,7 @@ interface IProps {
   /**
    * @property file
    * @desc Includes file as an object of files data
-   * @type {object}
+   * @type {object} ( not defined properly )
    * @memberof IProps
    */
   file: IFile;
