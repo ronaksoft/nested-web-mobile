@@ -1,9 +1,10 @@
 /**
- * @file component/PostAttachment/components/otherThumbnail/index.tsx
- * @author sinaa < sinaa@nested.me >
- * @description specially renders any type attachments except video and images inside post card
- *              Documented by:          robzizo
- *              Date of documentation:  2017-07-25
+ * @file scenes/compose/AttachmentList/Item/otherThumbnail/index.tsx
+ * @author naamesteh < naamesteh@nested.me >
+ * @description specially renders any type attachments except video and images
+ * inside upload attachment in compose page
+ *              Documented by:          Shayesteh Naeimabadi
+ *              Date of documentation:  2017-08-01
  *              Reviewed by:            -
  *              Date of review:         -
  */
@@ -81,8 +82,8 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
           !this.props.item.model && (
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' pdf'}>
-                  PDF
+                <div className={style.fileBadge}>
+                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
                 </div>
               </div>
             </div>

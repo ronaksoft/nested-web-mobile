@@ -1,9 +1,10 @@
 /**
- * @file component/PostAttachment/components/otherThumbnail/index.tsx
- * @author sinaa < sinaa@nested.me >
- * @description specially renders any type attachments except video and images inside post card
- *              Documented by:          robzizo
- *              Date of documentation:  2017-07-25
+ * @file scenes/compose/AttachmentList/Item/ArchiveThumbnail/index.tsx
+ * @author naamesteh < naamesteh@nested.me >
+ * @description specially renders Archive type attachments
+ * inside upload attachment in compose page
+ *              Documented by:          Shayesteh Naeimabadi
+ *              Date of documentation:  2017-08-01
  *              Reviewed by:            -
  *              Date of review:         -
  */
@@ -45,7 +46,7 @@ export default class ArchiveThumbnail extends React.Component<IProps, IState> {
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof OtherThumbnail
+   * @memberof ArchiveThumbnail
    */
   constructor(props) {
     super(props);
@@ -55,7 +56,7 @@ export default class ArchiveThumbnail extends React.Component<IProps, IState> {
    * renders the attachment element related to attachment type
    * @function
    * @returns {ReactElement} markup
-   * @memberof OtherThumbnail
+   * @memberof ArchiveThumbnail
    * @override
    * @generator
    */
@@ -71,7 +72,7 @@ export default class ArchiveThumbnail extends React.Component<IProps, IState> {
       <div key={item.id}>
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' rar'}>
+                <div className={style.fileBadge + ' ' + style.fileBadgeArchive}>
                   RAR
                 </div>
               </div>

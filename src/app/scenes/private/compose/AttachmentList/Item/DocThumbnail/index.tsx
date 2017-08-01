@@ -1,9 +1,10 @@
 /**
- * @file component/PostAttachment/components/videoThumbnail/index.tsx
- * @author sina < sinaa@nested.me >
- * @description specially renders videos thumbnail
- *              Documented by:          robzizo
- *              Date of documentation:  2017-07-25
+ * @file scenes/compose/AttachmentList/Item/DocThumbnail/index.tsx
+ * @author naamesteh < naamesteh@nested.me >
+ * @description specially renders Documents type attachments
+ * inside upload attachment in compose page
+ *              Documented by:          Shayesteh Naeimabadi
+ *              Date of documentation:  2017-08-01
  *              Reviewed by:            -
  *              Date of review:         -
  */
@@ -35,9 +36,8 @@ interface IState {
 }
 
 /**
- * TODO : render should like imageSingle component if full width is true
  * @export
- * @class VideoThumbnail
+ * @class DocThumbnail
  * @classdesc render the thumbnails of video attachments
  * @extends {React.Component<IProps, IState>}
  */
@@ -47,7 +47,7 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof ImageThumbnail
+   * @memberof DocThumbnail
    */
   constructor(props) {
     super(props);
@@ -57,7 +57,7 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
    * renders the video preview in post card
    * @function
    * @returns {ReactElement} markup
-   * @memberof ImageThumbnail
+   * @memberof DocThumbnail
    * @override
    * @generator
    */
@@ -79,8 +79,8 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
       <div key={item.id}>
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' doc'}>
-                  DOC
+                <div className={style.fileBadge + ' ' + style.fileBadgeDoc}>
+                  DOCX
                 </div>
               </div>
             </div>

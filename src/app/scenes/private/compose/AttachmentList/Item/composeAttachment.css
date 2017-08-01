@@ -36,26 +36,26 @@
   font-size: 9px;
 }
 
-.fileBadge.archive {
+.fileBadgeArchive {
   border-color: #5A28BE;
   color: #5A28BE;
   margin-top: 8px;
   font-weight: bold;
 }
 
-.fileBadge.pdf {
+.fileBadgePdf {
   border-color: #FA0032;
   color: #FA0032;
   font-weight: bold;
 }
 
-.fileBadge.doc {
+.fileBadgeDoc {
   border-color: #148CF0;
   color: #148CF0;
   font-weight: bold;
 }
 
-.fileBadge.aud, .fileBadge.vid, .fileBadge.img {
+.fileBadgeAud, .fileBadgeVid, .fileBadgeImg {
   border-color: #3CC882;
   color: #3CC882;
   font-weight: bold;

@@ -1,9 +1,10 @@
 /**
- * @file component/PostAttachment/components/videoThumbnail/index.tsx
- * @author sina < sinaa@nested.me >
- * @description specially renders videos thumbnail
- *              Documented by:          robzizo
- *              Date of documentation:  2017-07-25
+ * @file scenes/compose/AttachmentList/Item/videoThumbnail/index.tsx
+ * @author naamesteh < naamesteh@nested.me >
+ * @description specially renders Video type attachments
+ * inside upload attachment in compose page
+ *              Documented by:          Shayesteh Naeimabadi
+ *              Date of documentation:  2017-08-01
  *              Reviewed by:            -
  *              Date of review:         -
  */
@@ -36,7 +37,6 @@ interface IState {
 }
 
 /**
- * TODO : render should like imageSingle component if full width is true
  * @export
  * @class VideoThumbnail
  * @classdesc render the thumbnails of video attachments
@@ -48,7 +48,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof ImageThumbnail
+   * @memberof VideoThumbnail
    */
   constructor(props) {
     super(props);
@@ -58,7 +58,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
    * renders the video preview in post card
    * @function
    * @returns {ReactElement} markup
-   * @memberof ImageThumbnail
+   * @memberof VideoThumbnail
    * @override
    * @generator
    */
@@ -89,7 +89,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
         !this.props.item.model && (
         <div key={item.id} className={style.imageContainer}>
           <div className={style.filesTypesImages}>
-            <div className={style.fileBadge + ' vid'}>
+            <div className={style.fileBadge + ' ' + style.fileBadgeVid}>
               VID
             </div>
           </div>
