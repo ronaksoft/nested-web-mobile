@@ -158,7 +158,9 @@ class Api {
             api.server = null;
 
             // store domain of new configs in local storage
-            localStorage.setItem('nested.server.domain', domain);
+            if (process.env.BROWSER) {
+              localStorage.setItem('nested.server.domain', domain);
+            }
             resolve();
           } else {
             reject();

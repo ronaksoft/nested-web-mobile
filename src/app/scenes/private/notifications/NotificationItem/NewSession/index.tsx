@@ -12,7 +12,7 @@
 import * as React from 'react';
 import {IcoN, UserAvatar} from 'components';
 import INotification from '../../../../../api/notification/interfaces/INotification';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import 'antd/dist/antd.css';
 
 const style = require('../NotificationItem.css');
@@ -49,7 +49,7 @@ class NewSession extends React.Component <IProps, any> {
               <span><b>New login</b> from:</span>
               {/* setting _cid of notification for rendering log in devices */}
               <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
-              {/* using untils service component for rendering correct time */}
+              {/* using utils service component for rendering correct time */}
               <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>

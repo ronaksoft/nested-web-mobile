@@ -13,7 +13,7 @@ import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
 import INotification from '../../../../../api/notification/interfaces/INotification';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 

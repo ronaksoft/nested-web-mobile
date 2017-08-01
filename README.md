@@ -1,4 +1,4 @@
-# Vortigern
+# Nested
 [![Build Status](https://travis-ci.org/barbar/vortigern.svg?branch=master)](https://travis-ci.org/barbar/vortigern)
 [![Dependency Status](https://david-dm.org/barbar/vortigern.svg)]()
 [![devDependency Status](https://david-dm.org/barbar/vortigern/dev-status.svg)]()
@@ -7,9 +7,9 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/barbar/vortigern/develop/LICENSE)
 ___
 
-<img src="https://barbaruploads.s3.amazonaws.com/bicoz/vortigern.png" width="100%" />
+<img src="http://nested.me/wp-content/uploads/2017/07/GrandPlace-Posts@2x.png" width="320" height="568"/>
 
-**Vortigern** is our opinionated boilerplate for crafting universal web applications by using modern technologies like TypeScript, React and Redux.
+**Nested Mobile App** This is mobile client for Nested application
 
 [![TypeScript](https://barbaruploads.s3.amazonaws.com/bicoz/typescript.png)](https://www.typescriptlang.org/) 
 [![React](https://barbaruploads.s3.amazonaws.com/bicoz/react.png)](https://github.com/facebook/react) 
@@ -17,7 +17,7 @@ ___
 
 
 ## Libraries
-Vortigern uses the following libraries and tools:
+App uses the following libraries and tools:
 
 #### Core
 - [TypeScript](https://www.typescriptlang.org/)
@@ -26,6 +26,10 @@ Vortigern uses the following libraries and tools:
 - [Redux](https://github.com/reactjs/redux) for managing application state.
 - [React-Redux](https://github.com/reactjs/react-redux) to use React-Redux bindings.
 - [React-Router-Redux](https://github.com/reactjs/react-router-redux) to keep application state sync with route changes.
+- [Less](https://github.com/less/less.js/) Helps to write faster styles.
+- [firebase](https://github.com/firebase/) for managing notifications
+- [md5](https://github.com/pvorb/node-md5) for encription passwords
+- [cookies-js](https://github.com/ScottHamper/Cookies) for managing cookies
 
 #### Utilities
 - [Isomorphic Fetch](https://github.com/matthew-andrews/isomorphic-fetch) with [ES6-Promise](https://github.com/stefanpenner/es6-promise) for using fetch api on both client & server side.
@@ -33,6 +37,9 @@ Vortigern uses the following libraries and tools:
 - [Redux Connect](https://github.com/makeomatic/redux-connect) for resolving async props in react-router.
 - [React Helmet](https://github.com/nfl/react-helmet)
 - [classnames](https://github.com/JedWatson/classnames)
+- [antd](https://github.com/ant-design/ant-design) for some button and form elements
+- [lodash](https://github.com/lodash/lodash)
+- [moment](https://github.com/moment/moment) to handle the timestamp converts
 
 #### Build System
 - [Webpack](https://github.com/webpack/webpack) for bundling.
@@ -70,6 +77,7 @@ Vortigern uses the following libraries and tools:
 - [Redux Logger](https://github.com/theaqua/redux-logger)
 - [Redux DevTools](https://github.com/gaearon/redux-devtools)
 - [Chalk](https://github.com/chalk/chalk) for colored terminal logs.
+- [doctype](https://github.com/deepsweet/istanbul-instrumenter-loader) for ubuilding documenations
 
 #### Testing
 - [Karma](https://github.com/karma-runner/karma) as test runner with following plugins
@@ -96,16 +104,28 @@ Vortigern uses the following libraries and tools:
 ├── node_modules                # Node Packages.
 ├── src                         # Source code.
 │   ├── app                     # App folder.
+│   │ ├── api                   # Nested api components.
+│   │ ├── assets                # application icon and fonts
 │   │ ├── components            # React Components.
 │   │ ├── containers            # React/Redux Containers.
-│   │ ├── helpers               # Helper Functions & Components.
 │   │ ├── redux                 # Redux related code aka data layer of the app.
-│   │ │   ├── modules           # Redux modules.   
-│   │ │   ├── reducers.ts       # Main reducers file to combine them.  
-│   │ │   └── store.ts          # Redux store, contains global app state.    
+│   │ │   ├── accounts          # Redux accounts module.
+│   │ │   ├── app               # Redux app module.
+│   │ │   ├── comments          # Redux comments module.
+│   │ │   ├── places            # Redux places module.
+│   │ │   ├── posts             # Redux posts module.
+│   │ │   ├── IStore.ts         # Store interface.
+│   │ │   ├── reducers.ts       # Main reducers file to combine them.
+│   │ │   └── store.ts          # Redux store, contains global app state.
+│   │ ├── scenes                # Main pages.
+│   │ │   ├── private           # Pages for authenticated users.
+│   │ │   └── public            # Pages for not logged in visitors.
+│   │ ├── services              # Services for handling websockets and authentications. 
 │   │ └── routes.tsx            # Routes.
 │   ├── client.tsx              # Entry point for client side rendering.
 │   └── server.tsx              # Entry point for server side rendering.
+│   └── manigest.json           # Config file for browsers.
+│   └── favicon.ico             # Favicon.
 ├── typings                     # Type definitions installed with typings.              
 ├── .dockerignore               # Tells docker which files to ignore.
 ├── .gitignore                  # Tells git which files to ignore.
@@ -121,11 +141,12 @@ Vortigern uses the following libraries and tools:
 
 ## Installation
 
-You can clone from this repository or [install the latest version](https://github.com/barbar/vortigern/releases) as a zip file or a tarball. 
+You can clone from this repository or [install the latest version](http://git.ronaksoftware.com/nested/web-mobile-app) as a zip file or a tarball. 
 
 ```bash
-$ git clone https://github.com/barbar/vortigern
-$ cd vortigern
+$ git clone http://git.ronaksoftware.com/nested/web-mobile-app
+$ cd mobile-app
+$ yarn install
 $ npm install
 ```
 
@@ -164,20 +185,25 @@ $ typings install dt~<package> --global --save
 $ typings install <package> --save
 ```
 
+# output documenations
+```bash
+$ npm doc
+```
+
 ## Credits
 
 Vortigern is released under the [MIT license](LICENSE). 
 
-The image in this README belongs to [hhvferry.com](http://www.hhvferry.com/vortscrap.html).
+The image in this README belongs to [ronaksoft.com](http://ronaksoft.com).
 
 ___
 
-## [Barbar Startup Factory](https://www.barbar.com.tr/?ref=vortigern)
+## [Ronak Software Group](https://www.ronaksoft.com)
 
-<a target="_blank" href="https://barbar.digital/?ref=vortigern-barbar-logo"><img src="https://barbaruploads.s3.amazonaws.com/bicoz/logo2x.png" height="55px" /></a>
+<a target="_blank" href="http://ronaksoft.com/"><img src="http://ronaksoft.com/favico.jpg" height="55px" /></a>
 
 We help startups start and stay started by helping them plan, strategize, fund and execute their vision. 
 
-You can contact us at [hey@barbar.digital](mailto:hey@barbar.digital)
+You can contact us at [developers@nested.me](mailto:developers@nested.me)
 
-Be sure to check out available [jobs at Barbar](https://github.com/barbar/hr).
+Be sure to check out available [jobs at nested](https://nested.me/jobs).
