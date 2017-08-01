@@ -20,6 +20,7 @@
   padding-top: 4px;
   padding-right: 16px;
   padding-bottom: 16px;
+  overflow: hidden;
 }
 .commentContainer{
   width: 100%;
@@ -41,7 +42,7 @@
   width: 100%;
 }
 .notifData{
-  width: 100%;
+  width: calc(100% - 25px);
   margin-right: 8px;
 }
 

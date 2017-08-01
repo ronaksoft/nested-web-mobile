@@ -436,7 +436,7 @@ class Shared extends React.Component<IProps, IState> {
           </div>))}
         {/* rendering Loading component in  `loadingBefore` case */}
         {this.state.loadingBefore &&
-        <div>Loading...</div>
+          <Loading active={true}/>
         }
         {/* rendering following text when there is no unseen post */}
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&
