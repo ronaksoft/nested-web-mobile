@@ -1,0 +1,72 @@
+.fileBadge {
+  display: inline-block;
+  border: 1px solid #000;
+  border-radius: 3px;
+  width: 40px;
+}
+
+.filesTypesImages {
+  margin: 0 0 0 13px;
+  position: relative;
+}
+
+.imgContainer:after {
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  content: "";
+  border-radius: 3px;
+}
+
+.fileBadge {
+  text-align: center;
+  text-transform: uppercase;
+  height: 28px;
+  line-height: 20px;
+  padding: 4px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #000;
+  background: #fff;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.fileBadgeArchive {
+  border-color: #5A28BE;
+  color: #5A28BE;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.fileBadgePdf {
+  border-color: #FA0032;
+  color: #FA0032;
+  font-weight: bold;
+}
+
+.fileBadgeDoc {
+  border-color: #148CF0;
+  color: #148CF0;
+  font-weight: bold;
+}
+
+.fileBadgeAud, .fileBadgeVid, .fileBadgeImg {
+  border-color: #3CC882;
+  color: #3CC882;
+  font-weight: bold;
+}
+
+.imageContainer {
+  display: flex;
+  align-items: center;
+  padding: 0 16px 0 0;
+}
+
+
+
+

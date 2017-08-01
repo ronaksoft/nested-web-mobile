@@ -82,7 +82,9 @@ class Signin extends React.Component<IProps, IState> {
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
 
     // clear storage
-    localStorage.removeItem('nested.server.domain');
+    if (process.env.BROWSER) {
+      localStorage.removeItem('nested.server.domain');
+    }
   }
 
   /**

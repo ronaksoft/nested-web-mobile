@@ -49,7 +49,7 @@ class Html extends React.Component<IHtmlProps, {}> {
         charSet="UTF-8"/>
     );
     return (
-      <html>
+      <html lang="en">
       <head>
         {head.base.toComponent()}
         {head.title.toComponent()}
