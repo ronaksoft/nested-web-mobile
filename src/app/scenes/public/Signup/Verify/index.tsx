@@ -391,7 +391,7 @@ class Verify extends React.Component<IProps, IState> {
               trigger={this.state.callPhoneWaiting}
               onFinish={this.handleCallWaitFinish}
               message="wait...">
-              <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
+              <a onClick={this.call}>
                 {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
               </a>
             </Waiting>
