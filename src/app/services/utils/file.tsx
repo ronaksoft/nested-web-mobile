@@ -5,8 +5,8 @@
  * @export {FileUtil}
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-22
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import AAA from 'services/aaa';
@@ -71,7 +71,7 @@ class FileUtil {
    * @function getUrl
    * @desc Generates a download/view url of a file
    * The difference between download and view url is the last part of url. A download url
-   * ends with a download token wich is obviously required to download a file. A view url
+   * ends with a download token which is obviously required to download a file. A view url
    * does not have a token at the end and ends with the file universal Id
    * @private
    * @static
@@ -93,7 +93,7 @@ class FileUtil {
 
   /**
    * @const groups
-   * @desc A list of the ssuported file types with mimetypes
+   * @desc A list of the supported file types with mimetypes
    * @private
    * @static
    * @memberof FileUtil
@@ -209,7 +209,7 @@ class FileUtil {
   /**
    * @function getSuffix
    * @desc Returns a file extension using the file name
-   * e.g. "foo.txt" => "txt"
+   * @example "foo.txt" => "txt"
    * @static
    * @param {string} fileName
    * @returns {string}
@@ -255,7 +255,7 @@ class FileUtil {
   /**
    * @function getUploadType
    * @desc Find the given file upload type based on the file type
-   * e.g. "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
+   * @example "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
    * @borrows getType
    * @static
    * @param {File} file
