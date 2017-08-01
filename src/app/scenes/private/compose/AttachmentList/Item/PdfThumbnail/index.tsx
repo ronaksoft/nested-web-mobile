@@ -10,7 +10,7 @@
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
-import FileUtil from 'services/utils/file';
+// import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
