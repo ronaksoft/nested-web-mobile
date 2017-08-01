@@ -107,7 +107,6 @@ class AttachmentItem extends React.Component<IProps, IState> {
       progress: progressValue,
     });
   }
-  
   private renderThumbnail() {
     const item = this.props.item;
     const fileType = item.model ? item.model.type : FileUtil.getType(item.type);
