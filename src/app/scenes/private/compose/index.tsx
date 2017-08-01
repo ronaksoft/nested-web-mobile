@@ -272,7 +272,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @private
    * @func overlayClick
    * @memberOf Compose
-   */ 
+   */
   private overlayClick = (event) => {
     event.stopPropagation();
   }
