@@ -1,9 +1,35 @@
+/**
+ * @file services/syncActivity/index.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc Cyrus broadcasts messages of `sync-a` type to the clients. These activities
+ * are just sent to the authenticated users based on their teammates' actions. This
+ * service listens to these messages and filters by `place_id` and activity type for
+ * the registered channels. But wait a moment! What's a channel? A channel is how the
+ * app components talk to this service. They tell the service what kind of activities
+ * they look for and the service feeds them on receiving new activities.
+ * @export {SyncActivity}
+ * Documented by: Soroush Torkzadeh
+ * Date of documentation:  2017-07-31
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
 import Api from '../../api/index';
 import SyncActions from './syncActions';
 import ActivityApi from '../../api/activity/index';
 import IActivity from '../../api/activity/interfaces/IActivitiy';
 
+/**
+ * @interface IChanel
+ * @desc Interface of channel
+ */
 interface IChanel {
+  /**
+   * @property placeId
+   * @desc A placeId for filtering activities
+   * @type {string}
+   * @memberof IChanel
+   */
   placeId: string;
   action: SyncActions;
   cb: (activity: IActivity) => void;

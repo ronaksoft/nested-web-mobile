@@ -10,13 +10,24 @@
  */
 
 import * as React from 'react';
-import FileUtil from 'services/utils/file';
+// import FileUtil from 'services/utils/file';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
+import OtherThumbnail from './otherThumbnail';
+import ArchiveThumbnail from './ArchiveThumbnail';
+import VideoThumbnail from './videoThumbnail';
+import AudioThumbnail from './AudThumbnail';
+import DocThumbnail from './DocThumbnail';
+import PdfThumbnail from './PdfThumbnail';
+import FileUtil from 'services/utils/file';
+import AttachmentType from '../../../../../api/attachment/constants/AttachmentType';
+// import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
 import Mode from './mode';
 import {IcoN} from 'components';
 import {Progress} from 'antd';
-const EMPTY_PICTURE = require('../default.gif');
+/*
+ const EMPTY_PICTURE = require('../default.gif');
+ */
 
 /**
  * @interface IProps
@@ -31,6 +42,12 @@ interface IProps {
    * @memberof IProps
    */
   item: IAttachmentItem;
+  /**
+   * @property {Array<IPostAttachment>} attachments - list of attachments
+   * @desc routing state receive from react-router-redux
+   * @type {array<IPostAttachment>}
+   * @memberof IProps
+   */
   /**
    * @prop picture
    * @desc Picture of the selected File. A thumbnail image will be created on selecting an image
@@ -92,6 +109,54 @@ class AttachmentItem extends React.Component<IProps, IState> {
   }
 
   /**
+   * @function
+   * @desc this function render each upload attachment view in compose page
+   * @returns {any}
+   * @private
+   */
+  private renderThumbnail() {
+    const item = this.props.item;
+    const fileType = item.model ? item.model.type : FileUtil.getType(item.type);
+    switch (fileType) {
+      case AttachmentType.GIF:
+      case AttachmentType.IMAGE:
+        return (
+          <img
+            src={this.props.picture}
+            alt={this.props.item.name}
+            style={{width: 40, height: 40}}
+          />
+        );
+      case AttachmentType.VIDEO:
+        return (
+          <VideoThumbnail item={item}/>
+        );
+      case AttachmentType.AUDIO:
+        return (
+          <AudioThumbnail item={item}/>
+        );
+      case AttachmentType.PDF:
+        return (
+          <PdfThumbnail item={item}/>
+        );
+      case AttachmentType.DOCUMENT:
+        return (
+          <DocThumbnail item={item}/>
+        );
+      case AttachmentType.ARCHIVE:
+        return (
+          <ArchiveThumbnail item={item}/>
+        );
+      case AttachmentType.OTHER:
+        return (
+          <OtherThumbnail item={item}/>
+      );
+      default:
+        return null;
+    }
+  }
+
+  /**
    * @func render
    * @desc Renders the component
    * @returns
@@ -103,31 +168,12 @@ class AttachmentItem extends React.Component<IProps, IState> {
         this.props.onRemove(this.props.item);
       }
     };
-
     return (
       <div className={style.item}>
         <span className={style.thumb}>
-          {
-            this.props.item.mode === Mode.UPLOAD
-              ? (
-                  <img
-                      src={this.props.picture}
-                      alt={this.props.item.name}
-                      style={{width: 40, height: 40}}
-                  />
-                )
-              : (
-                  <img
-                      src={
-                        this.props.item.model.thumbs.x64
-                          ? FileUtil.getViewUrl(this.props.item.model.thumbs.x64)
-                          : EMPTY_PICTURE
-                        }
-                      alt={this.props.item.model.name}
-                      style={{width: 40, height: 40}}
-                  />
-                )
-          }
+               {
+            this.renderThumbnail()
+               }
         </span>
         <div className={style.atachmentDetail}>
           <span className={style.name}>

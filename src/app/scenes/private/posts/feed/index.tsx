@@ -4,8 +4,8 @@
  * @description This component is designed for rendering posts which are bookmarked.
  * Documented by:          Shayesteh Naeimabadi <naamesteh@nested.me>
  * Date of documentation:  2017-07-27
- * Reviewed by:            --
- * Date of review:         --
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
  */
 import * as React from 'react';
 import {OptionsMenu} from 'components';
@@ -15,7 +15,7 @@ import PostApi from '../../../../api/post/index';
 import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
-import ArrayUntiles from '../../../../services/untils/array';
+import ArrayUntiles from '../../../../services/utils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
@@ -146,17 +146,21 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  */
 class Feed extends React.Component<IProps, IState> {
+  // (needs documentation)
   private postApi: PostApi;
   private syncActivity = SyncActivity.getInstance();
   private syncActivityListeners = [];
   private favoritePlacesId = [];
   private newPostsIds = [];
+
   /**
    * Creates an instance of Feed.
+   * @constructor
    * @param {*} props
    * @memberof Feed
    */
   constructor(props: IProps) {
+
     super(props);
     /**
      * read the data from props and set to the state and
@@ -183,7 +187,7 @@ class Feed extends React.Component<IProps, IState> {
   }
 
   /**
-   * Component Did Mount
+   * Component Did Mount ( what ?!)
    * @desc Get post from redux store
    * Calls the Api and store it in redux store
    * @func componentDidMount
@@ -215,6 +219,7 @@ class Feed extends React.Component<IProps, IState> {
         200);
     }
 
+    // Needs documentation
     this.syncActivityListeners.push(
       this.syncActivity.openAllChannel(
         (activity: IActivity) => {
@@ -249,7 +254,7 @@ class Feed extends React.Component<IProps, IState> {
 
   /**
    * @function addCommentToPostActivity
-   * @desc add comment to post activity sort
+   * @desc add comment to post activity sort ( unclear )
    * @param {IActivity} activity
    * @private
    */
@@ -271,6 +276,7 @@ class Feed extends React.Component<IProps, IState> {
         });
     }
   }
+
   /**
    * @function gotoFeedByActivity
    * @desc set Feed sort by latest activity
@@ -279,6 +285,7 @@ class Feed extends React.Component<IProps, IState> {
   private gotoFeedByActivity() {
     browserHistory.push(`/m/feed/latest-activity`);
   }
+
   /**
    * @function getPost
    * @desc Get posts with declared limits and `before` timestamp of
@@ -324,7 +331,7 @@ class Feed extends React.Component<IProps, IState> {
         };
       }
     }
-    // set get post limit
+    // set get post limit ( unclear )
     // FIXME:: set limit from config
     params.limit = 20;
     // call get Favorite posts
@@ -463,7 +470,7 @@ class Feed extends React.Component<IProps, IState> {
         }
         {/* after Loading component render posts list */}
         {this.state.posts.map((post: IPost) => (
-          <div key={post._id + 'fdgdfgdf'} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
         {/* rendering Loading component in  `loadingBefore` case */}

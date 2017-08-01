@@ -15,6 +15,7 @@ import {Progress} from 'antd';
 import {IcoN} from 'components';
 import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
+// import IComposeAttachment from '../../../../api/post/interfaces/IComposeAttachment';
 import AttachmentApi from 'api/attachment';
 import Unique from 'services/utils/unique';
 import Mode from './Item/mode';

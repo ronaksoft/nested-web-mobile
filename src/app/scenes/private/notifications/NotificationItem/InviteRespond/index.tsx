@@ -13,7 +13,7 @@ import * as React from 'react';
 import INotification from '../../../../../api/notification/interfaces/INotification';
 import {IcoN, UserAvatar, FullName} from 'components';
 import PlaceName from '../../../../../components/PlaceName';
-import TimeUntiles from '../../../../../services/untils/time';
+import TimeUntiles from '../../../../../services/utils/time';
 import {Link} from 'react-router';
 import 'antd/dist/antd.css';
 
@@ -55,7 +55,7 @@ class InviteRespond extends React.Component <IProps, any> {
             <span> accepted your invitation and joined </span>
               {/* using PlaceName component for rendering Place name */}
               <b><PlaceName place_id={this.props.notification.place_id}/>.</b>
-              {/* using untils service component for rendering correct time */}
+              {/* using utils service component for rendering correct time */}
               <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>

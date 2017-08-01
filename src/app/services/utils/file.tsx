@@ -44,14 +44,14 @@ const UploadTypes = {
  * @desc The different file types which are defined by Xrexes, based on a file mimetype.
  */
 const FileTypes = {
-  IMAGE: 'image',
-  GIF: 'gif',
-  ARCHIVE: 'archive',
-  DOCUMENT: 'document',
-  AUDIO: 'audio',
-  VIDEO: 'video',
-  PDF: 'pdf',
-  OTHER: 'other',
+  IMAGE: 'IMG',
+  GIF: 'GIF',
+  ARCHIVE: 'ZIP',
+  DOCUMENT: 'DOC',
+  AUDIO: 'AUD',
+  VIDEO: 'VID',
+  PDF: 'PDF',
+  OTHER: 'OTH',
 };
 
 /**
