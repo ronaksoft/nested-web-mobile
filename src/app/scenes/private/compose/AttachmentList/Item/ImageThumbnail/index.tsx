@@ -1,7 +1,7 @@
 /**
- * @file scenes/compose/AttachmentList/Item/videoThumbnail/index.tsx
+ * @file scenes/compose/AttachmentList/Item/ImageThumbnail/index.tsx
  * @author naamesteh < naamesteh@nested.me >
- * @description specially renders Video type attachments
+ * @description specially renders Image type attachments
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
