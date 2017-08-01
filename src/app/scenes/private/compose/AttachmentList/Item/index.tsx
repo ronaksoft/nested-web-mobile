@@ -5,8 +5,8 @@
  * @export AttachmentItem
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import * as React from 'react';
@@ -71,6 +71,12 @@ interface IProps {
 }
 
 interface IState {
+  /**
+   * @prop progress
+   * @desc upload progress ratio
+   * @type {number}
+   * @memberof IState
+   */
   progress: number;
 }
 
@@ -109,9 +115,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
   }
 
   /**
-   * @function
+   * @function renderThumbnail
    * @desc this function render each upload attachment view in compose page
-   * @returns {any}
+   * @returns {JSXElement}
    * @private
    */
   private renderThumbnail() {
@@ -161,6 +167,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
    * @desc Renders the component
    * @returns
    * @memberof AttachmentItem
+   * @generator
    */
   public render() {
     const handleRemoveClick = () => {

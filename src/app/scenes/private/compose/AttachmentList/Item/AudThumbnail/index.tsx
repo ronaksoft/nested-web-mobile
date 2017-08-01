@@ -5,8 +5,8 @@
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            rozizo
+ *              Date of review:         2017-08-01
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';

@@ -5,8 +5,8 @@
  * @export AttachmentList
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import * as React from 'react';
@@ -115,6 +115,11 @@ interface IUploadItem {
 
 /**
  * manage the Items list and file upload
+ *
+ * @class AttachmentList
+ * @extends {React.Component<IProps, IState>}
+ */
+/**
  *
  * @class AttachmentList
  * @extends {React.Component<IProps, IState>}

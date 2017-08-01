@@ -1,11 +1,11 @@
 /**
  * @file component/scenes/private/files/index.tsx
- * @auther naamesteh < naemabadei.shayesteh@gmail.com >
+ * @author naamesteh < naemabadei.shayesteh@gmail.com >
  * @desc This file renders all file item types.
  * Document By : naamesteh
- * Date of documantion : 07/24/2017
- * Review by : -
- * Date of review : -
+ * Date of documentation : 07/24/2017
+ * Review by : robzizo
+ * Date of review : 08/01/2017
  */
 import * as React from 'react';
 import {FileItem} from 'components/FileItem';
@@ -24,12 +24,12 @@ interface IState {
 /**
  * renders the Files element
  * @class Files
- * @extends {React.Component<{}, IState>}
+ * @extends {React.Component<any, IState>}
  */
 class Files extends React.Component<{}, IState> {
 
   /**
-   * Constructor
+   * @constructor
    * Creates an instance of Files.
    * @param {IProps} props
    * @memberof Files
