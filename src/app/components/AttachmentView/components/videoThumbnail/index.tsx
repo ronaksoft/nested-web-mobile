@@ -9,9 +9,8 @@
  */
 import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
-import AAA from '../../../../services/aaa/index';
-import CONFIG from '../../../../config';
 import AttachmentApi from 'api/attachment';
+import FileUtiles from '../../../../services/utils/file';
 
 /**
  * @name IProps
@@ -59,8 +58,9 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
         universal_id: this.props.attachment._id,
       }).then((token: string) => {
         this.setState({
-          viewUrl : `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-              `${this.props.attachment._id}/${token}`,
+          // viewUrl : `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+          //     `${this.props.attachment._id}/${token}`,
+          viewUrl : FileUtiles.getDownloadUrl(this.props.attachment._id, token),
         });
       });
   }
@@ -96,8 +96,9 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @var
      * @type {string}
      */
-    const srcPoster: string = `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
-    `${attachment.thumbs.pre}/`;
+    // const srcPoster: string = `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
+    // `${attachment.thumbs.pre}/`;
+    const srcPoster: string = FileUtiles.getViewUrl(attachment._id);
     return (
       <li>
         {this.state.viewUrl && (
