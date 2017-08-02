@@ -64,9 +64,6 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
   public componentWillUnmount() {
     this.listener();
-    // browserHistory.listen(() => {
-    //   this.closeAll();
-    // });
   }
 
   /**
