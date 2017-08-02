@@ -8,6 +8,7 @@
  * Date of review:          2017-07-31
  */
 import Api from 'api';
+import RequestBundle from '../requestBundle';
 import {
   IRecallRequest,
   IRecallResponse,
@@ -34,11 +35,20 @@ export default class AccountApi {
   private api;
 
   /**
+   * @prop requestBundle
+   * @desc An instance of requestBundle
+   * @private
+   * @memberof CommentApi
+   */
+  private requestBundle: RequestBundle;
+
+  /**
    * Creates an instance of AccountApi.
    * @memberof AccountApi
    */
   constructor() {
     this.api = Api.getInstance();
+    this.requestBundle = RequestBundle.getInstance();
   }
 
   /**
@@ -79,10 +89,28 @@ export default class AccountApi {
    * @memberof AccountApi
    */
   public get(data: IGetRequest): Promise<any> {
-    return this.api.request({
-      cmd: 'account/get',
+    // return this.api.request({
+    //   cmd: 'account/get',
+    //   data,
+    // });
+    // console.log(this.requestBundle);
+    return this.requestBundle.observeRequest('account', data.account_id, false, '_id', 'accounts', this.getManyPrivate);
+  }
+
+  /**
+   * @func get
+   * @desc Retrieves the current user account data
+   * @param {string} ids
+   * @memberof AccountApi
+   */
+  public getManyPrivate(ids: string) {
+    const data: IGetRequest = {
+      account_id: ids,
+    };
+    return {
+      cmd: 'account/get_many',
       data,
-    });
+    };
   }
 
   /**

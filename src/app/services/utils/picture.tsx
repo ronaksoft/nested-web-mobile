@@ -1,4 +1,28 @@
+/**
+ * @file utils/picture.tsx
+ * @author Soroush Torkzadeh <sorousht@nested.com>
+ * @desc generates a base64 url of image file
+ * @export {FileUtil}
+ * Documented by: robzizo
+ * Date of documentation:  2017-08-01
+ * Reviewed by:            -
+ * Date of review:         -
+ */
+
+/**
+ * resize the uploaded image and make data url of it
+ * and rejects the files are not image
+ * @class Picture
+ */
 class Picture {
+   /**
+    * Draw image into canvas and with canvas prototypes converts it toDataURL
+    * @static
+    * @param {File} file
+    * @returns {string} data url of image
+    * @async
+    * @memberOf Picture
+    */
    public static resize(file: File) {
      if (!Picture.isImage(file)) {
        return Promise.reject(Error('The file is not an image!'));

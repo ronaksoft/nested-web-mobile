@@ -5,8 +5,8 @@
  * @export {Unique}
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-22
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 class Unique {
   /**

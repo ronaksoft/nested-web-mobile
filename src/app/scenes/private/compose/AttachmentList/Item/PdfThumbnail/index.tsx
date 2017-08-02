@@ -5,12 +5,12 @@
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            robzizo
+ *              Date of review:         2017-08-01
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
-import FileUtil from 'services/utils/file';
+// import FileUtil from 'services/utils/file';
 const style = require('../composeAttachment.css');
 
 /**
@@ -63,28 +63,16 @@ export default class PdfThumbnail extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-
-    /**
-     * @name attachment
-     * @const
-     * @type {object}
-     */
     const {item} = this.props;
-
-    /**
-     * @name src
-     * @const
-     * @type {string}
-     */
     return (
       <div key={item.id}>
-            <div key={item.id} className={style.imageContainer}>
-              <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' ' + style.fileBadgePdf}>
-                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
-                </div>
-              </div>
+        <div key={item.id} className={style.imageContainer}>
+          <div className={style.filesTypesImages}>
+            <div className={style.fileBadge + ' ' + style.fileBadgePdf}>
+              PDF
             </div>
+          </div>
+        </div>
       </div>
     );
   }

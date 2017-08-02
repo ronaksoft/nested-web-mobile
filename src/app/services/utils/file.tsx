@@ -5,8 +5,8 @@
  * @export {FileUtil}
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-22
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import AAA from 'services/aaa';
@@ -71,7 +71,7 @@ class FileUtil {
    * @function getUrl
    * @desc Generates a download/view url of a file
    * The difference between download and view url is the last part of url. A download url
-   * ends with a download token wich is obviously required to download a file. A view url
+   * ends with a download token which is obviously required to download a file. A view url
    * does not have a token at the end and ends with the file universal Id
    * @private
    * @static
@@ -93,7 +93,7 @@ class FileUtil {
 
   /**
    * @const groups
-   * @desc A list of the ssuported file types with mimetypes
+   * @desc A list of the supported file types with mimetypes
    * @private
    * @static
    * @memberof FileUtil
@@ -103,23 +103,6 @@ class FileUtil {
       mimetypes: [
         'application/zip',
         'application/x-rar-compressed',
-      ],
-    },
-    {
-      type: FileTypes.ARCHIVE,
-      mimetypes: [
-        'text/plain',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-        'application/vnd.ms-excel.template.macroEnabled.12',
-        'application/vnd.ms-excel.addin.macroEnabled.12',
-        'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
       ],
     },
     {
@@ -200,16 +183,16 @@ class FileUtil {
       return '';
     }
 
-    const type = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
+    const fileType = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
 
     // TODO: Check if type is null
-    return type.type || FileTypes.OTHER;
+    return fileType ? fileType.type : FileTypes.OTHER;
   }
 
   /**
    * @function getSuffix
    * @desc Returns a file extension using the file name
-   * e.g. "foo.txt" => "txt"
+   * @example "foo.txt" => "txt"
    * @static
    * @param {string} fileName
    * @returns {string}
@@ -255,7 +238,7 @@ class FileUtil {
   /**
    * @function getUploadType
    * @desc Find the given file upload type based on the file type
-   * e.g. "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
+   * @example "foo.gif" => "gif", "foo.mp4" => "video", "foo.bar" => "file"
    * @borrows getType
    * @static
    * @param {File} file

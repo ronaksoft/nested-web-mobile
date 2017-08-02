@@ -94,7 +94,9 @@ class Api {
         }
         this.requestKeyList[requestKey].status = response.status;
         this.callAllPromisesByRequestKey(requestKey);
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error);
+        console.log('Promise Catch');
         this.requestKeyList[requestKey].response = null;
         this.requestKeyList[requestKey].resolve = null;
         this.callAllPromisesByRequestKey(requestKey);

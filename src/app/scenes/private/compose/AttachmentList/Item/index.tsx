@@ -5,8 +5,8 @@
  * @export AttachmentItem
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 
 import * as React from 'react';
@@ -18,6 +18,7 @@ import ArchiveThumbnail from './ArchiveThumbnail';
 import VideoThumbnail from './videoThumbnail';
 import AudioThumbnail from './AudThumbnail';
 import DocThumbnail from './DocThumbnail';
+import ImageThumbnail from './ImageThumbnail';
 import PdfThumbnail from './PdfThumbnail';
 import FileUtil from 'services/utils/file';
 import AttachmentType from '../../../../../api/attachment/constants/AttachmentType';
@@ -71,6 +72,12 @@ interface IProps {
 }
 
 interface IState {
+  /**
+   * @prop progress
+   * @desc upload progress ratio
+   * @type {number}
+   * @memberof IState
+   */
   progress: number;
 }
 
@@ -109,9 +116,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
   }
 
   /**
-   * @function
+   * @function renderThumbnail
    * @desc this function render each upload attachment view in compose page
-   * @returns {any}
+   * @returns {JSXElement}
    * @private
    */
   private renderThumbnail() {
@@ -121,11 +128,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
       case AttachmentType.GIF:
       case AttachmentType.IMAGE:
         return (
-          <img
-            src={this.props.picture}
-            alt={this.props.item.name}
-            style={{width: 40, height: 40}}
-          />
+          <ImageThumbnail item={item} thumb={this.props.picture}/>
         );
       case AttachmentType.VIDEO:
         return (
@@ -161,6 +164,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
    * @desc Renders the component
    * @returns
    * @memberof AttachmentItem
+   * @generator
    */
   public render() {
     const handleRemoveClick = () => {

@@ -6,8 +6,8 @@
  * @exports {Socket, SocketState}
  * Documented by: Soroush Torkzadeh
  * Date of documentation:  2017-07-24
- * Reviewed by:            -
- * Date of review:         -
+ * Reviewed by:            robzizo
+ * Date of review:         2017-08-01
  */
 import * as log from 'loglevel';
 
@@ -20,6 +20,7 @@ import {
 import SocketState from './states';
 /**
  * @const defaultConfig
+ * @default
  * @desc Socket's default configuration
  */
 const defaultConfig: ISocketConfig = {
@@ -153,6 +154,7 @@ class Socket {
   /**
    * @func connect
    * @desc Creates a new instance of browser WebSocket and listen to all events
+   * binds functions by `this`.
    * @memberof Socket
    */
   public connect() {
@@ -224,7 +226,7 @@ class Socket {
    *    1. Stops reconnecting
    *    2. Triggers onReady callback that was received on instantiation of the class
    *    3. Start ping-pong
-   *    4. Set state to OPEN and totify the state change
+   *    4. Set state to OPEN and notify the state change
    * @private
    * @memberof Socket
    */
@@ -265,8 +267,8 @@ class Socket {
 
   /**
    * @func onMessage
-   * @desc Receives the message and reads the content to find out that is a JSON message or a PONG.
-   * If the message is PONG, then rests pingPongCounter, else if is rgular message, then call onMessage callback
+   * @desc Receives the message from server and reads the content to find out that is a JSON message or a PONG.
+   * If the message is PONG, then rests pingPongCounter, else if is regular message, then call onMessage callback
    * In both cases, This sets state to OPEN and stops reconnecting
    * @private
    * @param {*} msg

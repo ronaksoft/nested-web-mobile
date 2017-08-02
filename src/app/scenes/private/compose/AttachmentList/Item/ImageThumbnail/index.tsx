@@ -1,17 +1,18 @@
 /**
- * @file scenes/compose/AttachmentList/Item/DocThumbnail/index.tsx
+ * @file scenes/compose/AttachmentList/Item/ImageThumbnail/index.tsx
  * @author naamesteh < naamesteh@nested.me >
- * @description specially renders Documents type attachments
+ * @description specially renders Image type attachments
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
- *              Reviewed by:            robzizo
- *              Date of review:         2017-08-01
+ *              Reviewed by:            -
+ *              Date of review:         -
  */
 import * as React from 'react';
-import IAttachmentItem from '../IAttachmentItem';
 import FileUtil from 'services/utils/file';
+import IAttachmentItem from '../IAttachmentItem';
 const style = require('../composeAttachment.css');
+import Mode from '../mode';
 
 /**
  * @name IProps
@@ -24,6 +25,7 @@ const style = require('../composeAttachment.css');
 interface IProps {
   item: IAttachmentItem;
   fullWidth?: boolean;
+  thumb?: any;
 }
 
 /**
@@ -38,17 +40,17 @@ interface IState {
 
 /**
  * @export
- * @class DocThumbnail
+ * @class ImageThumbnail
  * @classdesc render the thumbnails of video attachments
  * @extends {React.Component<IProps, IState>}
  */
-export default class DocThumbnail extends React.Component<IProps, IState> {
+export default class ImageThumbnail extends React.Component<IProps, IState> {
 
   /**
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof DocThumbnail
+   * @memberof ImageThumbnail
    */
   constructor(props) {
     super(props);
@@ -58,22 +60,34 @@ export default class DocThumbnail extends React.Component<IProps, IState> {
    * renders the video preview in post card
    * @function
    * @returns {ReactElement} markup
-   * @memberof DocThumbnail
+   * @memberof ImageThumbnail
    * @override
    * @generator
    */
   public render() {
-    const {item} = this.props;
-    const name = item.model ? item.model.name : item.name;
+    const {item, thumb} = this.props;
+    const hasThumb = (item.model && item.model.thumbs.x64);
     return (
       <div key={item.id}>
-        <div key={item.id} className={style.imageContainer}>
-          <div className={style.filesTypesImages}>
-            <div className={style.fileBadge + ' ' + style.fileBadgeDoc}>
-              {FileUtil.getSuffix(name).toUpperCase()}
+        {
+          item.mode === Mode.UPLOAD ?
+          (
+            <img src={thumb}
+              style={{width: 40, height: 40}}
+            />
+          ) : hasThumb ? (
+            <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+              style={{width: 40, height: 40}}
+            />
+          ) :
+          (
+            <div key={item.id} className={style.imageContainer}>
+              <div className={style.fileBadge + ' ' + style.fileBadgeImg}>
+                IMG
+              </div>
             </div>
-          </div>
-        </div>
+          )
+        }
       </div>
     );
   }

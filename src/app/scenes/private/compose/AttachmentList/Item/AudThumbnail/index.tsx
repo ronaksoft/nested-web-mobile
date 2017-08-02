@@ -5,8 +5,8 @@
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
- *              Reviewed by:            -
- *              Date of review:         -
+ *              Reviewed by:            rozizo
+ *              Date of review:         2017-08-01
  */
 import * as React from 'react';
 import IAttachmentItem from '../IAttachmentItem';
@@ -63,34 +63,21 @@ export default class AudioThumbnail extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-
-    /**
-     * @name attachment
-     * @const
-     * @type {object}
-     */
     const {item} = this.props;
-
-    /**
-     * @name src
-     * @const
-     * @type {string}
-     */
+    const hasThumb = item.model && item.model.thumbs.x64;
     return (
       <div key={item.id}>
         {
-          this.props.item.model &&
+          hasThumb ?
           (
-            <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-                 style={{width: 40, height: 40}}/>
-          )
-        }
-        {
-          !this.props.item.model && (
+            <img src={FileUtil.getViewUrl(item.model.thumbs.x64)}
+                style={{width: 40, height: 40}}/>
+          ) :
+          (
             <div key={item.id} className={style.imageContainer}>
               <div className={style.filesTypesImages}>
                 <div className={style.fileBadge + ' ' + style.fileBadgeAud}>
-                  {FileUtil.getSuffix(this.props.item.model.name).toUpperCase()}
+                  AUD
                 </div>
               </div>
             </div>

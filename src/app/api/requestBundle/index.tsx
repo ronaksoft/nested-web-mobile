@@ -9,16 +9,20 @@
  * Date of review:        -
  */
 
+import Api from 'api';
+
 /**
  * @class RequestBundle
  * @desc Base of all RequestBundle classes
  */
 class RequestBundle {
   private static instance;
+  private api;
   private bundleRequestList: any[] = [];
 
   private constructor() {
     //
+    this.api = Api.getInstance();
   }
 
   /**
@@ -38,11 +42,21 @@ class RequestBundle {
   /**
    * @func observeRequst
    * @desc Observe requests in order to bundle them
+   * @param {string} domain
+   * @param {string} parameter
+   * @param {boolean} isMany
+   * @param {string} paramKey
+   * @param {string} responseKey
+   * @param {any} func
    * @returns {Promise}
    * @memberof RequestBundle
    */
-  public observeRequst(domain: string, parameter: string, isMany: boolean = false, paramKey: string, func: any) {
-    console.log('observeRequst');
+  public observeRequest(domain: string,
+                        parameter: string,
+                        isMany: boolean = false,
+                        paramKey: string,
+                        responseKey: string,
+                        func: any): Promise<any> {
     if (domain !== null) {
       if (!this.bundleRequestList.hasOwnProperty(domain)) {
         this.bundleRequestList[domain] = {
@@ -51,11 +65,14 @@ class RequestBundle {
         };
         setTimeout(() => {
           const ids = this.getBundleIds(domain);
-          func(ids).then((response) => {
-            console.log(this.bundleRequestList[domain].requset.length + ' request(s) bundled');
-            this.bundleRequestList[domain].reponse = response;
+          console.log(ids);
+          this.api.request(func(ids)).then((response) => {
+            console.log(`${this.bundleRequestList[domain].request.length} request(s) were bundled`);
+            this.bundleRequestList[domain].response = response[responseKey];
             this.resolveAllPromisesByDomain(domain, paramKey);
-          }).catch(() => {
+          }).catch((error) => {
+            console.log(error);
+            console.log('reject all');
             this.rejectAllPromisesByDomain(domain);
           });
         }, 100);
@@ -91,7 +108,7 @@ class RequestBundle {
    * @returns {array}
    * @memberof RequestBundle
    */
-  private extractCommaSeparatedIds(str: string) {
+  private extractCommaSeparatedIds(str: string): any[] {
     return str.split(',');
   }
 
@@ -106,13 +123,13 @@ class RequestBundle {
     const idList: string[] = [];
     const bundleList = this.bundleRequestList[domain];
     bundleList.request.forEach((value) => {
-      const subIds = this.extractCommaSeparatedIds;
+      const subIds = this.extractCommaSeparatedIds(value.param);
       value.ids = subIds;
-      subIds(value.request.param).forEach((subValue) => {
-        if (idList.indexOf(subValue) === -1) {
-          idList.push(subValue);
+      for (const i in subIds) {
+        if (idList.indexOf(subIds[i]) === -1) {
+          idList.push(subIds[i]);
         }
-      });
+      }
     });
     return idList.join(',');
   }
@@ -130,17 +147,17 @@ class RequestBundle {
     const responses = requestList.response;
     requestList.request.forEach((request) => {
       request.ids.forEach((subValue) => {
+        const dataList = [];
         responses.forEach((response) => {
-          const dataList = [];
           if (subValue === response[paramKey]) {
             dataList.push(response);
           }
-          if (request.many) {
-            request.promise.resolve(dataList);
-          } else {
-            request.promise.resolve(dataList[0]);
-          }
         });
+        if (request.many) {
+          request.promise.resolve(dataList);
+        } else {
+          request.promise.resolve(dataList[0]);
+        }
       });
     });
     delete this.bundleRequestList[domain];
