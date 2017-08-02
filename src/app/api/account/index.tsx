@@ -98,12 +98,23 @@ export default class AccountApi {
   }
 
   /**
+   * @func getMany
+   * @desc Retrieves the current user account data
+   * @param {IGetRequest} data
+   * @returns {Promise<any>}
+   * @memberof AccountApi
+   */
+  public getMany(data: IGetRequest): Promise<any> {
+    return this.requestBundle.observeRequest('account', data.account_id, true, '_id', 'accounts', this.getManyPrivate);
+  }
+
+  /**
    * @func get
    * @desc Retrieves the current user account data
    * @param {string} ids
    * @memberof AccountApi
    */
-  public getManyPrivate(ids: string) {
+  private getManyPrivate(ids: string) {
     const data: IGetRequest = {
       account_id: ids,
     };
