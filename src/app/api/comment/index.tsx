@@ -60,8 +60,8 @@ export default class CommentApi {
     //   const comments = res.comments[0] as IComment;
     //   return comments;
     // });
-    console.log('comment get');
-    return this.requestBundle.observeRequest('comment', data.comment_id, false, 'comment_id', this.getPrivateMany);
+    return this.requestBundle.observeRequest(
+      'comment', data.comment_id, false, '_id', 'comments', this.getPrivateMany);
   }
 
   /**
@@ -71,14 +71,14 @@ export default class CommentApi {
    * @returns {Promise<any>}
    * @memberof CommentApi
    */
-  private getPrivateMany(ids: string): Promise<any> {
+  private getPrivateMany(ids: string) {
     const request: IGetCommentRequest = {
       comment_id: ids,
     };
-    return this.api.request({
+    return {
       cmd: 'post/get_many_comments',
       request,
-    });
+    };
   }
 
   /**
