@@ -4,6 +4,7 @@ import {IChipsItem} from 'components/Chips';
 interface IComposeState {
   subject?: string;
   body?: string;
+  contentType: string;
   attachments: IAttachment[];
   targets: IChipsItem[];
   allowComment: boolean;
