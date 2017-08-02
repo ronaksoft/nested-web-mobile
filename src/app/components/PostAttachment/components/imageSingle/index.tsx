@@ -22,6 +22,7 @@ import IAttachment from '../../../../api/attachment/interfaces/IAttachment';
  * @property {function} onclick - callback click event to parent
  */
 interface IProps {
+  key: string;
   attachment: IPostAttachment;
   onclick: (attachment: IAttachment) => void;
 }

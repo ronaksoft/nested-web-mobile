@@ -32,7 +32,7 @@ interface IOptionsMenuState {
  * @extends {React.Component<IOptionsMenuProps, IOptionsMenuState>}
  */
 class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> {
-
+  private listener;
   /**
    * Constructor
    * Creates an instance of OptionsMenu.
@@ -57,9 +57,16 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
   }
 
   public componentDidMount() {
-    browserHistory.listen(() => {
+    this.listener = browserHistory.listen(() => {
       this.closeAll();
     });
+  }
+
+  public componentWillUnmount() {
+    this.listener();
+    // browserHistory.listen(() => {
+    //   this.closeAll();
+    // });
   }
 
   /**

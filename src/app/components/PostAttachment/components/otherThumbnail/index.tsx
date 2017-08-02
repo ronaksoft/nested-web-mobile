@@ -21,6 +21,7 @@ const style = require('../../postattachment.css');
  */
 interface IProps {
   attachment: IPostAttachment;
+  key: string;
   onclick: (attachment: IPostAttachment) => void;
 }
 

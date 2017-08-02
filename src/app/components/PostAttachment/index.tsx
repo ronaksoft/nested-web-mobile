@@ -137,18 +137,18 @@ export default class PostAttachment extends React.Component<IProps, IState> {
                   case AttachmentType.GIF:
                   case AttachmentType.IMAGE:
                     return (
-                      <ImageThumbnail onclick={this.showAttachment.bind(this, attachment)}
+                      <ImageThumbnail key={attachment._id} onclick={this.showAttachment.bind(this, attachment)}
                                       attachment={attachment}/>
                     );
                   case AttachmentType.VIDEO:
                     return (
-                      <VideoThumbnail onclick={this.showAttachment.bind(this, attachment)}
+                      <VideoThumbnail key={attachment._id} onclick={this.showAttachment.bind(this, attachment)}
                                       fullWidth={this.props.attachments.length === 1}
                                       attachment={attachment}/>
                     );
                   default:
                     return (
-                      <OtherThumbnail onclick={this.showAttachment.bind(this, attachment)}
+                      <OtherThumbnail key={attachment._id} onclick={this.showAttachment.bind(this, attachment)}
                                       attachment={attachment}/>
                     );
                 }
@@ -159,7 +159,8 @@ export default class PostAttachment extends React.Component<IProps, IState> {
         {/* renders for attachments contain only one image */}
         {singleImage && (
           <div className={style.singleImage}>
-            <ImageSingle onclick={this.showAttachment.bind(this, this.props.attachments[0])}
+            <ImageSingle key={this.props.attachments[0]._id}
+            onclick={this.showAttachment.bind(this, this.props.attachments[0])}
                          attachment={this.props.attachments[0]}/>
           </div>
         )}

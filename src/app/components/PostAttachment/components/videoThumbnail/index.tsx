@@ -22,6 +22,7 @@ import CONFIG from '../../../../config';
  * @property {function} onclick - callback click event to parent
  */
 interface IProps {
+  key: string;
   attachment: IPostAttachment;
   fullWidth?: boolean;
   onclick: (attachment: IPostAttachment) => void;
