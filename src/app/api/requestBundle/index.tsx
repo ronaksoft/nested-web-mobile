@@ -65,14 +65,15 @@ class RequestBundle {
         };
         setTimeout(() => {
           const ids = this.getBundleIds(domain);
-          console.log(ids);
           this.api.request(func(ids)).then((response) => {
-            console.log(`${this.bundleRequestList[domain].request.length} request(s) were bundled`);
-            this.bundleRequestList[domain].response = response[responseKey];
-            this.resolveAllPromisesByDomain(domain, paramKey);
-          }).catch((error) => {
-            console.log(error);
-            console.log('reject all');
+            try {
+              console.log(`${this.bundleRequestList[domain].request.length} request(s) were bundled`);
+              this.bundleRequestList[domain].response = response[responseKey];
+              this.resolveAllPromisesByDomain(domain, paramKey);
+            } catch (error) {
+              console.warn(error);
+            }
+          }).catch(() => {
             this.rejectAllPromisesByDomain(domain);
           });
         }, 100);
