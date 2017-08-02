@@ -95,7 +95,23 @@ interface IComposeProps {
  * (description is missed)
  */
 class Compose extends React.Component<IComposeProps, IComposeState> {
+
+  /**
+   * @prop isHtml
+   * @desc Determines the current email is html type or plain type
+   * @private
+   * @type {boolean}
+   * @memberof Compose
+   */
   private isHtml: boolean = false;
+
+  /**
+   * @prop htmlBodyRef
+   * @desc Reference of html email body element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Compose
+   */
   private htmlBodyRef: HTMLDivElement;
 
   /**
@@ -182,7 +198,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       this.postApi.get({
         post_id: this.props.params.replyId || this.props.params.forwardId,
       }).then((post: IPost) => {
-        console.log(post);
         // Setting to reply the message by loading the recipients and subject of the target post.
         if (this.props.params.replyId) {
 
@@ -225,8 +240,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
             return attachment;
           });
+          // Assign `isHtml` property
           this.isHtml = post.content_type === 'text/html';
-          console.log(this.isHtml);
           this.setState({
             subject: post.subject,
             body: post.body,
@@ -551,6 +566,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     };
   }
 
+  /**
+   * @func refHandler
+   * @desc handler for html emails
+   * @private
+   * @memberof Compose
+   * @param {HTMLDivElement} value
+   */
   private refHandler = (value) => {
     this.htmlBodyRef = value;
   }
