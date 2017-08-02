@@ -106,23 +106,6 @@ class FileUtil {
       ],
     },
     {
-      type: FileTypes.ARCHIVE,
-      mimetypes: [
-        'text/plain',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-        'application/vnd.ms-excel.template.macroEnabled.12',
-        'application/vnd.ms-excel.addin.macroEnabled.12',
-        'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-      ],
-    },
-    {
       type: FileTypes.DOCUMENT,
       mimetypes: [
         'text/plain',
@@ -200,10 +183,10 @@ class FileUtil {
       return '';
     }
 
-    const type = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
+    const fileType = FileUtil.groups.find((item) => item.mimetypes.indexOf(mimetype) > -1);
 
     // TODO: Check if type is null
-    return type.type || FileTypes.OTHER;
+    return fileType ? fileType.type : FileTypes.OTHER;
   }
 
   /**

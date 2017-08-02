@@ -12,6 +12,7 @@ import * as React from 'react';
 import FileUtil from 'services/utils/file';
 import IAttachmentItem from '../IAttachmentItem';
 const style = require('../composeAttachment.css');
+import Mode from '../mode';
 
 /**
  * @name IProps
@@ -24,6 +25,7 @@ const style = require('../composeAttachment.css');
 interface IProps {
   item: IAttachmentItem;
   fullWidth?: boolean;
+  thumb?: any;
 }
 
 /**
@@ -63,38 +65,30 @@ export default class ImageThumbnail extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-
-    /**
-     * @name attachment
-     * @const
-     * @type {object}
-     */
-    const {item} = this.props;
-
-    /**
-     * @name src
-     * @const
-     * @type {string}
-     */
+    const {item, thumb} = this.props;
+    const hasThumb = (item.model && item.model.thumbs.x64);
     return (
-    <div key={item.id}>
-      {
-        this.props.item.model &&
-        (
-          <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
-             style={{width: 40, height: 40}}/>
-        )
-      }
-      {
-        !this.props.item.model && (
-        <div key={item.id} className={style.imageContainer}>
-          <div className={style.fileBadge + ' ' + style.fileBadgeImg}>
-            IMG
-          </div>
-        </div>
-        )
-      }
-    </div>
+      <div key={item.id}>
+        {
+          item.mode === Mode.UPLOAD ?
+          (
+            <img src={thumb}
+              style={{width: 40, height: 40}}
+            />
+          ) : hasThumb ? (
+            <img src={FileUtil.getViewUrl(this.props.item.model.thumbs.x64)}
+              style={{width: 40, height: 40}}
+            />
+          ) :
+          (
+            <div key={item.id} className={style.imageContainer}>
+              <div className={style.fileBadge + ' ' + style.fileBadgeImg}>
+                IMG
+              </div>
+            </div>
+          )
+        }
+      </div>
     );
   }
 }

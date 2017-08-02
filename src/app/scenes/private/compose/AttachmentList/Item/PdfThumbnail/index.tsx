@@ -63,28 +63,16 @@ export default class PdfThumbnail extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-
-    /**
-     * @name attachment
-     * @const
-     * @type {object}
-     */
     const {item} = this.props;
-
-    /**
-     * @name src
-     * @const
-     * @type {string}
-     */
     return (
       <div key={item.id}>
-            <div key={item.id} className={style.imageContainer}>
-              <div className={style.filesTypesImages}>
-                <div className={style.fileBadge + ' ' + style.fileBadgePdf}>
-                  PDF
-                </div>
-              </div>
+        <div key={item.id} className={style.imageContainer}>
+          <div className={style.filesTypesImages}>
+            <div className={style.fileBadge + ' ' + style.fileBadgePdf}>
+              PDF
             </div>
+          </div>
+        </div>
       </div>
     );
   }

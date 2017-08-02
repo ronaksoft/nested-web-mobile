@@ -302,7 +302,7 @@ class Verify extends React.Component<IProps, IState> {
       callPhoneWaiting: true,
     });
     // TODO: Use callPhone method
-    this.accountApi.sendText({
+    this.accountApi.callPhone({
       vid: this.props.params.vid,
     }).then(() => {
       this.setState({
