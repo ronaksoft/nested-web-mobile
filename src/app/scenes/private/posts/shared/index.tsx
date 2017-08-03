@@ -27,6 +27,7 @@ import SyncActivity from '../../../../services/syncActivity/index';
 import IUser from '../../../../api/account/interfaces/IUser';
 
 const style = require('../posts.css');
+const privateStyle = require('../../private.css');
 
 /**
  * @interface IProps
@@ -441,10 +442,10 @@ class Shared extends React.Component<IProps, IState> {
         {/* rendering following text when there is no unseen post */}
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&
         !this.state.loadingBefore && this.state.posts.length === 0 &&
-        <div>You don't have any unseen posts.</div>
+        <div className={privateStyle.emptyMessage}>You don't have any unseen posts.</div>
         }
         {this.state.reachedTheEnd &&
-        <div>No more messages here!</div>
+        <div className={privateStyle.emptyMessage}>No more messages here!</div>
         }
         {/* Load More button */}
         {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
