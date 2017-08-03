@@ -297,14 +297,14 @@ class Server {
     queueItem.resolve(response);
 
     // log request and response in a group
-    if (console.groupCollapsed) {
-      console.groupCollapsed(`Server : ${queueItem.request.cmd.toUpperCase()}`);
-    }
-    console.log('Request ', queueItem.request);
-    console.log('Response', response);
-    if (console.groupEnd) {
-      console.groupEnd();
-    }
+    // if (console.groupCollapsed) {
+    //   console.groupCollapsed(`Server : ${queueItem.request.cmd.toUpperCase()}`);
+    // }
+    // console.log('Request ', queueItem.request);
+    // console.log('Response', response);
+    // if (console.groupEnd) {
+    //   console.groupEnd();
+    // }
 
     // remove request from queue
     this.queue.splice(itemIndex, 1);
