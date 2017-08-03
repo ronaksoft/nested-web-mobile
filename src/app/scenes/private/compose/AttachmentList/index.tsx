@@ -143,7 +143,7 @@ class AttachmentList extends React.Component<IProps, IState> {
 
     this.state = {
       items: props.items.map(this.createItem),
-      isExpanded: true,
+      isExpanded: false,
     };
 
     this.uploads = [];
