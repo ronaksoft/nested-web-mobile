@@ -313,10 +313,10 @@ class Post extends React.Component<IProps, IState> {
    * @private
    * @memberof Post
    */
-  private toggleBookmark() {
+  private toggleBookmark(event) {
     // arguments[1] is an event
-    arguments[1].stopPropagation();
-    arguments[1].preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
     // change pinned of post
     let post;
     post = JSON.parse(JSON.stringify(this.state.post));
@@ -377,6 +377,7 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
+    const bookmarkClick = this.toggleBookmark.bind(this);
 
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
@@ -415,7 +416,7 @@ class Post extends React.Component<IProps, IState> {
           </p>
           {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
           <div className={post.pinned ? style.postPinned : style.postPin}
-               onClick={this.toggleBookmark.bind(this, event)}>
+               onClick={bookmarkClick}>
             {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
