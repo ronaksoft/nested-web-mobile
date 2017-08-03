@@ -164,9 +164,11 @@ export default class AccountApi {
    * @memberof AccountApi
    */
   public phoneAvailable(data: IPhoneAvailableRequest): Promise<boolean> {
-    return this.api.request({
-      cmd: 'auth/phone_available',
-      data,
+    return new Promise((resolve) => {
+      return this.api.request({
+        cmd: 'auth/phone_available',
+        data,
+      }).then(() => resolve(true), () => resolve(false));
     });
   }
 

@@ -44,7 +44,7 @@ class Demoted extends React.Component <IProps, any> {
      */
     const notification = this.props.notification;
     return (
-      <Link to={`/m/message/${notification.place_id}`}
+      <Link to={`/m/places/${notification.place_id}/messages`}
             className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
@@ -56,7 +56,7 @@ class Demoted extends React.Component <IProps, any> {
               <span> demoted you in </span>
               {/* using PlaceName component for rendering Place name */}
               <b><PlaceName place_id={this.props.notification.place_id}/>.</b>
-              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>
           <IcoN size={16} name={'person16'}/>

@@ -103,7 +103,7 @@ class Comment extends React.Component <IProps, any> {
                 <span>
                   commented on
                   {/* using PostSubject component for rendering post subject full */}
-                  <b><PostSubject post_id={notification.post_id}/></b>
+                  <b> <PostSubject post_id={notification.post_id}/></b>
                 </span>
                 {/* using CommentBody component for rendering body of comment */}
                 <CommentBody comment_id={this.props.notification.comment_id}
@@ -123,7 +123,7 @@ class Comment extends React.Component <IProps, any> {
                 <span>
                   commented on
                   {/* using PostSubject component for rendering post subject full */}
-                  <b><PostSubject post_id={notification.post_id}/></b>
+                  <b> <PostSubject post_id={notification.post_id}/></b>
                 </span>
                 {/* using CommentBody component for rendering body of comment */}
                 <CommentBody comment_id={this.props.notification.comment_id}
