@@ -508,7 +508,7 @@ class Register extends React.Component<IProps, IState> {
 
           // Navigates to the default route which is `/feed`
           browserHistory.push('/m');
-          message.success('Congradulations! Your account has been created successfully. Now you can explore Nested :)');
+          message.success('Congratulations! Your account has been created successfully. Now you can explore Nested :)');
         }, () => {
           // Navigates to signin page if could not log the user in
           browserHistory.push('/m/signin');
