@@ -56,7 +56,7 @@ class Demoted extends React.Component <IProps, any> {
               <span> demoted you in </span>
               {/* using PlaceName component for rendering Place name */}
               <b><PlaceName place_id={this.props.notification.place_id}/>.</b>
-              <span> {TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
             </p>
           </div>
           <IcoN size={16} name={'person16'}/>
