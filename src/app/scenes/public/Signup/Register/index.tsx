@@ -518,7 +518,7 @@ class Register extends React.Component<IProps, IState> {
             validateStatus={this.state.password.status}
           >
             <label>Set a password</label>
-            <Input value={this.state.password.value} onChange={this.handlePasswordChange}/>
+            <Input type="password" value={this.state.password.value} onChange={this.handlePasswordChange}/>
           </Form.Item>
           <Form.Item
             help={this.state.firstName.message}
