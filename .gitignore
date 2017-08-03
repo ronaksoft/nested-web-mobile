@@ -45,3 +45,5 @@ doc
 .idea
 .awcache
 .vscode
+
+package-lock.json
