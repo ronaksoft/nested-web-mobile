@@ -380,9 +380,9 @@ class Verify extends React.Component<IProps, IState> {
               trigger={this.state.sendTextWaiting}
               onFinish={this.handleResendWaitFinish}
               message="wait...">
-              <a onClick={this.resend} disabled={this.state.sendTextWaiting}>
+              <Button type="dashed" onClick={this.resend} disabled={this.state.sendTextWaiting}>
                 {this.state.sendingText ? 'Sending...' : 'Resend SMS'}
-              </a>
+              </Button>
             </Waiting>
           </div>
           <div className={style.item}>
@@ -391,9 +391,9 @@ class Verify extends React.Component<IProps, IState> {
               trigger={this.state.callPhoneWaiting}
               onFinish={this.handleCallWaitFinish}
               message="wait...">
-              <a onClick={this.call} disabled={this.state.callPhoneWaiting}>
+              <Button type="dashed" onClick={this.call} disabled={this.state.callPhoneWaiting}>
                 {this.state.callingPhone ? 'Calling...' : 'Request a Call'}
-              </a>
+              </Button>
             </Waiting>
           </div>
           <Button type="primary" style={{width: '100%'}} onClick={this.submit}>

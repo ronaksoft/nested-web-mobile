@@ -123,7 +123,7 @@ class Api {
     return new Promise((resolve, reject) => {
 
       // create request path
-      const getConfigUrl = `${window.location.protocol}://${window.location.host}/getConfig/${domain}`;
+      const getConfigUrl = `/getConfig/${domain}`;
 
       // create xhr request
       const xhr = new XMLHttpRequest();
