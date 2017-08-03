@@ -339,7 +339,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
           )
         }
         {this.state.comments.map((comment: IComment) => (
-          <div id={comment._id} className={style.commentRow}>
+          <div id={comment._id} key={comment._id} className={style.commentRow}>
             <UserAvatar user_id={comment.sender._id} size={24} borderRadius={'16px'}/>
             <div className={style.commentContent}>
               <div className={style.commentHead}>

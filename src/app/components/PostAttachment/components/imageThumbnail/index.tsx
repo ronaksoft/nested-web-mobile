@@ -23,6 +23,7 @@ import IAttachment from '../../../../api/attachment/interfaces/IAttachment';
  */
 interface IProps {
   attachment: IPostAttachment;
+  key: string;
   onclick: (attachment: IAttachment) => void;
 }
 

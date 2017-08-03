@@ -21,6 +21,7 @@ import Post from '../components/post/index';
 import {browserHistory} from 'react-router';
 import {Loading} from '../../../../components/Loading/index';
 
+const privateStyle = require('../../private.css');
 const style = require('../posts.css');
 
 /**
@@ -351,7 +352,7 @@ class Bookmarked extends React.Component<IProps, IState> {
           !this.state.loadingBefore &&
           this.state.posts.length === 0 &&
           (
-            <div>
+            <div className={privateStyle.emptyMessage}>
               <b>You haven't bookmarked anything yet!</b>
               <div>There's a bookmark icon on the upper-right corner of each post.</div>
               Click on it to save the post to be viewed later.
@@ -364,7 +365,7 @@ class Bookmarked extends React.Component<IProps, IState> {
         }
         {/* rendering following text in `reachedTheEnd` case */}
         {this.state.reachedTheEnd &&
-        <div>No more messages here!</div>
+        <div className={privateStyle.emptyMessage}>No more messages here!</div>
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&

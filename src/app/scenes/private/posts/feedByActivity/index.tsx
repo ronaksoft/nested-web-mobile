@@ -477,7 +477,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
           !this.state.loadingBefore &&
           this.state.posts.length === 0 &&
           (
-            <div>
+            <div className={privateStyle.emptyMessage}>
               You have no message in your feed
               <div>
                 <Button onClick={loadMore}>Try again</Button>
@@ -486,7 +486,7 @@ class FeedByActivity extends React.Component<IProps, IState> {
           )
         }
         {this.state.reachedTheEnd &&
-        <div>No more messages here!</div>
+        <div className={privateStyle.emptyMessage}>No more messages here!</div>
         }
         {!this.state.reachedTheEnd &&
         !this.state.loadingBefore && !this.state.loadingAfter &&

@@ -23,6 +23,7 @@ import AccountApi from 'api/account';
 import IValidationResult from '../../IValidationResult';
 import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
 import Failure from 'services/server/failure';
+import {debounce} from 'lodash';
 
 const publicStyle = require('../../public.css');
 
@@ -69,7 +70,7 @@ class Phone extends React.Component<any, IState> {
    * Creates an instance of Phone.
    * @memberof Phone
    */
-  constructor() {
+  constructor(props: any) {
     super();
     // sets the a default value for the component state
     this.state = {
@@ -78,20 +79,24 @@ class Phone extends React.Component<any, IState> {
         status: null,
       },
     };
+    this.country = props.params.country;
+    this.code = props.params.code;
+    this.phone = props.params.phone;
     this.handlePhoneChange = this.handlePhoneChange.bind(this);
     this.submit = this.submit.bind(this);
-    this.validate = this.validate.bind(this);
+    this.validate = debounce(this.validate.bind(this), 350);
   }
 
   /**
    * @function validate
    * @desc Validates country, country-code and phone number. Updates the state
    * with the result of validation. It returns true if all three has been provided
+   * and the phone number is available to be used
    * @private
    * @returns {boolean}
    * @memberof Phone
    */
-  private validate() {
+  private validate(): Promise<boolean> {
     let validation: IValidationResult = {
       status: 'success',
       message: null,
@@ -118,11 +123,40 @@ class Phone extends React.Component<any, IState> {
       };
     }
 
-    this.setState({
-      validation,
+    if (validation.status === 'error') {
+      this.setState({
+        validation,
+      });
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      this.accountApi.phoneAvailable({
+        phone: this.code + this.phone,
+      }).then((isAvailable) => {
+        if (!isAvailable) {
+          validation = {
+            message: 'The phone number is not available',
+            status: 'error',
+          };
+        }
+
+        this.setState({
+          validation,
+        });
+        resolve(isAvailable);
+      }, () => {
+        validation = {
+          message: 'Sorry, We can not validate your phone number! Please contact us.',
+          status: 'error',
+        };
+        this.setState({
+          validation,
+        });
+        resolve(false);
+      });
     });
 
-    return validation.status === 'success';
   }
 
   /**
@@ -154,40 +188,37 @@ class Phone extends React.Component<any, IState> {
    * @memberof Phone
    */
   private submit() {
-    if (!this.validate()) {
-      return;
-    }
-
-    // Concatinates country-code and phone number because Server expects to receive both as `phone`
-    const phoneNumber = this.code + this.phone;
-    this.accountApi.getVerification({
-      phone: phoneNumber,
-    }).then((data) => {
-
-      // TODO: Use es6 string interpolation
-      const nextStepRoute = '/m/signup/verify/:country/:code/:phone/:vid'
-        .replace(':country', this.country)
-        .replace(':code', this.code)
-        .replace(':phone', this.phone)
-        .replace(':vid', data.vid);
-
-      browserHistory.push(nextStepRoute);
-    }, (error: IErrorResponseData) => {
-      if (error.err_code === Failure.INVALID) {
-        this.setState({
-          validation: {
-            message: 'Invalid phone number',
-            status: 'error',
-          },
-        });
-      } else {
-        this.setState({
-          validation: {
-            message: 'An error has occured',
-            status: 'error',
-          },
-        });
+    this.validate().then((isValid) => {
+      if (!isValid) {
+        return;
       }
+      // Concatinates country-code and phone number because Server expects to receive both as `phone`
+      const phoneNumber = this.code + this.phone;
+      this.accountApi.getVerification({
+        phone: phoneNumber,
+      }).then((data) => {
+
+        // TODO: Use es6 string interpolation
+        const nextStep = `/m/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
+
+        browserHistory.push(nextStep);
+      }, (error: IErrorResponseData) => {
+        if (error.err_code === Failure.INVALID) {
+          this.setState({
+            validation: {
+              message: 'Invalid phone number',
+              status: 'error',
+            },
+          });
+        } else {
+          this.setState({
+            validation: {
+              message: 'An error has occured',
+              status: 'error',
+            },
+          });
+        }
+      });
     });
   }
 
