@@ -15,11 +15,15 @@
 
 import * as React from 'react';
 import {browserHistory} from 'react-router';
-import {Input, Button, Form} from 'antd';
+import {Input, Button, Form, message} from 'antd';
 import AccountApi from 'api/account';
 import * as md5 from 'md5';
 import IValidatableField from '../../IValidatableField';
 import IValidationResult from '../../IValidationResult';
+import { connect } from 'react-redux';
+import { login } from 'redux/app/actions';
+import { IUser, ILoginResponse } from 'api/account/interfaces';
+import AAA from 'services/aaa';
 
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
@@ -51,6 +55,8 @@ interface IState {
 
 interface IProps {
   params: IParams;
+  setLogin: (user: IUser) => {};
+  isLogin: boolean;
 }
 
 /**
@@ -478,20 +484,35 @@ class Register extends React.Component<IProps, IState> {
       this.setState({
         submitting: true,
       });
-
+      const cipher = md5(this.state.password.value);
       this.accountApi.register({
         vid: this.props.params.vid,
         country: this.props.params.country,
         phone: this.props.params.code + this.props.params.phone,
         uid: this.state.username.value,
-        pass: md5(this.state.password.value),
+        pass: cipher,
         fname: this.state.firstName.value,
         lname: this.state.lastName.value,
         email: this.state.email.value,
       }).then(() => {
-        // Goes to signin page if the registeration was successfull
-        // TODO: Login the user automatically and go to default state (/feed)
-        browserHistory.push('/m/signin');
+        // Authenticates the user and lets her in
+        this.accountApi.login({
+          pass: cipher,
+          uid: this.state.username.value,
+        }).then((response: ILoginResponse) => {
+          // Replaces the previous credentials that have been stored inside `AAA` service
+          AAA.getInstance().setCredentials(response);
+
+          // Puts the authenticated user data in `store.app` reducer
+          this.props.setLogin(response.account);
+
+          // Navigates to the default route which is `/feed`
+          browserHistory.push('/m');
+          message.success('Congradulations! Your account has been created successfully. Now you can explore Nested :)');
+        }, () => {
+          // Navigates to signin page if could not log the user in
+          browserHistory.push('/m/signin');
+        });
       }, () => {
         // Enable the button again and let the user to try once more!
         this.setState({
@@ -555,4 +576,29 @@ class Register extends React.Component<IProps, IState> {
   }
 }
 
-export default Register;
+/**
+ * @function mapStateToProps
+ * @description Provides `store.app.isLogin` from the store to identify whether he/she is loged-in or not
+ *
+ * @param {any} store
+ */
+const mapStateToProps = (store) => ({
+  isLogin: store.app.isLogin,
+});
+
+/**
+ * @function mapDispatchToProps
+ * @description Provides `login` and `logout` actions through `props`
+ *
+ * @param {any} dispatch
+ * @returns
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setLogin: (user: IUser) => {
+      dispatch(login(user));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
