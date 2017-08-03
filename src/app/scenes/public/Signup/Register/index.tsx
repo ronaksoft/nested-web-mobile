@@ -219,11 +219,12 @@ class Register extends React.Component<IProps, IState> {
    * @memberof Register
    */
   private handleUsernameChange = (e: any) => {
+    const value = e.target.value ? e.target.value.trim() : '';
     this.setState({
-      username: Object.assign(this.state.username, {value: e.target.value}),
+      username: Object.assign(this.state.username, {value}),
     });
 
-    this.validateUsername(e.target.value).then((result) => {
+    this.validateUsername(value).then((result) => {
       this.setState({
         username: Object.assign(this.state.username, result),
       });
