@@ -54,7 +54,8 @@
   opacity: .16;
 }
 .postBody {
-  border-bottom: 1px solid rgba(50,61,71,.16);   
+  border-bottom: 1px solid rgba(50,61,71,.16);
+  overflow: hidden;
 }
 .postBody h3{
   color: rgba(50,61,71,1);
@@ -117,6 +118,10 @@
 .postBody .postFooter i{
   margin-right: 6px;
   margin-top: 1px;
+}
+.mailWrapper {
+  display: inline-block;
+  transform-origin: top left;
 }
 .commentboxIllu {
   height: 64px;

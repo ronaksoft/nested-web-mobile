@@ -118,6 +118,15 @@ class Post extends React.Component<IProps, IState> {
   private inProgress: boolean;
 
   /**
+   * @prop htmlBodyRef
+   * @desc Reference of html email body element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Compose
+   */
+  private htmlBodyRef: HTMLDivElement;
+
+  /**
    * Creates an instance of Post.
    * @param {IProps} props
    * @memberof Post
@@ -130,7 +139,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
-   * @func componentDidMount
+   * @function componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
    * the given `postId` parameter in route also Marks the post as read.
    * @memberof Post
@@ -155,6 +164,20 @@ class Post extends React.Component<IProps, IState> {
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
+
+    setTimeout( () => {
+      this.loadBodyEv(this.htmlBodyRef);
+    }, 500);
+  }
+
+  /**
+   * @function componentWillUnmount
+   * remove event listeners on this situation
+   * @override
+   * @memberOf Post
+   */
+  public componentWillUnmount() {
+    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
   }
 
   /**
@@ -217,6 +240,72 @@ class Post extends React.Component<IProps, IState> {
    */
   private postPlaceClick(pid) {
     browserHistory.push(`/m/places/${pid}/messages`);
+  }
+
+  /**
+   * @func loadBodyEv
+   * @desc Triggers after loading the post body
+   *       this function resize the mail body fit into screen
+   * @private
+   * @event
+   * @param {any} e - event
+   * @memberof Post
+   */
+  private loadBodyEv(el: HTMLDivElement) {
+    const DOMHeight = el.offsetHeight;
+    const DOMWidth = el.offsetWidth;
+    const ParentDOMHeight = el.parentElement.offsetHeight;
+    const delta = ParentDOMHeight - DOMHeight;
+    // console.log(ParentDOMHeight, delta);
+    const WinWidth = window.screen.width;
+    const ratio = WinWidth / DOMWidth;
+    if (ratio >= 1 ) {
+      return;
+    }
+    el.style.transform = 'scale(' + ratio + ',' + ratio + ')';
+    el.style.webkitTransform = 'scale(' + ratio + ',' + ratio + ')';
+    setTimeout( () => {
+      const newH = el.getBoundingClientRect().height;
+      // console.log(delta, newH);
+      el.parentElement.style.height = delta + newH + 'px';
+    }, 500);
+    this.resizeFont(el, ratio);
+  }
+
+  private resizeFont(el, ratio: number) {
+    // console.log(el.children);
+    if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
+      // console.log(el.style.fontSize);
+      const fontSize = parseInt(el.style.fontSize, 10);
+      if ( fontSize > 0 ) {
+        el.style.fontSize = fontSize * (1 / ratio) + 'px';
+      } else {
+        el.style.fontSize = 14 * (1 / ratio) + 'px';
+      }
+      // console.log(fontSize, el.style.fontSize, el);
+    }
+    for (const value of el.children) {
+      this.resizeFont(value, ratio);
+      // console.log(value);
+    }
+    // for ( let i = 0; i < el.children.length; i++) {
+    //   this.resizeFont(el.children[i], ratio);
+    //   console.log(el.children[i]);
+    // }
+    // if ( el.children.length > 0 ) {
+    //   this.resizeFont(el.children, ratio);
+    // }
+  }
+
+  /**
+   * @func refHandler
+   * @desc handler for html emails
+   * @private
+   * @memberof Compose
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.htmlBodyRef = value;
   }
 
   /**
@@ -334,7 +423,8 @@ class Post extends React.Component<IProps, IState> {
         {!this.props.post && <hr/>}
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
-          <div dangerouslySetInnerHTML={{__html: post.body}}/>
+          <div dangerouslySetInnerHTML={{__html: post.body}}
+          ref={this.refHandler} className={style.mailWrapper}/>
           {post.post_attachments.length > 0 && !this.props.post && (
             <PostAttachment attachments={post.post_attachments}/>
           )}

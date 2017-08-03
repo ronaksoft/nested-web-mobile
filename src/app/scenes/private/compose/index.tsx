@@ -662,7 +662,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         )}
         {this.isHtml && (
           <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}
-          ref={this.refHandler}/>
+          ref={this.refHandler} />
         )}
         {/* attachments uploading/uploaded list */}
         <AttachmentList
