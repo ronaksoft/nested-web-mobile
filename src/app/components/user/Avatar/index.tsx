@@ -355,7 +355,7 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
      * @const
      * @type {string}
      */
-    const nameOfUser = `${user.fname} ${user.lname}`;
+    const nameOfUser = user.fname ? `${user.fname} ${user.lname}` : user._id;
 
     /**
      * @name pictureId
@@ -364,12 +364,14 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
      */
     let pictureId = null;
 
-    if (this.props.size <= 32) {
-      pictureId = user.picture.x32;
-    } else if (this.props.size <= 64) {
-      pictureId = user.picture.x64;
-    } else {
-      pictureId = user.picture.x128;
+    if (user.picture) {
+      if (this.props.size <= 32) {
+        pictureId = user.picture.x32;
+      } else if (this.props.size <= 64) {
+        pictureId = user.picture.x64;
+      } else {
+        pictureId = user.picture.x128;
+      }
     }
 
     /**

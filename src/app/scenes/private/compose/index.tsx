@@ -97,6 +97,24 @@ interface IComposeProps {
 class Compose extends React.Component<IComposeProps, IComposeState> {
 
   /**
+   * @prop isHtml
+   * @desc Determines the current email is html type or plain type
+   * @private
+   * @type {boolean}
+   * @memberof Compose
+   */
+  private isHtml: boolean = false;
+
+  /**
+   * @prop htmlBodyRef
+   * @desc Reference of html email body element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Compose
+   */
+  private htmlBodyRef: HTMLDivElement;
+
+  /**
    * @prop attachments
    * @desc Reference of `AttachmentList` component
    * @private
@@ -155,6 +173,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const defaultState: IComposeState = {
       attachments: [],
       targets: [],
+      contentType: 'text/plain',
       allowComment: true,
       sending: false,
       body: '',
@@ -221,9 +240,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
             return attachment;
           });
+          // Assign `isHtml` property
+          this.isHtml = post.content_type === 'text/html';
           this.setState({
             subject: post.subject,
             body: post.body,
+            contentType: post.content_type,
             attachments,
           });
 
@@ -263,7 +285,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @private
    * @func bodyFocus
    * @memberOf Compose
-   */  private bodyFocus = () => {
+   */
+  private bodyFocus = () => {
     this.targets.clearSuggests();
   }
 
@@ -398,8 +421,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
-      body: this.state.body,
+      body: this.isHtml ? this.htmlBodyRef.innerHTML : this.state.body,
       no_comment: !this.state.allowComment,
+      content_type: this.isHtml ? 'text/html' : 'text/plain',
       subject: this.state.subject,
       attaches: this.state.attachments.map((i) => i.universal_id).join(','),
       targets: this.state.targets.map((i) => i._id).join(','),
@@ -543,6 +567,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
+   * @func refHandler
+   * @desc handler for html emails
+   * @private
+   * @memberof Compose
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.htmlBodyRef = value;
+  }
+
+  /**
    * @func render
    * @desc Renders the component
    * @returns
@@ -617,12 +652,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </div>
         </div>
         {/* compose body */}
-        <textarea
-          onFocus={this.bodyFocus}
-          placeholder="Write something…"
-          onChange={this.handleBodyChange}
-          value={this.state.body}
-        />
+        {!this.isHtml && (
+          <textarea
+            onFocus={this.bodyFocus}
+            placeholder="Write something…"
+            onChange={this.handleBodyChange}
+            value={this.state.body}
+          />
+        )}
+        {this.isHtml && (
+          <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}
+          ref={this.refHandler}/>
+        )}
         {/* attachments uploading/uploaded list */}
         <AttachmentList
           onItemsChanged={this.handleAttachmentsChange}
