@@ -124,6 +124,7 @@ class Api {
 
       // create request path
       const getConfigUrl = `/getConfig/${domain}`;
+      // const getConfigUrl = `https://webapp.nested.me/getConfig/${domain}`;
 
       // create xhr request
       const xhr = new XMLHttpRequest();
@@ -154,8 +155,10 @@ class Api {
             );
 
             // close server socket and remove current server
-            api.server.socket.close();
-            api.server = null;
+            if (api.server) {
+              api.server.socket.close();
+              api.server = null;
+            }
 
             // store domain of new configs in local storage
             if (process.env.BROWSER) {
