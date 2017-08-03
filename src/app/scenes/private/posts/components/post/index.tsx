@@ -118,6 +118,15 @@ class Post extends React.Component<IProps, IState> {
   private inProgress: boolean;
 
   /**
+   * @prop htmlBodyRef
+   * @desc Reference of html email body element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Compose
+   */
+  private htmlBodyRef: HTMLDivElement;
+
+  /**
    * Creates an instance of Post.
    * @param {IProps} props
    * @memberof Post
@@ -130,7 +139,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
-   * @func componentDidMount
+   * @function componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
    * the given `postId` parameter in route also Marks the post as read.
    * @memberof Post
@@ -155,6 +164,20 @@ class Post extends React.Component<IProps, IState> {
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
+
+    setTimeout( () => {
+      this.loadBodyEv(this.htmlBodyRef);
+    }, 300);
+  }
+
+  /**
+   * @function componentWillUnmount
+   * remove event listeners on this situation
+   * @override
+   * @memberOf Post
+   */
+  public componentWillUnmount() {
+    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
   }
 
   /**
@@ -220,14 +243,85 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
+   * @func loadBodyEv
+   * @desc Triggers after loading the post body
+   *       this function resize the mail body fit into screen
+   * @private
+   * @event
+   * @param {any} e - event
+   * @memberof Post
+   */
+  private loadBodyEv(el: HTMLDivElement) {
+    if (!el) {
+      return setTimeout( () => {
+        this.loadBodyEv(this.htmlBodyRef);
+      }, 100);
+    }
+    const DOMHeight = el.offsetHeight;
+    const DOMWidth = el.offsetWidth;
+    const ParentDOMHeight = el.parentElement.offsetHeight;
+    const delta = ParentDOMHeight - DOMHeight;
+    // console.log(ParentDOMHeight, delta);
+    const WinWidth = window.screen.width;
+    const ratio = WinWidth / DOMWidth;
+    if (ratio >= 1 ) {
+      return;
+    }
+    el.style.transform = 'scale(' + ratio + ',' + ratio + ')';
+    el.style.webkitTransform = 'scale(' + ratio + ',' + ratio + ')';
+    setTimeout( () => {
+      const newH = el.getBoundingClientRect().height;
+      // console.log(delta, newH);
+      el.parentElement.style.height = delta + newH + 'px';
+    }, 500);
+    this.resizeFont(el, ratio);
+  }
+
+  private resizeFont(el, ratio: number) {
+    // console.log(el.children);
+    if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
+      // console.log(el.style.fontSize);
+      const fontSize = parseInt(el.style.fontSize, 10);
+      if ( fontSize > 0 ) {
+        el.style.fontSize = fontSize * (1 / ratio) + 'px';
+      } else {
+        el.style.fontSize = 14 * (1 / ratio) + 'px';
+      }
+      // console.log(fontSize, el.style.fontSize, el);
+    }
+    for (const value of el.children) {
+      this.resizeFont(value, ratio);
+      // console.log(value);
+    }
+    // for ( let i = 0; i < el.children.length; i++) {
+    //   this.resizeFont(el.children[i], ratio);
+    //   console.log(el.children[i]);
+    // }
+    // if ( el.children.length > 0 ) {
+    //   this.resizeFont(el.children, ratio);
+    // }
+  }
+
+  /**
+   * @func refHandler
+   * @desc handler for html emails
+   * @private
+   * @memberof Compose
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.htmlBodyRef = value;
+  }
+
+  /**
    * @func Pins/Unpins the post and updates the post in store's posts list
    * @private
    * @memberof Post
    */
-  private toggleBookmark() {
+  private toggleBookmark(event) {
     // arguments[1] is an event
-    arguments[1].stopPropagation();
-    arguments[1].preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
     // change pinned of post
     let post;
     post = JSON.parse(JSON.stringify(this.state.post));
@@ -288,6 +382,7 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
+    const bookmarkClick = this.toggleBookmark.bind(this);
 
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
@@ -326,7 +421,7 @@ class Post extends React.Component<IProps, IState> {
           </p>
           {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
           <div className={post.pinned ? style.postPinned : style.postPin}
-               onClick={this.toggleBookmark.bind(this, event)}>
+               onClick={bookmarkClick}>
             {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
             {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
           </div>
@@ -334,7 +429,8 @@ class Post extends React.Component<IProps, IState> {
         {!this.props.post && <hr/>}
         <div className={style.postBody}>
           <h3>{post.subject}</h3>
-          <div dangerouslySetInnerHTML={{__html: post.body}}/>
+          <div dangerouslySetInnerHTML={{__html: post.body}}
+          ref={this.refHandler} className={style.mailWrapper}/>
           {post.post_attachments.length > 0 && !this.props.post && (
             <PostAttachment attachments={post.post_attachments}/>
           )}

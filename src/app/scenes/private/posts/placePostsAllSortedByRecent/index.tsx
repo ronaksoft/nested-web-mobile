@@ -593,11 +593,11 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
         <Loading active={this.state.loadingBefore}/>
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&
         !this.state.loadingBefore && this.state.posts.length === 0 &&
-        <div>You don't have any post.</div>
+        <div className={privateStyle.emptyMessage}>You don't have any post.</div>
         }
         {/* rendering following text when there is no post */}
         {this.state.reachedTheEnd &&
-        <div>No more messages here!</div>
+        <div className={privateStyle.emptyMessage}>No more messages here!</div>
         }
         {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
         !this.state.loadingBefore && !this.state.loadingAfter &&

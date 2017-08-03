@@ -65,3 +65,7 @@ html {
   height: 72px;
   align-items: center;
 }
+.emptyMessage {
+  width: 100%;
+  text-align: center;
+}
