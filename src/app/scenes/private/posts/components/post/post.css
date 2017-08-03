@@ -41,6 +41,7 @@
 }
 .postHead span{
   width: 100%;
+  overflow: hidden;
 }
 .postPin,
 .postPinned{

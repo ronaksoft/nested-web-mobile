@@ -257,7 +257,6 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
      * @type {IUser}
      */
     const {user} = this.state;
-
     if (!user) {
       return null;
     }
@@ -393,12 +392,10 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       } else {
         abbr = 'U';
       }
-
       const c = abbr.toUpperCase();
 
       const colorIndex = this.getIndexStr(user._id);
       finalColor = defaultColors[colorIndex];
-
       const cobj = document.createElement('text');
       for (const k in textAtts) {
         if (k) {
@@ -431,16 +428,14 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       const svgHtml = window.btoa(unescape(encodeURIComponent(div.innerHTML)));
 
       const src = 'data:image/svg+xml;base64,' + svgHtml;
-
       imgDOM = <img style={imageStyle} src={src}/>;
-
     }
 
     return (
       <div aria-label={name} className={classes.join(' ')} style={style}>
         <div className={style.UserAvatarInner} style={innerStyle}>
           <div className={imageClass} style={ImageHolder}>
-            {user.picture && imgDOM}
+            {user && imgDOM}
           </div>
         </div>
       </div>
