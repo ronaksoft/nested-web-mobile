@@ -519,10 +519,6 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
           <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
             <Post post={post}/>
           </div>))}
-        {this.state.posts.map((post: IPost) => (
-          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-            <Post post={post}/>
-          </div>))}
         <Loading active={this.state.loadingBefore}/>
         {!this.state.reachedTheEnd && !this.state.loadingAfter &&
         !this.state.loadingBefore && this.state.posts.length === 0 &&
