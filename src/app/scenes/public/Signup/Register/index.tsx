@@ -198,7 +198,7 @@ class Register extends React.Component<IProps, IState> {
 
     return new Promise((resolve) => {
       this.accountApi.usernameAvailable({
-        account_id: value,
+        account_id: value ? value.toLowerCase() : '',
       }).then((available: boolean) => {
         if (available) {
           resolve({
@@ -493,7 +493,7 @@ class Register extends React.Component<IProps, IState> {
         pass: cipher,
         fname: this.state.firstName.value,
         lname: this.state.lastName.value,
-        email: this.state.email.value,
+        email: this.state.email.value || null,
       }).then(() => {
         // Authenticates the user and lets her in
         this.accountApi.login({
@@ -518,6 +518,7 @@ class Register extends React.Component<IProps, IState> {
         this.setState({
           submitting: false,
         });
+        message.error('An error has occured! Please contact us.');
       });
     });
   }

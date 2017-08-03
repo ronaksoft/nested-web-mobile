@@ -70,7 +70,7 @@ class Phone extends React.Component<any, IState> {
    * Creates an instance of Phone.
    * @memberof Phone
    */
-  constructor() {
+  constructor(props: any) {
     super();
     // sets the a default value for the component state
     this.state = {
@@ -79,6 +79,9 @@ class Phone extends React.Component<any, IState> {
         status: null,
       },
     };
+    this.country = props.params.country;
+    this.code = props.params.code;
+    this.phone = props.params.phone;
     this.handlePhoneChange = this.handlePhoneChange.bind(this);
     this.submit = this.submit.bind(this);
     this.validate = debounce(this.validate.bind(this), 350);
