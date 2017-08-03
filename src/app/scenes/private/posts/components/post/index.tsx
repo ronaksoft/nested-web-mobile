@@ -167,7 +167,7 @@ class Post extends React.Component<IProps, IState> {
 
     setTimeout( () => {
       this.loadBodyEv(this.htmlBodyRef);
-    }, 500);
+    }, 300);
   }
 
   /**
@@ -252,6 +252,11 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private loadBodyEv(el: HTMLDivElement) {
+    if (!el) {
+      return setTimeout( () => {
+        this.loadBodyEv(this.htmlBodyRef);
+      }, 100);
+    }
     const DOMHeight = el.offsetHeight;
     const DOMWidth = el.offsetWidth;
     const ParentDOMHeight = el.parentElement.offsetHeight;
