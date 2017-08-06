@@ -305,8 +305,8 @@ class Notifications extends React.Component<IProps, IState> {
           {/* render items for all notification items */}
           {this.state.notifications.map((notification) =>
             (
-              <div onClick={this.readNotif.bind(this, notification)}>
-                <NotificationItem key={notification._id} notification={notification}/>
+              <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
+                <NotificationItem notification={notification}/>
               </div>
             ))}
           {/* Load more notifications button */}
