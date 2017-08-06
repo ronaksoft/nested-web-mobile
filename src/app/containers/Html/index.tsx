@@ -60,6 +60,7 @@ class Html extends React.Component<IHtmlProps, {}> {
         {renderStyles}
         <link rel="shortcut icon" href="/m/public/favicon.ico"/>
         <link rel="manifest" href="/m/public/manifest.json"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
       </head>
       <body>
       <main id="app" dangerouslySetInnerHTML={{__html: markup}}/>
