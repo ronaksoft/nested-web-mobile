@@ -1,5 +1,6 @@
 .commentBoard {
   background-color: #F0F0F0;
+  overflow: hidden;
 }
 .commentBoard:before {
   content: ' ';
@@ -58,6 +59,8 @@
   width: 100%;
   font-size: 13px;
   line-height: 16px;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 .commentInput {
   height: 56px;
