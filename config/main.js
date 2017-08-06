@@ -10,12 +10,12 @@ var config = {
   app: {
     head: {
       title: 'nested',
-      titleTemplate: 'barbar-vortigern: %s',
+      titleTemplate: 'nested: %s',
       meta: [
         { charset: 'utf-8' },
         { name: 'theme-color', content: '#323D47' },
         { 'http-equiv': 'x-ua-compatible', content: 'ie=edge' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
+        // { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
         { name: 'description', content: 'Nested' },
       ]
     }

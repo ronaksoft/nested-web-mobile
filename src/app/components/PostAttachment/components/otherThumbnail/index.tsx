@@ -9,6 +9,7 @@
  */
 import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
+import FileUtiles from '../../../../services/utils/file';
 const style = require('../../postattachment.css');
 
 /**
@@ -69,13 +70,14 @@ export default class OtherThumbnail extends React.Component<IProps, IState> {
      * @type {object}
      */
     const {attachment} = this.props;
+    const ext = FileUtiles.getSuffix(attachment.filename);
     return (
       /** parent element define onClick function */
       <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
         <div className={[style.attachmentHolder, style[attachment.type]].join(' ')}>
           <div className={style.fileName}><p>{attachment.filename}</p></div>
           <div className={style.detail}>
-            <p>{'extension'}</p>
+            <p>{ext}</p>
             <span className={style.attsize}>{attachment.size}</span>
           </div>
         </div>
