@@ -178,14 +178,19 @@ class Private extends React.Component<IProps, IState> {
     }
 
     // Config Firebase notification
-    const fcm = FCM.getInstance();
-    fcm.configFCM()
-      .then((deviceToken: string) => {
-        recall(deviceToken);
-      })
-      .catch(() => {
-        recall();
-      });
+    try {
+      const fcm = FCM.getInstance();
+      fcm.configFCM()
+        .then((deviceToken: string) => {
+          console.log(deviceToken);
+          recall(deviceToken);
+        })
+        .catch(() => {
+          recall();
+        });
+    } catch (e) {
+      recall();
+    }
 
     /** determine use login state */
     if (this.props.isLogin && this.props.user) {
