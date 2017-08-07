@@ -130,7 +130,8 @@ export default class PostAttachment extends React.Component<IProps, IState> {
       <div>
         {/* attachments thumbnail */}
         {!singleImage && (
-          <div className={style.attachmentBar}>
+          <div className={[style.attachmentBar,
+            this.props.attachments.length > 1 ? style.multiAttachment : '' ].join(' ')}>
             <ul>
               {this.props.attachments.map((attachment: IPostAttachment) => {
                 switch (attachment.type) {

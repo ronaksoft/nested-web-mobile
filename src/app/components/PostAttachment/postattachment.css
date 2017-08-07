@@ -12,9 +12,11 @@
 }
 .attachmentBar {
   width: 100%;
-  height: 108px;
   overflow-x: scroll;
   -webkit-overflow-scrolling: touch;
+}
+.multiAttachment {
+  height: 108px;
 }
 .attachmentBar ul {
   display: flex;
