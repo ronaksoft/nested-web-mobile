@@ -65,10 +65,6 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     this.viewUrl();
-    // this.refs.videoEl.load();
-    setTimeout(() => {
-      // $('#ali').load();
-    }, 1000);
   }
 
   /**
@@ -96,14 +92,14 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      */
     const srcPoster: string = FileUtiles.getViewUrl(attachment._id);
     return (
-      <li>
+      <div>
         {this.state.viewUrl && (
-          <video id="ali" width="100%" controls={true} preload="auto" poster={srcPoster}>
+          <video width="100%" controls={true} preload="auto" poster={srcPoster}>
             <source src={this.state.viewUrl} type="video/mp4" />
             Your browser does not support HTML5 video.
           </video>
         )}
-      </li>
+      </div>
     );
   }
 }

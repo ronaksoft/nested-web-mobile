@@ -423,14 +423,18 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             this.state.attachments[indexOfAttachment - 1].type === AttachmentType.IMAGE) &&
           <ImageThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
           }
-          {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.VIDEO &&
-          <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
-          }
+          {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.VIDEO && (
+          <div>
+            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+          </div>
+          )}
           {this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.IMAGE &&
-          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.VIDEO &&
-          <OtherThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
-          }
+          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.VIDEO && (
+            <div>
+              <OtherThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+            </div>
+          )}
         </main>
       );
     }
@@ -438,17 +442,21 @@ export default class AttachmentView extends React.Component<IProps, IState> {
       nextElement = (
         <main id="next" className={style.nextItem}>
           {(this.state.attachments[indexOfAttachment + 1].type === AttachmentType.GIF ||
-            this.state.attachments[indexOfAttachment + 1].type === AttachmentType.IMAGE) &&
-          <ImageThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
-          }
+            this.state.attachments[indexOfAttachment + 1].type === AttachmentType.IMAGE) && (
+          <div>
+            <ImageThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          </div>
+          )}
           {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.VIDEO &&
           <VideoThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
           }
           {this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.IMAGE &&
-          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO &&
-          <OtherThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
-          }
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO && (
+          <div>
+            <OtherThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          </div>
+          )}
         </main>
       );
     }
