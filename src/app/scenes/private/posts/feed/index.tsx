@@ -389,6 +389,12 @@ class Feed extends React.Component<IProps, IState> {
    * @private
    */
   private getOffset(id: string) {
+    if (!document.getElementById(id)) {
+      return {
+        top : 0,
+        left : 0,
+      };
+    }
     const el = document.getElementById(id).getBoundingClientRect();
     return {
       left: el.left + window.scrollX,
