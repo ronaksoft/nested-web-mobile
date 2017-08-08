@@ -67,7 +67,7 @@ class Comment extends React.Component <IProps, any> {
     others.map((userId: string, index: number) => {
       // rendering multi user avatar when counts of users less than 3
       if (index < 3) {
-        return othersDoms.push(<UserAvatar user_id={userId} size={24} borderRadius={'24px'}/>);
+        return othersDoms.push(<UserAvatar key={userId + 'j'} user_id={userId} size={24} borderRadius={'24px'}/>);
       } else {
         return more++;
       }
@@ -96,7 +96,7 @@ class Comment extends React.Component <IProps, any> {
                 others.map((userId: string, index: number) => {
                   if (index < 3) {
                     {/* using FullName component for rendering user full name */}
-                    return <span> and <b><FullName user_id={userId}/></b></span>;
+                    return <span key={userId + 'a'}> and <b><FullName user_id={userId}/></b></span>;
                   }
                 })
                 }
