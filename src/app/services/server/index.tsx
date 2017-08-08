@@ -352,7 +352,7 @@ class Server {
     }
 
     if (typeof window !== 'undefined') {
-      Cookies.set('cid', cid);
+      Cookies.set('cid', cid, {expires: new Date(Date.now() + (7 * 1000 * 60 * 60 * 24))});
     }
 
     return cid;
