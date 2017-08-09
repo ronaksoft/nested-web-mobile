@@ -33,6 +33,7 @@ import AAA from 'services/aaa';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import FCM from '../../services/fcm/index';
+import Client from 'services/utils/client';
 
 const style = require('./private.css');
 
@@ -155,11 +156,19 @@ class Private extends React.Component<IProps, IState> {
      * redirects to sign for invalid local data
      */
     const recall = (deviceToken?: string) => {
+      const did = Client.getDid();
+      const dos = Client.getDo();
+
       this.accountApi.recall({
         _ss: credential.ss,
         _sk: credential.sk,
         _dt: deviceToken,
+        _did: did,
+        _do: dos,
       }).then((response: IRecallResponse) => {
+        Client.setDt(deviceToken);
+        Client.setDid(did);
+        Client.setDo(dos);
         this.setState({
           isLogin: true,
         });

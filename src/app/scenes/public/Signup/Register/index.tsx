@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { login } from 'redux/app/actions';
 import { IUser, ILoginResponse } from 'api/account/interfaces';
 import AAA from 'services/aaa';
+import Client from 'services/utils/client';
 
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
@@ -496,13 +497,21 @@ class Register extends React.Component<IProps, IState> {
         email: this.state.email.value || null,
       }).then(() => {
         // Authenticates the user and lets her in
+        const did = Client.getDid();
+        const dos = Client.getDo();
+        const dt = Client.getDt();
         this.accountApi.login({
           pass: cipher,
           uid: this.state.username.value,
+          _did: did,
+          _do: dos,
+          _dt: dt,
         }).then((response: ILoginResponse) => {
           // Replaces the previous credentials that have been stored inside `AAA` service
           AAA.getInstance().setCredentials(response);
-
+          Client.setDid(did);
+          Client.setDo(dos);
+          Client.setDt(dt);
           // Puts the authenticated user data in `store.app` reducer
           this.props.setLogin(response.account);
 

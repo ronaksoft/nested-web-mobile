@@ -15,8 +15,7 @@ import AAA from './../aaa/index';
 import CONFIG from 'config';
 import {Socket, SocketState} from 'services/socket';
 import Unique from './../utils/unique';
-import * as platform from 'platform';
-import * as Cookies from 'cookies-js';
+import Client from 'services/utils/client';
 
 const TIMEOUT_TIME = 24000;
 
@@ -85,7 +84,7 @@ class Server {
     });
     this.queue = [];
     this.socket.connect();
-    this.cid = this.getClientId();
+    this.cid = Client.getCid();
   }
 
   /**
@@ -332,30 +331,6 @@ class Server {
         this.sendRequest(request.request);
       }
     });
-  }
-
-  /**
-   * generates a client id
-   * @private
-   * @function
-   * @memberof Server
-   * @returns {string}
-   */
-  private getClientId(): string {
-    let cid = null;
-    if (typeof window !== 'undefined') {
-      cid = Cookies.get('cid');
-    }
-
-    if (!cid) {
-      cid = ['Web', 'mobile', platform.name, platform.os].join('_');
-    }
-
-    if (typeof window !== 'undefined') {
-      Cookies.set('cid', cid);
-    }
-
-    return cid;
   }
 
 }

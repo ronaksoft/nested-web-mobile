@@ -22,6 +22,7 @@ import AAA from 'services/aaa';
 import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
 import Failure from 'services/server/failure';
+import Client from 'services/utils/client';
 
 const publicStyle = require('../public.css');
 const signinStyle = require('./style.css');
@@ -132,9 +133,15 @@ class Signin extends React.Component<IProps, IState> {
   }
 
   private login() {
+    const did = Client.getDid();
+    const dt = Client.getDt();
+    const dos = Client.getDo();
     this.accountApi.login({
       uid: this.state.username.value.split('@')[0],
       pass: md5(this.state.password.value),
+      _did: did,
+      _do: dos,
+      _dt: dt,
     })
       .then((response: ILoginResponse) => {
 
