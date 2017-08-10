@@ -83,8 +83,8 @@ export default class AAA {
    */
   public setCredentials(credential: any) {
     if (typeof window !== 'undefined') {
-      Cookies.set('nss', credential._ss, {expires: new Date(Date.now() + (7 * 1000 * 60 * 60 * 24))});
-      Cookies.set('nsk', credential._sk, {expires: new Date(Date.now() + (7 * 1000 * 60 * 60 * 24))});
+      Cookies.set('nss', credential._ss, {expires: new Date(Date.now() + (30 * 1000 * 60 * 60 * 24))});
+      Cookies.set('nsk', credential._sk, {expires: new Date(Date.now() + (30 * 1000 * 60 * 60 * 24))});
     }
     this.nss = credential._ss;
     this.nsk = credential._sk;
