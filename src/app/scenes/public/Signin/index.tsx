@@ -135,7 +135,7 @@ class Signin extends React.Component<IProps, IState> {
   private login() {
     const did = Client.getDid();
     const dt = Client.getDt();
-    const dos = Client.getDo();
+    const dos = 'android';
     this.accountApi.login({
       uid: this.state.username.value.split('@')[0],
       pass: md5(this.state.password.value),

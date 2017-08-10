@@ -157,7 +157,7 @@ class Private extends React.Component<IProps, IState> {
      */
     const recall = (deviceToken?: string) => {
       const did = Client.getDid();
-      const dos = Client.getDo();
+      const dos = 'android';
 
       this.accountApi.recall({
         _ss: credential.ss,
