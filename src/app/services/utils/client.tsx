@@ -1,8 +1,12 @@
-
 import Platform from 'react-platform-js';
 import * as Cookies from 'cookies-js';
 
 class Client {
+
+  private static getExpiresTime() {
+    return new Date(Date.now() + (30 * 1000 * 60 * 60 * 24));
+  }
+
   public static getCid() {
     let cid = null;
     if (typeof window !== 'undefined') {
@@ -19,7 +23,11 @@ class Client {
 
   public static setCid(cid: string): void {
     if (typeof window !== 'undefined') {
-      Cookies.set('ncid', cid, { expires: 365 });
+      if (!cid) {
+        Cookies.set('ncid', cid, {expires: Client.getExpiresTime()});
+      } else {
+        Cookies.set('ncid');
+      }
     }
   }
 
@@ -34,7 +42,11 @@ class Client {
 
   public static setDid(did: string): void {
     if (typeof window !== 'undefined') {
-      Cookies.set('ndid', did, { expires: 365 });
+      if (!did) {
+        Cookies.set('ndid', did, {expires: Client.getExpiresTime()});
+      } else {
+        Cookies.set('ndid');
+      }
     }
   }
 
@@ -48,7 +60,11 @@ class Client {
 
   public static setDt(dt: string): void {
     if (typeof window !== 'undefined') {
-      Cookies.set('ndt', dt, { expires: 365 });
+      if (dt) {
+        Cookies.set('ndt', dt, {expires: Client.getExpiresTime()});
+      } else {
+        Cookies.set('ndt');
+      }
     }
   }
 
@@ -60,7 +76,11 @@ class Client {
 
   public static setDo(os: string): void {
     if (typeof window !== 'undefined') {
-      Cookies.set('ndo', os, { expires: 365 });
+      if (os) {
+        Cookies.set('ndo', os, {expires: Client.getExpiresTime()});
+      } else {
+        Cookies.set('ndo');
+      }
     }
   }
 
