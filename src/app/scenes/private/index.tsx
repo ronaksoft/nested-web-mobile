@@ -34,7 +34,6 @@ import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import FCM from '../../services/fcm/index';
 import Client from 'services/utils/client';
-
 const style = require('./private.css');
 
 /**
@@ -80,7 +79,7 @@ interface IProps {
  * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>,<InvitationItem>]
  */
 class Private extends React.Component<IProps, IState> {
-
+  private xStart: number;
   /**
    * Define accountApi
    * @private
@@ -88,6 +87,15 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    */
   private accountApi: AccountApi;
+
+  /**
+   * @prop privatePagesWrapper
+   * @desc Reference of privatePages Wrapper element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Private
+   */
+  private privatePagesWrapper: HTMLDivElement;
 
   /**
    * Define notificationApi
@@ -234,6 +242,9 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
 
+    document.addEventListener('touchstart', (e) => {
+      this.xStart = e.touches[0].screenY;
+    });
     /** Assign accountApi */
     this.accountApi = new AccountApi();
 
@@ -318,11 +329,21 @@ class Private extends React.Component<IProps, IState> {
    */
   public createLayout = () => {
     return (
-      <div className={style.container}>
+      <div ref={this.refHandler} className={style.container}>
         <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={this.state.notificationsCount}/>
         {this.props.children}
       </div>
     );
+  }
+
+  /**
+   * @func refHandler
+   * @private
+   * @memberof Private
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.privatePagesWrapper = value;
   }
 
   /**
@@ -333,7 +354,23 @@ class Private extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-
+    if ( this.privatePagesWrapper ) {
+      this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
+        const xMovement = e.touches[0].screenY - this.xStart;
+        if ( xMovement < 0 || this.privatePagesWrapper.scrollTop > 0 ) {
+          return true;
+        } else {
+          e = e || window.event;
+          e.returnValue = false;
+          e.cancelBubble = true;
+          if (e.preventDefault) {
+              e.preventDefault();
+              e.stopPropagation();
+          }
+          return false; // or return e, doesn't matter
+        }
+      }, false);
+    }
     return (
       <div>
         {

@@ -117,6 +117,16 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     });
     return LeftItemMenuDOM;
   }
+  private touchMove = (e: any) => {
+    e = e || window.event;
+    e.returnValue = false;
+    e.cancelBubble = true;
+    if (e.preventDefault) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    return false;
+  }
 
   /**
    * Creats the right icon and popover elemnts
@@ -201,7 +211,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     const rightMenu = this.renderRightMenus();
 
     return (
-      <div className={style.container}>
+      <div className={style.container} onTouchMove={this.touchMove}>
         {/*  always visible area contains icons element */}
         <div className={style.visible}>
           <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}
