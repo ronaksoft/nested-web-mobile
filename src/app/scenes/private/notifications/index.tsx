@@ -235,7 +235,9 @@ class Notifications extends React.Component<IProps, IState> {
    * @memberof Notifications
    */
   private readNotif(notification: INotification) {
-
+    if ( notification.read ) {
+      return;
+    }
     // define the notification Api class
     const notificationApi = new NotificationApi();
     notificationApi.markAsRead({notification_id: notification._id});
