@@ -13,6 +13,7 @@ import {Input, Button, message} from 'antd';
 import {PlaceChips} from 'components';
 import {IChipsItem} from 'components/Chips';
 import IPlace from 'api/place/interfaces/IPlace';
+import SystemApi from 'api/system/';
 import SearchApi from 'api/search';
 import FileUtil from 'services/utils/file';
 
@@ -40,16 +41,26 @@ interface ISuggestState {
 class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
   /**
-   * Define the `debouncedFillSuggests` to get suggestions appropriated to the query
+   * @prop systemConstApi
+   * @desc An instance of base Api
    * @private
+   * @memberof Suggestion
    */
-  private debouncedFillSuggests: (val: string) => void;
+  private systemConstApi;
+
+  private targetLimit: number;
 
   /**
    * Define the `searchApi`
    * @private
    */
   private searchApi: SearchApi;
+
+  /**
+   * Define the `debouncedFillSuggests` to get suggestions appropriated to the query
+   * @private
+   */
+  private debouncedFillSuggests: (val: string) => void;
 
   /**
    * @constructor
@@ -81,6 +92,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
 
     // assign searchApi
     this.searchApi = new SearchApi();
+    this.systemConstApi = new SystemApi();
   }
 
   public load(items: IChipsItem[]) {
@@ -89,6 +101,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     });
   }
 
+  public componentWillMount() {
+    this.systemConstApi.get().then((result) => {
+      this.targetLimit = result.post_max_targets || 10;
+    });
+  }
   /**
    * clears the suggested items array
    * @function clearSuggests
@@ -275,6 +292,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @memberof Suggestion
    */
   private insertChip = (item: IChipsItem) => {
+    // prevent exceed maximum compose recipients.
+    // TODO notify user
+    if (this.state.selectedItems.length === this.targetLimit ) {
+      return;
+    }
     /**
      * prevent to add multiple an item
      */
