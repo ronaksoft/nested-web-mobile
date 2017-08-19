@@ -73,7 +73,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
       );
     }
     return (
-      <li key={this.props.key}>
+      <li key={this.props.place.id + 'ss'}>
         {/* horizental rule for grand places */}
         {!this.props.place.isChildren &&
         <hr className={style.hrDark}/>

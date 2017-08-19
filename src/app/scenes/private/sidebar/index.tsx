@@ -29,6 +29,7 @@ const style = require('./sidebar.css');
 
 interface IOwnProps {
   closeSidebar: () => void;
+  openPlace: any;
 }
 
 /**
@@ -52,6 +53,7 @@ interface ISidebarProps {
   sidebarPlaces: ISidebarPlace[];
   sidebarPlacesUnreads: IUnreadPlace;
   places: IPlace[];
+  openPlace: any;
 }
 
 /**
@@ -274,7 +276,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     /**
      * Detemines if recieved data is exists assigns to 'places'
      */
-    if (this.props.sidebarPlaces.length > 0) {
+    if (this.props.sidebarPlaces.length > 0 && !this.props.openPlace.placeId) {
       this.setState({
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
       }, () => {
@@ -338,7 +340,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
               hasChildren: false,
               isChildren: false,
             };
-
             /**
              * Determines the Place Depth
              * User can be out of any parent places of this Place So need to determine the Place depth
@@ -418,6 +419,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           /** set `places` State value to `placesConjuctions` for view rendering */
           this.setState({
             places: placesConjuctions,
+          }, () => {
+            const filteredItem = placesConjuctions.filter( (item) => {
+              return  this.props.openPlace.placeId === item.id;
+            });
+            if ( filteredItem.length > 0 ) {
+              this.toggleChildren(this.props.openPlace.placeId, filteredItem[0].depth, true);
+            }
           });
 
           /** save sidebar Places object in redux store */
@@ -428,7 +436,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
            * Get Unreads of Places
            */
           this.getUnreads();
-        });
+      });
+
     }
   }
 
@@ -439,8 +448,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @param {number} depth
    * @memberof Sidebar
    */
-  public toggleChildren(placeId: string, depth: number) {
-
+  public toggleChildren(placeId: string, depth: number, forceOpenChildren?: boolean) {
     /** Clone the sidebar places to proccess on it */
     const placesMirror = this.state.places.slice(0);
 
@@ -450,7 +458,9 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     });
 
     /** toggle the `isOpen` property of Place object */
-    theParentItem.isOpen = !theParentItem.isOpen;
+    if ( theParentItem ) {
+      theParentItem.isOpen = !theParentItem.isOpen;
+    }
 
     /**
      * Find next depth childrens places of this place and update related proprties
@@ -477,9 +487,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      * update related proprties to Place item
      */
     filter.forEach((item) => {
-      // Retivice arrow rotation
-      item.isOpen = false;
-      item.expanded = !item.expanded;
+      // Retivive arrow rotation
+      // on froce Open chilren the other assign isOpen = true
+      if ( !forceOpenChildren ) {
+        item.isOpen = false;
+        item.expanded = !item.expanded;
+      } else {
+        item.expanded = true;
+      }
     });
 
     /**
@@ -487,6 +502,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     this.setState({
       places: placesMirror,
+    }, () => {
+      if ( forceOpenChildren && depth > 0 ) {
+        return this.toggleChildren(placeId.split('.').slice(0).splice(0, depth).join('.'), depth - 1, true);
+      }
     });
   }
 
@@ -634,6 +653,7 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => {
     sidebarPlaces: store.app.sidebarPlaces,
     sidebarPlacesUnreads: store.app.sidebarPlacesUnreads,
     closeSidebar: ownPlops.closeSidebar,
+    openPlace: ownPlops.openPlace,
   };
 };
 

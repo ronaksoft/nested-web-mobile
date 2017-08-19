@@ -65,6 +65,7 @@ interface IState {
 interface IProps {
   isLogin: boolean;
   user: IUser;
+  params: string;
   setNotificationCount: (counts: INotificationCountResponse) => {};
   setLogin: (user: IUser) => {};
   setLogout: () => {};
@@ -380,7 +381,7 @@ class Private extends React.Component<IProps, IState> {
               {this.createLayout()}
               {/* Sidebar elemnt with visibility state check */}
               {this.state.sidebarOpen &&
-              <Sidebar closeSidebar={this.closeSidebar}/>
+              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
               }
             </div>
           )
