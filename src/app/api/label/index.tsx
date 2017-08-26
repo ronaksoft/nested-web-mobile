@@ -11,9 +11,18 @@
 
 import Api from 'api';
 import RequestBundle from 'api/requestBundle';
-import IGetCommentRequest from './interfaces/IGetRequest';
-// import IComment from './interfaces/IComment';
-import ISendCommentRequest from './interfaces/ISendCommentRequest';
+import ICreateLabelRequest from './interfaces/ICreateLabelRequest';
+import IUpdateLabelRequest from './interfaces/IUpdateLabelRequest';
+import IRemoveLabelRequest from './interfaces/IRemoveLabelRequest';
+import ISearchLabelRequest from './interfaces/ISearchLabelRequest';
+import CLabelFilterTypes from './consts/CLabelFilterTypes';
+import IGetRequestLabelRequest from './interfaces/IGetRequestLabelRequest';
+import IRequestLabelRequest from './interfaces/IRequestLabelRequest';
+import IUpdateRequestLabelRequest from './interfaces/IUpdateRequestLabelRequest';
+import ICancelRequestLabelRequest from './interfaces/ICancelRequestLabelRequest';
+import IGetMembersLabelRequest from './interfaces/IGetMembersLabelRequest';
+import IAddMemberLabelRequest from './interfaces/IAddMemberLabelRequest';
+import IGetLabelRequest from './interfaces/IGetLabelRequest';
 
 /**
  * @class CommentApi
@@ -32,13 +41,13 @@ export default class LabelApi {
    * @prop requestBundle
    * @desc An instance of requestBundle
    * @private
-   * @memberof CommentApi
+   * @memberof LabelApi
    */
   private requestBundle;
 
   /**
    * Creates an instance of CommentApi.
-   * @memberof CommentApi
+   * @memberof LabelApi
    */
   constructor() {
     this.api = Api.getInstance();
@@ -46,52 +55,169 @@ export default class LabelApi {
   }
 
   /**
-   * @func get
-   * @desc Requests for some comments using the provided comma separated Ids
-   * @param {IGetCommentRequest} data
+   * @func update
+   * @desc Creates a label
+   * @param {ICreateLabelRequest} params
    * @returns {Promise<any>}
-   * @memberof CommentApi
+   * @memberof LabelApi
    */
-  public get(data: IGetCommentRequest): Promise<any> {
-    // return this.api.request({
-    //   cmd: 'post/get_many_comments',
-    //   data,
-    // }).then((res) => {
-    //   const comments = res.comments[0] as IComment;
-    //   return comments;
-    // });
-    return this.requestBundle.observeRequest(
-      'comment', data.comment_id, false, '_id', 'comments', this.getPrivateMany);
-  }
-
-  /**
-   * @func getPrivateMany
-   * @desc Requests for some comments using the provided comma separated Ids
-   * @param {string} ids
-   * @returns {Promise<any>}
-   * @memberof CommentApi
-   */
-  private getPrivateMany(ids: string) {
-    const request: IGetCommentRequest = {
-      comment_id: ids,
-    };
-    return {
-      cmd: 'post/get_many_comments',
-      request,
-    };
-  }
-
-  /**
-   * @func addComment
-   * @desc Adds a new comment to a post
-   * @param {ISendCommentRequest} data
-   * @returns
-   * @memberof CommentApi
-   */
-  public addComment(data: ISendCommentRequest) {
+  public create(params: ICreateLabelRequest): Promise<any> {
     return this.api.request({
-      cmd: 'post/add_comment',
-      data,
+      cmd: 'label/create',
+      params,
+    });
+  }
+
+  /**
+   * @func update
+   * @desc Updates a label
+   * @param {IUpdateLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public update(params: IUpdateLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/update',
+      params,
+    });
+  }
+
+  /**
+   * @func remove
+   * @desc Removes a label
+   * @param {IRemoveLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public remove(params: IRemoveLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/remove',
+      params,
+    });
+  }
+
+  /**
+   * @func search
+   * @desc Search labels database
+   * @param {ISearchLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public search(params: ISearchLabelRequest = {details: true, filter: CLabelFilterTypes.ALL}): Promise<any> {
+    return this.api.request({
+      cmd: 'search/labels',
+      params,
+    });
+  }
+  /**
+   * @func getRequests
+   * @desc Gets requests
+   * @param {IGetRequestLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public getRequests(params: IGetRequestLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/get_requests',
+      params,
+    });
+  }
+
+  /**
+   * @func request
+   * @desc Requests a label (either joining or creating, for joining you should provide label_id)
+   * @param {IRequestLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public request(params: IRequestLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/request',
+      params,
+    });
+  }
+
+  /**
+   * @func updateRequest
+   * @desc Updates request
+   * @param {IUpdateRequestLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public updateRequest(params: IUpdateRequestLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/update_request',
+      params,
+    });
+  }
+
+  /**
+   * @func cancelRequest
+   * @desc Cancels request
+   * @param {ICancelRequestLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public cancelRequest(params: ICancelRequestLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/remove_request',
+      params,
+    });
+  }
+
+  /**
+   * @func getMembers
+   * @desc Gets members of a label
+   * @param {IGetMembersLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public getMembers(params: IGetMembersLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/get_members',
+      params,
+    });
+  }
+
+  /**
+   * @func addMember
+   * @desc Adds member(s) to label, (comma separated)
+   * @param {IAddMemberLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public addMember(params: IAddMemberLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/add_member',
+      params,
+    });
+  }
+
+  /**
+   * @func removeMember
+   * @desc Removes a member from a label
+   * @param {IAddMemberLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public removeMember(params: IAddMemberLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/remove_member',
+      params,
+    });
+  }
+
+  /**
+   * @func get
+   * @desc Requests for some labels using the provided comma separated Ids
+   * @param {IGetLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof LabelApi
+   */
+  public get(params: IGetLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'label/get_many',
+      params,
     });
   }
 };
