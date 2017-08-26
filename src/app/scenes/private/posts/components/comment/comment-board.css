@@ -96,3 +96,6 @@
   outline: none;
   box-shadow: 0 0 16px rgba(50,61,71,.32);
 }
+.Rtl {
+  direction: rtl;
+}

@@ -20,6 +20,7 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
+import RTLDetector from '../../../../../components/RTLDetector/';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -102,6 +103,7 @@ interface IState {
    * @memberof IState
    */
   post?: IPost | null;
+  showMoreOptions: boolean;
 }
 
 /**
@@ -116,6 +118,16 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private inProgress: boolean;
+
+  /**
+   * Subject RTL flag for RTL mails
+   */
+  private subjectRtl: boolean;
+
+  /**
+   * body RTL flag for RTL mails
+   */
+  private bodyRtl: boolean;
 
   /**
    * @prop htmlBodyRef
@@ -135,7 +147,10 @@ class Post extends React.Component<IProps, IState> {
     super(props);
     this.state = {};
     this.inProgress = false;
-    this.state = {post: this.props.post};
+    this.state = {
+      post: this.props.post,
+      showMoreOptions: false,
+    };
   }
 
   /**
@@ -147,6 +162,9 @@ class Post extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     if (this.props.post) {
+
+      this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
+      this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
       this.setState({
         post: this.props.post ? this.props.post : null,
       });
@@ -155,6 +173,8 @@ class Post extends React.Component<IProps, IState> {
       postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
           post.post_read = true;
+          this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
+          this.bodyRtl = RTLDetector.getInstance().direction(post.body);
           this.setState({
             post,
           });
@@ -168,6 +188,7 @@ class Post extends React.Component<IProps, IState> {
     setTimeout( () => {
       this.loadBodyEv(this.htmlBodyRef);
     }, 300);
+
   }
 
   /**
@@ -278,28 +299,24 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private resizeFont(el, ratio: number) {
-    // console.log(el.children);
     if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
-      // console.log(el.style.fontSize);
       const fontSize = parseInt(el.style.fontSize, 10);
       if ( fontSize > 0 ) {
         el.style.fontSize = fontSize * (1 / ratio) + 'px';
       } else {
         el.style.fontSize = 14 * (1 / ratio) + 'px';
       }
-      // console.log(fontSize, el.style.fontSize, el);
     }
     for (const value of el.children) {
       this.resizeFont(value, ratio);
-      // console.log(value);
     }
-    // for ( let i = 0; i < el.children.length; i++) {
-    //   this.resizeFont(el.children[i], ratio);
-    //   console.log(el.children[i]);
-    // }
-    // if ( el.children.length > 0 ) {
-    //   this.resizeFont(el.children, ratio);
-    // }
+  }
+
+  private toggleMoreOpts = () => {
+    console.log(this.state.showMoreOptions);
+    this.setState({
+      showMoreOptions: !this.state.showMoreOptions,
+    });
   }
 
   /**
@@ -396,16 +413,45 @@ class Post extends React.Component<IProps, IState> {
             </a>
             <div className={styleNavbar.filler}/>
             <Link to={`/m/forward/${post._id}`}>
-              <IcoN size={24} name="forward16"/>
+              <IcoN size={24} name="forward24"/>
             </Link>
             <Link to={`/m/reply/${post._id}`}>
               <IcoN size={24} name="reply24"/>
             </Link>
-            {/*<a>
+            <a onClick={this.toggleMoreOpts}>
               <IcoN size={24} name="more24"/>
-            </a>*/}
+            </a>
           </div>
         )}
+        {this.state.showMoreOptions && (
+          <div className={[style.postOptions, style.opened].join(' ')}>
+            <ul>
+              <li>
+                <IcoN size={16} name={'label16'}/>
+                <a>Labels</a>
+                <p>{this.state.post.post_attachments.length}</p>
+              </li>
+              <li className={style.hr}/>
+              <li>
+                <IcoN size={16} name={'reply16'}/>
+                <Link to={`/m/reply/${post._id}`}>Reply</Link>
+              </li>
+              <li>
+                <IcoN size={16} name={'reply16'}/>
+                <Link to={`/m/reply/${post._id}`}>
+                  Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
+                </Link>
+              </li>
+              <li>
+                <IcoN size={16} name={'forward16'}/>
+                <Link to={`/m/forward/${post._id}`}>Forward</Link>
+              </li>
+            </ul>
+          </div>
+        )}
+        {this.state.showMoreOptions &&
+          <div onClick={this.toggleMoreOpts} className={style.overlay}/>
+        }
         <div className={style.postHead}>
           <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
           {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
@@ -428,9 +474,9 @@ class Post extends React.Component<IProps, IState> {
         </div>
         {!this.props.post && <hr/>}
         <div className={style.postBody}>
-          <h3>{post.subject}</h3>
+          <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}
-          ref={this.refHandler} className={style.mailWrapper}/>
+          ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
           {post.post_attachments.length > 0 && !this.props.post && (
             <PostAttachment attachments={post.post_attachments}/>
           )}
