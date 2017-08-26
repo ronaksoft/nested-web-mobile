@@ -62,7 +62,7 @@ class AddLabel extends React.Component<IProps, IState> {
                         <IcoN size={24} name={'label16' + label.code}/>
                     </div>
                     <div className={style.detail}>
-                        <span key={label._id}>
+                        <span key={label._id + index}>
                             {label.title}
                         </span>
                         <IcoN size={24} name="xcross16Red"/>
