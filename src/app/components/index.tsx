@@ -8,6 +8,7 @@ export {InvitationItem} from './InvitationItem/';
 export {Invitation} from './invitation/';
 export {NewBadge} from './NewBadge/';
 export {Loading} from './Loading/';
+export {AddLabel} from './labels/';
 
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';

@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading} from 'components';
+import {IcoN, UserAvatar, FullName, Loading, AddLabel} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
@@ -104,6 +104,7 @@ interface IState {
    */
   post?: IPost | null;
   showMoreOptions: boolean;
+  showAddLabel: boolean;
 }
 
 /**
@@ -149,6 +150,7 @@ class Post extends React.Component<IProps, IState> {
     this.state = {
       post: this.props.post,
       showMoreOptions: false,
+      showAddLabel: false,
     };
   }
 
@@ -312,9 +314,15 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private toggleMoreOpts = () => {
-    console.log(this.state.showMoreOptions);
     this.setState({
       showMoreOptions: !this.state.showMoreOptions,
+    });
+  }
+
+  private toggleAddLabel = () => {
+    this.setState({
+      showMoreOptions: false,
+      showAddLabel: !this.state.showAddLabel,
     });
   }
 
@@ -427,7 +435,7 @@ class Post extends React.Component<IProps, IState> {
             <ul>
               <li>
                 <IcoN size={16} name={'label16'}/>
-                <a>Labels</a>
+                <a onClick={this.toggleAddLabel}>Labels</a>
                 <p>{this.state.post.post_attachments.length}</p>
               </li>
               <li className={style.hr}/>
@@ -514,6 +522,9 @@ class Post extends React.Component<IProps, IState> {
           <CommentsBoard no_comment={this.state.post.no_comment}
           post_id={this.state.post._id} post={this.state.post}
           user={this.props.user}/>
+        )}
+        {!this.state.showAddLabel && (
+          <AddLabel labels={[]} onDone={this.toggleAddLabel}/>
         )}
       </div>
     );
