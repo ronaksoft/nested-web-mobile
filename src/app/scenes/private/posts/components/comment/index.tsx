@@ -21,6 +21,7 @@ import IPost from 'api/post/interfaces/IPost';
 import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
 import IUser from '../../../../../api/account/interfaces/IUser';
+import RTLDetector from '../../../../../components/RTLDetector/';
 
 const style = require('./comment-board.css');
 
@@ -100,6 +101,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private postApi;
+  /**
+   * RTL flag for rtl comments
+   * @private
+   * @memberof CommentsBoard
+   */
+  private isRtl: boolean;
   /**
    * @prop syncActivity
    * @desc An instance SyncActivity
@@ -346,7 +353,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
                 <a><FullName user_id={comment.sender._id}/></a>
                 <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
               </div>
-              <p>{comment.text}</p>
+              <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
             </div>
           </div>
         ))}

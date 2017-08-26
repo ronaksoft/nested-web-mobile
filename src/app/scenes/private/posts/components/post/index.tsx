@@ -158,6 +158,9 @@ class Post extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     if (this.props.post) {
+
+      this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
+      this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
       this.setState({
         post: this.props.post ? this.props.post : null,
       });
@@ -166,6 +169,8 @@ class Post extends React.Component<IProps, IState> {
       postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
           post.post_read = true;
+          this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
+          this.bodyRtl = RTLDetector.getInstance().direction(post.body);
           this.setState({
             post,
           });
@@ -180,9 +185,6 @@ class Post extends React.Component<IProps, IState> {
       this.loadBodyEv(this.htmlBodyRef);
     }, 300);
 
-    this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
-    this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
-    console.log(this.props.post.subject, this.subjectRtl, this.bodyRtl);
   }
 
   /**
