@@ -20,6 +20,7 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
+import RTLDetector from '../../../../../components/RTLDetector/';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -118,6 +119,16 @@ class Post extends React.Component<IProps, IState> {
   private inProgress: boolean;
 
   /**
+   * Subject RTL flag for RTL mails
+   */
+  private subjectRtl: boolean;
+
+  /**
+   * body RTL flag for RTL mails
+   */
+  private bodyRtl: boolean;
+
+  /**
    * @prop htmlBodyRef
    * @desc Reference of html email body element
    * @private
@@ -168,6 +179,10 @@ class Post extends React.Component<IProps, IState> {
     setTimeout( () => {
       this.loadBodyEv(this.htmlBodyRef);
     }, 300);
+
+    this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
+    this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
+    console.log(this.props.post.subject, this.subjectRtl, this.bodyRtl);
   }
 
   /**
@@ -428,9 +443,9 @@ class Post extends React.Component<IProps, IState> {
         </div>
         {!this.props.post && <hr/>}
         <div className={style.postBody}>
-          <h3>{post.subject}</h3>
+          <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
           <div dangerouslySetInnerHTML={{__html: post.body}}
-          ref={this.refHandler} className={style.mailWrapper}/>
+          ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
           {post.post_attachments.length > 0 && !this.props.post && (
             <PostAttachment attachments={post.post_attachments}/>
           )}
