@@ -13,9 +13,11 @@ export {AddLabel} from './labels/';
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
 import PlaceName from './PlaceName';
+import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
 
 export {UserAvatar};
 export {FullName};
 export {PlaceName};
 export {PlaceItem};
+export {RTLDetector};

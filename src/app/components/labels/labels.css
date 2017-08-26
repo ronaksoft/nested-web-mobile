@@ -31,11 +31,11 @@
     font-weight: bold;
     color: #323D47;
 }
-.AddLabelHead li{
+.AddLabel li{
     height: 48px;
     display: flex;
 }
-.AddLabelHead li .icon{
+.AddLabel li .icon{
     height: 48px;
     width: 48px;
     display: flex;

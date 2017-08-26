@@ -35,7 +35,18 @@ class AddLabel extends React.Component<IProps, IState> {
      * @property {any} labels
      */
     this.state = {
-      labels: [],
+      labels: [
+          {
+              _id: '01',
+              code: 'B',
+              title: 'aaaa',
+          },
+          {
+              _id: '02',
+              code: 'F',
+              title: 'bbbb',
+          },
+      ],
     };
   }
 

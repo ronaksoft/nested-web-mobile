@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading, AddLabel} from 'components';
+import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
@@ -20,7 +20,6 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
-import RTLDetector from '../../../../../components/RTLDetector/';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -103,7 +102,15 @@ interface IState {
    * @memberof IState
    */
   post?: IPost | null;
+  /**
+   * @prop showMoreOptions
+   * @memberof IState
+   */
   showMoreOptions: boolean;
+  /**
+   * @prop showAddLabel
+   * @memberof IState
+   */
   showAddLabel: boolean;
 }
 
@@ -319,7 +326,7 @@ class Post extends React.Component<IProps, IState> {
     });
   }
 
-  private toggleAddLabel = () => {
+  private toggleAddLAbel = () => {
     this.setState({
       showMoreOptions: false,
       showAddLabel: !this.state.showAddLabel,
@@ -435,7 +442,7 @@ class Post extends React.Component<IProps, IState> {
             <ul>
               <li>
                 <IcoN size={16} name={'label16'}/>
-                <a onClick={this.toggleAddLabel}>Labels</a>
+                <a onClick={this.toggleAddLAbel}>Labels</a>
                 <p>{this.state.post.post_attachments.length}</p>
               </li>
               <li className={style.hr}/>
@@ -523,8 +530,8 @@ class Post extends React.Component<IProps, IState> {
           post_id={this.state.post._id} post={this.state.post}
           user={this.props.user}/>
         )}
-        {!this.state.showAddLabel && (
-          <AddLabel labels={[]} onDone={this.toggleAddLabel}/>
+        {this.state.showAddLabel && (
+          <AddLabel labels={[]} onDone={this.toggleAddLAbel}/>
         )}
       </div>
     );
