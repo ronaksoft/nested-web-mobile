@@ -145,7 +145,6 @@ class Post extends React.Component<IProps, IState> {
    */
   constructor(props: IProps) {
     super(props);
-    this.state = {};
     this.inProgress = false;
     this.state = {
       post: this.props.post,

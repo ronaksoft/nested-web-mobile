@@ -102,12 +102,6 @@ class CommentsBoard extends React.Component<IProps, IState> {
    */
   private postApi;
   /**
-   * RTL flag for rtl comments
-   * @private
-   * @memberof CommentsBoard
-   */
-  private isRtl: boolean;
-  /**
    * @prop syncActivity
    * @desc An instance SyncActivity
    * @private
