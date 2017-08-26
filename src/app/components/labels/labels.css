@@ -1,0 +1,45 @@
+.AddLabel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #F0F0F0;
+    z-index: 4;
+}
+.AddLabelHead {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+}
+.AddLabelHead div{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none
+}
+.AddLabelHead h3{
+    width: 100%;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #323D47;
+}
+.AddLabelHead li{
+    height: 48px;
+    display: flex;
+}
+.AddLabelHead li .icon{
+    height: 48px;
+    width: 48px;
+    display: flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+}
