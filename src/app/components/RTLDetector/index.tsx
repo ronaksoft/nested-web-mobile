@@ -75,7 +75,4 @@ export default class RTLDetector {
         }
         return combined + ')';
     }
-
-    // private constructor() {
-    // }
 }
