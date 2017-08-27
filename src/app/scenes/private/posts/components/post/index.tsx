@@ -20,6 +20,8 @@ import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
+import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
+import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -120,6 +122,7 @@ interface IState {
  * @desc A post-card component
  */
 class Post extends React.Component<IProps, IState> {
+  private PostApi: PostApi;
   /**
    * define inProgress flag
    * @property {boolean} inProgress
@@ -169,6 +172,7 @@ class Post extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
+    this.PostApi = new PostApi();
     if (this.props.post) {
 
       this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
@@ -177,8 +181,7 @@ class Post extends React.Component<IProps, IState> {
         post: this.props.post ? this.props.post : null,
       });
     } else {
-      const postApi = new PostApi();
-      postApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
+      this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
           post.post_read = true;
           this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
@@ -197,6 +200,22 @@ class Post extends React.Component<IProps, IState> {
       this.loadBodyEv(this.htmlBodyRef);
     }, 300);
 
+  }
+
+  private removeLabel(id: string) {
+    const params: IRemoveLabelRequest = {
+        post_id : this.state.post._id,
+        label_id : id,
+    };
+    this.PostApi.removeLabel(params);
+  }
+
+  private addLabel(id: string) {
+    const params: IAddLabelRequest = {
+        post_id : this.state.post._id,
+        label_id : id,
+    };
+    this.PostApi.addLabel(params);
   }
 
   /**
@@ -333,6 +352,12 @@ class Post extends React.Component<IProps, IState> {
     });
   }
 
+  private doneAddLabel = () => {
+    this.toggleAddLAbel();
+    this.addLabel('');
+    this.removeLabel('');
+  }
+
   /**
    * @func refHandler
    * @desc handler for html emails
@@ -413,7 +438,6 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
-    console.log(post);
     const bookmarkClick = this.toggleBookmark.bind(this);
 
     // Checks the sender is external mail or not
@@ -532,7 +556,7 @@ class Post extends React.Component<IProps, IState> {
           user={this.props.user}/>
         )}
         {this.state.showAddLabel && (
-          <AddLabel labels={post.post_labels} onDone={this.toggleAddLAbel}/>
+          <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}
       </div>
     );

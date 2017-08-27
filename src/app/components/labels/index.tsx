@@ -13,6 +13,7 @@ const style = require('./labels.css');
 interface IProps {
   labels: ILabel[];
   onDone: () => void;
+  onClose: () => void;
 }
 
 interface IState {
@@ -58,38 +59,47 @@ class AddLabel extends React.Component<IProps, IState> {
         labels: this.props.labels,
     });
     this.searchApi = debounce(this.searchApi, 256);
+    this.searchApi();
   }
 
   private handleChangeInput = (e: any) => {
     this.setState({
         input: e.target.value,
     });
-    this.searchApi(e.target.value);
-  }
-
-  private removeLabel(id: string) {
-    // remove label
-    console.log(id);
-  }
-
-  private addLabel(id: string) {
-    // remove label
-    console.log(id);
+    this.searchApi();
   }
 
   private handleEnterInput = () => {
     console.log('');
   }
 
-  private searchApi = (str) => {
+  private addLabel(label: ILabel) {
+    this.setState({
+        labels: [...this.state.labels, label],
+    });
+    this.searchApi();
+  }
+
+  private removeLabel(label: ILabel) {
+    const labels = this.state.labels.slice(0);
+    const newLabels = labels.filter( (l) => {
+        return l._id !== label._id;
+    });
+    this.setState({
+        labels: newLabels,
+    });
+    this.searchApi();
+  }
+
+  private searchApi = () => {
     const params: ISearchLabelRequest = {
-        keyword: str,
+        keyword: this.state.input,
         filter: CLabelFilterTypes.MY_LABELS,
         skip: 0,
         limit: 8,
     };
     this.LabelApi.search(params).then( (res: any) => {
-        console.log(res.labels);
+        // TODO : remove slected labels
         this.setState({
             searchResult: res.labels,
         });
@@ -140,7 +150,7 @@ class AddLabel extends React.Component<IProps, IState> {
         </div>
         <ul className={style.suggests}>
             {this.state.searchResult.map((label: ILabel, index: number) =>  (
-                <li key={label._id + index} onClick={this.addLabel.bind(this, label._id)}>
+                <li key={label._id + index} onClick={this.addLabel.bind(this, label)}>
                     <div className={style.icon}>
                         <IcoN size={16} name={'label16' + label.code}/>
                     </div>
