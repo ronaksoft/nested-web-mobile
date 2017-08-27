@@ -6,7 +6,7 @@ import LabelApi from '../../api/label/';
 import ISearchLabelRequest from '../../api/label/interfaces/ISearchLabelRequest';
 import ILabel from '../../api/label/interfaces/ILabel';
 import CLabelFilterTypes from '../../api/label/consts/CLabelFilterTypes';
-import {debounce} from 'lodash';
+import {debounce, differenceWith, find, findIndex} from 'lodash';
 
 const style = require('./labels.css');
 
@@ -76,23 +76,39 @@ class AddLabel extends React.Component<IProps, IState> {
   }
 
   private addLabel(label: ILabel) {
+    if (find(this.state.labels, {_id: label._id})) {
+      return;
+    }
     this.setState({
         labels: [...this.state.labels, label],
         priestine: true,
+    }, () => {
+      this.trimReplicatedLabels();
     });
     this.searchApi();
   }
 
   private removeLabel(label: ILabel) {
-    const labels = this.state.labels.slice(0);
-    const newLabels = labels.filter( (l) => {
-        return l._id !== label._id;
-    });
-    this.setState({
+    const index = findIndex(this.state.labels, {_id: label._id});
+    const newLabels = this.state.labels.slice(0);
+    newLabels.splice(index, 1);
+    if (index > -1) {
+      this.setState({
         labels: newLabels,
         priestine: true,
+      }, () => {
+        this.trimReplicatedLabels();
+      });
+      this.searchApi();
+    }
+  }
+
+  private trimReplicatedLabels() {
+    this.setState({
+      searchResult: differenceWith(this.state.searchResult, this.state.labels, (a, b) => {
+        return a._id === b._id;
+      }),
     });
-    this.searchApi();
   }
 
   private closeAddLabel = () => {
@@ -119,9 +135,10 @@ class AddLabel extends React.Component<IProps, IState> {
         limit: 8,
     };
     this.LabelApi.search(params).then( (res: any) => {
-        // TODO : remove slected labels
         this.setState({
-            searchResult: res.labels,
+            searchResult: differenceWith(res.labels, this.state.labels, (a, b) => {
+              return a._id === b._id;
+            }),
         });
     });
   }
@@ -156,7 +173,7 @@ class AddLabel extends React.Component<IProps, IState> {
                             <span>
                                 {label.title}
                             </span>
-                            <div onClick={this.removeLabel.bind(this, label._id)}>
+                            <div onClick={this.removeLabel.bind(this, label)}>
                                 <IcoN size={16} name="xcross16Red"/>
                             </div>
                         </div>
