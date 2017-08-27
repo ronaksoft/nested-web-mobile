@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import {Input} from 'antd';
+import {Input, Modal} from 'antd';
 import {IcoN} from 'components';
 import LabelApi from '../../api/label/';
 import ISearchLabelRequest from '../../api/label/interfaces/ISearchLabelRequest';
@@ -21,6 +21,7 @@ interface IState {
     input: string;
     haveMore: boolean;
     searchResult: ILabel[];
+    priestine: boolean;
 }
 
 /**
@@ -50,6 +51,7 @@ class AddLabel extends React.Component<IProps, IState> {
       input: '',
       haveMore: true,
       searchResult: [],
+      priestine: false,
     };
   }
 
@@ -76,6 +78,7 @@ class AddLabel extends React.Component<IProps, IState> {
   private addLabel(label: ILabel) {
     this.setState({
         labels: [...this.state.labels, label],
+        priestine: true,
     });
     this.searchApi();
   }
@@ -87,8 +90,21 @@ class AddLabel extends React.Component<IProps, IState> {
     });
     this.setState({
         labels: newLabels,
+        priestine: true,
     });
     this.searchApi();
+  }
+
+  private closeAddLabel() {
+    Modal.confirm({
+        title: 'Unsaved changes',
+        content: 'are you sure for discarding changes here?',
+        cancelText: 'Yes, Let me go',
+        okText: 'No',
+        onCancel: () => {
+          this.props.onClose();
+        },
+      });
   }
 
   private searchApi = () => {
@@ -118,7 +134,7 @@ class AddLabel extends React.Component<IProps, IState> {
       <div className={style.AddLabel}>
         <div className={style.main}>
             <div className={style.AddLabelHead}>
-                <div onClick={this.props.onClose}>
+                <div onClick={this.closeAddLabel}>
                     <IcoN size={24} name="xcross24"/>
                 </div>
                 <h3>Labels</h3>
