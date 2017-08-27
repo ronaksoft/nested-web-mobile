@@ -22,7 +22,7 @@ import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
-
+import {difference} from 'lodash';
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 
@@ -352,10 +352,22 @@ class Post extends React.Component<IProps, IState> {
     });
   }
 
-  private doneAddLabel = () => {
+  private doneAddLabel = (labels) => {
+    console.log(labels);
+    const removeItems = difference(this.state.post.post_labels, labels);
+    const addItems = difference(labels, this.state.post.post_labels);
     this.toggleAddLAbel();
-    this.addLabel('');
-    this.removeLabel('');
+    removeItems.forEach((element) => {
+      this.removeLabel(element._id);
+    });
+    addItems.forEach((element) => {
+      this.addLabel(element._id);
+    });
+    const post = this.state.post;
+    post.post_labels = labels;
+    this.setState({
+      post,
+    });
   }
 
   /**
