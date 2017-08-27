@@ -15,6 +15,8 @@ import IGetPostRequest from './interfaces/IGetRequest';
 import ISendRequest from './interfaces/ISendRequest';
 import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
+import IAddLabelRequest from './interfaces/IAddLabelRequest';
+import IRemoveLabelRequest from './interfaces/IRemoveLabelRequest';
 
 export default class PostApi {
   /**
@@ -243,6 +245,34 @@ export default class PostApi {
       data: params,
     }).then((res) => {
       return res.comments;
+    });
+  }
+
+  /**
+   * @func addLabel
+   * @desc Adds label to a post (comma separated supported)
+   * @param {IAddLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof PostApi
+   */
+  public addLabel(params: IAddLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/add_label',
+      data: params,
+    });
+  }
+
+  /**
+   * @func removeLabel
+   * @desc Removes label from a post
+   * @param {IRemoveLabelRequest} params
+   * @returns {Promise<any>}
+   * @memberof PostApi
+   */
+  public removeLabel(params: IRemoveLabelRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/remove_label',
+      data: params,
     });
   }
 }
