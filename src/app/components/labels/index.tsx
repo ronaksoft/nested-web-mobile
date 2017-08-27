@@ -118,10 +118,13 @@ class AddLabel extends React.Component<IProps, IState> {
       <div className={style.AddLabel}>
         <div className={style.main}>
             <div className={style.AddLabelHead}>
-                <div onClick={this.props.onDone}>
+                <div onClick={this.props.onClose}>
                     <IcoN size={24} name="xcross24"/>
                 </div>
                 <h3>Labels</h3>
+                <div onClick={this.props.onDone}>
+                    <span>Done</span>
+                </div>
             </div>
             <ul>
                 {this.state.labels.map((label: ILabel, index: number) =>  (
