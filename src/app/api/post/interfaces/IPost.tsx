@@ -1,6 +1,7 @@
 import IPostCounters from './IPostCounters';
 import IUser from '../../account/interfaces/IUser';
 import IPlace from '../../place/interfaces/IPlace';
+import ILabel from '../../label/interfaces/ILabel';
 import IPostAttachment from './IPostAttachment';
 
 interface IPost {
@@ -26,6 +27,7 @@ interface IPost {
   watched: boolean;
   reply_to: string;
   forward_from: string;
+  labels: ILabel[];
   _id: string;
 }
 
