@@ -165,13 +165,13 @@ class AddLabel extends React.Component<IProps, IState> {
                     </div>
                 </li>
             ))}
-            <li className={style.more}>
+            {/* <li className={style.more}>
                 <div className={style.icon}>
                     {!this.state.haveMore && <IcoN size={16} name="nonSearch"/>}
                 </div>
                 {this.state.haveMore && <span>Show more…</span>}
                 {!this.state.haveMore && <span>No more results.</span>}
-            </li>
+            </li> */}
         </ul>
       </div>
     );

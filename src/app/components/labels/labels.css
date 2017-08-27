@@ -95,6 +95,9 @@
   border: none;
   box-shadow: none;
 }
+.suggests {
+  padding-bottom: 48px;
+}
 .suggests li .detail i{
   transform: rotateZ(45deg);
   transform-origin: center center; 
