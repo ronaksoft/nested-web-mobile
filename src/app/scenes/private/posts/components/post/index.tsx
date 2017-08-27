@@ -444,7 +444,7 @@ class Post extends React.Component<IProps, IState> {
               <li>
                 <IcoN size={16} name={'label16'}/>
                 <a onClick={this.toggleAddLAbel}>Labels</a>
-                <p>{this.state.post.post_attachments.length}</p>
+                <p>{this.state.post.post_labels.length}</p>
               </li>
               <li className={style.hr}/>
               <li>
@@ -532,7 +532,7 @@ class Post extends React.Component<IProps, IState> {
           user={this.props.user}/>
         )}
         {this.state.showAddLabel && (
-          <AddLabel labels={[]} onDone={this.toggleAddLAbel}/>
+          <AddLabel labels={post.post_labels} onDone={this.toggleAddLAbel}/>
         )}
       </div>
     );

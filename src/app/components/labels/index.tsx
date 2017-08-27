@@ -2,6 +2,10 @@
 import * as React from 'react';
 import {Input} from 'antd';
 import {IcoN} from 'components';
+import LabelApi from '../../api/label/';
+import ISearchLabelRequest from '../../api/label/interfaces/ISearchLabelRequest';
+import ILabel from '../../api/label/interfaces/ILabel';
+import CLabelFilterTypes from '../../api/label/consts/CLabelFilterTypes';
 
 const style = require('./labels.css');
 
@@ -23,6 +27,7 @@ interface IState {
  */
 class AddLabel extends React.Component<IProps, IState> {
 
+    private LabelApi: LabelApi;
   /**
    * Creates an instance of Invitation.
    * @constructor
@@ -38,31 +43,45 @@ class AddLabel extends React.Component<IProps, IState> {
      * @property {any} labels
      */
     this.state = {
-      labels: [
-          {
-              _id: '01',
-              code: 'B',
-              title: 'aaaa',
-          },
-          {
-              _id: '02',
-              code: 'F',
-              title: 'bbbb',
-          },
-      ],
+      labels: [],
       input: '',
       haveMore: true,
     };
+  }
+
+  public componentDidMount() {
+    this.LabelApi = new LabelApi();
+    this.setState({
+        labels: this.props.labels,
+    });
   }
 
   private handleChangeInput = (e: any) => {
     this.setState({
         input: e.target.value,
     });
+    this.searchApi(e.target.value);
+  }
+
+  private removeLabel(id: string) {
+    // remove label
+    console.log(id);
   }
 
   private handleEnterInput = () => {
     console.log('');
+  }
+
+  private searchApi = (str) => {
+    const params: ISearchLabelRequest = {
+        keyword: str,
+        filter: CLabelFilterTypes.MY_LABELS,
+        skip: 0,
+        limit: 8,
+    };
+    this.LabelApi.search(params).then( (labels: ILabel[]) => {
+        console.log(labels);
+    });
   }
 
   /**
@@ -92,7 +111,9 @@ class AddLabel extends React.Component<IProps, IState> {
                             <span>
                                 {label.title}
                             </span>
-                            <IcoN size={16} name="xcross16Red"/>
+                            <div onClick={this.removeLabel.bind(this, label._id)}>
+                                <IcoN size={16} name="xcross16Red"/>
+                            </div>
                         </div>
                     </li>
                 ))}
