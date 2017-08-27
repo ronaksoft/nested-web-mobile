@@ -6,6 +6,7 @@
   right: 0;
   background-color: #F0F0F0;
   z-index: 4;
+  overflow: auto;
 }
 .AddLabel .main {
   width: 100%;
@@ -82,7 +83,7 @@
   box-shadow: none;
 }
 .suggests li .detail i{
-  transform: rotateZ('45deg');
+  transform: rotateZ(45deg);
   transform-origin: center center; 
 }
 .suggests .more{

@@ -6,18 +6,20 @@ import LabelApi from '../../api/label/';
 import ISearchLabelRequest from '../../api/label/interfaces/ISearchLabelRequest';
 import ILabel from '../../api/label/interfaces/ILabel';
 import CLabelFilterTypes from '../../api/label/consts/CLabelFilterTypes';
+import {debounce} from 'lodash';
 
 const style = require('./labels.css');
 
 interface IProps {
-  labels: any[];
+  labels: ILabel[];
   onDone: () => void;
 }
 
 interface IState {
-    labels: any[];
+    labels: ILabel[];
     input: string;
     haveMore: boolean;
+    searchResult: ILabel[];
 }
 
 /**
@@ -46,6 +48,7 @@ class AddLabel extends React.Component<IProps, IState> {
       labels: [],
       input: '',
       haveMore: true,
+      searchResult: [],
     };
   }
 
@@ -54,6 +57,7 @@ class AddLabel extends React.Component<IProps, IState> {
     this.setState({
         labels: this.props.labels,
     });
+    this.searchApi = debounce(this.searchApi, 256);
   }
 
   private handleChangeInput = (e: any) => {
@@ -64,6 +68,11 @@ class AddLabel extends React.Component<IProps, IState> {
   }
 
   private removeLabel(id: string) {
+    // remove label
+    console.log(id);
+  }
+
+  private addLabel(id: string) {
     // remove label
     console.log(id);
   }
@@ -79,8 +88,11 @@ class AddLabel extends React.Component<IProps, IState> {
         skip: 0,
         limit: 8,
     };
-    this.LabelApi.search(params).then( (labels: ILabel[]) => {
-        console.log(labels);
+    this.LabelApi.search(params).then( (res: any) => {
+        console.log(res.labels);
+        this.setState({
+            searchResult: res.labels,
+        });
     });
   }
 
@@ -102,7 +114,7 @@ class AddLabel extends React.Component<IProps, IState> {
                 <h3>Labels</h3>
             </div>
             <ul>
-                {this.state.labels.map((label: any, index: number) =>  (
+                {this.state.labels.map((label: ILabel, index: number) =>  (
                     <li key={label._id + index}>
                         <div className={style.icon}>
                             <IcoN size={16} name={'label16' + label.code}/>
@@ -127,8 +139,8 @@ class AddLabel extends React.Component<IProps, IState> {
             </ul>
         </div>
         <ul className={style.suggests}>
-            {this.state.labels.map((label: any, index: number) =>  (
-                <li key={label._id + index}>
+            {this.state.searchResult.map((label: ILabel, index: number) =>  (
+                <li key={label._id + index} onClick={this.addLabel.bind(this, label._id)}>
                     <div className={style.icon}>
                         <IcoN size={16} name={'label16' + label.code}/>
                     </div>
