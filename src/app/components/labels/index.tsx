@@ -12,7 +12,7 @@ const style = require('./labels.css');
 
 interface IProps {
   labels: ILabel[];
-  onDone: () => void;
+  onDone: (labels) => void;
   onClose: () => void;
 }
 
@@ -159,7 +159,7 @@ class AddLabel extends React.Component<IProps, IState> {
                     <IcoN size={24} name="xcross24"/>
                 </div>
                 <h3>Labels</h3>
-                <div onClick={this.props.onDone}>
+                <div onClick={this.props.onDone.bind(this, this.state.labels)}>
                     <span>Done</span>
                 </div>
             </div>
