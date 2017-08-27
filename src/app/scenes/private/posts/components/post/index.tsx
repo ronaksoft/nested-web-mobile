@@ -413,6 +413,7 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
+    console.log(post);
     const bookmarkClick = this.toggleBookmark.bind(this);
 
     // Checks the sender is external mail or not

@@ -9,7 +9,7 @@ export default {
     REQUEST_MAX_RETRY_TIMES: 16,
   },
   STORE: {
-    URL: process.env.NST_XERXES_URL || 'https://xerxes.nested.me',
+    URL: process.env.NST_XERXES_URL || 'https://xerxes.nested.me:80',
     TOKEN_EXPMS: 3550000,
   },
   REGISTER: {
