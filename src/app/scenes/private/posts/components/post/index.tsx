@@ -353,7 +353,6 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private doneAddLabel = (labels) => {
-    console.log(labels);
     const removeItems = difference(this.state.post.post_labels, labels);
     const addItems = difference(labels, this.state.post.post_labels);
     this.toggleAddLAbel();
