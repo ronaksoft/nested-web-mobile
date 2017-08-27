@@ -95,7 +95,7 @@ class AddLabel extends React.Component<IProps, IState> {
     this.searchApi();
   }
 
-  private closeAddLabel() {
+  private closeAddLabel = () => {
     Modal.confirm({
         title: 'Unsaved changes',
         content: 'are you sure for discarding changes here?',
