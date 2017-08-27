@@ -128,13 +128,14 @@ class AddLabel extends React.Component<IProps, IState> {
   }
 
   private searchApi = () => {
-    const params: ISearchLabelRequest = {
+    const data: ISearchLabelRequest = {
+        details: true,
         keyword: this.state.input,
         filter: CLabelFilterTypes.MY_LABELS,
         skip: 0,
         limit: 8,
     };
-    this.LabelApi.search(params).then( (res: any) => {
+    this.LabelApi.search(data).then( (res: any) => {
         this.setState({
             searchResult: differenceWith(res.labels, this.state.labels, (a, b) => {
               return a._id === b._id;

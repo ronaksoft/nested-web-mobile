@@ -64,7 +64,7 @@ export default class LabelApi {
   public create(params: ICreateLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/create',
-      params,
+      data: params,
     });
   }
 
@@ -78,7 +78,7 @@ export default class LabelApi {
   public update(params: IUpdateLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/update',
-      params,
+      data: params,
     });
   }
 
@@ -92,7 +92,7 @@ export default class LabelApi {
   public remove(params: IRemoveLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/remove',
-      params,
+      data: params,
     });
   }
 
@@ -104,9 +104,10 @@ export default class LabelApi {
    * @memberof LabelApi
    */
   public search(params: ISearchLabelRequest = {details: true, filter: CLabelFilterTypes.ALL}): Promise<any> {
+    console.log(params);
     return this.api.request({
       cmd: 'search/labels',
-      params,
+      data: params,
     });
   }
   /**
@@ -119,7 +120,7 @@ export default class LabelApi {
   public getRequests(params: IGetRequestLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/get_requests',
-      params,
+      data: params,
     });
   }
 
@@ -133,7 +134,7 @@ export default class LabelApi {
   public request(params: IRequestLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/request',
-      params,
+      data: params,
     });
   }
 
@@ -147,7 +148,7 @@ export default class LabelApi {
   public updateRequest(params: IUpdateRequestLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/update_request',
-      params,
+      data: params,
     });
   }
 
@@ -161,7 +162,7 @@ export default class LabelApi {
   public cancelRequest(params: ICancelRequestLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/remove_request',
-      params,
+      data: params,
     });
   }
 
@@ -175,7 +176,7 @@ export default class LabelApi {
   public getMembers(params: IGetMembersLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/get_members',
-      params,
+      data: params,
     });
   }
 
@@ -189,7 +190,7 @@ export default class LabelApi {
   public addMember(params: IAddMemberLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/add_member',
-      params,
+      data: params,
     });
   }
 
@@ -203,7 +204,7 @@ export default class LabelApi {
   public removeMember(params: IAddMemberLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/remove_member',
-      params,
+      data: params,
     });
   }
 
@@ -217,7 +218,7 @@ export default class LabelApi {
   public get(params: IGetLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'label/get_many',
-      params,
+      data: params,
     });
   }
 };
