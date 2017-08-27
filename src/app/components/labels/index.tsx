@@ -96,15 +96,19 @@ class AddLabel extends React.Component<IProps, IState> {
   }
 
   private closeAddLabel = () => {
-    Modal.confirm({
-        title: 'Unsaved changes',
-        content: 'are you sure for discarding changes here?',
-        cancelText: 'Yes, Let me go',
-        okText: 'No',
-        onCancel: () => {
-          this.props.onClose();
-        },
-      });
+      if (this.state.priestine) {
+        Modal.confirm({
+            title: 'Unsaved changes',
+            content: 'are you sure for discarding changes here?',
+            cancelText: 'Yes, Let me go',
+            okText: 'No',
+            onCancel: () => {
+                this.props.onClose();
+            },
+        });
+      } else {
+        this.props.onClose();
+      }
   }
 
   private searchApi = () => {
