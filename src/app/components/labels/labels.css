@@ -69,7 +69,6 @@
   flex: 1;
   align-items: center;
   border-bottom: 1px solid rgba(50, 61, 71, .16);
-  padding-right: 16px;
 }
 .AddLabel li .detail span{
   width: 100%;
@@ -78,6 +77,13 @@
   font-size: 14px;
   font-weight: bold;
   color: rgba(50, 61, 71, 1);
+}
+.AddLabel li .detail div{
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .AddLabel li.input{
   padding: 0 16px;

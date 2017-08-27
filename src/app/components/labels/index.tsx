@@ -161,7 +161,9 @@ class AddLabel extends React.Component<IProps, IState> {
                         <span>
                             {label.title}
                         </span>
-                        <IcoN size={16} name="xcross16Green"/>
+                        <div>
+                            <IcoN size={16} name="xcross16Green"/>
+                        </div>
                     </div>
                 </li>
             ))}
