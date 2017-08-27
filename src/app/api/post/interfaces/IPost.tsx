@@ -27,7 +27,7 @@ interface IPost {
   watched: boolean;
   reply_to: string;
   forward_from: string;
-  labels: ILabel[];
+  post_labels: ILabel[];
   _id: string;
 }
 
