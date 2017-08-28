@@ -22,6 +22,7 @@ import {browserHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
+import ILabel from '../../../../../api/label/interfaces/ILabel';
 import {difference} from 'lodash';
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -538,6 +539,14 @@ class Post extends React.Component<IProps, IState> {
               {post.post_attachments.length > 1 && <span>Attachments</span>}
             </div>
           )}
+          <ul className={style.postLabels}>
+            {post.post_labels.map((label: ILabel, index: number) => {
+              return (
+              <li key={label._id + index} className={[style.postLabel, style['label' + label.code]].join(' ')}>
+                {label.title}
+              </li>
+              ); })}
+          </ul>
           <div className={style.postPlaces}>
             {postView && <a>Shared with:</a>}
             {post.post_places.map((place: IPlace, index: number) => {

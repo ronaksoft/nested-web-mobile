@@ -185,3 +185,46 @@
   z-index: 1;
   background-color: rgba(50,61,71,.40)
 }
+.postLabels {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding: 0 16px;
+  margin-bottom: 4px;
+}
+.postLabel {
+  line-height: 24px;
+  height: 22px;
+  opacity: .8;
+  margin-right: 6px;
+  border-radius: 5px;
+  color: #ffffff;
+  padding: 0 6px;
+}
+.labelA {
+  background-color: #8895A1;
+}
+
+.labelB {
+  background-color: #60BF70;
+}
+
+.labelC {
+  background-color: #EBC246;
+}
+
+.labelD {
+  background-color: #F26161;
+}
+
+.labelE {
+  background-color: #8669BF;
+}
+
+.labelF {
+  background-color: #508EE6;
+}
+
+.labelG {
+  background-color: #6CD9D9;
+}
