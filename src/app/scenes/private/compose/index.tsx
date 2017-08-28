@@ -89,6 +89,13 @@ interface IComposeProps {
    * @memberof IComposeProps
    */
   unsetDraft: () => void;
+  /**
+   * @property route
+   * @desc Route of this component
+   * @type {string}
+   * @memberof IComposeProps
+   */
+  route?: any;
 }
 
 /**
@@ -200,24 +207,32 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       }).then((post: IPost) => {
         // Setting to reply the message by loading the recipients and subject of the target post.
         if (this.props.params.replyId) {
+          let targets = [];
+          if (this.props.route.path.indexOf('/sender') > -1) {
+            targets.push({
+              _id: post.sender._id,
+              name: post.sender.fname + ' ' + post.sender.lname,
+              picture: post.sender.picture,
+            });
+          } else {
+            targets = post.post_places.map((i) => {
+              const chipsItem: IChipsItem = {
+                _id: i._id,
+                name: i.name,
+                picture: i.picture,
+              };
 
-          const targets = post.post_places.map((i) => {
-            const chipsItem: IChipsItem = {
-              _id: i._id,
-              name: i.name,
-              picture: i.picture,
-            };
+              return chipsItem;
+            }).concat(post.post_recipients.map((i) => {
+              const chipsItem: IChipsItem = {
+                _id: i._id,
+                name: i.name,
+                picture: i.picture,
+              };
 
-            return chipsItem;
-          }).concat(post.post_recipients.map((i) => {
-            const chipsItem: IChipsItem = {
-              _id: i._id,
-              name: i.name,
-              picture: i.picture,
-            };
-
-            return chipsItem;
-          }));
+              return chipsItem;
+            }));
+          }
 
           this.setState({
             targets,
