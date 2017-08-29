@@ -2,6 +2,10 @@
   width: 48px;
   height: 48px;
 }
+.publicPage {
+  overflow: auto;
+  height: 100%;
+}
 .publicPage h2 {
   font-size: 20px;
   font-weight: bold;
