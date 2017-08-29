@@ -13,6 +13,9 @@ export default function accountsReducer(state = initialState, action?: IAccountA
   switch (action.type) {
     case ActionTypes.ACCOUNT_ADD:
       // check state for finding place
+      if (action.payload === undefined) {
+        return state;
+      }
       const accounts = Immutable.getIn(state, ['accounts']);
       const indexOfAccount: number = accounts.findIndex((a: IUser) => {
         return a._id === action.payload._id;
