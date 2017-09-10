@@ -26,6 +26,7 @@ import ILabel from '../../../../../api/label/interfaces/ILabel';
 import {difference} from 'lodash';
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
+const privateStyle = require('../../../private.css');
 
 /**
  * @interface IOwnProps
@@ -575,6 +576,7 @@ class Post extends React.Component<IProps, IState> {
           post_id={this.state.post._id} post={this.state.post}
           user={this.props.user}/>
         )}
+        {postView && <div className={privateStyle.bottomSpace}/>}
         {this.state.showAddLabel && (
           <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}

@@ -535,6 +535,7 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
           </div>
         )
         }
+        <div className={privateStyle.bottomSpace}/>
       </div>
     );
   }

@@ -506,6 +506,7 @@ class Feed extends React.Component<IProps, IState> {
             <Button onClick={loadMore}>Load More</Button>
           </div>
         )}
+        <div className={privateStyle.bottomSpace}/>
       </div>
     );
   }

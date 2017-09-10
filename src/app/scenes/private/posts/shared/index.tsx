@@ -452,6 +452,7 @@ class Shared extends React.Component<IProps, IState> {
         !this.state.loadingBefore && !this.state.loadingAfter &&
         <div><Button onClick={loadMore}>Load More</Button></div>
         }
+        <div className={privateStyle.bottomSpace}/>
       </div>
     );
   }

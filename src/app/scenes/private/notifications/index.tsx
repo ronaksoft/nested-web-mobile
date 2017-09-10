@@ -315,6 +315,7 @@ class Notifications extends React.Component<IProps, IState> {
           <div className={privateStyle.loadMore}>
             <Button onClick={this.getNotificationBefore.bind(this, false)}>Load More</Button>
           </div>
+          <div className={privateStyle.bottomSpace}/>
         </div>
       </div>
     );
