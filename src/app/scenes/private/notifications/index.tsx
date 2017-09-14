@@ -56,6 +56,14 @@ class Notifications extends React.Component<IProps, IState> {
   // private isInTop: boolean = true;
 
   /**
+   * @prop notificationScrollbar
+   * @desc Reference of notification scene scrollbar
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Notifications
+   */
+  private notificationScrollbar: HTMLDivElement;
+  /**
    * @constructor
    * Creates an instance of Notifications.
    * binds functions by `this`.
@@ -87,6 +95,8 @@ class Notifications extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
+
+    this.notificationScrollbar.scrollTop = 0;
 
     // recieve notification before now
     this.getNotificationBefore(true, true);
@@ -261,6 +271,15 @@ class Notifications extends React.Component<IProps, IState> {
     });
   }
 
+  /**
+   * @func refHandler
+   * @private
+   * @memberof Notifications
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.notificationScrollbar = value;
+  }
   // private onTouchStart() {
   //   if (window.scrollY === 0) {
   //     this.isInTop = true;
@@ -295,7 +314,7 @@ class Notifications extends React.Component<IProps, IState> {
    */
   public render() {
     return (
-      <div>
+      <div className={style.notificationScrollbar} ref={this.refHandler}>
         <div className={style.notificationHead}>
           <h2>Notifications</h2>
           {/* mark all as see button */}
