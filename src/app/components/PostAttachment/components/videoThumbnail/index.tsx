@@ -11,7 +11,7 @@ import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
 import AAA from '../../../../services/aaa/index';
 import CONFIG from '../../../../config';
-
+import {IcoN} from 'components';
 /**
  * @name IProps
  * @interface IProps for component initials data
@@ -84,12 +84,25 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
       `${this.props.fullWidth ? attachment.thumbs.pre : attachment.thumbs.x128}`;
     const height = window.innerWidth - 24 * ( attachment.height / attachment.width);
     return (
-      <li key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
+      <li style={{position: 'relative'}} key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
         <img src={src}
              style={{
                width: this.props.fullWidth ? '100%' : 'inherit',
                height: this.props.fullWidth ? height + 'px' : '96px',
              }}/>
+             <div style={{
+                position: 'absolute',
+                top: '50%', left: '50%',
+                marginTop: '-8px',
+                marginLeft: '-8px',
+                width : '24px',
+                height : '24px',
+                padding: '4px',
+                backgroundColor: 'black',
+                borderRadius : '24px',
+              }}>
+               <IcoN size={16} name="play16White"/>
+             </div>
       </li>
     );
   }
