@@ -8,6 +8,7 @@
   position: fixed;
   left: 0;
   top: 0;
+  touch-action: auto;
 }
 .sidebar > div {
   height: 100%;

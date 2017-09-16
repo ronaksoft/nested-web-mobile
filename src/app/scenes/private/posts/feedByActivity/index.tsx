@@ -182,6 +182,20 @@ class FeedByActivity extends React.Component<IProps, IState> {
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({posts: newProps.posts});
   }
+
+  /**
+   * @prop scrollWrapper
+   * @desc Reference of  scroll element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof PlacePostsAllSortedByActivity
+   */
+  private scrollWrapper: HTMLDivElement;
+
+  private refHandler = (value) => {
+    this.scrollWrapper = value;
+  }
+
   /**
    * Component Did Mount
    * @desc Get post from redux store
@@ -191,6 +205,43 @@ class FeedByActivity extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
+    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    if ( this.scrollWrapper ) {
+      if (isSafari) {
+        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
+          e = e || window.event;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
+          e = e || window.event;
+          e.currentTarget.scrollTop += 1;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+
+      }
+      this.scrollWrapper.addEventListener('scroll', (e: any) => {
+        e = e || window.event;
+        const el = e.currentTarget;
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        if (el.scrollTop === 0) {
+            el.scrollTop = 1;
+        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
+          el.scrollTop -= 1;
+        }
+        e.returnValue = true;
+        return true;
+      }, true);
+    }
     /**
      * define the Post Api
      */
@@ -461,43 +512,45 @@ class FeedByActivity extends React.Component<IProps, IState> {
                   count={this.state.newPostCount}
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        {/* rendering Loading component in  `loadingAfter` case */}
-        <Loading active={this.state.loadingAfter}/>
-        {/* after Loading component render posts list */}
-        {this.state.posts.map((post: IPost) => (
-          <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-            <Post post={post}/>
-          </div>))}
-        {/* rendering Loading component in  `loadingBefore` case */}
-        <Loading active={this.state.loadingBefore}/>
-        {/* rendering following text when there is no post in Feed */}
-        {
-          !this.state.reachedTheEnd &&
-          !this.state.loadingAfter &&
-          !this.state.loadingBefore &&
-          this.state.posts.length === 0 &&
-          (
-            <div className={privateStyle.emptyMessage}>
-              You have no message in your feed
-              <div>
-                <Button onClick={loadMore}>Try again</Button>
+        <div className={privateStyle.postsArea} ref={this.refHandler}>
+          {/* rendering Loading component in  `loadingAfter` case */}
+          <Loading active={this.state.loadingAfter}/>
+          {/* after Loading component render posts list */}
+          {this.state.posts.map((post: IPost) => (
+            <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+              <Post post={post}/>
+            </div>))}
+          {/* rendering Loading component in  `loadingBefore` case */}
+          <Loading active={this.state.loadingBefore}/>
+          {/* rendering following text when there is no post in Feed */}
+          {
+            !this.state.reachedTheEnd &&
+            !this.state.loadingAfter &&
+            !this.state.loadingBefore &&
+            this.state.posts.length === 0 &&
+            (
+              <div className={privateStyle.emptyMessage}>
+                You have no message in your feed
+                <div>
+                  <Button onClick={loadMore}>Try again</Button>
+                </div>
               </div>
+            )
+          }
+          {this.state.reachedTheEnd &&
+          <div className={privateStyle.emptyMessage}>No more messages here!</div>
+          }
+          {!this.state.reachedTheEnd &&
+          !this.state.loadingBefore && !this.state.loadingAfter &&
+          (
+            <div className={privateStyle.loadMore}>
+              {/* Load More button */}
+              <Button onClick={loadMore}>Load More</Button>
             </div>
           )
-        }
-        {this.state.reachedTheEnd &&
-        <div className={privateStyle.emptyMessage}>No more messages here!</div>
-        }
-        {!this.state.reachedTheEnd &&
-        !this.state.loadingBefore && !this.state.loadingAfter &&
-        (
-          <div className={privateStyle.loadMore}>
-            {/* Load More button */}
-            <Button onClick={loadMore}>Load More</Button>
-          </div>
-        )
-        }
-        <div className={privateStyle.bottomSpace}/>
+          }
+          <div className={privateStyle.bottomSpace}/>
+        </div>
       </div>
     );
   }

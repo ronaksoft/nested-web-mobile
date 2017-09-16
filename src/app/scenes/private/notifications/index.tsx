@@ -95,8 +95,44 @@ class Notifications extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
+    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    this.notificationScrollbar.scrollTop = 1;
+    if ( this.notificationScrollbar ) {
+      if (isSafari) {
+        this.notificationScrollbar.addEventListener('touchmove', (e: any) => {
+          e = e || window.event;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+        this.notificationScrollbar.addEventListener('touchstart', (e: any) => {
+          e = e || window.event;
+          e.currentTarget.scrollTop += 1;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
 
-    this.notificationScrollbar.scrollTop = 0;
+      }
+      this.notificationScrollbar.addEventListener('scroll', (e: any) => {
+        e = e || window.event;
+        const el = e.currentTarget;
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        if (el.scrollTop === 0) {
+            el.scrollTop = 1;
+        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
+          el.scrollTop -= 1;
+        }
+        e.returnValue = true;
+        return true;
+      }, true);
+    }
 
     // recieve notification before now
     this.getNotificationBefore(true, true);

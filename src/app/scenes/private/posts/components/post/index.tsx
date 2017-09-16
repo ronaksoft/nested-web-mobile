@@ -167,6 +167,19 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
+   * @prop scrollWrapper
+   * @desc Reference of  scroll element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Feed
+   */
+  private scrollWrapper: HTMLDivElement;
+
+  private refScrollHandler = (value) => {
+    this.scrollWrapper = value;
+  }
+
+  /**
    * @function componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
    * the given `postId` parameter in route also Marks the post as read.
@@ -174,6 +187,43 @@ class Post extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
+    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    if ( this.scrollWrapper ) {
+      if (isSafari) {
+        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
+          e = e || window.event;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
+          e = e || window.event;
+          e.currentTarget.scrollTop += 1;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+
+      }
+      this.scrollWrapper.addEventListener('scroll', (e: any) => {
+        e = e || window.event;
+        const el = e.currentTarget;
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        if (el.scrollTop === 0) {
+            el.scrollTop = 1;
+        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
+          el.scrollTop -= 1;
+        }
+        e.returnValue = true;
+        return true;
+      }, true);
+    }
     this.PostApi = new PostApi();
     if (this.props.post) {
 
@@ -504,79 +554,81 @@ class Post extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <div className={style.postHead}>
-          <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
-          {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
-          {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
-          {post.sender && <FullName user_id={post.sender._id}/>}
-          {post.email_sender && (
-            <span>
-              {`${post.email_sender._id}`}
-            </span>
-          )}
-          <p>
-            {TimeUntiles.dynamic(post.timestamp)}
-          </p>
-          {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
-          <div className={post.pinned ? style.postPinned : style.postPin}
-               onClick={bookmarkClick}>
-            {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
-            {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
-          </div>
-        </div>
-        {!this.props.post && <hr/>}
-        <div className={style.postBody}>
-          <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
-          <div dangerouslySetInnerHTML={{__html: post.body}}
-          ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
-          {post.post_attachments.length > 0 && !this.props.post && (
-            <PostAttachment attachments={post.post_attachments}/>
-          )}
-          {post.post_attachments.length > 0 && this.props.post && (
-            <div className={style.postAttachs}>
-              <IcoN size={16} name={'attach24'}/>
-              {post.post_attachments.length}
-              {post.post_attachments.length === 1 && <span>Attachment</span>}
-              {post.post_attachments.length > 1 && <span>Attachments</span>}
+        <div className={style.postScrollContainer} ref={this.refScrollHandler}>
+          <div className={style.postHead}>
+            <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
+            {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
+            {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
+            {post.sender && <FullName user_id={post.sender._id}/>}
+            {post.email_sender && (
+              <span>
+                {`${post.email_sender._id}`}
+              </span>
+            )}
+            <p>
+              {TimeUntiles.dynamic(post.timestamp)}
+            </p>
+            {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
+            <div className={post.pinned ? style.postPinned : style.postPin}
+                onClick={bookmarkClick}>
+              {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
+              {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
             </div>
-          )}
-          <ul className={style.postLabels}>
-            {post.post_labels.map((label: ILabel, index: number) => {
-              return (
-              <li key={label._id + index} className={[style.postLabel, style['label' + label.code]].join(' ')}>
-                {label.title}
-              </li>
-              ); })}
-          </ul>
-          <div className={style.postPlaces}>
-            {postView && <a>Shared with:</a>}
-            {post.post_places.map((place: IPlace, index: number) => {
-              if (index < 2) {
+          </div>
+          {!this.props.post && <hr/>}
+          <div className={style.postBody}>
+            <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
+            <div dangerouslySetInnerHTML={{__html: post.body}}
+            ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
+            {post.post_attachments.length > 0 && !this.props.post && (
+              <PostAttachment attachments={post.post_attachments}/>
+            )}
+            {post.post_attachments.length > 0 && this.props.post && (
+              <div className={style.postAttachs}>
+                <IcoN size={16} name={'attach24'}/>
+                {post.post_attachments.length}
+                {post.post_attachments.length === 1 && <span>Attachment</span>}
+                {post.post_attachments.length > 1 && <span>Attachments</span>}
+              </div>
+            )}
+            <ul className={style.postLabels}>
+              {post.post_labels.map((label: ILabel, index: number) => {
                 return (
-                  <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
-                    {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </span>
-                );
-              }
-            })}
-            {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
-          </div>
-
-          {!postView && (
-            <div className={style.postFooter}>
-              <IcoN size={16} name={'comment24'}/>
-              {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-              {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+                <li key={label._id + index} className={[style.postLabel, style['label' + label.code]].join(' ')}>
+                  {label.title}
+                </li>
+                ); })}
+            </ul>
+            <div className={style.postPlaces}>
+              {postView && <a>Shared with:</a>}
+              {post.post_places.map((place: IPlace, index: number) => {
+                if (index < 2) {
+                  return (
+                    <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
+                      {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                  );
+                }
+              })}
+              {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
             </div>
+
+            {!postView && (
+              <div className={style.postFooter}>
+                <IcoN size={16} name={'comment24'}/>
+                {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
+                {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+              </div>
+            )}
+          </div>
+          {/* renders the comments and comment input in post view */}
+          {!this.props.post && (
+            <CommentsBoard no_comment={this.state.post.no_comment}
+            post_id={this.state.post._id} post={this.state.post}
+            user={this.props.user}/>
           )}
+          {postView && <div className={privateStyle.bottomSpace}/>}
         </div>
-        {/* renders the comments and comment input in post view */}
-        {!this.props.post && (
-          <CommentsBoard no_comment={this.state.post.no_comment}
-          post_id={this.state.post._id} post={this.state.post}
-          user={this.props.user}/>
-        )}
-        {postView && <div className={privateStyle.bottomSpace}/>}
         {this.state.showAddLabel && (
           <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}

@@ -89,6 +89,15 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   private PlaceApi: PlaceApi;
 
   /**
+   * @prop sidebarElement
+   * @desc Reference of sidebar element
+   * @private
+   * @type {HTMLDivElement}
+   * @memberof Sidebar
+   */
+  private sidebarElement: HTMLDivElement;
+
+  /**
    * @constructor
    * Creates an instance of Sidebar.
    * @param {ISidebarProps} props
@@ -119,6 +128,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    */
   public componentDidMount() {
 
+    this.sidebarElement.addEventListener('touchmove', (e: any) => {
+      e = e || window.event;
+      document.body.scrollTop = 0;
+      e.stopImmediatePropagation();
+      e.cancelBubble = true;
+      e.stopPropagation();
+    }, false);
+
     /** Assign PlaceApi */
     this.PlaceApi = new PlaceApi();
 
@@ -143,6 +160,16 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           invitations: response.invitations,
         });
       });
+  }
+
+  /**
+   * @func refHandler
+   * @private
+   * @memberof Sidebar
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.sidebarElement = value;
   }
 
   /**
@@ -579,7 +606,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       }
     });
     return (
-      <div className={style.sidebar}>
+      <div className={style.sidebar} ref={this.refHandler}>
         <div>
           {/* Close Sidebar button */}
           <div className={style.sidebarHead} onClick={this.props.closeSidebar}>

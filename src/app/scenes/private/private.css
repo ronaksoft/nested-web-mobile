@@ -51,6 +51,7 @@ body {
   height: 100%;
   overflow: hidden;
   position: auto;
+  touch-action: none;
   -webkit-overflow-scrolling: none;
 }
 html {
@@ -59,10 +60,11 @@ html {
   -webkit-overflow-scrolling: none;
 }
 .container {
-  padding-top: 56px;
+  /* padding-top: 56px; */
   height: 100vh;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: auto;
   /* left: 0;
   top: 0;
   right: 0;
@@ -86,6 +88,10 @@ html {
 .emptyMessage {
   width: 100%;
   text-align: center;
+}
+.postsArea {
+  height: calc(100% - 56px);
+  overflow: auto;
 }
 .bottomSpace {
   width: 100%;

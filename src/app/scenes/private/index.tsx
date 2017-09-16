@@ -234,6 +234,20 @@ class Private extends React.Component<IProps, IState> {
       });
   }
 
+  private scrollPreventer = (e) => {
+    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    e = e || window.event;
+    if (isSafari) {
+      e.returnValue = false;
+      e.cancelBubble = true;
+      if (e.preventDefault) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+      return false; // or return e, doesn't matter
+    }
+  }
+
   /**
    * @name componentDidMount
    * @function
@@ -242,6 +256,11 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    */
   public componentDidMount() {
+    document.body.scrollTop = 0;
+    document.addEventListener('scroll', this.scrollPreventer, false);
+    document.addEventListener('touchmove', this.scrollPreventer, false);
+    document.body.addEventListener('scroll', this.scrollPreventer, false);
+    document.body.addEventListener('touchmove', this.scrollPreventer, false);
 
     document.addEventListener('touchstart', (e) => {
       this.xStart = e.touches[0].screenY;
@@ -356,21 +375,22 @@ class Private extends React.Component<IProps, IState> {
    */
   public render() {
     if ( this.privatePagesWrapper ) {
-      this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
-        const xMovement = e.touches[0].screenY - this.xStart;
-        if ( xMovement < 0 || this.privatePagesWrapper.scrollTop > 0 ) {
-          return true;
-        } else {
-          e = e || window.event;
-          e.returnValue = false;
-          e.cancelBubble = true;
-          if (e.preventDefault) {
-              e.preventDefault();
-              e.stopPropagation();
-          }
-          return false; // or return e, doesn't matter
-        }
-      }, false);
+      // this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
+      //   e = e || window.event;
+      //   document.body.scrollTop = 0;
+      //   e.stopImmediatePropagation();
+      //   e.cancelBubble = true;
+      //   e.stopPropagation();
+      //   const xMovement = e.touches[0].screenY - this.xStart;
+      //   console.log(xMovement, this.privatePagesWrapper.scrollTop);
+      //   if ( xMovement < 0 || this.privatePagesWrapper.scrollTop > 0 ) {
+      //     return true;
+      //   } else {
+      //     e.preventDefault();
+      //     e.returnValue = false;
+      //     return false;
+      //   }
+      // }, false);
     }
     return (
       <div>

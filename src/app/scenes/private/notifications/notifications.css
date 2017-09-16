@@ -7,9 +7,13 @@
 }
 .notificationWrp {
   opacity: 1;
+  width: 100%;
+}
+.notificationWrp > div {
+  width: 100%;
 }
 .notificationScrollbar {
-  height: 100%;
+  height: calc(100% - 56px);
   overflow: auto;
   width: 100%;
   -webkit-overflow-scrolling: touch;
