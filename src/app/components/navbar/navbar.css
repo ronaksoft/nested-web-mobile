@@ -8,6 +8,7 @@
   overflow: hidden;
   width: 100%;
   /* position: fixed; */
+  flex: none;
   top: 0;
   left: 0;
   z-index: 3;
