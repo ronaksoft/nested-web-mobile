@@ -187,43 +187,6 @@ class Post extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    if ( this.scrollWrapper ) {
-      if (isSafari) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
     this.PostApi = new PostApi();
     if (this.props.post) {
 
@@ -495,6 +458,42 @@ class Post extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
+    if ( this.scrollWrapper && !this.props.post) {
+      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
+        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
+          e = e || window.event;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
+          e = e || window.event;
+          e.currentTarget.scrollTop += 1;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+      }
+      this.scrollWrapper.addEventListener('scroll', (e: any) => {
+        e = e || window.event;
+        const el = e.currentTarget;
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        if (el.scrollTop === 0) {
+            el.scrollTop = 1;
+        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
+          el.scrollTop -= 1;
+        }
+        e.returnValue = true;
+        return true;
+      }, true);
+    }
     const postView = !this.props.post;
     if (!this.state.post) {
       return <Loading active={true}/>;

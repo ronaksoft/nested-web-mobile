@@ -9,6 +9,11 @@
 .postScrollContainer {
   height: calc(100% - 56px);
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+  z-index: 22;
+  will-change: scroll;
+  touch-action: auto;
 }
 .postView .postBody {
   border-bottom: none;
