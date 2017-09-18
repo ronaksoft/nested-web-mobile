@@ -60,12 +60,12 @@ class Html extends React.Component<IHtmlProps, {}> {
         {renderStyles}
         <link rel="shortcut icon" href="/m/public/favicon.ico"/>
         <link rel="manifest" href="/m/public/manifest.json"/>
-        <link rel="apple-touch-icon" href="images/nested-144.png" sizes="152x152"/>
-        <link rel="apple-touch-icon" href="images/nested-192.png" sizes="180x180"/>
-        <link rel="apple-touch-icon" href="images/nested-168.png" sizes="167x167"/>
-        <link rel="apple-touch-icon" href="nested-512.png"/>
+        <link rel="apple-touch-icon" href="/m/public/images/nested-144.png" sizes="152x152"/>
+        <link rel="apple-touch-icon" href="/m/public/images/nested-192.png" sizes="180x180"/>
+        <link rel="apple-touch-icon" href="/m/public/images/nested-168.png" sizes="167x167"/>
+        <link rel="apple-touch-icon" href="/m/public/nested-512.png"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
-        <link rel="apple-touch-startup-image" href="images/nested-512.png"/>
+        <link rel="apple-touch-startup-image" href="/m/public/images/nested-512.png"/>
         <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
       </head>
