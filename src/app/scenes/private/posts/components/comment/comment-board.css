@@ -1,6 +1,7 @@
 .commentBoard {
   background-color: #F0F0F0;
   overflow: hidden;
+  flex: none;
 }
 .commentBoard:before {
   content: ' ';

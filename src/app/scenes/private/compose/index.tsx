@@ -120,6 +120,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private htmlBodyRef: HTMLDivElement;
+  private textArea: HTMLDivElement;
 
   /**
    * @prop attachments
@@ -325,6 +326,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private handleBodyChange = (e: any) => {
     this.setState({
       body: e.target.value,
+    }, () => {
+      this.textArea.style.height = (this.textArea.scrollHeight) + 'px';
     });
   }
 
@@ -591,6 +594,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private refHandler = (value) => {
     this.htmlBodyRef = value;
   }
+  private textAreaRefHandler = (value) => {
+    this.textArea = value;
+  }
 
   /**
    * @func render
@@ -599,6 +605,53 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   public render() {
+    setTimeout( () => {
+      if (this.textArea && !this.isHtml) {
+        alert(this.textArea.scrollHeight);
+        this.textArea.style.height = (this.textArea.scrollHeight) + 'px';
+        if (this.htmlBodyRef.scrollTop === 0) {
+          this.htmlBodyRef.scrollTop = 10;
+        }
+      }
+    }, 10);
+    if ( this.htmlBodyRef) {
+      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
+        this.htmlBodyRef.addEventListener('touchmove', (e: any) => {
+          // alert(111);
+          e = e || window.event;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+        this.htmlBodyRef.addEventListener('touchstart', (e: any) => {
+          e = e || window.event;
+          // alert(222);
+          e.currentTarget.scrollTop += 1;
+          e.stopImmediatePropagation();
+          e.cancelBubble = true;
+          e.stopPropagation();
+          e.returnValue = true;
+          return true;
+        }, false);
+      }
+      this.htmlBodyRef.addEventListener('scroll', (e: any) => {
+        e = e || window.event;
+        const el = e.currentTarget;
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        if (el.scrollTop === 0) {
+            el.scrollTop = 1;
+        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
+          el.scrollTop -= 1;
+        }
+        e.returnValue = true;
+        return true;
+      }, false);
+    }
     return (
       <div className={style.compose}>
         {/* specefic compose navbar */}
@@ -667,18 +720,20 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </div>
         </div>
         {/* compose body */}
-        {!this.isHtml && (
-          <textarea
-            onFocus={this.bodyFocus}
-            placeholder="Write something…"
-            onChange={this.handleBodyChange}
-            value={this.state.body}
-          />
-        )}
-        {this.isHtml && (
-          <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}
-          ref={this.refHandler} />
-        )}
+        <div ref={this.refHandler} className={style.scrollWrapper}>
+          {!this.isHtml && (
+            <textarea
+              onFocus={this.bodyFocus}
+              placeholder="Write something…"
+              onChange={this.handleBodyChange}
+              value={this.state.body}
+              ref={this.textAreaRefHandler}
+            />
+          )}
+          {this.isHtml && (
+            <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}/>
+          )}
+        </div>
         {/* attachments uploading/uploaded list */}
         <AttachmentList
           onItemsChanged={this.handleAttachmentsChange}

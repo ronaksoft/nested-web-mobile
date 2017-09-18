@@ -10,10 +10,27 @@
   height: calc(100% - 56px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  touch-action: auto;
   z-index: 22;
   will-change: scroll;
   touch-action: auto;
+  display: flex;
+  flex-direction: column;
+}
+.postScrollContent {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  flex: none;
+  position: relative;
+}
+.postView .postScrollContent {
+  min-height: 98vh;
+}
+.postView .postScrollContainer > div:last-child {
+  height: calc(2% + 24px);
+  margin-top: 16px;
+  flex: none;
 }
 .postView .postBody {
   border-bottom: none;
@@ -37,6 +54,7 @@
   color: rgba(50,61,71,.72);
   position: relative;
   overflow: hidden;
+  flex: none;
 }
 .postHead > i{
   margin-left: 6px;
@@ -71,6 +89,7 @@
 .postBody {
   border-bottom: 1px solid rgba(50,61,71,.16);
   overflow: hidden;
+  flex: none;
 }
 .postBody h3{
   color: rgba(50,61,71,1);

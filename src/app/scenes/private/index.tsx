@@ -80,7 +80,7 @@ interface IProps {
  * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>,<InvitationItem>]
  */
 class Private extends React.Component<IProps, IState> {
-  private xStart: number;
+  // private xStart: number;
   /**
    * Define accountApi
    * @private
@@ -262,9 +262,9 @@ class Private extends React.Component<IProps, IState> {
     document.body.addEventListener('scroll', this.scrollPreventer, false);
     document.body.addEventListener('touchmove', this.scrollPreventer, false);
 
-    document.addEventListener('touchstart', (e) => {
-      this.xStart = e.touches[0].screenY;
-    });
+    // document.addEventListener('touchstart', (e) => {
+    //   this.xStart = e.touches[0].screenY;
+    // });
     /** Assign accountApi */
     this.accountApi = new AccountApi();
 
@@ -374,7 +374,7 @@ class Private extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    if ( this.privatePagesWrapper ) {
+    // if ( this.privatePagesWrapper ) {
       // this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
       //   e = e || window.event;
       //   document.body.scrollTop = 0;
@@ -391,7 +391,7 @@ class Private extends React.Component<IProps, IState> {
       //     return false;
       //   }
       // }, false);
-    }
+    // }
     return (
       <div>
         {

@@ -9,11 +9,27 @@ main > div {
   flex-direction: column;
   height: 100vh;
   margin-top: -56px;
+  /* position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; */
+}
+.scrollWrapper {
+  max-height: calc(100vh - 256px);
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+  will-change: scroll;
+  transform: translateZ(0);
+  display: flex;
+  height: 100%;
 }
 .compose [contenteditable] ,
 .compose textarea {
-  max-height: calc(100vh - 152px);
-  overflow: auto;
+  height: auto;
+  min-height: 101%;
+  width: 100%;
+  padding: 16px;
 }
 .compose >div:first-child a:last-child {
   width: 70px
@@ -66,12 +82,11 @@ main > div {
   box-shadow: none;
 }
 .compose textarea{
-  padding: 16px;
-  width: 100%;
   flex-grow: 1;
   font-size: 14px;
   line-height: 20px;
   border: none;
+  overflow: hidden;
 }
 .compose textarea:focus{
   outline: none;
