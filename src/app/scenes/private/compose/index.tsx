@@ -607,7 +607,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   public render() {
     setTimeout( () => {
       if (this.textArea && !this.isHtml) {
-        alert(this.textArea.scrollHeight);
         this.textArea.style.height = (this.textArea.scrollHeight) + 'px';
         if (this.htmlBodyRef.scrollTop === 0) {
           this.htmlBodyRef.scrollTop = 10;
@@ -618,7 +617,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
       if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
         this.htmlBodyRef.addEventListener('touchmove', (e: any) => {
-          // alert(111);
           e = e || window.event;
           e.stopImmediatePropagation();
           e.cancelBubble = true;
@@ -628,7 +626,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         }, false);
         this.htmlBodyRef.addEventListener('touchstart', (e: any) => {
           e = e || window.event;
-          // alert(222);
           e.currentTarget.scrollTop += 1;
           e.stopImmediatePropagation();
           e.cancelBubble = true;
