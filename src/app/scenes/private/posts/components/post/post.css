@@ -5,6 +5,7 @@
   /* padding-bottom: 144px;  */
   height: 100vh;
   margin-top: -56px;
+  overflow: hidden;
 }
 .postScrollContainer {
   height: calc(100% - 56px);
