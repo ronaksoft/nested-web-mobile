@@ -581,7 +581,9 @@ class Post extends React.Component<IProps, IState> {
               <div dangerouslySetInnerHTML={{__html: post.body}}
               ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
               {post.post_attachments.length > 0 && !this.props.post && (
-                <PostAttachment attachments={post.post_attachments}/>
+                <PostAttachment attachments={post.post_attachments}
+                                postId={post._id}
+                />
               )}
               {post.post_attachments.length > 0 && this.props.post && (
                 <div className={style.postAttachs}>

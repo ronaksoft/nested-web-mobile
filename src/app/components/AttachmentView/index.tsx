@@ -33,6 +33,7 @@ const style = require('./attachmentview.css');
 interface IProps {
   attachments: IPostAttachment[];
   selectedAttachment?: IPostAttachment | null;
+  postId: string;
   onClose: () => void;
 }
 
@@ -142,7 +143,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @memberof AttachmentView
    */
   public componentDidMount() {
-    this.setDownloadUrl(this.state.selectedAttachment._id);
+    this.setDownloadUrl(this.state.selectedAttachment._id, this.props.postId);
   }
 
   /**
@@ -151,9 +152,10 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @param {string} id
    * @memberof AttachmentView
    */
-  public setDownloadUrl(id: string): void {
+  public setDownloadUrl(id: string, postId: string): void {
       AttachmentApi.getDownloadToken({
         universal_id: id,
+        post_id: postId,
       }).then((token: string) => {
         this.setState({
           downloadUrl: FileUtil.getDownloadUrl(id, token),
@@ -233,7 +235,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.setState({selectedAttachment: next}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(next._id);
+    this.setDownloadUrl(next._id, this.props.postId);
   }
 
   /**
@@ -256,7 +258,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     this.setState({selectedAttachment: prev}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(prev._id);
+    this.setDownloadUrl(prev._id, this.props.postId);
   }
 
   // private onSwipe(event: any, props: any) {

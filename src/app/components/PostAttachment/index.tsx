@@ -32,6 +32,7 @@ interface IProps {
    * @memberof IProps
    */
   attachments: IPostAttachment[];
+  postId: string;
 }
 
 /**
@@ -169,7 +170,9 @@ export default class PostAttachment extends React.Component<IProps, IState> {
         {this.state.showAttachmentView && (
           <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
                           selectedAttachment={this.state.selectedAttachment}
-                          attachments={this.props.attachments}/>
+                          attachments={this.props.attachments}
+                          postId={this.props.postId}
+          />
         )}
       </div>
     );
