@@ -376,7 +376,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @param {*} e
    * @memberof AttachmentView
    */
-  private download(e: any) {
+  private download = (e: any) => {
     if (!this.state.downloadUrl) {
       message.error('We are not able to serve the file, try again later.');
       e.preventDefault();

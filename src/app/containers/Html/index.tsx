@@ -65,8 +65,9 @@ class Html extends React.Component<IHtmlProps, {}> {
         <link rel="apple-touch-icon" href="/m/public/images/nested-168.png" sizes="167x167"/>
         <link rel="apple-touch-icon" href="/m/public/nested-512.png"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
         <link rel="apple-touch-startup-image" href="/m/public/images/nested-512.png"/>
-        <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
       </head>
       <body>
