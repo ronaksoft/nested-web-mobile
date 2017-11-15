@@ -10,14 +10,14 @@ import Private from 'scenes/private';
 import {Public, Signin, Signup, NotFound} from 'scenes/public';
 import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
 import {Provider} from 'react-redux';
-import {Router, Route, browserHistory, IndexRoute, Redirect} from 'react-router';
+import {Router, Route, hashHistory, IndexRoute, Redirect} from 'react-router';
 import {configureStore} from 'redux/store';
 
-const store = configureStore(browserHistory);
+const store = configureStore(hashHistory);
 
 export default (
   <Provider store={store}>
-    <Router history={browserHistory}>
+    <Router history={hashHistory}>
       <Route component={Private}>
         <IndexRoute component={Feed}/>
         <Redirect from="/" to="/m/feed" />

@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import {Input, Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import Waiting from './Waiting';
@@ -247,7 +247,7 @@ class Verify extends React.Component<IProps, IState> {
         .replace(':phone', this.props.params.phone)
         .replace(':vid', this.props.params.vid);
 
-      browserHistory.push(nextStepRoute);
+      hashHistory.push(nextStepRoute);
     }, (error: IErrorResponseData) => {
       if (error.err_code === Failure.INVALID) {
         this.setState({

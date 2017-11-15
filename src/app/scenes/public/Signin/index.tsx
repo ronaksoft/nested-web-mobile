@@ -11,7 +11,7 @@
 
 import * as React from 'react';
 import {Input, Button, Form} from 'antd';
-import {Link, browserHistory} from 'react-router';
+import {Link, hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {login, logout} from 'redux/app/actions';
 import * as md5 from 'md5';
@@ -152,7 +152,7 @@ class Signin extends React.Component<IProps, IState> {
           this.props.setLogin(response.account);
 
           // Navigates to the default route which is `/feed`
-          browserHistory.push('/m');
+          hashHistory.push('/m');
         },
         (error) => {
           console.log(error);
@@ -248,7 +248,7 @@ class Signin extends React.Component<IProps, IState> {
           >
             <b>Sign in</b>
           </Button>
-          <p className={publicStyle.detail}>Don't have an account? <Link to="/m/signup">Create a new account</Link></p>
+          <p className={publicStyle.detail}>Don't have an account? <Link to="#/m/signup">Create a new account</Link></p>
           {
             this.state.message &&
             (

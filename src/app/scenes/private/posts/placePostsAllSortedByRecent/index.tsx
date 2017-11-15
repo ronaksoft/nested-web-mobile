@@ -18,7 +18,7 @@ import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/act
 import ArrayUntiles from '../../../../services/utils/array';
 import {Button, Modal} from 'antd';
 import Post from '../components/post/index';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Loading} from '../../../../components/Loading/index';
 import {NewBadge} from '../../../../components/NewBadge/index';
 import SyncActions from '../../../../services/syncActivity/syncActions';
@@ -428,7 +428,7 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
             title: 'Error',
             content: 'Either the Place doesn\'t exist, or you haven\'t been permitted to enter the Place.',
             okText: 'Return',
-            onOk: () => browserHistory.goBack(),
+            onOk: () => hashHistory.goBack(),
           });
         }
         console.log('====================================');
@@ -457,7 +457,7 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByRecentPost = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/messages`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/messages`);
   }
   /**
    * @function gotoPlacePostsAllSortedByActivity
@@ -466,7 +466,7 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByActivity = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
   }
   /**
    * @function gotoPlacePostsUnreadSortedByRecent
@@ -475,12 +475,12 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsUnreadSortedByRecentPost = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/unread`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/unread`);
   }
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/m/message/${post._id}`);
   }
   /**
    * @function gotoPost

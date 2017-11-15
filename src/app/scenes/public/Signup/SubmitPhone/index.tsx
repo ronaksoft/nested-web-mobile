@@ -16,7 +16,7 @@
  */
 
 import * as React from 'react';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import PhoneInput from 'components/PhoneInput';
 import {Button, Form} from 'antd';
 import AccountApi from 'api/account';
@@ -199,9 +199,9 @@ class Phone extends React.Component<any, IState> {
       }).then((data) => {
 
         // TODO: Use es6 string interpolation
-        const nextStep = `/m/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
+        const nextStep = `#/m/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
 
-        browserHistory.push(nextStep);
+        hashHistory.push(nextStep);
       }, (error: IErrorResponseData) => {
         if (error.err_code === Failure.INVALID) {
           this.setState({
@@ -256,7 +256,7 @@ class Phone extends React.Component<any, IState> {
               phone={this.props.params.phone}
               country={this.props.params.country}/>
           </Form.Item>
-          <p className={publicStyle.detail}>Have an account? <Link to="/m/signin">Sign in</Link></p>
+          <p className={publicStyle.detail}>Have an account? <Link to="#/m/signin">Sign in</Link></p>
           <Button type="primary" className={publicStyle.submit} onClick={this.submit}>
             <b>Next</b>
           </Button>

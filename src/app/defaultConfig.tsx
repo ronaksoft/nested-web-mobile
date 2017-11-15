@@ -1,7 +1,7 @@
 export default {
   APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
   APP_VERSION: 353,
-  DOMAIN: '_DOMAIN_',
+  DOMAIN: 'localhost',
   SIGN_OUT_TARGET: 'https://nested.me',
   WEBSOCKET: {
     URL: process.env.NST_WS_CYRUS_URL || 'wss://cyrus.nested.me:443',

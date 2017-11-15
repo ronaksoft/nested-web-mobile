@@ -25,7 +25,7 @@ import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 
 const style = require('./sidebar.css');
 
-// import {browserHistory} from 'react-router';
+// import {hashHistory} from 'react-router';
 
 interface IOwnProps {
   closeSidebar: () => void;
@@ -615,21 +615,21 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           <ul className={style.sidebarActions}>
             {/* Feed scene link */}
             <li>
-              <Link to={`/m/feed`}>
+              <Link to={`#/m/feed`}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             {/* bookmarks scene link */}
             <li>
-              <Link to={`/m/bookmarks`}>
+              <Link to={`#/m/bookmarks`}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             {/* Shared messages scene link */}
             <li>
-              <Link to={`/m/shared`}>
+              <Link to={`#/m/shared`}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -657,7 +657,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             </li>
             {/* Logging out button */}
             <li>
-              <Link to={`/m/signout`}>
+              <Link to={`#/m/signout`}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>

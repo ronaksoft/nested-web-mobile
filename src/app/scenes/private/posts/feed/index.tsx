@@ -18,7 +18,7 @@ import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/act
 import ArrayUntiles from '../../../../services/utils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import SyncActivity from '../../../../services/syncActivity/index';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
@@ -320,7 +320,7 @@ class Feed extends React.Component<IProps, IState> {
    * @private
    */
   private gotoFeedByActivity() {
-    browserHistory.push(`/m/feed/latest-activity`);
+    hashHistory.push(`/m/feed/latest-activity`);
   }
 
   /**
@@ -459,7 +459,7 @@ class Feed extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/m/message/${post._id}`);
   }
   /**
    * renders the component

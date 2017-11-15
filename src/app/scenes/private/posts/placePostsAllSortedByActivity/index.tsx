@@ -18,7 +18,7 @@ import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/act
 import ArrayUntiles from '../../../../services/utils/array';
 import {Button} from 'antd';
 import Post from '../components/post/index';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Loading} from '../../../../components/Loading/index';
 import SyncActivity from 'services/syncActivity';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
@@ -438,7 +438,7 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByRecentPost = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/messages`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/messages`);
   }
   /**
    * @function gotoPlacePostsAllSortedByActivity
@@ -447,7 +447,7 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByActivity = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
   }
   /**
    * @function gotoPlacePostsUnreadSortedByRecent
@@ -456,7 +456,7 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsUnreadSortedByRecent = () => {
-    browserHistory.push(`/m/places/${this.currentPlaceId}/unread`);
+    hashHistory.push(`/m/places/${this.currentPlaceId}/unread`);
   }
   /**
    * @function gotoPost
@@ -466,7 +466,7 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/m/message/${post._id}`);
   }
   /**
    * renders the component

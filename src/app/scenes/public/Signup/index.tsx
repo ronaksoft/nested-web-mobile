@@ -39,7 +39,7 @@ class Signup extends React.Component<any, any> {
     return (
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
-          <Link to="/m/signin">
+          <Link to="#/m/signin">
             <img src={require('./logo.svg')} className={publicStyle.logo} alt="Nested"/>
           </Link>
           <div className={publicStyle.filler}/>

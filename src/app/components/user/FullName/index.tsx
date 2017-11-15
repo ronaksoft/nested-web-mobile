@@ -141,7 +141,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
       return null;
     }
     return (
-      <span>{user.fname} {user.lname}</span>
+      <span>{user.fname}&nbsp;{user.lname}</span>
     );
   }
 }

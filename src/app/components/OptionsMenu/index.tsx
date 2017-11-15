@@ -11,7 +11,7 @@ import * as React from 'react';
 import ILeftItem from './ILeftItem';
 import IRightItem from './IRightItem';
 import {IcoN} from 'components';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 const style = require('./OptionsMenu.css');
 
@@ -57,7 +57,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
   }
 
   public componentDidMount() {
-    this.listener = browserHistory.listen(() => {
+    this.listener = hashHistory.listen(() => {
       this.closeAll();
     });
   }

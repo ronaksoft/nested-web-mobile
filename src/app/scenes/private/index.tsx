@@ -9,7 +9,7 @@
  */
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 
 import Feed from './posts/feed';
@@ -184,14 +184,14 @@ class Private extends React.Component<IProps, IState> {
         this.props.setLogin(response.account);
       }, () => {
         aaa.clearCredentials();
-        browserHistory.push('/m/signin');
+        hashHistory.push('/m/signin');
       });
     };
 
     /** clear credentials in some unexpected situations */
     if (!credential.sk || !credential.ss) {
       aaa.clearCredentials();
-      browserHistory.push('/m/signin');
+      hashHistory.push('/m/signin');
       return;
     }
 
@@ -284,7 +284,7 @@ class Private extends React.Component<IProps, IState> {
      * @function
      * @event
      */
-    this.unListenChangeRoute = browserHistory.listen(() => {
+    this.unListenChangeRoute = hashHistory.listen(() => {
       this.closeSidebar();
       this.getNotificationCounts();
       document.body.scrollTop = document.documentElement.scrollTop = 0;
@@ -299,7 +299,7 @@ class Private extends React.Component<IProps, IState> {
    * @public
    */
   public sampleF = () => {
-    browserHistory.push('/m/feed');
+    hashHistory.push('/m/feed');
   }
 
   /**

@@ -81,7 +81,7 @@ class SidebarItem extends React.Component<ISidebarItemProps, any> {
         {!this.props.place.isChildren &&
         <hr className={style.hrLight}/>
         }
-        <Link to={`/m/places/${this.props.place.id}/messages`} activeClassName="active">
+        <Link to={`#/m/places/${this.props.place.id}/messages`} activeClassName="active">
           <div className={style.place}>
             {/* margin left on each child depth */}
             {placeIndent}

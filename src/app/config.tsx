@@ -1,5 +1,21 @@
 function generateConfig(): any {
   const windowObj: Window = window;
+  if (!window.hasOwnProperty('__NESTED_CONFIG__')) {
+    window.__NESTED_CONFIG__ = {
+      DOMAIN: 'nested.me',
+      WEBSOCKET: {
+        URL: 'wss://cyrus.nested.me:443',
+      },
+      STORE: {
+        URL: 'https://xerxes.nested.me:80',
+      },
+      REGISTER: {
+        AJAX: {
+          URL: 'wss://cyrus.nested.me:443',
+        },
+      },
+    };
+  }
   return {
     APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
     APP_VERSION: 353,
