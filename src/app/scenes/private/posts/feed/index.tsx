@@ -320,7 +320,7 @@ class Feed extends React.Component<IProps, IState> {
    * @private
    */
   private gotoFeedByActivity() {
-    hashHistory.push(`/m/feed/latest-activity`);
+    hashHistory.push(`/feed/latest-activity`);
   }
 
   /**
@@ -459,7 +459,7 @@ class Feed extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    hashHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/message/${post._id}`);
   }
   /**
    * renders the component

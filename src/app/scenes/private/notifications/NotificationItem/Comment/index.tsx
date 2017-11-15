@@ -77,7 +77,7 @@ class Comment extends React.Component <IProps, any> {
       othersDoms.push(<div className={style.plus}>+{more}</div>);
     }
     return (
-      <Link to={`#/m/message/${notification.post_id}`}
+      <Link to={`/message/${notification.post_id}`}
       className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
         <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
         {/* rendering comment component when more than one user commenting */}

@@ -199,7 +199,7 @@ class Phone extends React.Component<any, IState> {
       }).then((data) => {
 
         // TODO: Use es6 string interpolation
-        const nextStep = `#/m/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
+        const nextStep = `#/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
 
         hashHistory.push(nextStep);
       }, (error: IErrorResponseData) => {
@@ -256,7 +256,7 @@ class Phone extends React.Component<any, IState> {
               phone={this.props.params.phone}
               country={this.props.params.country}/>
           </Form.Item>
-          <p className={publicStyle.detail}>Have an account? <Link to="#/m/signin">Sign in</Link></p>
+          <p className={publicStyle.detail}>Have an account? <Link to="/signin">Sign in</Link></p>
           <Button type="primary" className={publicStyle.submit} onClick={this.submit}>
             <b>Next</b>
           </Button>

@@ -248,7 +248,7 @@ class Signin extends React.Component<IProps, IState> {
           >
             <b>Sign in</b>
           </Button>
-          <p className={publicStyle.detail}>Don't have an account? <Link to="#/m/signup">Create a new account</Link></p>
+          <p className={publicStyle.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
           {
             this.state.message &&
             (

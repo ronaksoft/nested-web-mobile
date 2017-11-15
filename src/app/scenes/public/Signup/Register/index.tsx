@@ -520,7 +520,7 @@ class Register extends React.Component<IProps, IState> {
           message.success('Congratulations! Your account has been created successfully. Now you can explore Nested :)');
         }, () => {
           // Navigates to signin page if could not log the user in
-          hashHistory.push('/m/signin');
+          hashHistory.push('/signin');
         });
       }, () => {
         // Enable the button again and let the user to try once more!

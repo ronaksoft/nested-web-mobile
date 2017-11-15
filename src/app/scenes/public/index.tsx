@@ -45,7 +45,7 @@ class Public extends React.Component<any, any> {
     const hasCredentials = !!(credentials.sk && credentials.ss);
 
     if (hasCredentials) {
-      hashHistory.push('/m/feed');
+      hashHistory.push('/feed');
     }
 
     return (

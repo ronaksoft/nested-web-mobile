@@ -448,11 +448,11 @@ class FeedByActivity extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    hashHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/message/${post._id}`);
   }
 
   private gotoFeed() {
-    hashHistory.push('/m/feed');
+    hashHistory.push('/feed');
   }
   /**
    * renders the component

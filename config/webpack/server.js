@@ -28,7 +28,7 @@ var config = {
   output: {
     path: path.resolve('./build/public'),
     filename: '../server.js',
-    publicPath: '/m/public/',
+    publicPath: '/public/',
     libraryTarget: 'commonjs2'
   },
 

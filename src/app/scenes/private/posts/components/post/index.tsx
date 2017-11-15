@@ -302,7 +302,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private postPlaceClick(pid) {
-    hashHistory.push(`/m/places/${pid}/messages`);
+    hashHistory.push(`/places/${pid}/messages`);
   }
 
   /**
@@ -513,10 +513,10 @@ class Post extends React.Component<IProps, IState> {
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
-            <Link to={`#/m/forward/${post._id}`}>
+            <Link to={`/forward/${post._id}`}>
               <IcoN size={24} name="forward24"/>
             </Link>
-            <Link to={`#/m/reply/${post._id}`}>
+            <Link to={`/reply/${post._id}`}>
               <IcoN size={24} name="reply24"/>
             </Link>
             <a onClick={this.toggleMoreOpts}>
@@ -535,17 +535,17 @@ class Post extends React.Component<IProps, IState> {
               <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'reply16'}/>
-                <Link to={`#/m/reply/${post._id}`}>Reply</Link>
+                <Link to={`/reply/${post._id}`}>Reply</Link>
               </li>
               <li>
                 <IcoN size={16} name={'reply16'}/>
-                <Link to={`#/m/reply/${post._id}/sender`}>
+                <Link to={`/reply/${post._id}/sender`}>
                   Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
                 </Link>
               </li>
               <li>
                 <IcoN size={16} name={'forward16'}/>
-                <Link to={`#/m/forward/${post._id}`}>Forward</Link>
+                <Link to={`/forward/${post._id}`}>Forward</Link>
               </li>
             </ul>
           </div>

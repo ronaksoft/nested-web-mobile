@@ -457,7 +457,7 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByRecentPost = () => {
-    hashHistory.push(`/m/places/${this.currentPlaceId}/messages`);
+    hashHistory.push(`/places/${this.currentPlaceId}/messages`);
   }
   /**
    * @function gotoPlacePostsAllSortedByActivity
@@ -466,7 +466,7 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsAllSortedByActivity = () => {
-    hashHistory.push(`/m/places/${this.currentPlaceId}/messages/latest-activity`);
+    hashHistory.push(`/places/${this.currentPlaceId}/messages/latest-activity`);
   }
   /**
    * @function gotoPlacePostsUnreadSortedByRecent
@@ -475,12 +475,12 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @private
    */
   private gotoPlacePostsUnreadSortedByRecentPost = () => {
-    hashHistory.push(`/m/places/${this.currentPlaceId}/unread`);
+    hashHistory.push(`/places/${this.currentPlaceId}/unread`);
   }
 
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    hashHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/message/${post._id}`);
   }
   /**
    * @function gotoPost

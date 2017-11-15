@@ -615,21 +615,21 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           <ul className={style.sidebarActions}>
             {/* Feed scene link */}
             <li>
-              <Link to={`#/m/feed`}>
+              <Link to={`/feed`}>
                 <IcoN size={16} name={'bookmarkMessage1White'}/>
                 Feed
               </Link>
             </li>
             {/* bookmarks scene link */}
             <li>
-              <Link to={`#/m/bookmarks`}>
+              <Link to={`/bookmarks`}>
                 <IcoN size={16} name={'bookmarkMessage16White'}/>
                 Bookmarked Posts
               </Link>
             </li>
             {/* Shared messages scene link */}
             <li>
-              <Link to={`#/m/shared`}>
+              <Link to={`/shared`}>
                 <IcoN size={16} name={'sentMessage16White'}/>
                 Shared by me
               </Link>
@@ -657,7 +657,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             </li>
             {/* Logging out button */}
             <li>
-              <Link to={`#/m/signout`}>
+              <Link to={`/signout`}>
                 <IcoN size={16} name={'exit16White'}/>
                 Sign out
               </Link>
