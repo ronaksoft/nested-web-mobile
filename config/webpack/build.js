@@ -163,15 +163,15 @@ var config = {
         },
       }
     }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false,
-    //     screw_ie8: true,
-    //     drop_console: true,
-    //     drop_debugger: true
-    //   }
-    // }),
-    // new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        screw_ie8: true,
+        drop_console: true,
+        drop_debugger: true
+      }
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new ExtractTextPlugin('css/[name].[hash].css'),
     new ManifestPlugin({
       fileName: '../manifest.json'
