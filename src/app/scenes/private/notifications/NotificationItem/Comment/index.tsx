@@ -19,7 +19,6 @@ import INotification from '../../../../../api/notification/interfaces/INotificat
 import TimeUntiles from '../../../../../services/utils/time';
 import ArrayUntiles from '../../../../../services/utils/array';
 import {IcoN, UserAvatar, FullName} from 'components';
-import CommentBody from '../../../../../components/CommentBody';
 import PostSubject from '../../../../../components/PostSubject';
 import 'antd/dist/antd.css';
 import {Link} from 'react-router';
@@ -56,7 +55,7 @@ class Comment extends React.Component <IProps, any> {
       others = ArrayUntiles.uniqueArray(notification.data.others);
     }
     // defining indexOfActorInOthers const
-    const indexOfActorInOthers = others.indexOf(notification.actor_id);
+    const indexOfActorInOthers = others.indexOf(notification.actor._id);
     if (indexOfActorInOthers > -1) {
       others.splice(indexOfActorInOthers, 1);
     }
@@ -64,10 +63,10 @@ class Comment extends React.Component <IProps, any> {
     let more = 0;
     // define othersDoms as an array
     const othersDoms = [];
-    others.map((userId: string, index: number) => {
+    others.map((userId: any, index: number) => {
       // rendering multi user avatar when counts of users less than 3
       if (index < 3) {
-        return othersDoms.push(<UserAvatar key={userId + 'j'} user_id={userId} size={24} borderRadius={'24px'}/>);
+        return othersDoms.push(<UserAvatar key={userId._id + 'j'} user_id={userId} size={24} borderRadius={'24px'}/>);
       } else {
         return more++;
       }
@@ -78,8 +77,8 @@ class Comment extends React.Component <IProps, any> {
     }
     return (
       <Link to={`/message/${notification.post_id}`}
-      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
-        <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
+      className={[style.notifWrapper, notification.read ? style.read : null].join(' ')}>
+        <UserAvatar user_id={notification.actor} size={32} borderRadius={'16px'}/>
         {/* rendering comment component when more than one user commenting */}
         { others.length > 0 && (
           <div className={style.commentContainer}>
@@ -91,12 +90,12 @@ class Comment extends React.Component <IProps, any> {
             <div className={style.notifData}>
               <p>
                 {/* using FullName component for rendering user full name */}
-                <b><FullName user_id={this.props.notification.actor_id}/> </b>
+                <b><FullName user_id={notification.actor}/> </b>
                 {others &&
-                others.map((userId: string, index: number) => {
+                others.map((userId: any, index: number) => {
                   if (index < 3) {
                     {/* using FullName component for rendering user full name */}
-                    return <span key={userId + 'a'}> and <b><FullName user_id={userId}/></b></span>;
+                    return <span key={userId._id + 'a'}> and <b><FullName user_id={userId}/></b></span>;
                   }
                 })
                 }
@@ -106,9 +105,8 @@ class Comment extends React.Component <IProps, any> {
                   <b> <PostSubject post_id={notification.post_id}/></b>
                 </span>
                 {/* using CommentBody component for rendering body of comment */}
-                <CommentBody comment_id={this.props.notification.comment_id}
-                              post_id={this.props.notification.post_id}/>.
-                <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+                <span>{notification.comment.text}</span>.
+                <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
               </p>
             </div>
           </div>
@@ -119,16 +117,15 @@ class Comment extends React.Component <IProps, any> {
             <div className={style.notifData}>
               <p>
                 {/* using FullName component for rendering Place full name */}
-                <b><FullName user_id={this.props.notification.actor_id}/> </b>
+                <b><FullName user_id={this.props.notification.actor}/> </b>
                 <span>
                   commented on
                   {/* using PostSubject component for rendering post subject full */}
                   <b> <PostSubject post_id={notification.post_id}/></b>
                 </span>
                 {/* using CommentBody component for rendering body of comment */}
-                <CommentBody comment_id={this.props.notification.comment_id}
-                              post_id={this.props.notification.post_id}/>.
-                <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+                <span>{notification.comment.text}</span>.
+                <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
               </p>
             </div>
             <IcoN size={16} name={'comment24Crown'}/>

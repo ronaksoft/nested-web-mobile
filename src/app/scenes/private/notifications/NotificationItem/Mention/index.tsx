@@ -44,20 +44,19 @@ class Mention extends React.Component <IProps, any> {
     const notification = this.props.notification;
     return (
       <Link to={`/message/${notification.post_id}`}
-            className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+            className={[style.notifWrapper, notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
-        <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
+        <UserAvatar user_id={notification.actor_id} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
             <p>
               <b>
                 {/* using FullName component for rendering user full name */}
-                <FullName user_id={this.props.notification.account_id}/>
+                <FullName user_id={notification.actor}/>
               </b>:
-              {/* rendering account id of notification */}
-              <span><b> @{this.props.notification.account_id}.</b></span>
+              <span>{notification.comment.text}</span>.
               {/* using utils service component for rendering correct time */}
-              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
             </p>
           </div>
           <IcoN size={16} name={'atsign16'}/>

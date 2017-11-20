@@ -42,10 +42,12 @@ export default class NotificationApi {
    * @memberof NotificationApi
    */
   public get(params: INotificationRequest = {
+    details: true,
     skip: 0,
     limit: 10,
     after: null,
     before: null,
+    subject: 'post',
   }) {
     return this.api.request({
       cmd: 'notification/get_all',

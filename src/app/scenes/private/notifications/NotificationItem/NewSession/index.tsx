@@ -39,18 +39,19 @@ class NewSession extends React.Component <IProps, any> {
    * @memberof Mention
    */
   public render() {
+    const notification = this.props.notification;
     return (
-      <div className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+      <div className={[style.notifWrapper, notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
-        <UserAvatar user_id={this.props.notification.account_id} size={32} borderRadius={'16px'}/>
+        <UserAvatar user_id={notification.actor} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
             <p>
               <span><b>New login</b> from:</span>
-              {/* setting _cid of notification for rendering log in devices */}
-              <span> {this.props.notification._cid.replace(/_/g, ' ')}.</span>
+              {/* setting client_id of notification for rendering log in devices */}
+              <span> {notification.client_id.replace(/_/g, ' ')}.</span>
               {/* using utils service component for rendering correct time */}
-              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
             </p>
           </div>
           <IcoN size={16} name={'devicePhone16'}/>

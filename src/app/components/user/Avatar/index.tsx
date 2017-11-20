@@ -15,6 +15,7 @@ import IUser from '../../../api/account/interfaces/IUser';
 import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';
+import {isObject} from 'lodash';
 
 /**
  * its window function and need to be declared to stop tslint undiefiend error
@@ -99,7 +100,7 @@ const svgAtts = {
 };
 
 interface IOwnProps {
-  user_id: string;
+  user_id: any;
   borderRadius: string;
   size: any;
 }
@@ -116,7 +117,7 @@ interface IOwnProps {
  * @property {function} accountAdd - add account in redux store
  */
 interface IUserItemProps {
-  user_id: string;
+  user_id: any;
   borderRadius: string;
   size: any;
   accounts: IUser[];
@@ -166,6 +167,19 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
    * @borrows accountApi
    */
   public componentDidMount() {
+    /**
+     * if it was user model it just copy it to user in State
+     */
+    if (isObject(this.props.user_id)) {
+      this.setState({
+        user: this.props.user_id,
+      });
+      /**
+       * store account in redux store
+       */
+      this.props.accountAdd(this.props.user_id);
+      return;
+    }
     const user = this.props.accounts.filter((user: IUser) => {
       return user._id === this.props.user_id;
     });

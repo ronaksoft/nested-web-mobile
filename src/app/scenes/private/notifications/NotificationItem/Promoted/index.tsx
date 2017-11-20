@@ -45,19 +45,19 @@ class Promoted extends React.Component <IProps, any> {
     const notification = this.props.notification;
     return (
       <Link to={`/places/${notification.place_id}/messages`}
-      className={[style.notifWrapper, this.props.notification.read ? style.read : null].join(' ')}>
+      className={[style.notifWrapper, notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
-        <UserAvatar user_id={this.props.notification.actor_id} size={32} borderRadius={'16px'}/>
+        <UserAvatar user_id={notification.actor} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
             <p>
               {/* using FullName component for rendering user full name */}
-              <b><FullName user_id={this.props.notification.actor_id}/></b>
+              <b><FullName user_id={notification.actor}/></b>
             <span> promoted you in </span>
               {/* using PlaceName component for rendering Place full name */}
-              <b><PlaceName place_id={this.props.notification.place_id}/>.</b>
+              <b><PlaceName place_id={notification.place}/>.</b>
               {/* using utils service component for rendering correct time */}
-              <span className={style.time}> •{TimeUntiles.dynamic(this.props.notification.timestamp)}</span>
+              <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
             </p>
           </div>
           <IcoN size={16} name={'crown16'}/>

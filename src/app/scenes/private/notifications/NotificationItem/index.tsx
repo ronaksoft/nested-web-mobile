@@ -19,6 +19,10 @@ import Mention from './Mention';
 import NewSession from './NewSession';
 import Promoted from './Promoted';
 import PlaceSettingsChanged from './PlaceSettingsChanged';
+import LabelApproved from './LabelApproved';
+import LabelCreated from './LabelCreated';
+import LabelJoined from './LabelJoined';
+import LabelRejected from './LabelRejected';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
@@ -141,6 +145,22 @@ class NotificationItem extends React.Component<IProps, IState> {
       case INotificationTypes.PLACE_SETTINGS_CHANGED:
         return (
           <PlaceSettingsChanged notification={notification}/>
+        );
+      case INotificationTypes.LABEL_REQUEST_APPROVED:
+        return (
+          <LabelApproved notification={notification}/>
+        );
+      case INotificationTypes.LABEL_REQUEST_CREATED:
+        return (
+          <LabelCreated notification={notification}/>
+        );
+      case INotificationTypes.LABEL_JOINED:
+        return (
+          <LabelJoined notification={notification}/>
+        );
+      case INotificationTypes.LABEL_REQUEST_REJECTED:
+        return (
+          <LabelRejected notification={notification}/>
         );
       default:
         return null;

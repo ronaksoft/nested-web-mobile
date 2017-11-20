@@ -173,6 +173,8 @@ class Notifications extends React.Component<IProps, IState> {
       limit: this.requestLimit,
       before: getFromNow === true ? Date.now() : (this.state.notifications.length > 0) ?
         this.state.notifications[this.state.notifications.length - 1].timestamp : Date.now(),
+      details: true,
+      subject: 'post',
     }).then((notificationsResponse: INotificationData) => {
 
       // check saveInStore value and store notification items in redux store
@@ -210,6 +212,8 @@ class Notifications extends React.Component<IProps, IState> {
     notificationApi.get({
       limit: this.requestLimit,
       after: this.state.notifications[0].timestamp,
+      details: true,
+      subject: 'post',
     }).then((notificationsResponse: INotificationData) => {
 
       // store notification items in redux store
