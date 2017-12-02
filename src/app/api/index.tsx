@@ -254,7 +254,6 @@ class Api {
   }
 
   private parseConfigFromRemote(data: any) {
-    window.console.log(data);
     const cyrus = [];
     const xerxes = [];
     const admin = [];
