@@ -206,24 +206,18 @@ class Api {
       // create xhr request
       const xhr = new XMLHttpRequest();
       xhr.open('GET', getConfigUrl, true);
-      // These request headers are required for talking to Xerxes
-      // xhr.setRequestHeader('Cache-Control', 'no-cache');
-      // xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      // xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-      // xhr.responseType = 'arraybuffer';
 
       xhr.onload = () => {
         if (xhr.status === 200) {
           const response: any = JSON.parse(xhr.response);
           let newConfigs: any;
           // try to parse response text
-          // try {
-          newConfigs = this.parseConfigFromRemote(response.data);
-          // } catch (e) {
-          //   reject();
-          //   return;
-          // }
-          console.log(newConfigs);
+          try {
+            newConfigs = this.parseConfigFromRemote(response.data);
+          } catch (e) {
+            reject();
+            return;
+          }
 
           if (response.status === 'ok') {
 
