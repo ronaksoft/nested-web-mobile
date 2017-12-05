@@ -4,7 +4,7 @@ function generateConfig(): any {
     window.__NESTED_CONFIG__ = {
       APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
       APP_VERSION: 353,
-      DOMAIN: 'nested.me',
+      DOMAIN: '_DOMAIN_',
       SIGN_OUT_TARGET: 'https://nested.me',
       WEBSOCKET: {
         URL: '_WS_CYRUS_CYRUS_URL_CONF_',
