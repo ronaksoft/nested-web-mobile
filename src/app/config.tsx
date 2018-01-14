@@ -1,3 +1,4 @@
+/* tslint:disable */
 function generateConfig(): any {
   const windowObj: Window = window;
   if (!window.hasOwnProperty('__NESTED_CONFIG__')) {
@@ -56,6 +57,9 @@ function generateConfig(): any {
     GRAND_PLACE_REGEX: /^[a-zA-Z][a-zA-Z0-9-]{3,30}[a-zA-Z0-9]$/,
     GOOGLE_ANALYTICS_TOKEN: 'UA-92612481-1',
     UPLOAD_SIZE_LIMIT: 209715200,
+    REGEX: {
+      EMAIL: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    },
   };
 }
 

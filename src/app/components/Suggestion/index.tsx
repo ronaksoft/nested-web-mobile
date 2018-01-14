@@ -16,6 +16,7 @@ import IPlace from 'api/place/interfaces/IPlace';
 import SystemApi from 'api/system/';
 import SearchApi from 'api/search';
 import FileUtil from 'services/utils/file';
+import CONFIG from '../../config';
 
 const style = require('./suggestion.css');
 const unknownPicture = require('assets/icons/absents_place.svg');
@@ -164,8 +165,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
      * adds first suggest to selected items on enter key press whenever the
      * input is filled
      */
-    if (event.key === 'Enter' && val.length > 0) {
+    if ((event.key === 'Enter' || event.keyCode === 13) && val.length > 0) {
       const array = this.state.suggests;
+      if (CONFIG().REGEX.EMAIL.test(val)) {
+        array.push({
+          _id: val,
+          name: val,
+        });
+      }
       this.insertChip(array[0]);
     }
 
@@ -294,7 +301,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   private insertChip = (item: IChipsItem) => {
     // prevent exceed maximum compose recipients.
     // TODO notify user
-    if (this.state.selectedItems.length === this.targetLimit ) {
+    if (this.state.selectedItems.length === this.targetLimit) {
       return;
     }
     /**

@@ -4,7 +4,7 @@ import {Helmet} from 'react-helmet';
 import * as serialize from 'serialize-javascript';
 
 const appConfig = require('../../../../config/main');
-import CONFIG from './../../defaultConfig';
+import CONFIG from './../../config';
 
 interface IHtmlProps {
   manifest?: any;
@@ -45,7 +45,7 @@ class Html extends React.Component<IHtmlProps, {}> {
 
     const nestedConfig = (
       <script
-        dangerouslySetInnerHTML={{__html: `window.__NESTED_CONFIG__=${serialize(CONFIG, {isJSON: true})};`}}
+        dangerouslySetInnerHTML={{__html: `window.__NESTED_CONFIG__=${serialize(CONFIG(), {isJSON: true})};`}}
         charSet="UTF-8"/>
     );
     return (

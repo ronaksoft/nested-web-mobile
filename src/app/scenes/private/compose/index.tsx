@@ -224,15 +224,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
               };
 
               return chipsItem;
-            }).concat(post.post_recipients.map((i) => {
-              const chipsItem: IChipsItem = {
-                _id: i._id,
-                name: i.name,
-                picture: i.picture,
-              };
+            });
+            if (post.post_recipients) {
+              targets = targets.concat(post.post_recipients.map((i) => {
+                const chipsItem: IChipsItem = {
+                  _id: i._id,
+                  name: i.name,
+                  picture: i.picture,
+                };
 
-              return chipsItem;
-            }));
+                return chipsItem;
+              }));
+            }
           }
 
           this.setState({
