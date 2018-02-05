@@ -16,7 +16,7 @@ import IErrorResponseData from './IErrorResponseData';
  */
 interface IResponse {
     /**
-     * @prop A unique Id that matches 
+     * @prop A unique Id that matches
      * @desc
      * @type {(string | number)}
      * @memberof IResponse
@@ -28,7 +28,7 @@ interface IResponse {
      * @type {(IErrorResponseData | {})}
      * @memberof IResponse
      */
-    data : IErrorResponseData | {};
+    data: IErrorResponseData | {} | any;
     // TODO: Define a type
     /**
      * @prop status
