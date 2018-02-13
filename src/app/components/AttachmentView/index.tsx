@@ -28,6 +28,7 @@ const style = require('./attachmentview.css');
  * @type {object}
  * @property {Array<IPostAttachment>} attachments - list of attachments
  * @property {IPostAttachment} selectedAttachment - selected attachment
+ * @property {string} postId - postId
  * @property {function} onClose - close attachment view
  */
 interface IProps {
@@ -427,7 +428,9 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           }
           {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.VIDEO && (
           <div>
-            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
+            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}
+                            postId={this.props.postId}
+            />
           </div>
           )}
           {this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.GIF &&
@@ -449,8 +452,10 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             <ImageThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
           </div>
           )}
-          {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.VIDEO &&
-          <VideoThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
+          {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.VIDEO && (
+            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}
+                          postId={this.props.postId}/>
+          )
           }
           {this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.IMAGE &&
@@ -485,7 +490,10 @@ export default class AttachmentView extends React.Component<IProps, IState> {
             <ImageThumbnail attachment={this.state.selectedAttachment}/>
             }
             {this.state.selectedAttachment.type === AttachmentType.VIDEO &&
-            <VideoThumbnail attachment={this.state.selectedAttachment}/>
+            (
+              <VideoThumbnail attachment={this.state.selectedAttachment}
+                            postId={this.props.postId}/>
+            )
             }
             {this.state.selectedAttachment.type !== AttachmentType.GIF &&
             this.state.selectedAttachment.type !== AttachmentType.IMAGE &&

@@ -125,14 +125,14 @@ export default class PostAttachment extends React.Component<IProps, IState> {
      * @type {boolean}
      */
     const singleImage = this.props.attachments.length === 1 &&
-      ( this.props.attachments[0].type === AttachmentType.IMAGE ||
-        this.props.attachments[0].type === AttachmentType.GIF );
+      (this.props.attachments[0].type === AttachmentType.IMAGE ||
+        this.props.attachments[0].type === AttachmentType.GIF);
     return (
       <div>
         {/* attachments thumbnail */}
         {!singleImage && (
           <div className={[style.attachmentBar,
-            this.props.attachments.length > 1 ? style.multiAttachment : '' ].join(' ')}>
+            this.props.attachments.length > 1 ? style.multiAttachment : ''].join(' ')}>
             <ul>
               {this.props.attachments.map((attachment: IPostAttachment) => {
                 switch (attachment.type) {
@@ -146,7 +146,8 @@ export default class PostAttachment extends React.Component<IProps, IState> {
                     return (
                       <VideoThumbnail key={attachment._id} onclick={this.showAttachment.bind(this, attachment)}
                                       fullWidth={this.props.attachments.length === 1}
-                                      attachment={attachment}/>
+                                      attachment={attachment}
+                      />
                     );
                   default:
                     return (
@@ -162,7 +163,7 @@ export default class PostAttachment extends React.Component<IProps, IState> {
         {singleImage && (
           <div className={style.singleImage}>
             <ImageSingle key={this.props.attachments[0]._id}
-            onclick={this.showAttachment.bind(this, this.props.attachments[0])}
+                         onclick={this.showAttachment.bind(this, this.props.attachments[0])}
                          attachment={this.props.attachments[0]}/>
           </div>
         )}

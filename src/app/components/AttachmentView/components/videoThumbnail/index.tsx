@@ -21,6 +21,7 @@ import FileUtiles from '../../../../services/utils/file';
  */
 interface IProps {
   attachment: IPostAttachment;
+  postId: string;
 }
 
 /**
@@ -56,6 +57,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
   private viewUrl() {
     AttachmentApi.getDownloadToken({
         universal_id: this.props.attachment._id,
+        post_id: this.props.postId,
       }).then((token: string) => {
         this.setState({
           viewUrl : FileUtiles.getDownloadUrl(this.props.attachment._id, token),
