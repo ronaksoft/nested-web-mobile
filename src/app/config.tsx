@@ -4,7 +4,7 @@ function generateConfig(): any {
   if (!window.hasOwnProperty('__NESTED_CONFIG__')) {
     window.__NESTED_CONFIG__ = {
       APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
-      APP_VERSION: 353,
+      APP_VERSION: '4.4.4',
       DOMAIN: '_DOMAIN_',
       SIGN_OUT_TARGET: 'https://nested.me',
       WEBSOCKET: {
@@ -37,7 +37,7 @@ function generateConfig(): any {
   }
   return {
     APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
-    APP_VERSION: 353,
+    APP_VERSION: '4.4.4',
     DOMAIN: windowObj.__NESTED_CONFIG__.DOMAIN,
     SIGN_OUT_TARGET: '/',
     WEBSOCKET: {
