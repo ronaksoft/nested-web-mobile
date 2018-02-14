@@ -53,11 +53,13 @@ body {
   position: auto;
   touch-action: none;
   -webkit-overflow-scrolling: none;
+  overscroll-behavior-y: contain;
 }
 html {
   position: relative;
   overflow: hidden;
   -webkit-overflow-scrolling: none;
+  overscroll-behavior-y: contain;
 }
 .container {
   /* padding-top: 56px; */
