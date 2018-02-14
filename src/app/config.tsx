@@ -27,13 +27,13 @@ function generateConfig(): any {
     };
   }
   if (windowObj.__NESTED_CONFIG__.WEBSOCKET.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.WEBSOCKET.URL = 'wss://webapp.ronaksoftware.com:81';
+    windowObj.__NESTED_CONFIG__.WEBSOCKET.URL = 'wss://webapp.ronaksoftware.com:81/api';
   }
   if (windowObj.__NESTED_CONFIG__.STORE.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.STORE.URL = 'https://webapp.ronaksoftware.com:83';
+    windowObj.__NESTED_CONFIG__.STORE.URL = 'https://webapp.ronaksoftware.com:81/file';
   }
   if (windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL = 'https://webapp.ronaksoftware.com:81';
+    windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL = 'https://webapp.ronaksoftware.com:81/api';
   }
   return {
     APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
