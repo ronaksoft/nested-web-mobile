@@ -9,6 +9,7 @@
  */
 import * as React from 'react';
 import {debounce} from 'lodash';
+// import {findIndex} from 'lodash/array';
 import {Input, Button, message} from 'antd';
 import {PlaceChips} from 'components';
 import {IChipsItem} from 'components/Chips';
@@ -202,7 +203,24 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @memberof Suggestion
    */
   private fillSuggests(query: string): Promise<any> {
+    query = query || '';
     return this.getSuggests(query).then((items: IChipsItem[]) => {
+      if (query.length > 0) {
+        // const index = findIndex(items, {_id: query});
+        const index = items.findIndex((s) => s._id === query);
+        let item: IChipsItem;
+        if (index === -1) {
+          item = {
+            _id: query,
+            name: query,
+          };
+          if (items.length > 1) {
+            items.splice(4, 0, item);
+          } else {
+            items.push(item);
+          }
+        }
+      }
       this.setState({
         suggests: items,
       });
