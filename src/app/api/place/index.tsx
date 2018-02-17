@@ -81,16 +81,5 @@ export default class PlaceApi {
     });
   }
 
-  /**
-   * @func getInvitations
-   * @desc Retrieves a list of the given place pending invitations
-   * @returns {Promise<any>}
-   * @memberof PlaceApi
-   */
-  public getInvitations(): Promise<any> {
-    return this.api.request({
-      cmd: 'account/get_invitations',
-    });
-  }
 
 };

@@ -77,7 +77,7 @@ interface IProps {
  * @classdesc wrapper for all private scenses also
  * checks the user authentication state
  * @extends {React.Component<IProps, IState>}
- * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>,<InvitationItem>]
+ * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>]
  */
 class Private extends React.Component<IProps, IState> {
   // private xStart: number;

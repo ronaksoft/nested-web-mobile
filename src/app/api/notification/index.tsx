@@ -27,7 +27,7 @@ export default class NotificationApi {
   private api;
 
   /**
-   * Creates an instance of InvitationApi.
+   * Creates an instance of NotificationApi.
    * @memberof NotificationApi
    */
   constructor() {

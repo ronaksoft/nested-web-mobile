@@ -11,8 +11,6 @@
 import * as React from 'react';
 import Comment from './Comment';
 import Demoted from './Demoted';
-import Invite from './Invite';
-import InviteRespond from './InviteRespond';
 import YouJoined from './YouJoined';
 import Joined from './Joined';
 import Mention from './Mention';
@@ -115,13 +113,8 @@ class NotificationItem extends React.Component<IProps, IState> {
           <Demoted notification={notification}/>
         );
       case INotificationTypes.INVITE:
-        return (
-          <Invite notification={notification}/>
-        );
       case INotificationTypes.INVITE_RESPOND:
-        return (
-          <InviteRespond notification={notification}/>
-        );
+        return <span>Deprecated</span>;
       case INotificationTypes.FRIEND_JOINED:
         return (
           <Joined notification={notification}/>

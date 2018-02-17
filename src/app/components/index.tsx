@@ -4,8 +4,6 @@ export {OptionsMenu} from './OptionsMenu/';
 export {Navbar} from './navbar/';
 export {IcoN} from './Icons/';
 export {SidebarItem} from './SidebarItem/';
-export {InvitationItem} from './InvitationItem/';
-export {Invitation} from './invitation/';
 export {NewBadge} from './NewBadge/';
 export {Loading} from './Loading/';
 export {AddLabel} from './labels/';

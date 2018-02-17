@@ -15,7 +15,7 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
 import {sortBy} from 'lodash';
-import {SidebarItem, InvitationItem, IcoN} from 'components';
+import {SidebarItem, IcoN} from 'components';
 
 import PlaceApi from '../../../api/place/index';
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
@@ -62,13 +62,11 @@ interface ISidebarProps {
  * @type {object}
  * @property {Array<ISidebarPlace>} places
  * @property {object} placesConjuction have enough datas for sidebar view elements like : Place Children Position
- * @property {Array<IPlace>}invitations  Array of inivted Places
  * @property {IUnreadPlace} sidebarPlacesUnreads Sidebar Places unread counts @link{}
  */
 interface ISidebarState {
   places?: ISidebarPlace[];
   placesConjuction?: any; // TODO Define interface
-  invitations?: IPlace[];
   sidebarPlacesUnreads?: IUnreadPlace;
 }
 
@@ -77,7 +75,7 @@ interface ISidebarState {
  * @classdesc Component navigating user to Places Posts, feed, Bookmark, Shared messages
  * and other exernal links
  * @extends {React.Component<ISidebarProps, ISidebarState>}
- * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>,<InvitationItem>]
+ * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>]
  */
 class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   /**
@@ -112,7 +110,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     this.state = {
       places: [],
-      invitations: [],
       sidebarPlacesUnreads: {
         placesUnreadCounts: {},
         placesUnreadChildrens: {},
@@ -141,26 +138,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
     /** Get Sidebar Places */
     this.getMyPlaces();
-
-    /** Get user Places invitations */
-    this.getInvitations();
   }
 
-  /**
-   * send request to the server for invited places by calling PlaceApi
-   * and sets response to the component state
-   * @function getInvitations
-   * @private
-   * @memberof Sidebar
-   */
-  private getInvitations() {
-    this.PlaceApi.getInvitations()
-      .then((response: any) => {
-        this.setState({
-          invitations: response.invitations,
-        });
-      });
-  }
 
   /**
    * @func refHandler
@@ -537,34 +516,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   /**
-   * calls after accepting invitation in invitation modal
-   * @function
-   * @callback
-   * @private
-   * @memberof Sidebar
-   */
-  private handleInvitationAccept = () => {
-    /** get Places for ensuring invited place adds to sidebar */
-    this.getMyPlaces();
-
-    /** get invitations */
-    this.getInvitations();
-  }
-
-  /**
-   * calls after decline invitation in invitation modal
-   * @function
-   * @callback
-   * @private
-   * @memberof Sidebar
-   */
-  private handleInvitationDecline = () => {
-
-    /** get invitations */
-    this.getInvitations();
-  }
-
-  /**
    * renders the component
    * @returns {ReactElement} markup
    * @memberof Sidebar
@@ -573,20 +524,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    */
   public render() {
     const placeDoms = [];
-    const invDoms = [];
-    /**
-     * generates JSX elements for invitations
-     */
-    this.state.invitations.forEach((item, i) => {
-      const invDom = (
-        <InvitationItem key={i + 'nc'}
-                        item={item}
-                        onAccept={this.handleInvitationAccept}
-                        onDecline={this.handleInvitationDecline}
-        />
-      );
-      invDoms.push(invDom);
-    });
 
     /**
      * generates JSX elements for visible or grand places
@@ -640,9 +577,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           </ul>
           <hr className={style.hrDark}/>
           <hr className={style.hrLight}/>
-          <ul className={style.invitations}>
-            {invDoms}
-          </ul>
           <ul className={style.sidebarActions}>
             {/*<li>
               <IcoN size={16} name={'gear16White'}/>

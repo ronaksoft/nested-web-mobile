@@ -33,7 +33,7 @@ class AddLabel extends React.Component<IProps, IState> {
 
     private LabelApi: LabelApi;
   /**
-   * Creates an instance of Invitation.
+   * Creates an instance of AddLabel.
    * @constructor
    * @param {object} props
    * @memberof AddLabel
