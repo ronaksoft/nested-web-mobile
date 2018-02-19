@@ -140,7 +140,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.getMyPlaces();
   }
 
-
   /**
    * @func refHandler
    * @private
