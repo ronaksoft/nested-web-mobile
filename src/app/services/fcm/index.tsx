@@ -48,7 +48,7 @@ export default class FCM {
     return this.deviceToken;
   }
 
-  public configFCM(): firebase.Promise<any> {
+  public configFCM(): any {
 
     // check browser notification's support
     if (!('Notification' in window)) {
