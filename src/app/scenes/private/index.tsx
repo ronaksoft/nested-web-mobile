@@ -286,7 +286,7 @@ class Private extends React.Component<IProps, IState> {
      */
     this.unListenChangeRoute = hashHistory.listen(() => {
       this.closeSidebar();
-      this.getNotificationCounts();
+      // this.getNotificationCounts();
       document.body.scrollTop = document.documentElement.scrollTop = 0;
     });
   }

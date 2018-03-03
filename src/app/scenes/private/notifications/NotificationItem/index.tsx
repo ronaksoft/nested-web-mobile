@@ -9,18 +9,23 @@
  * Component renders each notification item component by its type.
  */
 import * as React from 'react';
-import Comment from './Comment';
-import Demoted from './Demoted';
-import YouJoined from './YouJoined';
-import Joined from './Joined';
-import Mention from './Mention';
-import NewSession from './NewSession';
-import Promoted from './Promoted';
-import PlaceSettingsChanged from './PlaceSettingsChanged';
-import LabelApproved from './LabelApproved';
-import LabelCreated from './LabelCreated';
-import LabelJoined from './LabelJoined';
-import LabelRejected from './LabelRejected';
+import Comment from './post/Comment';
+import Demoted from './post/Demoted';
+import YouJoined from './post/YouJoined';
+import Joined from './post/Joined';
+import Mention from './post/Mention';
+import NewSession from './post/NewSession';
+import Promoted from './post/Promoted';
+import PlaceSettingsChanged from './post/PlaceSettingsChanged';
+import LabelApproved from './post/LabelApproved';
+import LabelCreated from './post/LabelCreated';
+import LabelJoined from './post/LabelJoined';
+import LabelRejected from './post/LabelRejected';
+// Task
+import {Accepted, AddCandidate, Updated, Hold,
+        AddWatcher, Assigned, AssigneeChanged,
+        CommentTask, Completed, DuetimeUpdated,
+        InProgress, MentionTask, Overdue, Rejected} from './task';
 import 'antd/dist/antd.css';
 import INotification from '../../../../api/notification/interfaces/INotification';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
@@ -154,6 +159,64 @@ class NotificationItem extends React.Component<IProps, IState> {
       case INotificationTypes.LABEL_REQUEST_REJECTED:
         return (
           <LabelRejected notification={notification}/>
+        );
+      // tasks
+      case INotificationTypes.TASK_MENTION:
+        return (
+          <MentionTask notification={notification}/>
+        );
+      case INotificationTypes.TASK_COMMENT:
+        return (
+          <CommentTask notification={notification}/>
+        );
+      case INotificationTypes.TASK_ASSIGNED:
+        return (
+          <Assigned notification={notification}/>
+        );
+      case INotificationTypes.TASK_ASSIGNEE_CHANGED:
+        return (
+          <AssigneeChanged notification={notification}/>
+        );
+      case INotificationTypes.TASK_ADD_TO_CANDIDATES:
+        return (
+          <AddCandidate notification={notification}/>
+        );
+      case INotificationTypes.TASK_ADD_TO_WATCHERS:
+        return (
+          <AddWatcher notification={notification}/>
+        );
+      case INotificationTypes.TASK_DUE_TIME_UPDATED:
+        return (
+          <DuetimeUpdated notification={notification}/>
+        );
+      case INotificationTypes.TASK_OVER_DUE:
+        return (
+          <Overdue notification={notification}/>
+        );
+      case INotificationTypes.TASK_TITLE_UPDATED:
+      case INotificationTypes.TASK_UPDATED:
+        return (
+          <Updated notification={notification}/>
+        );
+      case INotificationTypes.TASK_REJECTED:
+        return (
+          <Rejected notification={notification}/>
+        );
+      case INotificationTypes.TASK_ACCEPTED:
+        return (
+          <Accepted notification={notification}/>
+        );
+      case INotificationTypes.TASK_COMPLETED:
+        return (
+          <Completed notification={notification}/>
+        );
+      case INotificationTypes.TASK_HOLD:
+        return (
+          <Hold notification={notification}/>
+        );
+      case INotificationTypes.TASK_IN_PROGRESS:
+        return (
+          <InProgress notification={notification}/>
         );
       default:
         return null;
