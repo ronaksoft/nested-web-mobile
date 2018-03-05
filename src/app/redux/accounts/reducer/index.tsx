@@ -41,7 +41,7 @@ export default function accountsReducer(state = initialState, action?: IAccountA
     case ActionTypes.ACCOUNT_UPDATE:
       let currentAccountList;
       currentAccountList = Immutable.asMutable(state, ['accounts']);
-      console.log(currentAccountList);
+      // console.log(currentAccountList);
       currentAccountList.accounts[indexOfAccount] = action.payload;
       return currentAccountList;
 

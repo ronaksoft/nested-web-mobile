@@ -34,6 +34,9 @@
   align-items: center;
   display: flex;
 }
+.sidebarActions li svg{
+  fill: white;
+}
 .sidebarActions li a{
   align-items: center;
   display: flex;

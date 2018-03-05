@@ -4,6 +4,7 @@ import {
   PlacePostsAllSortedByActivity, PlacePostsAllSortedByRecent,
   PlacePostsUnreadSortedByRecent,
   Notifications, Activities, Files, Compose, Signout,
+  Tasks, TaskEdit,
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
@@ -40,6 +41,12 @@ export default (
         <Route path="/places/:placeId/files" component={Files}/>
         <Route path="/messages/latest-activity" component={Activities}/>
         <Route path="/message/:postId" component={Post}/>
+        <Route path="/task/glance" component={Tasks}/>
+        <Route path="/task/assigned_to_me" component={Tasks}/>
+        <Route path="/task/created_by_me" component={Tasks}/>
+        <Route path="/task/watchlist" component={Tasks}/>
+        <Route path="/task/edit/:taskId" component={TaskEdit}/>
+        <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
         <Route path="/compose" component={Compose}/>
         <Route path="/reply/:replyId" component={Compose}/>

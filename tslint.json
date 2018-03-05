@@ -13,6 +13,7 @@
       "single",
       "jsx-double"
     ],
+    "align": [false],
     "no-var-requires": false,
     "ordered-imports": false,
     "member-ordering": [

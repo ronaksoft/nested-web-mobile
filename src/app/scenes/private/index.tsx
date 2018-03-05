@@ -16,12 +16,15 @@ import Feed from './posts/feed';
 import {Files} from './files';
 import Compose from './compose';
 import Sidebar from './sidebar/';
+import TaskSidebar from './sidebar/task';
 import {Navbar} from 'components';
 import {Activities} from './activities';
 import Signout from './Signout';
 import FeedByActivity from './posts/feedByActivity';
 import Bookmarked from './posts/bookmarked';
 import Shared from './posts/shared';
+import Tasks from './tasks';
+import TaskEdit from './tasks/componenets/editTask/';
 import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
 import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
 import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';
@@ -47,6 +50,7 @@ const style = require('./private.css');
 interface IState {
   isLogin: boolean;
   sidebarOpen: boolean;
+  isPostsApp: boolean;
   notificationsCount: number;
 };
 
@@ -124,6 +128,7 @@ class Private extends React.Component<IProps, IState> {
     this.state = {
       isLogin: false,
       sidebarOpen: false,
+      isPostsApp: true,
       notificationsCount: this.props.notificationsCount.unread_notifications,
     };
   }
@@ -298,8 +303,8 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    * @public
    */
-  public sampleF = () => {
-    hashHistory.push('/feed');
+  public FeedPage = () => {
+    hashHistory.push('/');
   }
 
   /**
@@ -328,6 +333,12 @@ class Private extends React.Component<IProps, IState> {
     });
   }
 
+  public changeApp = (isPostsApp) => {
+    this.setState({
+      isPostsApp,
+    });
+  }
+
   /**
    * stop listening to route change
    * @name componentWillUnmount
@@ -338,22 +349,6 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     this.unListenChangeRoute();
-  }
-
-  /**
-   * creates scenses Jsx elemnts with navbar
-   * @name createLayout
-   * @function
-   * @public
-   * @memberof Private
-   */
-  public createLayout = () => {
-    return (
-      <div ref={this.refHandler} className={style.container}>
-        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={this.state.notificationsCount}/>
-        {this.props.children}
-      </div>
-    );
   }
 
   /**
@@ -374,34 +369,24 @@ class Private extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    // if ( this.privatePagesWrapper ) {
-      // this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
-      //   e = e || window.event;
-      //   document.body.scrollTop = 0;
-      //   e.stopImmediatePropagation();
-      //   e.cancelBubble = true;
-      //   e.stopPropagation();
-      //   const xMovement = e.touches[0].screenY - this.xStart;
-      //   console.log(xMovement, this.privatePagesWrapper.scrollTop);
-      //   if ( xMovement < 0 || this.privatePagesWrapper.scrollTop > 0 ) {
-      //     return true;
-      //   } else {
-      //     e.preventDefault();
-      //     e.returnValue = false;
-      //     return false;
-      //   }
-      // }, false);
-    // }
     return (
       <div>
         {
           this.state.isLogin &&
           (
             <div>
-              {this.createLayout()}
+              <div ref={this.refHandler} className={style.container}>
+                <Navbar sidebarOpen={this.openSidebar} composeOpen={this.FeedPage}
+                  changeApp={this.changeApp}
+                  notifCount={this.state.notificationsCount} user={this.props.user} />
+                {this.props.children}
+              </div>
               {/* Sidebar elemnt with visibility state check */}
-              {this.state.sidebarOpen &&
+              {(this.state.sidebarOpen && this.state.isPostsApp) &&
               <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
+              }
+              {(this.state.sidebarOpen && !this.state.isPostsApp) &&
+              <TaskSidebar closeSidebar={this.closeSidebar}/>
               }
             </div>
           )
@@ -446,5 +431,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Private);
 export {
   Feed, FeedByActivity, Bookmarked, Shared, PlacePostsAllSortedByActivity,
   PlacePostsAllSortedByRecent, PlacePostsUnreadSortedByRecent, Activities, Files, Notifications, Compose,
-  Signout
+  Signout, Tasks, TaskEdit,
 };

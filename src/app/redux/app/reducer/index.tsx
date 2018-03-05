@@ -12,6 +12,7 @@ const initialState = Immutable.from<IAppStore>({
   notifications: [],
   notificationsCount: 0,
   posts: [],
+  tasks: [],
   sidebarPlaces: [],
   currentPost: null,
 });
@@ -65,6 +66,36 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         postsRoute: '',
       });
 
+    case ActionTypes.APP_TASK_FILTER_SET:
+      return Immutable.merge(state, {
+        taskCustomFilters: action.payload,
+      });
+
+    case ActionTypes.APP_TASK_FILTER_UNSET:
+      return Immutable.merge(state, {
+        taskCustomFilters: [],
+      });
+
+    case ActionTypes.APP_TASKS_SET:
+      return Immutable.merge(state, {
+        tasks: Immutable.merge(state.tasks, action.payload),
+      });
+
+    case ActionTypes.APP_TASKS_UNSET:
+      return Immutable.merge(state, {
+        tasks: {},
+      });
+
+    case ActionTypes.APP_TASKS_ROUTE_SET:
+      return Immutable.merge(state, {
+        tasksRoute: action.payload,
+      });
+
+    case ActionTypes.APP_TASKS_ROUTE_UNSET:
+      return Immutable.merge(state, {
+        tasksRoute: '',
+      });
+
     case ActionTypes.APP_USER_PLACES_SET:
       return Immutable.merge(state, {
         userPlaces: action.payload,
@@ -86,7 +117,6 @@ export default function appReducer(state = initialState, action?: IAppAction) {
       });
 
     case ActionTypes.APP_UNREAD_PLACES_SET:
-      console.log(action);
       return Immutable.merge(state, {
         sidebarPlacesUnreads: action.payload,
       });

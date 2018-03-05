@@ -144,7 +144,7 @@ class Signin extends React.Component<IProps, IState> {
       _dt: dt,
     })
       .then((response: ILoginResponse) => {
-
+        console.log(response);
           // Replaces the previous credentials that have been stored inside `AAA` service
           AAA.getInstance().setCredentials(response);
 
@@ -152,7 +152,8 @@ class Signin extends React.Component<IProps, IState> {
           this.props.setLogin(response.account);
 
           // Navigates to the default route which is `/feed`
-          hashHistory.push('/m');
+          // todo back to previous url !
+          hashHistory.push('/');
         },
         (error) => {
           console.log(error);

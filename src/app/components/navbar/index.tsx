@@ -9,20 +9,27 @@
  *              Date of review:         -
  */
 import * as React from 'react';
+import {IUser} from 'api/account/interfaces';
 
 const style = require('./navbar.css');
-import {IcoN} from 'components';
+import {IcoN, UserAvatar} from 'components';
 import {hashHistory, Link} from 'react-router';
 
 interface INavbarProps {
+  changeApp: (sts: boolean) => void;
   sidebarOpen: () => void;
   composeOpen: () => void;
   notifCount: number;
+  user: IUser;
 }
 
 interface INavbarState {
   notificationOpen: boolean;
+  postsApp: boolean;
+  isMounted: boolean;
   notifCount: number;
+  lastTaskRoute: string;
+  lastPostRoute: string;
 }
 
 /**
@@ -47,6 +54,10 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
      * @property {boolean} notificationOpen - the statement of notification scene
      */
     this.state = {
+      lastTaskRoute: '/task/glance',
+      lastPostRoute: '/feed',
+      postsApp: true,
+      isMounted: true,
       notifCount: this.props.notifCount,
       notificationOpen: false,
     };
@@ -58,7 +69,13 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    * @memberof Navbar
    */
   public componentWillReceiveProps(newProps: INavbarProps) {
-
+    const path = hashHistory.getCurrentLocation().pathname;
+    if (this.state.postsApp && path.indexOf('task') > -1) {
+      this.setState({
+        postsApp: false,
+      });
+      this.props.changeApp(false);
+    }
     /**
      * Counts of unread notifications from props
      * @type {object}
@@ -89,6 +106,35 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
     });
   }
 
+  public componentWillUnmount() {
+      this.setState({
+        isMounted: false,
+      });
+  }
+
+  private switchApp = () => {
+    const thisPath = hashHistory.getCurrentLocation().pathname;
+    const state: any = {
+      postsApp: !this.state.postsApp,
+    };
+    if (state.postsApp) {
+      state.lastTaskRoute = thisPath;
+    } else {
+      state.lastPostRoute = thisPath;
+    }
+    this.setState(state, () => {
+      // console.log(this.state, this.state.postsApp, this.state.lastTaskRoute, this.state.lastPostRoute);
+      if (this.state.isMounted) {
+        this.props.changeApp(state.postsApp);
+        if (!this.state.postsApp) {
+          hashHistory.push(this.state.lastTaskRoute);
+        } else {
+          hashHistory.push(this.state.lastPostRoute);
+        }
+      }
+    });
+  }
+
   /**
    * @function render
    * @description Renders the component
@@ -103,6 +149,19 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         <a onClick={this.props.sidebarOpen}>
           <IcoN size={24} name="menu24"/>
         </a>
+        {this.props.user && (
+          <a>
+            <UserAvatar user_id={this.props.user._id} size={24} borderRadius={'16px'}/>
+          </a>
+        )}
+        <div className={style.filler}/>
+        <div className={[style.appSwitcher, !this.state.postsApp ? style.active : style.deActive].join(' ')}
+          onClick={this.switchApp}>
+          <a>Posts</a>
+          <small>
+            <a>Tasks</a>
+          </small>
+        </div>
         <div className={style.filler}/>
         {/* notification scene toggler */}
         <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>

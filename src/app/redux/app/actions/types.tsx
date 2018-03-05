@@ -57,3 +57,19 @@ export const APP_POSTS_ROUTE_UNSET: string = 'APP/POSTS_ROUTE_UNSET';
 /** CURRENT POST ACTION */
 export const APP_CURRENT_POST_SET: string = 'APP/CURRENT_POST_SET';
 export const APP_CURRENT_POST_UNSET: string = 'APP/CURRENT_POST_UNSET';
+
+/** TASKS ACTION */
+export const APP_TASKS_SET: string = 'APP/TASKS_SET';
+export const APP_TASKS_UNSET: string = 'APP/TASKS_UNSET';
+
+/** TASKS ACTION */
+export const APP_TASKS_ROUTE_SET: string = 'APP/TASKS_ROUTE_SET';
+export const APP_TASKS_ROUTE_UNSET: string = 'APP/TASKS_ROUTE_UNSET';
+
+/** TASKS FILTER */
+export const APP_TASK_FILTER_SET: string = 'APP/TASKS_FILTER_SET';
+export const APP_TASK_FILTER_UNSET: string = 'APP/TASKS_FILTER_UNSET';
+
+/** CURRENT TASK ACTION */
+export const APP_CURRENT_TASK_SET: string = 'APP/CURRENT_TASK_SET';
+export const APP_CURRENT_TASK_UNSET: string = 'APP/CURRENT_TASK_UNSET';
