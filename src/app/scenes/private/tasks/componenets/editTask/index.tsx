@@ -1,28 +1,22 @@
 /**
  * @file scenes/private/posts/components/post/index.tsx
- * @author Sina Hosseini <ehosseiniir@gmail.com>
- * @description A post-card component
- * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
- * Date of documentation:  2017-07-27
- * Reviewed by:            robzizo <me@robzizo.ir>
- * Date of review:         2017-07-31
+ * @author robzizo <me@robzizo.ir>
+ * @description A task view component
+ * Documented by:          robzizo <me@robzizo.ir>
+ * Date of documentation:  2018-02-24
+ * Reviewed by:            -
+ * Date of review:         -
  */
 
 import * as React from 'react';
-import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel} from 'components';
-import IPlace from '../../../../../api/place/interfaces/IPlace';
-import TimeUntiles from '../../../../../services/utils/time';
-import PostApi from '../../../../../api/post/index';
+import ITask from '../../../../../api/task/interfaces/ITask';
+import {IcoN, Loading} from 'components';
+import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
-import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
-import PostAttachment from '../../../../../components/PostAttachment/index';
+import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
-import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
-import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
-import ILabel from '../../../../../api/label/interfaces/ILabel';
-import {difference} from 'lodash';
+// import {difference} from 'lodash';
 const style = require('../../task.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
@@ -32,19 +26,7 @@ const privateStyle = require('../../../private.css');
  * @desc The component owned properties
  */
 interface IOwnProps {
-  /**
-   * @prop post
-   * @desc A post model
-   * @type {IPost}
-   * @memberof IOwnProps
-   */
-  post?: IPost;
-  /**
-   * @prop routeParams
-   * @desc The parameters are given by React Router
-   * @type {*}
-   * @memberof IOwnProps
-   */
+  task?: ITask;
   routeParams?: any;
 }
 
@@ -53,21 +35,21 @@ interface IOwnProps {
  * @desc The component properties including the owned and the props are provided by route and redux
  */
 interface IProps {
-  post: IPost;
+  task: ITask;
   /**
    * @prop post
    * @desc A post model
    * @type {IPost}
    * @memberof IProps
    */
-  currentPost: IPost;
+  currentTask: ITask;
   /**
    * @prop posts
    * @desc The stored posts which are given by redux
    * @type {IPost[]}
    * @memberof IProps
    */
-  posts: IPost[];
+  tasks: ITask[];
   /**
    * @prop routeParams
    * @desc The parameters which are provided by React Router
@@ -80,13 +62,13 @@ interface IProps {
    * @desc Updates posts in store
    * @memberof IProps
    */
-  setPosts: (posts: IPost[]) => {};
+  setTasks: (posts: ITask[]) => {};
   /**
    * @prop setCurrentPost
    * @desc Updates the last post in store
    * @memberof IProps
    */
-  setCurrentPost: (post: IPost) => {};
+  setCurrentTask: (post: ITask) => {};
   /**
    * @prop user
    * @desc Current loggedin user
@@ -104,42 +86,27 @@ interface IState {
    * @prop post
    * @memberof IState
    */
-  post?: IPost | null;
+  task?: ITask | null;
   /**
    * @prop showMoreOptions
    * @memberof IState
    */
   showMoreOptions: boolean;
-  /**
-   * @prop showAddLabel
-   * @memberof IState
-   */
-  showAddLabel: boolean;
 }
 
 /**
- * @class Post
+ * @class EditTask
  * @extends {React.Component<IProps, IState>}
- * @desc A post-card component
+ * @desc A task-viw component
  */
 class EditTask extends React.Component<IProps, IState> {
-  private PostApi: PostApi;
+  private TaskApi: TaskApi;
   /**
    * define inProgress flag
    * @property {boolean} inProgress
    * @memberof Post
    */
   private inProgress: boolean;
-
-  /**
-   * Subject RTL flag for RTL mails
-   */
-  private subjectRtl: boolean;
-
-  /**
-   * body RTL flag for RTL mails
-   */
-  private bodyRtl: boolean;
 
   /**
    * @prop htmlBodyRef
@@ -159,9 +126,8 @@ class EditTask extends React.Component<IProps, IState> {
     super(props);
     this.inProgress = false;
     this.state = {
-      post: this.props.post,
+      task: this.props.task,
       showMoreOptions: false,
-      showAddLabel: false,
     };
   }
 
@@ -186,24 +152,18 @@ class EditTask extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    this.PostApi = new PostApi();
-    if (this.props.post) {
+    this.TaskApi = new TaskApi();
+    if (this.props.task) {
 
-      this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
-      this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
       this.setState({
-        post: this.props.post ? this.props.post : null,
+        task: this.props.task ? this.props.task : null,
       });
     } else {
-      this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
-        .then((post: IPost) => {
-          post.post_read = true;
-          this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
-          this.bodyRtl = RTLDetector.getInstance().direction(post.body);
+      this.TaskApi.getMany(this.props.task._id)
+        .then((task: ITask) => {
           this.setState({
-            post,
+            task,
           });
-          this.updatePostsInStore('post_read', true);
         });
 
       // scroll top to clear previous page scroll
@@ -215,23 +175,6 @@ class EditTask extends React.Component<IProps, IState> {
     }, 300);
 
   }
-
-  private removeLabel(id: string) {
-    const params: IRemoveLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
-    };
-    this.PostApi.removeLabel(params);
-  }
-
-  private addLabel(id: string) {
-    const params: IAddLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
-    };
-    this.PostApi.addLabel(params);
-  }
-
   /**
    * @function componentWillUnmount
    * remove event listeners on this situation
@@ -250,58 +193,47 @@ class EditTask extends React.Component<IProps, IState> {
    * @override
    */
   public componentWillReceiveProps(newProps: IProps) {
-    if (this.props.post) {
+    if (this.props.task) {
       this.setState({
-        post: newProps.post ? newProps.post : null,
+        task: newProps.task ? newProps.task : null,
       });
     }
   }
 
-  /**
-   * @func updatePostsInStore
-   * @desc Updates a post property and replaces the post in store's posts
-   * @private
-   * @param {string} key
-   * @param {*} value
-   * @memberof Post
-   */
-  private updatePostsInStore(key: string, value: any) {
+  // /**
+  //  * @func updatePostsInStore
+  //  * @desc Updates a post property and replaces the post in store's posts
+  //  * @private
+  //  * @param {string} key
+  //  * @param {*} value
+  //  * @memberof Post
+  //  */
+  // private updateTasksInStore(key: string, value: any) {
 
-    const posts = JSON.parse(JSON.stringify(this.props.posts));
-    let newPosts;
-    newPosts = posts.map((post: IPost) => {
-      if (post._id === this.state.post._id) {
-        post[key] = value;
-      }
-      return post;
-    });
+  //   const tasks = JSON.parse(JSON.stringify(this.props.tasks));
+  //   let newTasks;
+  //   newTasks = tasks.map((task: ITask) => {
+  //     if (task._id === this.state.task._id) {
+  //       task[key] = value;
+  //     }
+  //     return task;
+  //   });
 
-    this.props.setPosts(newPosts);
+  //   this.props.setTasks(newTasks);
 
-    if (this.props.currentPost) {
-      this.props.setCurrentPost(this.props.currentPost);
-    }
-  }
+  //   if (this.props.currentTask) {
+  //     this.props.setCurrentTask(this.props.currentTask);
+  //   }
+  // }
 
   /**
    * @func leave
    * @desc Routes to the previous page
    * @private
-   * @memberof Post
+   * @memberof EditTask
    */
   private leave() {
     hashHistory.goBack();
-  }
-
-  /**
-   * @func postPlaceClick
-   * @desc redirects to the clicked place posts
-   * @private
-   * @param {string} pid - place ID
-   * @memberof Post
-   */
-  private postPlaceClick(pid) {
-    hashHistory.push(`/places/${pid}/messages`);
   }
 
   /**
@@ -336,117 +268,12 @@ class EditTask extends React.Component<IProps, IState> {
       // console.log(delta, newH);
       el.parentElement.style.height = delta + newH + 'px';
     }, 500);
-    this.resizeFont(el, ratio);
-  }
-
-  private resizeFont(el, ratio: number) {
-    if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
-      const fontSize = parseInt(el.style.fontSize, 10);
-      if ( fontSize > 0 ) {
-        el.style.fontSize = fontSize * (1 / ratio) + 'px';
-      } else {
-        el.style.fontSize = 14 * (1 / ratio) + 'px';
-      }
-    }
-    for (const value of el.children) {
-      this.resizeFont(value, ratio);
-    }
   }
 
   private toggleMoreOpts = () => {
     this.setState({
       showMoreOptions: !this.state.showMoreOptions,
     });
-  }
-
-  private toggleAddLAbel = () => {
-    this.setState({
-      showMoreOptions: false,
-      showAddLabel: !this.state.showAddLabel,
-    });
-  }
-
-  private doneAddLabel = (labels) => {
-    const removeItems = difference(this.state.post.post_labels, labels);
-    const addItems = difference(labels, this.state.post.post_labels);
-    this.toggleAddLAbel();
-    removeItems.forEach((element) => {
-      this.removeLabel(element._id);
-    });
-    addItems.forEach((element) => {
-      this.addLabel(element._id);
-    });
-    const post = this.state.post;
-    post.post_labels = labels;
-    this.setState({
-      post,
-    });
-  }
-
-  /**
-   * @func refHandler
-   * @desc handler for html emails
-   * @private
-   * @memberof Compose
-   * @param {HTMLDivElement} value
-   */
-  private refHandler = (value) => {
-    this.htmlBodyRef = value;
-  }
-
-  /**
-   * @func Pins/Unpins the post and updates the post in store's posts list
-   * @private
-   * @memberof Post
-   */
-  private toggleBookmark(event) {
-    // arguments[1] is an event
-    event.stopPropagation();
-    event.preventDefault();
-    // change pinned of post
-    let post;
-    post = JSON.parse(JSON.stringify(this.state.post));
-    post.pinned = !post.pinned;
-    this.setState({post});
-
-    // create an PostApi and make api call based on post.pinned
-    const postApi = new PostApi();
-    if (post.pinned) {
-      postApi.pinPost(this.state.post._id)
-        .then(() => {
-          // set action is not in progress
-          this.inProgress = false;
-          // Update posts in store
-          this.updatePostsInStore('pinned', true);
-        })
-        .catch(() => {
-          // roll back if has error in api call
-          let post;
-          this.inProgress = false;
-          post = this.state.post;
-          post.pinned = !post.pinned;
-          this.setState({post});
-        });
-    } else {
-      postApi.unpinPost(this.state.post._id)
-        .then(() => {
-          // set action is not in progress
-          this.inProgress = false;
-          this.updatePostsInStore('pinned', false);
-        })
-        .catch(() => {
-
-          // set action is not in progress
-          this.inProgress = false;
-
-          // roll back if has error in api call
-          let post;
-          post = this.state.post;
-          post.pinned = !post.pinned;
-          this.setState({post});
-        });
-    }
-    return false;
   }
 
   /**
@@ -457,7 +284,7 @@ class EditTask extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    if ( this.scrollWrapper && !this.props.post) {
+    if ( this.scrollWrapper && !this.props.task) {
       const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
       if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
         this.scrollWrapper.addEventListener('touchmove', (e: any) => {
@@ -493,31 +320,23 @@ class EditTask extends React.Component<IProps, IState> {
         return true;
       }, false);
     }
-    const postView = !this.props.post;
-    if (!this.state.post) {
+    const taskView = !this.props.task;
+    if (!this.state.task) {
       return <Loading active={true}/>;
     }
 
-    const {post} = this.state;
-    const bookmarkClick = this.toggleBookmark.bind(this);
+    const {task} = this.state;
 
     // Checks the sender is external mail or not
-    const sender = post.email_sender ? post.email_sender : post.sender;
     return (
-      <div className={[style.postCard, !this.props.post ? style.postView : null].join(' ')}>
+      <div className={[style.postCard, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
-        {postView && (
+        {taskView && (
           <div className={styleNavbar.navbar}>
             <a onClick={this.leave}>
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
-            <Link to={`/forward/${post._id}`}>
-              <IcoN size={24} name="forward24"/>
-            </Link>
-            <Link to={`/reply/${post._id}`}>
-              <IcoN size={24} name="reply24"/>
-            </Link>
             <a onClick={this.toggleMoreOpts}>
               <IcoN size={24} name="more24"/>
             </a>
@@ -527,24 +346,8 @@ class EditTask extends React.Component<IProps, IState> {
           <div className={[style.postOptions, style.opened].join(' ')}>
             <ul>
               <li>
-                <IcoN size={16} name={'label16'}/>
-                <a onClick={this.toggleAddLAbel}>Labels</a>
-                <p>{this.state.post.post_labels.length}</p>
-              </li>
-              <li className={style.hr}/>
-              <li>
-                <IcoN size={16} name={'reply16'}/>
-                <Link to={`/reply/${post._id}`}>Reply</Link>
-              </li>
-              <li>
-                <IcoN size={16} name={'reply16'}/>
-                <Link to={`/reply/${post._id}/sender`}>
-                  Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
-                </Link>
-              </li>
-              <li>
                 <IcoN size={16} name={'forward16'}/>
-                <Link to={`/forward/${post._id}`}>Forward</Link>
+                <Link to={`/forward/${task._id}`}>Forward</Link>
               </li>
             </ul>
           </div>
@@ -554,94 +357,15 @@ class EditTask extends React.Component<IProps, IState> {
         }
         <div className={style.postScrollContainer} ref={this.refScrollHandler}>
           <div className={style.postScrollContent}>
-            <div className={style.postHead}>
-              <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
-              {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
-              {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
-              {post.sender && <FullName user_id={post.sender._id}/>}
-              {post.email_sender && (
-                <span>
-                  {`${post.email_sender._id}`}
-                </span>
-              )}
-              <p>
-                {TimeUntiles.dynamic(post.timestamp)}
-              </p>
-              {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
-              <div className={post.pinned ? style.postPinned : style.postPin}
-                  onClick={bookmarkClick}>
-                {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
-                {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
-              </div>
-            </div>
-            {!this.props.post && <hr/>}
-            <div className={style.postBody}>
-              <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
-              <div dangerouslySetInnerHTML={{__html: post.body}}
-              ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
-              {post.post_attachments.length > 0 && !this.props.post && (
-                <PostAttachment attachments={post.post_attachments}
-                                postId={post._id}
-                />
-              )}
-              {post.post_attachments.length > 0 && this.props.post && (
-                <div className={style.postAttachs}>
-                  <IcoN size={16} name={'attach24'}/>
-                  {post.post_attachments.length}
-                  {post.post_attachments.length === 1 && <span>Attachment</span>}
-                  {post.post_attachments.length > 1 && <span>Attachments</span>}
-                </div>
-              )}
-              <ul className={style.postLabels}>
-                {post.post_labels.map((label: ILabel, index: number) => {
-                  return (
-                  <li key={label._id + index} className={[style.postLabel, style['label' + label.code]].join(' ')}>
-                    {label.title}
-                  </li>
-                  ); })}
-              </ul>
-              <div className={style.postPlaces}>
-                {postView && <a>Shared with:</a>}
-                {post.post_places.map((place: IPlace, index: number) => {
-                  if (index < 2) {
-                    return (
-                      <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
-                        {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      </span>
-                    );
-                  }
-                })}
-                {post.post_recipients &&
-                post.post_recipients.map((email: any) => {
-                  return (
-                    <span key={email}>
-                      {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  );
-                })}
-                {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
-              </div>
-
-              {!postView && (
-                <div className={style.postFooter}>
-                  <IcoN size={16} name={'comment24'}/>
-                  {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-                  {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
-                </div>
-              )}
-            </div>
             {/* renders the comments and comment input in post view */}
             {/* {!this.props.post && (
               <CommentsBoard no_comment={this.state.post.no_comment}
               post_id={this.state.post._id} post={this.state.post}
               user={this.props.user}/>
             )} */}
-           {postView && <div className={privateStyle.bottomSpace}/>}
+           {taskView && <div className={privateStyle.bottomSpace}/>}
           </div>
         </div>
-        {this.state.showAddLabel && (
-          <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
-        )}
       </div>
     );
   }
@@ -654,9 +378,9 @@ class EditTask extends React.Component<IProps, IState> {
  * @param {IOwnProps} ownProps
  */
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
-  post: ownProps.post,
-  currentPost: store.app.currentPost,
-  posts: store.app.posts,
+  task: ownProps.task,
+  currentTask: store.app.currentTask,
+  tasks: store.app.tasks,
   user: store.app.user,
   routeParams: ownProps.routeParams,
 });
@@ -667,8 +391,8 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
  * @param {any} dispatch
  */
 const mapDispatchToProps = (dispatch) => ({
-  setPosts: (posts: IPost[]) => (dispatch(setPosts(posts))),
-  setCurrentPost: (post: IPost) => (dispatch(setCurrentPost(post))),
+  setTasks: (tasks: ITask[]) => (dispatch(setTasks(tasks))),
+  setCurrentTask: (task: ITask) => (dispatch(setCurrentTask(task))),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditTask);

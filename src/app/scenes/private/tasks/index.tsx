@@ -38,6 +38,8 @@ interface IProps {
 
 interface IState {
   tasks: ITask[];
+  overDueTasks: ITask[];
+  candidateTasks: ITask[];
   customFilters: ICustomFilter[];
   loadingAfter: boolean;
   loadingBefore: boolean;
@@ -60,8 +62,15 @@ class Tasks extends React.Component<IProps, IState> {
   constructor(props: IProps) {
 
     super(props);
+    console.log(this.props.location.pathname, this.props.tasksRoute);
     this.state = {
-      tasks: this.props.location.pathname === this.props.tasksRoute ? this.props.tasks.glance : [],
+      tasks: this.props.location.pathname === this.props.tasksRoute ? this.props.tasks.glance || [] : [],
+      overDueTasks: this.props.location.pathname === this.props.tasksRoute
+        ? this.props.tasks.overDueTasks || []
+        : [],
+      candidateTasks: this.props.location.pathname === this.props.tasksRoute
+        ? this.props.tasks.candidateTasks || []
+        : [],
       location: this.props.location,
       loadingAfter: false,
       loadingBefore: false,
@@ -81,6 +90,8 @@ class Tasks extends React.Component<IProps, IState> {
       routeChanged = true;
       switch (newProps.location.pathname) {
         case '/task/glance':
+          this.getOverDueTasks();
+          this.getCandidateTasks();
           route = 'glance';
           break;
         case '/task/watchlist':
@@ -240,6 +251,59 @@ class Tasks extends React.Component<IProps, IState> {
       default:
         break;
     }
+  }
+
+  private getOverDueTasks() {
+
+    const params: ITaskGetByFilterRequest = {
+      filter: C_TASK_FILTER[C_TASK_FILTER.assigned_to_me],
+      status_filter: '',
+    };
+    const statusFilter = [C_TASK_STATUS.OVERDUE];
+
+    params.status_filter = statusFilter.join(',');
+
+    this.taskApi.getByFilter(params)
+      .then((response: IGetTasksResponse) => {
+        const overDueTasks = ArrayUntiles.uniqueObjects(response.tasks.concat(this.state.overDueTasks), '_id')
+          .sort((a: ITask, b: ITask) => {
+            return b.timestamp - a.timestamp;
+          });
+
+        this.props.setTasks({overDueTasks});
+        this.setState({
+          overDueTasks,
+        });
+      })
+      .catch(() => {
+        message.success('An error has occurred.', 10);
+      });
+  }
+
+  private getCandidateTasks() {
+
+    const params: ITaskGetByFilterRequest = {
+      filter: C_TASK_FILTER[C_TASK_FILTER.candidate],
+      status_filter: '',
+    };
+    const statusFilter = [C_TASK_STATUS.NO_ASSIGNED];
+
+    params.status_filter = statusFilter.join(',');
+
+    this.taskApi.getByFilter(params)
+      .then((response: IGetTasksResponse) => {
+        const candidateTasks = ArrayUntiles.uniqueObjects(response.tasks.concat(this.state.candidateTasks), '_id')
+          .sort((a: ITask, b: ITask) => {
+            return b.timestamp - a.timestamp;
+          });
+        this.props.setTasks({candidateTasks});
+        this.setState({
+          candidateTasks,
+        });
+      })
+      .catch(() => {
+        message.success('An error has occurred.', 10);
+      });
   }
 
   /**
@@ -471,57 +535,118 @@ class Tasks extends React.Component<IProps, IState> {
 
   public render() {
     const loadMore = this.getTasks.bind(this);
+    let leftItem = {
+      name: 'Glance',
+      type: 'title',
+      menu: [],
+    };
     /**
      * @name leftItem
      * @desc setting of left Item
      * @const
      * @type {object}
      */
-    const leftItem = {
-      name: 'Feed',
-      type: 'title',
-      menu: [],
-    };
-    /**
-     * @name rightMenu
-     * @desc settings of right menu
-     * @const
-     * @type {array}
-     */
-    const rightMenu = [
-      {
-        name: 'sort24',
-        type: 'iconI',
+    if (this.state.route === 'assigned_to_me') {
+      leftItem = {
+        name: 'Assigned to Me',
+        type: 'title',
         menu: [
           {
             onClick: null,
-            name: 'Sort',
+            name: 'UnFinished',
             type: 'kind',
             isChecked: false,
+            icon: '',
           },
           {
             onClick: null,
-            name: 'Recent Posts',
+            name: 'Finished',
             isChecked: true,
+            icon: '',
           },
         ],
-      },
-    ];
+      };
+    }
+    if (this.state.route === 'created_by_me') {
+      leftItem = {
+        name: 'Created to Me',
+        type: 'title',
+        menu: [
+          {
+            onClick: null,
+            name: 'UnFinished',
+            type: 'kind',
+            isChecked: false,
+            icon: '',
+          },
+          {
+            onClick: null,
+            name: 'Finished',
+            isChecked: true,
+            icon: '',
+          },
+        ],
+      };
+    }
+    if (this.state.route === 'watchlist') {
+      leftItem = {
+        name: 'Watchlist',
+        type: 'title',
+        menu: [
+          {
+            onClick: null,
+            name: 'UnFinished',
+            type: 'kind',
+            isChecked: false,
+            icon: '',
+          },
+          {
+            onClick: null,
+            name: 'Finished',
+            isChecked: true,
+            icon: '',
+          },
+        ],
+      };
+    }
+    if (this.state.route.indexOf('filter') > -1) {
+      const filterId = parseInt(this.state.route.split('-')[1], 10);
+      const filterData: ICustomFilter = this.state.customFilters.find((fi) => parseInt(fi.id, 10) === filterId);
+      leftItem = {
+        name: filterData.name,
+        type: 'title',
+        menu: [],
+      };
+    }
 
     if (this.scrollWrapper) {
       this.scrollWrapper.scrollTop += 1;
     }
-
+    const showOverDue = this.state.route === 'glance' && this.state.overDueTasks.length > 0;
+    const showCandidate = this.state.route === 'glance' && this.state.candidateTasks.length > 0;
     return (
       <div className={style.container}>
-        <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <div className={privateStyle.postsArea} ref={this.refHandler}>
+        <OptionsMenu leftItem={leftItem} rightItems={[]}/>
+        <div className={[privateStyle.tasksArea, style.tasksList].join(' ')} ref={this.refHandler}>
           {/* rendering Loading component in  `loadingAfter` case */}
           <Loading active={this.state.loadingAfter}/>
           {this.state.loadingAfter &&
             <div>Loading new posts...</div>
           }
+          {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
+          {showOverDue && this.state.overDueTasks.map((task: ITask) => (
+            <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
+              {task.title}
+            </div>
+          ))}
+          {showCandidate && <h3 className={style.pending}>You’ve been Candidated to do this…</h3>}
+          {showCandidate && this.state.candidateTasks.map((task: ITask) => (
+            <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
+              {task.title}
+            </div>
+          ))}
           {/* after Loading component render posts list */}
+          {this.state.route === 'glance' && <h3>Upcomings</h3>}
           {this.state.tasks.map((task: ITask) => (
             <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
               {task.title}

@@ -159,14 +159,16 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
               </Link>
             </li>
           </ul>
-          <ul className={style.places}>
+          <ul className={style.filters}>
           {this.state.customFilters.map((filter, i) => (
               <li key={i}>
                 {/* horizental rule for grand places */}
                 <hr className={style.hrDark}/>
                 <hr className={style.hrLight}/>
                 <Link to={`/task/custom_filter/${filter.id}`} activeClassName="active">
-                  <div className={style.place}>
+                  <div className={style.filter}>
+                    <IcoN size={16} name={'filter16'}/>
+                    <div className={style.indent}/>
                     <span>{filter.name}</span>
                   </div>
                 </Link>

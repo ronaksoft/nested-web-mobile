@@ -97,26 +97,24 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     this.setState(state);
   }
 
-  private renderLeftItems = () => {
-    const LeftItemMenuDOM = [];
-    this.props.leftItem.menu.forEach((menuItem, index) => {
-      LeftItemMenuDOM.push(
-        <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
-            onClick={menuItem.onClick}>
+  private renderLeftItems = () => this.props.leftItem.menu.map((menuItem, index) => (
+      <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
+          onClick={menuItem.onClick}>
+        {/* {menuItem.icon && ( */}
           <div>
-            <IcoN size={16} name={menuItem.icon.name}/>
+            <IcoN size={16} name={menuItem.icon}/>
           </div>
-          <div>
-            <span>{menuItem.name}</span>
-            {menuItem.isChecked &&
-            <IcoN size={16} name="heavyCheck16"/>
-            }
-          </div>
-        </li>,
-      );
-    });
-    return LeftItemMenuDOM;
-  }
+        {/* )} */}
+        <div>
+          <span>{menuItem.name}</span>
+          {menuItem.isChecked &&
+          <IcoN size={16} name="heavyCheck16"/>
+          }
+        </div>
+      </li>
+    ),
+  )
+
   private touchMove = (e: any) => {
     e = e || window.event;
     e.returnValue = false;
@@ -209,7 +207,6 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
     // Get right menu items with show condition
     const rightMenu = this.renderRightMenus();
-
     return (
       <div className={style.container} onTouchMove={this.touchMove}>
         {/*  always visible area contains icons element */}

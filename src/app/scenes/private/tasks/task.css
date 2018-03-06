@@ -1,0 +1,18 @@
+.tasksList {
+  display: flex;
+  flex-direction: column;
+}
+.tasksList h3 {
+  line-height: 16px;
+  font-size: 12px;
+  padding: 24px 16px 8px;
+  font-weight: bold;
+  color: #323D47;
+  margin: 0;
+}
+.tasksList .force {
+  color: #FF3344;
+}
+.tasksList .pending {
+  color: #0079F2;
+}

@@ -16,7 +16,7 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  padding-bottom: 64px;
+  padding-bottom: 80px;
 }
 .sidebarHead {
   height: 56px;
@@ -61,4 +61,24 @@
   background-color: rgba(255,255,255,.04);
   margin: 0 0 8px 0;
   border: none;
+}
+.filter {
+  height: 48px;
+  width: 100%;
+  padding: 0 16px;
+  opacity: .4;
+  display: flex;
+  align-items: center;
+}
+.filter svg{
+  fill: white;
+}
+.filter span{
+  color: white;
+}
+.indent {
+  display: flex;
+  width: 16px;
+  height: 100%;
+  flex: none;
 }

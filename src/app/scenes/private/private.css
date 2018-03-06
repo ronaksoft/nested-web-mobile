@@ -95,6 +95,10 @@ html {
   height: calc(100% - 56px);
   overflow: auto;
 }
+.tasksArea {
+  height: calc(100% - 56px);
+  overflow: auto;
+}
 .bottomSpace {
   width: 100%;
   display: flex;
