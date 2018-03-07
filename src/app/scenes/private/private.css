@@ -89,6 +89,7 @@ html {
 }
 .emptyMessage {
   width: 100%;
+  flex: none;
   text-align: center;
 }
 .postsArea {

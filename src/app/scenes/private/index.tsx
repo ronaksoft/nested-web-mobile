@@ -24,7 +24,7 @@ import FeedByActivity from './posts/feedByActivity';
 import Bookmarked from './posts/bookmarked';
 import Shared from './posts/shared';
 import Tasks from './tasks';
-import TaskEdit from './tasks/componenets/editTask/';
+import TaskEdit from './tasks/components/editTask/';
 import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
 import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
 import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';

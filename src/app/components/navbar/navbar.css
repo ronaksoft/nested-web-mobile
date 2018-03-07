@@ -23,6 +23,10 @@
   align-items: center;
   position: relative;
 }
+.navbar > a.active {
+  border-radius: 8px;
+  background-color: rgba(50, 61, 71, .08)!important;
+}
 .navbar > a img {
   width: 24px;
   height: 24px;

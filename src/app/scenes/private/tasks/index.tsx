@@ -19,6 +19,9 @@ import ArrayUntiles from '  ../../../services/utils/array';
 import {Button, message} from 'antd';
 import {hashHistory} from 'react-router';
 import {Loading} from '  ../../../components/Loading/index';
+import TaskOverDueView from './components/list/overdueItem/index';
+import TaskCandidateView from './components/list/candidateItem/index';
+import TaskUpcomingView from './components/list/upcomingItem/index';
 
 const style = require('./task.css');
 const privateStyle = require('../private.css');
@@ -62,7 +65,6 @@ class Tasks extends React.Component<IProps, IState> {
   constructor(props: IProps) {
 
     super(props);
-    console.log(this.props.location.pathname, this.props.tasksRoute);
     this.state = {
       tasks: this.props.location.pathname === this.props.tasksRoute ? this.props.tasks.glance || [] : [],
       overDueTasks: this.props.location.pathname === this.props.tasksRoute
@@ -78,48 +80,58 @@ class Tasks extends React.Component<IProps, IState> {
       customFilters: this.props.customFilters || [],
       reachedTheEnd: false,
       newPostCount: 0,
-      route: 'glance',
+      route: this.findRouteFromPath(props) || 'glance',
     };
   }
 
   public componentWillReceiveProps(newProps: IProps) {
     let route = this.state.route;
-    let routeChanged = false;
-    let customFilterFlag = false;
     if (this.state.location !== newProps.location.pathname) {
-      routeChanged = true;
-      switch (newProps.location.pathname) {
-        case '/task/glance':
-          this.getOverDueTasks();
-          this.getCandidateTasks();
-          route = 'glance';
-          break;
-        case '/task/watchlist':
-          route = 'watchlist';
-          break;
-        case '/task/assigned_to_me':
-          route = 'assigned_to_me';
-          break;
-        case '/task/created_by_me':
-          route = 'created_by_me';
-          break;
-        default:
-          const filterId = newProps.location.pathname.split('/')[newProps.location.pathname.split('/').length - 1];
-          route = 'filter-' + filterId;
-          customFilterFlag = true;
-          break;
+      route = this.findRouteFromPath(newProps);
+      if (route === 'glance') {
+        this.getOverDueTasks();
+        this.getCandidateTasks();
       }
     }
+    const oldLocation = this.state.location;
     this.setState({tasks: newProps.tasks[route] || [], location: newProps.location.pathname, route}, () => {
-      if (!routeChanged) {
-        return;
-      }
-      if (customFilterFlag) {
-        this.getTasksByCustom(true);
-      } else {
-        this.getTasks(true);
+      if (oldLocation !== newProps.location.pathname) {
+        if (route.indexOf('filter') > -1) {
+          if (this.state && this.state.customFilters.length > 0) {
+            this.getTasksByCustom(true);
+          } else {
+            this.getMyFilters().then(() => {
+              this.getTasksByCustom(true);
+            });
+          }
+        } else {
+          this.getTasks(true);
+        }
       }
     });
+  }
+
+  public findRouteFromPath(newProps) {
+    let route;
+    switch (newProps.location.pathname) {
+      case '/task/glance':
+        route = 'glance';
+        break;
+      case '/task/watchlist':
+        route = 'watchlist';
+        break;
+      case '/task/assigned_to_me':
+        route = 'assigned_to_me';
+        break;
+      case '/task/created_by_me':
+        route = 'created_by_me';
+        break;
+      default:
+        const filterId = newProps.location.pathname.split('/')[newProps.location.pathname.split('/').length - 1];
+        route = 'filter-' + filterId;
+        break;
+    }
+    return route;
   }
 
   public componentDidMount() {
@@ -180,16 +192,20 @@ class Tasks extends React.Component<IProps, IState> {
    * @memberof TaskSidebar
    */
   private getMyFilters() {
-    this.ClientApi.read(C_TASK_CUSTOM_FILTER.KEY_NAME).then((result: any) => {
-      if (result) {
-        const customFilters = JSON.parse(result);
-        this.props.setTasksFilter(customFilters);
-        // TODO check if is mounted
-        this.setState({
-          customFilters,
-        });
-      }
+    const promise = new Promise((res, rej) => {
+      this.ClientApi.read(C_TASK_CUSTOM_FILTER.KEY_NAME).then((result: any) => {
+        if (result) {
+          const customFilters = JSON.parse(result);
+          this.props.setTasksFilter(customFilters);
+          // TODO check if is mounted
+          this.setState({
+            customFilters,
+          });
+          res(customFilters);
+        }
+      }).catch(rej);
     });
+    return promise;
   }
 
   private getCustomFilterParams(filters: ICustomFilterFilter[]) {
@@ -389,7 +405,6 @@ class Tasks extends React.Component<IProps, IState> {
     params.limit = 20;
     this.taskApi.getByFilter(params)
       .then((response: IGetTasksResponse) => {
-          console.log(response);
         // if length of received post is less than limit, set `reachedTheEnd` as true
         if (this.state.tasks.length > 0 && response.tasks.length < params.limit) {
           this.setState({
@@ -428,7 +443,6 @@ class Tasks extends React.Component<IProps, IState> {
     const route = this.state.route;
     const filterId = parseInt(route.split('-')[1], 10);
     const filterData: ICustomFilter = this.state.customFilters.find((fi) => parseInt(fi.id, 10) === filterId);
-    console.log(filterData);
     const filter: IGetTaskCustomFilterRequest = this.getCustomFilterParams(filterData.filters);
     if (fromNow === true) {
       filter.before = Date.now();
@@ -613,7 +627,7 @@ class Tasks extends React.Component<IProps, IState> {
       const filterId = parseInt(this.state.route.split('-')[1], 10);
       const filterData: ICustomFilter = this.state.customFilters.find((fi) => parseInt(fi.id, 10) === filterId);
       leftItem = {
-        name: filterData.name,
+        name: filterData ? filterData.name : 'Custom filter',
         type: 'title',
         menu: [],
       };
@@ -625,7 +639,7 @@ class Tasks extends React.Component<IProps, IState> {
     const showOverDue = this.state.route === 'glance' && this.state.overDueTasks.length > 0;
     const showCandidate = this.state.route === 'glance' && this.state.candidateTasks.length > 0;
     return (
-      <div className={style.container}>
+      <div className={style.tasksContainer}>
         <OptionsMenu leftItem={leftItem} rightItems={[]}/>
         <div className={[privateStyle.tasksArea, style.tasksList].join(' ')} ref={this.refHandler}>
           {/* rendering Loading component in  `loadingAfter` case */}
@@ -635,21 +649,21 @@ class Tasks extends React.Component<IProps, IState> {
           }
           {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
           {showOverDue && this.state.overDueTasks.map((task: ITask) => (
-            <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
-              {task.title}
+            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+              <TaskOverDueView task={task} />
             </div>
           ))}
           {showCandidate && <h3 className={style.pending}>You’ve been Candidated to do this…</h3>}
           {showCandidate && this.state.candidateTasks.map((task: ITask) => (
-            <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
-              {task.title}
+            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+              <TaskCandidateView task={task} />
             </div>
           ))}
           {/* after Loading component render posts list */}
           {this.state.route === 'glance' && <h3>Upcomings</h3>}
           {this.state.tasks.map((task: ITask) => (
-            <div key={task._id} id={task._id} onClick={this.gotoTask.bind(this, task)}>
-              {task.title}
+            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+              <TaskUpcomingView task={task} />
             </div>
           ))}
           {/* rendering Loading component in  `loadingBefore` case */}

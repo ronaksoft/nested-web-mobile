@@ -3,6 +3,12 @@
   display: inline-block;
   height : 24px;
 }
+.s32 {
+  width : 32px;
+  display: inline-block;
+  height : 32px;
+  position: relative;
+}
 .s24 svg{
   width : 24px;
   height : 24px;

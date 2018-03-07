@@ -56,7 +56,7 @@ export default class TaskApi {
     });
   }
 
-  public respond(taskId: string, response: C_TASK_RESPONSE, reason: string) {
+  public respond(taskId: string, response: C_TASK_RESPONSE, reason?: string) {
     return this.api.request({
       cmd: 'task/respond',
       data: {

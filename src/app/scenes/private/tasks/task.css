@@ -16,3 +16,12 @@
 .tasksList .pending {
   color: #0079F2;
 }
+.tasksContainer {
+    height: calc(100% - 56px);
+    overflow: hidden;
+    z-index: 22;
+    transform: translateZ(0);
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll;
+    touch-action: auto;
+}

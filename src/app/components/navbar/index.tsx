@@ -76,6 +76,11 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
       });
       this.props.changeApp(false);
     }
+    if (path.indexOf('notifications') > -1) {
+      this.setState({
+        notificationOpen: true,
+      });
+    }
     /**
      * Counts of unread notifications from props
      * @type {object}
@@ -95,7 +100,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    */
   private goToNotification() {
     if (this.state.notificationOpen) {
-      hashHistory.push('/feed');
+      hashHistory.goBack();
     } else {
       hashHistory.push('/notifications');
     }
@@ -115,24 +120,36 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   private switchApp = () => {
     const thisPath = hashHistory.getCurrentLocation().pathname;
     const state: any = {
-      postsApp: !this.state.postsApp,
+      notificationOpen: false,
     };
-    if (state.postsApp) {
-      state.lastTaskRoute = thisPath;
+    if (thisPath.indexOf('notifications') === -1) {
+      state.postsApp = !this.state.postsApp;
+      if (state.postsApp) {
+        state.lastTaskRoute = thisPath;
+      } else {
+        state.lastPostRoute = thisPath;
+      }
+      this.setState(state, () => {
+        // console.log(this.state, this.state.postsApp, this.state.lastTaskRoute, this.state.lastPostRoute);
+        if (this.state.isMounted) {
+          this.props.changeApp(state.postsApp);
+          if (!this.state.postsApp) {
+            hashHistory.push(this.state.lastTaskRoute);
+          } else {
+            hashHistory.push(this.state.lastPostRoute);
+          }
+        }
+      });
     } else {
-      state.lastPostRoute = thisPath;
-    }
-    this.setState(state, () => {
-      // console.log(this.state, this.state.postsApp, this.state.lastTaskRoute, this.state.lastPostRoute);
       if (this.state.isMounted) {
-        this.props.changeApp(state.postsApp);
         if (!this.state.postsApp) {
           hashHistory.push(this.state.lastTaskRoute);
         } else {
           hashHistory.push(this.state.lastPostRoute);
         }
+        this.setState(state);
       }
-    });
+    }
   }
 
   /**

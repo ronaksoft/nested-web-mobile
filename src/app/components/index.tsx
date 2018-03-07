@@ -7,6 +7,7 @@ export {NewBadge} from './NewBadge/';
 export {Loading} from './Loading/';
 export {AddLabel} from './labels/';
 export {Navbar} from './navbar/';
+export {TaskIcon} from './taskIcon/';
 
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
