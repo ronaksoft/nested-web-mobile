@@ -60,8 +60,8 @@
   margin-bottom: 24px;
 }
 .candidateItem .taskContent{
-    border-bottom: none;
-  }
+  border-bottom: none;
+}
 .candidateItem .taskItemInner{
   border-bottom: 1px solid rgba(50, 61, 71, .08);
 }
@@ -95,7 +95,6 @@
 .declineButton {
   opacity: 0.64;
 }
-
 
 .overDueItem .taskItemInner {
   background-image: url("../../../../../assets/icons/horizontal_stripes_force.png");

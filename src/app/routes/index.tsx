@@ -42,9 +42,12 @@ export default (
         <Route path="/messages/latest-activity" component={Activities}/>
         <Route path="/message/:postId" component={Post}/>
         <Route path="/task/glance" component={Tasks}/>
-        <Route path="/task/assigned_to_me" component={Tasks}/>
-        <Route path="/task/created_by_me" component={Tasks}/>
-        <Route path="/task/watchlist" component={Tasks}/>
+        <Route path="/task/assigned_to_me/normal" component={Tasks}/>
+        <Route path="/task/assigned_to_me/completed" component={Tasks}/>
+        <Route path="/task/created_by_me/normal" component={Tasks}/>
+        <Route path="/task/created_by_me/completed" component={Tasks}/>
+        <Route path="/task/watchlist/normal" component={Tasks}/>
+        <Route path="/task/watchlist/completed" component={Tasks}/>
         <Route path="/task/edit/:taskId" component={TaskEdit}/>
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>

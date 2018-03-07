@@ -1,7 +1,7 @@
 import IMenuItem from './IMenuItem';
 
 interface IRightItem {
-    name: string;
+    name: any;
     menu: IMenuItem[];
     type: string;
 }

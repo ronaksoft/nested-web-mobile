@@ -47,7 +47,6 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
-  completedResult: boolean;
   newPostCount: number;
   location: any;
   route: string;
@@ -65,8 +64,11 @@ class Tasks extends React.Component<IProps, IState> {
   constructor(props: IProps) {
 
     super(props);
+    const initiateRoute = this.findRouteFromPath(props);
     this.state = {
-      tasks: this.props.location.pathname === this.props.tasksRoute ? this.props.tasks.glance || [] : [],
+      tasks: this.props.location.pathname === this.props.tasksRoute
+        ? this.props.tasks[initiateRoute] || []
+        : [],
       overDueTasks: this.props.location.pathname === this.props.tasksRoute
         ? this.props.tasks.overDueTasks || []
         : [],
@@ -76,11 +78,10 @@ class Tasks extends React.Component<IProps, IState> {
       location: this.props.location,
       loadingAfter: false,
       loadingBefore: false,
-      completedResult: false,
       customFilters: this.props.customFilters || [],
       reachedTheEnd: false,
       newPostCount: 0,
-      route: this.findRouteFromPath(props) || 'glance',
+      route: initiateRoute || 'glance',
     };
   }
 
@@ -112,26 +113,29 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   public findRouteFromPath(newProps) {
-    let route;
     switch (newProps.location.pathname) {
       case '/task/glance':
-        route = 'glance';
-        break;
-      case '/task/watchlist':
-        route = 'watchlist';
-        break;
-      case '/task/assigned_to_me':
-        route = 'assigned_to_me';
-        break;
-      case '/task/created_by_me':
-        route = 'created_by_me';
-        break;
+        return 'glance';
+
+      case '/task/watchlist/normal':
+        return 'watchlist';
+      case '/task/watchlist/completed':
+        return 'watchlist_completed';
+
+      case '/task/assigned_to_me/normal':
+        return 'assigned_to_me';
+      case '/task/assigned_to_me/completed':
+        return 'assigned_to_me_completed';
+
+      case '/task/created_by_me/normal':
+        return 'created_by_me';
+      case '/task/created_by_me/completed':
+        return 'created_by_me_completed';
+
       default:
         const filterId = newProps.location.pathname.split('/')[newProps.location.pathname.split('/').length - 1];
-        route = 'filter-' + filterId;
-        break;
+        return 'filter-' + filterId;
     }
-    return route;
   }
 
   public componentDidMount() {
@@ -259,10 +263,13 @@ class Tasks extends React.Component<IProps, IState> {
       case 'glance':
          return C_TASK_FILTER[C_TASK_FILTER.upcoming];
       case 'watchlist':
+      case 'watchlist_completed':
          return C_TASK_FILTER[C_TASK_FILTER.watched];
       case 'created_by_me':
+      case 'created_by_me_completed':
          return C_TASK_FILTER[C_TASK_FILTER.created_by_me];
       case 'assigned_to_me':
+      case 'assigned_to_me_completed':
          return C_TASK_FILTER[C_TASK_FILTER.assigned_to_me];
       default:
         break;
@@ -336,7 +343,7 @@ class Tasks extends React.Component<IProps, IState> {
       filter: this.getFilterForApi(),
       status_filter: null,
     };
-    const {completedResult} = this.state;
+    const completedResult = this.state.route.indexOf('completed') > -1;
     const statusFilter = [];
     if (fromNow === true) {
       params.before = Date.now();
@@ -365,7 +372,7 @@ class Tasks extends React.Component<IProps, IState> {
       }
     }
 
-    if (this.state.route === 'assigned_to_me') {
+    if (this.state.route.indexOf('assigned_to_me')) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -374,7 +381,7 @@ class Tasks extends React.Component<IProps, IState> {
         statusFilter.push(C_TASK_STATUS.HOLD);
         statusFilter.push(C_TASK_STATUS.OVERDUE);
       }
-    } else if (this.state.route === 'created_by_me') {
+    } else if (this.state.route.indexOf('created_by_me')) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -386,7 +393,7 @@ class Tasks extends React.Component<IProps, IState> {
         statusFilter.push(C_TASK_STATUS.HOLD);
         statusFilter.push(C_TASK_STATUS.OVERDUE);
       }
-    } else if (this.state.route === 'watchlist') {
+    } else if (this.state.route.indexOf('watchlist')) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -402,7 +409,7 @@ class Tasks extends React.Component<IProps, IState> {
 
     params.status_filter = statusFilter.join(',');
 
-    params.limit = 20;
+    params.limit = 80;
     this.taskApi.getByFilter(params)
       .then((response: IGetTasksResponse) => {
         // if length of received post is less than limit, set `reachedTheEnd` as true
@@ -543,87 +550,138 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   private gotoTask(task: ITask) {
-    this.props.setCurrentTask(task);
-    hashHistory.push(`/task/edit/${task._id}`);
+    console.log(task);
+    // this.props.setCurrentTask(task);
+    // hashHistory.push(`/task/edit/${task._id}`);
   }
 
-  public render() {
-    const loadMore = this.getTasks.bind(this);
-    let leftItem = {
+  private getLeftItemMenu() {
+    let leftItem: any = {
       name: 'Glance',
       type: 'title',
       menu: [],
     };
-    /**
-     * @name leftItem
-     * @desc setting of left Item
-     * @const
-     * @type {object}
-     */
     if (this.state.route === 'assigned_to_me') {
       leftItem = {
-        name: 'Assigned to Me',
+        name: <span><b>Assigned to Me</b></span>,
         type: 'title',
         menu: [
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/assigned_to_me/normal`),
             name: 'UnFinished',
             type: 'kind',
-            isChecked: false,
+            isChecked: true,
             icon: '',
           },
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/assigned_to_me/completed`),
             name: 'Finished',
-            isChecked: true,
+            isChecked: false,
             icon: '',
           },
         ],
       };
-    }
-    if (this.state.route === 'created_by_me') {
+    } else if (this.state.route === 'assigned_to_me_completed') {
       leftItem = {
-        name: 'Created to Me',
+        name: <span><b>Assigned to me</b> completed</span>,
         type: 'title',
         menu: [
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/assigned_to_me/normal`),
             name: 'UnFinished',
             type: 'kind',
             isChecked: false,
             icon: '',
           },
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/assigned_to_me/completed`),
             name: 'Finished',
             isChecked: true,
             icon: '',
           },
         ],
       };
-    }
-    if (this.state.route === 'watchlist') {
+    } else if (this.state.route === 'created_by_me') {
       leftItem = {
-        name: 'Watchlist',
+        name: <span><b>Created to Me'</b></span>,
         type: 'title',
         menu: [
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/created_by_me/normal`),
+            name: 'UnFinished',
+            type: 'kind',
+            isChecked: true,
+            icon: '',
+          },
+          {
+            onClick: () => hashHistory.push(`/task/created_by_me/completed`),
+            name: 'Finished',
+            isChecked: false,
+            icon: '',
+          },
+        ],
+      };
+    } else if (this.state.route === 'created_by_me_completed') {
+      leftItem = {
+        name: <span><b>Created to Me'</b> Completed</span>,
+        type: 'title',
+        menu: [
+          {
+            onClick: () => hashHistory.push(`/task/created_by_me/normal`),
             name: 'UnFinished',
             type: 'kind',
             isChecked: false,
             icon: '',
           },
           {
-            onClick: null,
+            onClick: () => hashHistory.push(`/task/created_by_me/completed`),
             name: 'Finished',
             isChecked: true,
             icon: '',
           },
         ],
       };
-    }
-    if (this.state.route.indexOf('filter') > -1) {
+    } else if (this.state.route === 'watchlist') {
+      leftItem = {
+        name: <span><b>Watchlist</b></span>,
+        type: 'title',
+        menu: [
+          {
+            onClick: () => hashHistory.push(`/task/watchlist/noraml`),
+            name: 'UnFinished',
+            type: 'kind',
+            isChecked: true,
+            icon: '',
+          },
+          {
+            onClick: () => hashHistory.push(`/task/watchlist/completed`),
+            name: 'Finished',
+            isChecked: false,
+            icon: '',
+          },
+        ],
+      };
+    } else if (this.state.route === 'watchlist_completed') {
+      leftItem = {
+        name: <span><b>Watchlist</b> Completed</span>,
+        type: 'title',
+        menu: [
+          {
+            onClick: () => hashHistory.push(`/task/watchlist/normal`),
+            name: 'UnFinished',
+            type: 'kind',
+            isChecked: false,
+            icon: '',
+          },
+          {
+            onClick: () => hashHistory.push(`/task/watchlist/completed`),
+            name: 'Finished',
+            isChecked: true,
+            icon: '',
+          },
+        ],
+      };
+    } else if (this.state.route.indexOf('filter') > -1) {
       const filterId = parseInt(this.state.route.split('-')[1], 10);
       const filterData: ICustomFilter = this.state.customFilters.find((fi) => parseInt(fi.id, 10) === filterId);
       leftItem = {
@@ -632,7 +690,12 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [],
       };
     }
+    return leftItem;
+  }
 
+  public render() {
+    const loadMore = this.getTasks.bind(this);
+    const leftItem = this.getLeftItemMenu();
     if (this.scrollWrapper) {
       this.scrollWrapper.scrollTop += 1;
     }

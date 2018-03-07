@@ -89,7 +89,12 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
         break;
     }
     return (
-      <div className={style.taskItem}>
+      <div className={
+        (taskStatus === statuses.OVERDUE ? style.overDueItem : '')
+        + ((taskStatus === statuses.NOT_ASSIGNED  && task.candidates.length > 0 ) ? style.candidateItem : '')
+        + (taskStatus === statuses.COMPLETED ? style.completedItem : '')
+        + ' '
+        + style.taskItem}>
         <div className={style.taskItemInner}>
           <TaskIcon status={taskStatus} progress={progress}/>
           <div className={style.taskContent}>

@@ -141,19 +141,19 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
               </Link>
             </li>
             <li>
-              <Link to={`/task/assigned_to_me`}>
+              <Link to={`/task/assigned_to_me/normal`}>
                 <IcoN size={16} name={'internal16'}/>
                 Assigned to me
               </Link>
             </li>
             <li>
-              <Link to={`/task/created_by_me`}>
+              <Link to={`/task/created_by_me/normal`}>
                 <IcoN size={16} name={'external16'}/>
                 Created by me
               </Link>
             </li>
             <li>
-              <Link to={`/task/watchlist`}>
+              <Link to={`/task/watchlist/normal`}>
                 <IcoN size={16} name={'raggedList16'}/>
                 Watchlist
               </Link>

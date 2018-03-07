@@ -1,7 +1,7 @@
 interface IMenuItem {
   onClick?: () => void;
   icon?: any;
-  name: string;
+  name: any;
   type?: string;
   additional?: string;
   isChecked: boolean;

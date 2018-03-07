@@ -13,6 +13,7 @@ interface ITask {
     due_date: number;
     status: number;
     todos: any[];
+    candidates: any[];
     progress?: number;
 }
 export default ITask;
