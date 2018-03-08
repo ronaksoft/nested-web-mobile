@@ -72,6 +72,9 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
    * @memberof OptionsMenu
    */
   public openPopUp = (wrapper: string) => {
+    if (this.props.leftItem.menu.length === 0) {
+      return;
+    }
     const key = wrapper + 'Popup';
     let state;
     state = {
@@ -214,8 +217,8 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
           <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}
              className={this.state.titlePopup ? style.title + ' ' + style.active : style.title}>
             {this.props.leftItem.name}
-            {this.props.leftItem.place &&
-            <IcoN size={24} name="arrowSense16"/>
+            {this.props.leftItem.menu.length > 0 &&
+              <IcoN size={24} name="arrowSense24"/>
             }
           </a>
           <div className={style.filler}/>

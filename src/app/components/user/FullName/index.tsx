@@ -108,15 +108,13 @@ class FullName extends React.Component<IUserItemProps, IState> {
     /**
      * search redux store for any user which has the same id with `user_id`
      */
-    const user = this.props.accounts.filter((user: IUser) => {
-      return user._id === this.props.user_id;
-    });
+    const user = this.props.accounts.find((user: IUser) => user._id === this.props.user_id);
     /**
      * determine user is stored in redux already
      */
-    if (user.length > 0) {
+    if (user) {
       this.setState({
-        user: user[0],
+        user,
       });
     } else {
       /**

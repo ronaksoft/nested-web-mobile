@@ -61,6 +61,12 @@ html {
   -webkit-overflow-scrolling: none;
   overscroll-behavior-y: contain;
 }
+h1, h2, h3, h4, h5, h6, body {
+  color: rgba(50, 61, 71, 1);
+}
+svg {
+  fill: rgba(50, 61, 71, 1);
+}
 .container {
   /* padding-top: 56px; */
   height: 100vh;

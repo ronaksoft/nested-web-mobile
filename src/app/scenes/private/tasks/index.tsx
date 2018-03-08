@@ -19,8 +19,7 @@ import ArrayUntiles from '  ../../../services/utils/array';
 import {Button, message} from 'antd';
 import {hashHistory} from 'react-router';
 import {Loading} from '  ../../../components/Loading/index';
-import TaskOverDueView from './components/list/overdueItem/index';
-import TaskCandidateView from './components/list/candidateItem/index';
+// import TaskCandidateView from './components/list/candidateItem/index';
 import TaskUpcomingView from './components/list/upcomingItem/index';
 
 const style = require('./task.css');
@@ -371,8 +370,7 @@ class Tasks extends React.Component<IProps, IState> {
         params.before = this.state.tasks[this.state.tasks.length - 1].timestamp;
       }
     }
-
-    if (this.state.route.indexOf('assigned_to_me')) {
+    if (this.state.route.indexOf('assigned_to_me') > -1) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -381,7 +379,7 @@ class Tasks extends React.Component<IProps, IState> {
         statusFilter.push(C_TASK_STATUS.HOLD);
         statusFilter.push(C_TASK_STATUS.OVERDUE);
       }
-    } else if (this.state.route.indexOf('created_by_me')) {
+    } else if (this.state.route.indexOf('created_by_me') > -1) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -393,7 +391,7 @@ class Tasks extends React.Component<IProps, IState> {
         statusFilter.push(C_TASK_STATUS.HOLD);
         statusFilter.push(C_TASK_STATUS.OVERDUE);
       }
-    } else if (this.state.route.indexOf('watchlist')) {
+    } else if (this.state.route.indexOf('watchlist') > -1) {
       if (completedResult) {
         statusFilter.push(C_TASK_STATUS.COMPLETED);
         statusFilter.push(C_TASK_STATUS.FAILED);
@@ -406,10 +404,9 @@ class Tasks extends React.Component<IProps, IState> {
         statusFilter.push(C_TASK_STATUS.OVERDUE);
       }
     }
-
     params.status_filter = statusFilter.join(',');
 
-    params.limit = 80;
+    params.limit = 100;
     this.taskApi.getByFilter(params)
       .then((response: IGetTasksResponse) => {
         // if length of received post is less than limit, set `reachedTheEnd` as true
@@ -424,9 +421,7 @@ class Tasks extends React.Component<IProps, IState> {
          * @type {IPost[]}
          */
         const tasks = ArrayUntiles.uniqueObjects(response.tasks.concat(this.state.tasks), '_id')
-          .sort((a: ITask, b: ITask) => {
-            return b.timestamp - a.timestamp;
-          });
+          .sort((a: ITask, b: ITask) => b.timestamp - a.timestamp);
         // store current state post and route in redux store, if `fromNow` was true
         if (fromNow === true) {
           const tasksObj = {};
@@ -603,7 +598,7 @@ class Tasks extends React.Component<IProps, IState> {
       };
     } else if (this.state.route === 'created_by_me') {
       leftItem = {
-        name: <span><b>Created to Me'</b></span>,
+        name: <span><b>Created to Me</b></span>,
         type: 'title',
         menu: [
           {
@@ -623,7 +618,7 @@ class Tasks extends React.Component<IProps, IState> {
       };
     } else if (this.state.route === 'created_by_me_completed') {
       leftItem = {
-        name: <span><b>Created to Me'</b> Completed</span>,
+        name: <span><b>Created to Me</b> Completed</span>,
         type: 'title',
         menu: [
           {
@@ -713,20 +708,22 @@ class Tasks extends React.Component<IProps, IState> {
           {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
           {showOverDue && this.state.overDueTasks.map((task: ITask) => (
             <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskOverDueView task={task} />
+              <TaskUpcomingView task={task} />
             </div>
           ))}
           {showCandidate && <h3 className={style.pending}>You’ve been Candidated to do this…</h3>}
           {showCandidate && this.state.candidateTasks.map((task: ITask) => (
             <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskCandidateView task={task} />
+              <TaskUpcomingView task={task} />
             </div>
           ))}
           {/* after Loading component render posts list */}
           {this.state.route === 'glance' && <h3>Upcomings</h3>}
           {this.state.tasks.map((task: ITask) => (
             <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskUpcomingView task={task} />
+              <TaskUpcomingView task={task} withDetails={this.state.route !== 'glance'}
+                from={this.state.route !== 'created_by_me' && this.state.route !== 'created_by_me_completed'}
+                to={this.state.route !== 'assigned_to_me' && this.state.route !== 'assigned_to_me_completed'}/>
             </div>
           ))}
           {/* rendering Loading component in  `loadingBefore` case */}

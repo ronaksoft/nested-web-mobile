@@ -1,3 +1,7 @@
+.fill {
+  flex: 1!important;
+  margin-top: 0!important;
+}
 .taskItem {
   display: flex;
   flex-direction: column;
@@ -8,9 +12,9 @@
   width: 100%;
 }
 .taskItemInner > div:first-child {
-  padding: 16px;
-  width: 64px;
-  height: 64px;
+  padding: 12px;
+  width: 56px;
+  height: 56px;
   flex: none;
   display: flex;
 }
@@ -27,7 +31,7 @@
 }
 .taskHead h4{
   display: flex;
-  line-height: 22px;
+  line-height: 23px;
   font-size: 16px;
   font-weight: bold;
   flex: 1;
@@ -35,22 +39,52 @@
 .taskHead span{
   opacity: 0.8;
   font-size: 12px;
+  line-height: 24px;
   display: flex;
   flex: none;
   white-space: nowrap;
 }
+
 .taskDetail {
   margin-top: 8px;
   font-size: 12px;
   line-height: 17px;
   opacity: 0.64;
 }
+.taskExtra {
+  font-size: 12px;
+  line-height: 17px;
+  opacity: 0.64;
+  display: flex;
+}
+.taskExtra > * {
+  margin-top: 12px;
+  margin-right: 16px;
+}
+.taskExtra svg {
+  opacity: 0.4;
+}
+.taskExtra > div {
+  display: flex;
+  flex: none;
+}
+.taskExtra > div:last-child {
+  margin-right: 0px;
+}
+.taskExtra > div span{
+  display: flex;
+  flex: none;
+  margin-right: 4px;
+  opacity: 0.8;
+  font-size: 12px;
+}
 /*  */
 .overDueItem .taskContent{
   border-bottom: 1px solid rgba(255, 51, 68, .08);
 }
 .overDueItem .taskHead h4,
-.overDueItem .taskHead span{
+.overDueItem .taskHead span,
+.overDueItem .taskDetail{
   color: rgba(255, 51, 68, 1);
 }
 
@@ -59,6 +93,12 @@
   box-shadow: 0px 8px 16px rgba(50, 61, 71, 0.32);
   margin-bottom: 24px;
 }
+.candidateItem .taskDetail {
+  color: #0079F2;
+  font-weight: bold;
+  opacity: 1;
+}
+
 .candidateItem .taskContent{
   border-bottom: none;
 }
@@ -107,4 +147,22 @@
 .completedItem .taskItemInner {
   background-image: url("../../../../../assets/icons/horizontal_stripes_solid.png");
   background-repeat: repeat;
+}
+
+
+.completedItem .taskHead h4 {
+  font-size: 16px;
+  opacity: 0.8;
+  text-decoration: line-through;
+  text-decoration-line: strikethrough;
+}
+
+.rejectedItem .taskItemInner > div:first-child svg {
+  fill: #F2C230;
+}
+
+.rejectedItem .taskDetail {
+  color: #F2C230;
+  font-weight: bold;
+  opacity: 1;
 }
