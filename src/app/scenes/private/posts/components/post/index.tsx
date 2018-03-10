@@ -606,16 +606,16 @@ class Post extends React.Component<IProps, IState> {
                 {post.post_places.map((place: IPlace, index: number) => {
                   if (index < 2) {
                     return (
-                      <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
+                      <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
                         {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       </span>
                     );
                   }
                 })}
                 {post.post_recipients &&
-                post.post_recipients.map((email: any) => {
+                post.post_recipients.map((email: string, index: number) => {
                   return (
-                    <span key={email + 'em'}>
+                    <span key={email + 'em' + index}>
                       {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
                   );

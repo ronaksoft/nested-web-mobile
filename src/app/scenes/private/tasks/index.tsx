@@ -691,7 +691,7 @@ class Tasks extends React.Component<IProps, IState> {
   public render() {
     const loadMore = this.getTasks.bind(this);
     const leftItem = this.getLeftItemMenu();
-    if (this.scrollWrapper) {
+    if (this.scrollWrapper && this.scrollWrapper.scrollTop === 0) {
       this.scrollWrapper.scrollTop += 1;
     }
     const showOverDue = this.state.route === 'glance' && this.state.overDueTasks.length > 0;
