@@ -615,7 +615,7 @@ class Post extends React.Component<IProps, IState> {
                 {post.post_recipients &&
                 post.post_recipients.map((email: any) => {
                   return (
-                    <span key={email}>
+                    <span key={email + 'em'}>
                       {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
                   );
