@@ -9,6 +9,7 @@ export {AddLabel} from './labels/';
 export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
 
+import InfiniteScroll from './scroll/infinite-scroll';
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
 import PlaceName from './PlaceName';
@@ -16,4 +17,4 @@ import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
 
 export {UserAvatar, FullName, PlaceName,
-    PlaceItem, RTLDetector};
+    PlaceItem, RTLDetector, InfiniteScroll};

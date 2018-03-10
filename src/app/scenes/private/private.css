@@ -100,7 +100,7 @@ svg {
 }
 .postsArea {
   height: calc(100% - 56px);
-  overflow: auto;
+  overflow: hidden;
 }
 .tasksArea {
   height: calc(100% - 56px);

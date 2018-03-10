@@ -431,7 +431,6 @@ class Tasks extends React.Component<IProps, IState> {
         }
 
         this.setState({
-          tasks,
           loadingBefore: false,
           loadingAfter: false,
         });
@@ -500,7 +499,6 @@ class Tasks extends React.Component<IProps, IState> {
         }
 
         this.setState({
-          tasks,
           loadingBefore: false,
           loadingAfter: false,
         });

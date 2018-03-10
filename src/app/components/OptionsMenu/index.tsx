@@ -120,13 +120,13 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
   private touchMove = (e: any) => {
     e = e || window.event;
-    e.returnValue = false;
-    e.cancelBubble = true;
-    if (e.preventDefault) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    return false;
+    // e.returnValue = false;
+    // e.cancelBubble = true;
+    // if (e.preventDefault) {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    // }
+    // return false;
   }
 
   /**

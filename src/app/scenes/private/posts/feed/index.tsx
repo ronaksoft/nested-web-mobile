@@ -8,7 +8,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
-import {OptionsMenu} from 'components';
+import {OptionsMenu, InfiniteScroll, Loading} from 'components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../../api/post/index';
@@ -24,7 +24,6 @@ import IActivity from '../../../../api/activity/interfaces/IActivitiy';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 import AccountApi from '../../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';
-import {Loading} from '../../../../components/Loading/index';
 
 const style = require('../posts.css');
 const privateStyle = require('../../private.css');
@@ -195,43 +194,6 @@ class Feed extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    if ( this.scrollWrapper ) {
-      if (isSafari) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
     /**
      * define the Post Api
      */
@@ -332,7 +294,6 @@ class Feed extends React.Component<IProps, IState> {
    * @private
    */
   private getPost(fromNow?: boolean, after?: number) {
-
     let params: IPostsListRequest;
     if (fromNow === true) {
       params = {
@@ -390,13 +351,10 @@ class Feed extends React.Component<IProps, IState> {
             return b.timestamp - a.timestamp;
           });
         // store current state post and route in redux store, if `fromNow` was true
-        if (fromNow === true) {
           this.props.setPosts(posts);
           this.props.setPostsRoute(this.props.location.pathname);
-        }
 
         this.setState({
-          posts,
           loadingBefore: false,
           loadingAfter: false,
         });
@@ -439,18 +397,10 @@ class Feed extends React.Component<IProps, IState> {
     };
   }
 
-  /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Feed
-   */
-  private scrollWrapper: HTMLDivElement;
-
-  private refHandler = (value) => {
-    this.scrollWrapper = value;
+  private refresh = () => {
+    this.getPost(true);
   }
+
   /**
    * @function gotoPost
    * @desc Go to pst route by its `post_id`
@@ -511,10 +461,10 @@ class Feed extends React.Component<IProps, IState> {
       },
     ];
 
-    if (this.scrollWrapper) {
-      this.scrollWrapper.scrollTop += 1;
-    }
-
+    const doms = this.state.posts.map((post: IPost) => (
+      <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+        <Post post={post}/>
+      </div>));
     return (
       <div className={style.container}>
         {/* rendering NewBadge component in receiving new post case */}
@@ -523,7 +473,7 @@ class Feed extends React.Component<IProps, IState> {
                   count={this.state.newPostCount}
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <div className={privateStyle.postsArea} ref={this.refHandler}>
+        <div className={privateStyle.postsArea} style={{display: 'none'}}>
           {/* rendering Loading component in  `loadingAfter` case */}
           <Loading active={this.state.loadingAfter}/>
           {this.state.loadingAfter &&
@@ -562,6 +512,21 @@ class Feed extends React.Component<IProps, IState> {
             </div>
           )}
           <div className={privateStyle.bottomSpace}/>
+        </div>
+        <div className={privateStyle.postsArea}>
+          {this.state.posts.length > 0 && (
+            <InfiniteScroll
+              pullDownToRefresh={true}
+              pullDownToRefreshContent={<h3 style={{textAlign: 'center'}}>&#8595; Pull down to refresh</h3>}
+              releaseToRefreshContent={<h3 style={{textAlign: 'center'}}>&#8593; Release to refresh</h3>}
+              refreshFunction={this.refresh}
+              next={loadMore}
+              height={700}
+              hasMore={true}
+              loader={<Loading active={this.state.loadingAfter}/>}>
+                {doms}
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     );

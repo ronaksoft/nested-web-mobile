@@ -349,6 +349,10 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     this.unListenChangeRoute();
+    document.removeEventListener('scroll', this.scrollPreventer);
+    document.removeEventListener('touchmove', this.scrollPreventer);
+    document.body.removeEventListener('scroll', this.scrollPreventer);
+    document.body.removeEventListener('touchmove', this.scrollPreventer);
   }
 
   /**
