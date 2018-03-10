@@ -72,9 +72,9 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
    * @memberof OptionsMenu
    */
   public openPopUp = (wrapper: string) => {
-    if (this.props.leftItem.menu.length === 0) {
-      return;
-    }
+    // if (this.props.leftItem.menu.length === 0) {
+    //   return;
+    // }
     const key = wrapper + 'Popup';
     let state;
     state = {
