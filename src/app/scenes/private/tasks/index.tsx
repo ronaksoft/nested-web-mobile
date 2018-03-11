@@ -699,7 +699,7 @@ class Tasks extends React.Component<IProps, IState> {
         <OptionsMenu leftItem={leftItem} rightItems={[]}/>
         <div className={[privateStyle.tasksArea, style.tasksList].join(' ')} ref={this.refHandler}>
           {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter}/>
+          <Loading active={this.state.loadingAfter} position="absolute"/>
           {this.state.loadingAfter &&
             <div>Loading new posts...</div>
           }
@@ -725,7 +725,7 @@ class Tasks extends React.Component<IProps, IState> {
             </div>
           ))}
           {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore}/>
+          <Loading active={this.state.loadingBefore} position="absolute"/>
           {/* rendering following text when there is no post in Feed */}
           {
             !this.state.reachedTheEnd &&

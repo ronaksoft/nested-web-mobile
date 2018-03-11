@@ -13,6 +13,9 @@ const style = require('./loading.css');
 
 interface IProps {
   active: boolean;
+  size?: string;
+  color?: string;
+  position?: string;
 }
 
 interface IState {
@@ -69,18 +72,15 @@ class Loading extends React.Component<IProps, IState> {
    * @memberof Loading
    */
   public render() {
+    const {size, position, color} = this.props;
     return (
       <div>
         {/* chck the visibility condition for rendering */}
         { this.state.active && (
-          <div className={style.loading}>
-            {/* animated cicles in circular path */}
-            <div className={style.animation}><div className={style.one}/></div>
-            <div className={style.animation}><div className={style.two}/></div>
-            <div className={style.animation}><div className={style.three}/></div>
-            <div className={style.animation}><div className={style.four}/></div>
-            <div className={style.animation}><div className={style.five}/></div>
-          </div>
+          <div className={style.nstLoading + ' '
+            + (size ? style[size] : '') + ' '
+            + (position ? style[position] : '') + ' '
+            + (color ? style[color] : '')}/>
         )}
       </div>
     );

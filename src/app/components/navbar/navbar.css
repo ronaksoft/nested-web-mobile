@@ -60,7 +60,7 @@
   -webkit-tap-highlight-color: transparent;
   flex-direction: column;
   transition: all .2s;
-  touch-action: none;
+  touch-action: manipulation;
 }
 .appSwitcher.active {
   transition: all .2s;

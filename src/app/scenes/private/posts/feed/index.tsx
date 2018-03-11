@@ -521,9 +521,9 @@ class Feed extends React.Component<IProps, IState> {
               releaseToRefreshContent={<h3 style={{textAlign: 'center'}}>&#8593; Release to refresh</h3>}
               refreshFunction={this.refresh}
               next={loadMore}
-              height={700}
+              route={this.props.location.pathname}
               hasMore={true}
-              loader={<Loading active={this.state.loadingAfter}/>}>
+              loader={<Loading active={true} position="absolute"/>}>
                 {doms}
             </InfiniteScroll>
           )}

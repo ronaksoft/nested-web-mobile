@@ -53,13 +53,16 @@ body {
   position: auto;
   touch-action: none;
   -webkit-overflow-scrolling: none;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-y: none;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 html {
   position: relative;
   overflow: hidden;
   -webkit-overflow-scrolling: none;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-y: none;
 }
 h1, h2, h3, h4, h5, h6, body {
   color: rgba(50, 61, 71, 1);
@@ -70,9 +73,7 @@ svg {
 .container {
   /* padding-top: 56px; */
   height: 100vh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: auto;
+  overflow: hidden;
   /* left: 0;
   top: 0;
   right: 0;

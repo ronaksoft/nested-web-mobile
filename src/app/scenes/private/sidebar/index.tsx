@@ -15,7 +15,7 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
 import {sortBy} from 'lodash';
-import {SidebarItem, IcoN} from 'components';
+import {SidebarItem, IcoN, Loading} from 'components';
 
 import PlaceApi from '../../../api/place/index';
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
@@ -68,6 +68,7 @@ interface ISidebarState {
   places?: ISidebarPlace[];
   placesConjuction?: any; // TODO Define interface
   sidebarPlacesUnreads?: IUnreadPlace;
+  loading: boolean;
 }
 
 /**
@@ -110,6 +111,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     this.state = {
       places: [],
+      loading: true,
       sidebarPlacesUnreads: {
         placesUnreadCounts: {},
         placesUnreadChildrens: {},
@@ -284,6 +286,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     if (this.props.sidebarPlaces.length > 0 && !this.props.openPlace.placeId) {
       this.setState({
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
+        loading: false,
       }, () => {
 
         /**
@@ -424,6 +427,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           /** set `places` State value to `placesConjuctions` for view rendering */
           this.setState({
             places: placesConjuctions,
+            loading: false,
           }, () => {
             const filteredItem = placesConjuctions.filter( (item) => {
               return  this.props.openPlace.placeId === item.id;
@@ -572,6 +576,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             </li>
           </ul>
           <ul className={style.places}>
+            <Loading active={this.state.loading} position="absolute" color="white"/>
             {placeDoms}
           </ul>
           <hr className={style.hrDark}/>

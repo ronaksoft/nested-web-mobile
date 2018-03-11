@@ -58,6 +58,10 @@ export const APP_POSTS_ROUTE_UNSET: string = 'APP/POSTS_ROUTE_UNSET';
 export const APP_CURRENT_POST_SET: string = 'APP/CURRENT_POST_SET';
 export const APP_CURRENT_POST_UNSET: string = 'APP/CURRENT_POST_UNSET';
 
+/** SCROLL POSITIONS ACTION */
+export const APP_SCROLL_POSITION_SET: string = 'APP/SCROLL_SET';
+export const APP_SCROLL_POSITION_UNSET: string = 'APP/SCROLL_UNSET';
+
 /** TASKS ACTION */
 export const APP_TASKS_SET: string = 'APP/TASKS_SET';
 export const APP_TASKS_UNSET: string = 'APP/TASKS_UNSET';

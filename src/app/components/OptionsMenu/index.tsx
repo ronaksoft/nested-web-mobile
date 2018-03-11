@@ -72,9 +72,9 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
    * @memberof OptionsMenu
    */
   public openPopUp = (wrapper: string) => {
-    // if (this.props.leftItem.menu.length === 0) {
-    //   return;
-    // }
+    if (this.props.leftItem.menu.length === 0 && this.props.rightItems.length === 0) {
+      return;
+    }
     const key = wrapper + 'Popup';
     let state;
     state = {
@@ -118,8 +118,8 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     ),
   )
 
-  private touchMove = (e: any) => {
-    e = e || window.event;
+  // private touchMove = (e: any) => {
+    // e = e || window.event;
     // e.returnValue = false;
     // e.cancelBubble = true;
     // if (e.preventDefault) {
@@ -127,7 +127,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     //     e.stopPropagation();
     // }
     // return false;
-  }
+  // }
 
   /**
    * Creats the right icon and popover elemnts
@@ -211,7 +211,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     // Get right menu items with show condition
     const rightMenu = this.renderRightMenus();
     return (
-      <div className={style.container} onTouchMove={this.touchMove}>
+      <div className={style.container}>
         {/*  always visible area contains icons element */}
         <div className={style.visible}>
           <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}

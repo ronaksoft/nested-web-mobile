@@ -1,4 +1,7 @@
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {setScroll, unsetScroll} from '../../redux/app/actions/index';
+
 import {throttle} from 'lodash';
 interface IState {
     showLoader: boolean;
@@ -7,14 +10,17 @@ interface IState {
     pullToRefreshThresholdBreached: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
+    scrollPositions: any;
     pullDownToRefreshThreshold: number;
     disableBrowserPullToRefresh: boolean;
 };
-interface IProps {
+
+interface IOwnProps {
     next?: () => void;
     hasMore?: boolean;
     children?: any;
     loader: any;
+    route?: string;
     scrollThreshold?: number;
     initialScrollY?: number;
     endMessage?: any;
@@ -28,9 +34,33 @@ interface IProps {
     pullDownToRefreshThreshold?: number;
     refreshFunction?: () => void;
     onScroll?: (evt: Event) => void;
+}
+
+interface IProps {
+    next: () => void;
+    hasMore: boolean;
+    children: any;
+    loader: any;
+    route: string;
+    scrollThreshold: number;
+    initialScrollY: number;
+    endMessage: any;
+    style: any;
+    height: number;
+    scrollableTarget: any;
+    hasChildren: boolean;
+    pullDownToRefresh: boolean;
+    pullDownToRefreshContent: any;
+    releaseToRefreshContent: any;
+    pullDownToRefreshThreshold: number;
+    refreshFunction: () => void;
+    onScroll: (evt: Event) => void;
+    setScroll: (scroll: any) => {};
+    unsetScroll: () => {};
+    scrollPositions: any;
 };
 
-export default class InfiniteScroll extends React.Component<IProps, IState> {
+class InfiniteScroll extends React.Component<IProps, IState> {
     public startY: number;
     public currentY: number;
     public dragging: boolean;
@@ -43,14 +73,15 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     constructor(props) {
         super();
         this.state = {
-        showLoader: false,
-        lastScrollTop: 0,
-        actionTriggered: false,
-        pullToRefreshThresholdBreached: false,
-        pullDownToRefreshContent: props.pullDownToRefreshContent || <h3>Pull down to refresh</h3>,
-        releaseToRefreshContent: props.releaseToRefreshContent || <h3>Release to refresh</h3>,
-        pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 100,
-        disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
+            showLoader: false,
+            scrollPositions: {},
+            lastScrollTop: 0,
+            actionTriggered: false,
+            pullToRefreshThresholdBreached: false,
+            pullDownToRefreshContent: props.pullDownToRefreshContent || <h3>Pull down to refresh</h3>,
+            releaseToRefreshContent: props.releaseToRefreshContent || <h3>Release to refresh</h3>,
+            pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 260,
+            disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
         };
         // variables to keep track of pull down behaviour
         this.startY = 0;
@@ -68,13 +99,13 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-    this.el = this.props.height ? this.infScroll : this.props.scrollableTarget || window;
+    this.el = this.infScroll || window;
+    console.log(this.el, this.el.parentElement.scrollHeight);
     this.el.addEventListener('scroll', this.throttledOnScrollListener);
 
-    if (
-      typeof this.props.initialScrollY === 'number' &&
-      this.el.scrollHeight > this.props.initialScrollY
-    ) {
+    if (this.props.route && this.props.scrollPositions[this.props.route]) {
+      this.el.scrollTo(0, this.props.scrollPositions[this.props.route]);
+    } else if (this.el.scrollHeight > this.props.initialScrollY) {
       this.el.scrollTo(0, this.props.initialScrollY);
     }
 
@@ -115,12 +146,13 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     }
   }
 
-  public componentWillReceiveProps() {
+  public componentWillReceiveProps(props) {
     // new data was sent in
     this.setState({
       showLoader: false,
       actionTriggered: false,
       pullToRefreshThresholdBreached: false,
+      scrollPositions: props.scrollPositions,
     });
   }
 
@@ -205,7 +237,6 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
   public isElementAtBottom(target, scrollThreshold = 0.8) {
     const clientHeight = (target === document.body || target === document.documentElement)
     ? window.screen.availHeight : target.clientHeight;
-
     const scrolled = scrollThreshold * (target.scrollHeight - target.scrollTop);
     return scrolled <= clientHeight;
   }
@@ -217,9 +248,10 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
       setTimeout(() => this.props.onScroll(event), 0);
     }
 
-    const target = this.props.height || this.props.scrollableTarget
-      ? event.target
-      : (document.documentElement.scrollTop ? document.documentElement : document.body);
+    // const target = this.props.height || this.props.scrollableTarget
+    //   ? event.target
+    //   : (document.documentElement.scrollTop ? document.documentElement : document.body);
+    const target = event.target;
     event.stopImmediatePropagation();
     event.cancelBubble = true;
     event.stopPropagation();
@@ -229,6 +261,12 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
         target.scrollTop -= 1;
     }
     event.returnValue = true;
+    // save scroll in redux
+    if (typeof this.props.setScroll === 'function') {
+        const payload = {};
+        payload[this.props.route] = target.scrollTop;
+        this.props.setScroll(payload);
+    }
     // if user scrolls up, remove action trigger lock
     if (target.scrollTop < this.state.lastScrollTop) {
       this.setState({
@@ -245,7 +283,6 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     }
 
     const atBottom = this.isElementAtBottom(target, this.props.scrollThreshold);
-
     // call the `next` function in the props to trigger the next data fetch
     if (atBottom && this.props.hasMore) {
       this.props.next();
@@ -268,8 +305,10 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
         this.infScroll.scrollTop += 1;
       }
     const style = {
-      height: this.props.height || 'auto',
-      overflow: 'auto',
+      height: this.props.height || (this.el && this.el.parentElement.clientHeight) || '700px',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      touchAction: 'auto',
       WebkitOverflowScrolling: 'touch',
       ...this.props.style,
     };
@@ -278,7 +317,7 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     // because heighted infiniteScroll visualy breaks
     // on drag down as overflow becomes visible
     return (
-      <div style={{overflow: 'auto', height: '100%'}}>
+      <div style={{overflow: 'hidden', height: '100%'}}>
         <div
           className="infinite-scroll-component"
           ref={this.infScrollHandler}
@@ -312,3 +351,46 @@ export default class InfiniteScroll extends React.Component<IProps, IState> {
     );
   }
 }
+
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store, ownProps: IOwnProps) => ({
+    scrollPositions: store.app.scrollPositions,
+    route: ownProps.route,
+    next: ownProps.next,
+    hasMore: ownProps.hasMore,
+    children: ownProps.children,
+    loader: ownProps.loader,
+    scrollThreshold: ownProps.scrollThreshold,
+    initialScrollY: ownProps.initialScrollY,
+    endMessage: ownProps.endMessage,
+    style: ownProps.style,
+    height: ownProps.height,
+    scrollableTarget: ownProps.scrollableTarget,
+    hasChildren: ownProps.hasChildren,
+    pullDownToRefresh: ownProps.pullDownToRefresh,
+    pullDownToRefreshContent: ownProps.pullDownToRefreshContent,
+    releaseToRefreshContent: ownProps.releaseToRefreshContent,
+    pullDownToRefreshThreshold: ownProps.pullDownToRefreshThreshold,
+    refreshFunction: ownProps.refreshFunction,
+    onScroll: ownProps.onScroll,
+});
+
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
+const mapDispatchToProps = (dispatch) => {
+    return {
+      setScroll: (scroll: any) => {
+        dispatch(setScroll(scroll));
+      },
+      unsetScroll: () => {
+        dispatch(unsetScroll());
+      },
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(InfiniteScroll);

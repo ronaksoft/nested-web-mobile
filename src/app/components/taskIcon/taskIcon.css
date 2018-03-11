@@ -7,8 +7,8 @@
 }
 .taskProgressIcon .progress svg {
   position: absolute;
-  top: 23px;
-  right: 23px;
+  top: 19px;
+  right: 19px;
   height: 18px;
   width: 18px;
   transform: rotate(-90deg);

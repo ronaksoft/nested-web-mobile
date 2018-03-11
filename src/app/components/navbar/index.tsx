@@ -130,7 +130,6 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         state.lastPostRoute = thisPath;
       }
       this.setState(state, () => {
-        // console.log(this.state, this.state.postsApp, this.state.lastTaskRoute, this.state.lastPostRoute);
         if (this.state.isMounted) {
           this.props.changeApp(state.postsApp);
           if (!this.state.postsApp) {
@@ -142,12 +141,13 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
       });
     } else {
       if (this.state.isMounted) {
-        if (!this.state.postsApp) {
-          hashHistory.push(this.state.lastTaskRoute);
-        } else {
-          hashHistory.push(this.state.lastPostRoute);
-        }
-        this.setState(state);
+        this.setState(state, () => {
+          if (!this.state.postsApp) {
+            hashHistory.push(this.state.lastTaskRoute);
+          } else {
+            hashHistory.push(this.state.lastPostRoute);
+          }
+        });
       }
     }
   }

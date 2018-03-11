@@ -102,6 +102,19 @@ export function unsetCurrentPost(): IAppAction {
   };
 }
 
+export function setScroll(payload: any): IAppAction {
+  return {
+    type: ActionTypes.APP_SCROLL_POSITION_SET,
+    payload,
+  };
+}
+
+export function unsetScroll(): IAppAction {
+  return {
+    type: ActionTypes.APP_SCROLL_POSITION_UNSET,
+  };
+}
+
 export function setTasks(payload: any | ITask[]): IAppAction {
   return {
     type: ActionTypes.APP_TASKS_SET,

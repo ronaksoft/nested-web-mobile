@@ -3,7 +3,7 @@ import {IAppAction} from '../IAppStore';
 import * as ActionTypes from '../actions/types';
 
 /** Initial Places State */
-const initialState = Immutable.from<IAppStore>({
+const initialState = Immutable.from<IAppAction>({
   isSocketConnect: false,
   sidebarUnreadPlaces: null,
   isLogin: false,
@@ -15,6 +15,7 @@ const initialState = Immutable.from<IAppStore>({
   tasks: [],
   sidebarPlaces: [],
   currentPost: null,
+  scrollPositions: {},
 });
 
 export default function appReducer(state = initialState, action?: IAppAction) {
@@ -144,6 +145,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
     case ActionTypes.APP_DRAFT_UNSET:
       return Immutable.merge(state, {
         draft: null,
+      });
+
+    case ActionTypes.APP_SCROLL_POSITION_SET:
+      return Immutable.merge(state, {
+        scrollPositions: Immutable.merge(state.scrollPositions, action.payload),
+      });
+
+    case ActionTypes.APP_SCROLL_POSITION_UNSET:
+      return Immutable.merge(state, {
+        scrollPositions: {},
       });
 
     default :
