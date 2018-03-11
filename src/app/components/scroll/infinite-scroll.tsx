@@ -165,9 +165,8 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onStart(evt: any) {
-    console.log('onStart', 'InfiniteScroll');
     if (this.infScroll.scrollTop === 0) {
-        this.infScroll.scrollTop = 1;
+      this.infScroll.scrollTop = 1;
     } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
         this.infScroll.scrollTop -= 1;
     }
@@ -188,10 +187,12 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onMove(evt: any) {
-    console.log('onMove', 'InfiniteScroll', evt.target);
     evt.stopImmediatePropagation();
     evt.cancelBubble = true;
     evt.stopPropagation();
+    if (this.infScroll.scrollTop === 0) {
+      evt.preventDefault();
+    }
     if (!this.dragging) {
         return;
     }
@@ -222,7 +223,6 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onEnd(evt: any) {
-    console.log('onEnd', 'InfiniteScroll');
     if (this.infScroll.scrollTop === 0) {
         this.infScroll.scrollTop = 1;
     } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
@@ -315,10 +315,13 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public render() {
-
-    if (this.infScroll && this.infScroll.scrollTop === 0) {
-        this.infScroll.scrollTop += 1;
+    if (this.infScroll) {
+      if (this.infScroll.scrollTop === 0) {
+          this.infScroll.scrollTop = 1;
+      } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
+          this.infScroll.scrollTop -= 1;
       }
+    }
     const style = {
       height: this.props.height || (this.el && this.el.parentElement.clientHeight) || '700px',
       overflowY: 'auto',
