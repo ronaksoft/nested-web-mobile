@@ -80,7 +80,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
             pullToRefreshThresholdBreached: false,
             pullDownToRefreshContent: props.pullDownToRefreshContent || <h3>Pull down to refresh</h3>,
             releaseToRefreshContent: props.releaseToRefreshContent || <h3>Release to refresh</h3>,
-            pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 260,
+            pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
             disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
         };
         // variables to keep track of pull down behaviour
@@ -100,49 +100,57 @@ class InfiniteScroll extends React.Component<IProps, IState> {
 
     public componentDidMount() {
     this.el = this.infScroll || window;
-    console.log(this.el, this.el.parentElement.scrollHeight);
-    this.el.addEventListener('scroll', this.throttledOnScrollListener);
+    this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
 
     if (this.props.route && this.props.scrollPositions[this.props.route]) {
       this.el.scrollTo(0, this.props.scrollPositions[this.props.route]);
     } else if (this.el.scrollHeight > this.props.initialScrollY) {
       this.el.scrollTo(0, this.props.initialScrollY);
     }
-
     if (this.props.pullDownToRefresh) {
-      this.el.addEventListener('touchstart', this.onStart);
-      this.el.addEventListener('touchmove', this.onMove);
-      this.el.addEventListener('touchend', this.onEnd);
+        if ('PointerEvent' in window) {
+            this.el.addEventListener('pointerdown', this.onStart, false);
+            this.el.addEventListener('pointermove', this.onMove, false);
+            this.el.addEventListener('pointerup', this.onEnd, false);
+            this.el.addEventListener('pointercancel', this.onEnd, false);
+        } else {
+            this.el.addEventListener('touchstart', this.onStart, false);
+            this.el.addEventListener('touchmove', this.onMove, false);
+            this.el.addEventListener('touchend', this.onEnd, false);
+            this.el.addEventListener('mousedown', this.onStart, false);
+            this.el.addEventListener('mousemove', this.onMove, false);
+            this.el.addEventListener('mouseup', this.onEnd, false);
+        }
+        // get BCR of pullDown element to position it above
+        this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
+        this.forceUpdate();
 
-      this.el.addEventListener('mousedown', this.onStart);
-      this.el.addEventListener('mousemove', this.onMove);
-      this.el.addEventListener('mouseup', this.onEnd);
-
-      // get BCR of pullDown element to position it above
-      this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
-      this.forceUpdate();
-
-      if (typeof this.props.refreshFunction !== 'function') {
-        throw new Error(
-          `Mandatory prop "refreshFunction" missing.
-          Pull Down To Refresh functionality will not work
-          as expected. Check README.md for usage'`,
-        );
-      }
+        if (typeof this.props.refreshFunction !== 'function') {
+          throw new Error(
+            `Mandatory prop "refreshFunction" missing.
+            Pull Down To Refresh functionality will not work
+            as expected. Check README.md for usage'`,
+          );
+        }
     }
   }
 
   public componentWillUnmount() {
     this.el.removeEventListener('scroll', this.throttledOnScrollListener);
-
     if (this.props.pullDownToRefresh) {
-      this.el.removeEventListener('touchstart', this.onStart);
-      this.el.removeEventListener('touchmove', this.onMove);
-      this.el.removeEventListener('touchend', this.onEnd);
-
-      this.el.removeEventListener('mousedown', this.onStart);
-      this.el.removeEventListener('mousemove', this.onMove);
-      this.el.removeEventListener('mouseup', this.onEnd);
+        if ('PointerEvent' in window) {
+            this.el.removeEventListener('pointerdown', this.onStart);
+            this.el.removeEventListener('pointermove', this.onMove);
+            this.el.removeEventListener('pointerup', this.onEnd);
+            this.el.removeEventListener('pointercancel', this.onEnd);
+        } else {
+            this.el.removeEventListener('touchstart', this.onStart);
+            this.el.removeEventListener('touchmove', this.onMove);
+            this.el.removeEventListener('touchend', this.onEnd);
+            this.el.removeEventListener('mousedown', this.onStart);
+            this.el.removeEventListener('mousemove', this.onMove);
+            this.el.removeEventListener('mouseup', this.onEnd);
+        }
     }
   }
 
@@ -157,6 +165,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onStart(evt: any) {
+    console.log('onStart', 'InfiniteScroll');
     if (this.infScroll.scrollTop === 0) {
         this.infScroll.scrollTop = 1;
     } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
@@ -179,6 +188,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onMove(evt: any) {
+    console.log('onMove', 'InfiniteScroll', evt.target);
     evt.stopImmediatePropagation();
     evt.cancelBubble = true;
     evt.stopPropagation();
@@ -195,6 +205,10 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       this.setState({
         pullToRefreshThresholdBreached: true,
       });
+    } else {
+        this.setState({
+            pullToRefreshThresholdBreached: false,
+        });
     }
 
     // so you can drag upto 1.5 times of the maxPullDownDistance
@@ -208,6 +222,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onEnd(evt: any) {
+    console.log('onEnd', 'InfiniteScroll');
     if (this.infScroll.scrollTop === 0) {
         this.infScroll.scrollTop = 1;
     } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
