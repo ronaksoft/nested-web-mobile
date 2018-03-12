@@ -50,11 +50,22 @@
   position: absolute;
   top: 50%;
 }
-.nstLoading.absolute.sm {
+.nstLoading.fixed {
+  left: 50%;
+  margin-left: -24px;
+  margin-top: -24px;
+  position: fixed;
+  transform: translate3d(0, 0, 2px);
+  backface-visibility: hidden;
+  top: 50%;
+}
+.nstLoading.absolute.sm,
+.nstLoading.fixed.sm {
   margin-left: -16px;
   margin-top: -16px;
 }
-.nstLoading.absolute.xsm {
+.nstLoading.absolute.xsm,
+.nstLoading.fixed.xsm {
   margin-left: -8px;
   margin-top: -8px;
 }

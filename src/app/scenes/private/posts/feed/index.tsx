@@ -474,19 +474,6 @@ class Feed extends React.Component<IProps, IState> {
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
         <div className={privateStyle.postsArea} style={{display: 'none'}}>
-          {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter}/>
-          {this.state.loadingAfter &&
-            <div>Loading new posts...</div>
-          }
-          {/* after Loading component render posts list */}
-          {this.state.posts.map((post: IPost) => (
-            <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-              <Post post={post}/>
-            </div>))}
-          {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore}/>
-          {/* rendering following text when there is no post in Feed */}
           {
             !this.state.reachedTheEnd &&
             !this.state.loadingAfter &&
@@ -511,7 +498,6 @@ class Feed extends React.Component<IProps, IState> {
               <Button onClick={loadMore}>Load More</Button>
             </div>
           )}
-          <div className={privateStyle.bottomSpace}/>
         </div>
         <div className={privateStyle.postsArea}>
           {this.state.posts.length > 0 && (
@@ -527,8 +513,9 @@ class Feed extends React.Component<IProps, IState> {
               next={loadMore}
               route={this.props.location.pathname}
               hasMore={true}
-              loader={<Loading active={true} position="absolute"/>}>
+              loader={<Loading active={true} position="fixed"/>}>
                 {doms}
+                <div className={privateStyle.bottomSpace}/>
             </InfiniteScroll>
           )}
         </div>

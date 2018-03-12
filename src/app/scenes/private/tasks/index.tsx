@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import {OptionsMenu} from 'components';
+import {OptionsMenu, InfiniteScroll, IcoN} from 'components';
 
 import {connect} from 'react-redux';
 import TaskApi from '  ../../../api/task/index';
@@ -138,43 +138,6 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    if ( this.scrollWrapper ) {
-      if (isSafari) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
     this.taskApi = new TaskApi();
     this.ClientApi = new ClientApi();
     this.getMyFilters();
@@ -515,31 +478,21 @@ class Tasks extends React.Component<IProps, IState> {
    * @returns {{left: number, top: number}}
    * @private
    */
-  // private getOffset(id: string) {
-  //   if (!document.getElementById(id)) {
-  //     return {
-  //       top : 0,
-  //       left : 0,
-  //     };
-  //   }
-  //   const el = document.getElementById(id).getBoundingClientRect();
-  //   return {
-  //     left: el.left + window.scrollX,
-  //     top: el.top + window.scrollY,
-  //   };
-  // }
 
-  /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Feed
-   */
-  private scrollWrapper: HTMLDivElement;
+  private refresh = () => {
+    if (this.state.route.indexOf('filter') > -1) {
+      this.getTasksByCustom(true);
+    } else {
+      this.getTasks(true);
+    }
+  }
 
-  private refHandler = (value) => {
-    this.scrollWrapper = value;
+  private loadMoreTask = () => {
+    if (this.state.route.indexOf('filter') > -1) {
+      this.getTasksByCustom();
+    } else {
+      this.getTasks();
+    }
   }
 
   private gotoTask(task: ITask) {
@@ -687,71 +640,66 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const loadMore = this.getTasks.bind(this);
+    const loadMore = this.loadMoreTask.bind(this);
     const leftItem = this.getLeftItemMenu();
-    if (this.scrollWrapper && this.scrollWrapper.scrollTop === 0) {
-      this.scrollWrapper.scrollTop += 1;
-    }
     const showOverDue = this.state.route === 'glance' && this.state.overDueTasks.length > 0;
     const showCandidate = this.state.route === 'glance' && this.state.candidateTasks.length > 0;
     return (
       <div className={style.tasksContainer}>
         <OptionsMenu leftItem={leftItem} rightItems={[]}/>
-        <div className={[privateStyle.tasksArea, style.tasksList].join(' ')} ref={this.refHandler}>
-          {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter} position="absolute"/>
-          {this.state.loadingAfter &&
-            <div>Loading new posts...</div>
-          }
-          {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
-          {showOverDue && this.state.overDueTasks.map((task: ITask) => (
-            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskUpcomingView task={task} />
-            </div>
-          ))}
-          {showCandidate && <h3 className={style.pending}>You’ve been Candidated to do this…</h3>}
-          {showCandidate && this.state.candidateTasks.map((task: ITask) => (
-            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskUpcomingView task={task} />
-            </div>
-          ))}
-          {/* after Loading component render posts list */}
-          {this.state.route === 'glance' && <h3>Upcomings</h3>}
-          {this.state.tasks.map((task: ITask) => (
-            <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-              <TaskUpcomingView task={task} withDetails={this.state.route !== 'glance'}
-                from={this.state.route !== 'created_by_me' && this.state.route !== 'created_by_me_completed'}
-                to={this.state.route !== 'assigned_to_me' && this.state.route !== 'assigned_to_me_completed'}/>
-            </div>
-          ))}
-          {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore} position="absolute"/>
-          {/* rendering following text when there is no post in Feed */}
-          {
-            !this.state.reachedTheEnd &&
-            !this.state.loadingAfter &&
-            !this.state.loadingBefore &&
-            this.state.tasks.length === 0 &&
-            (
-              <div className={privateStyle.emptyMessage}>
-                You have no Tasks until next year...
-                <div className={style.loadMore}>
-                  <Button onClick={loadMore}>Try again</Button>
+        <div className={privateStyle.tasksArea + ' ' + style.tasksList}>
+          <InfiniteScroll
+            pullDownToRefresh={true}
+            pullDownToRefreshContent={(
+              <h5 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h5>
+            )}
+            releaseToRefreshContent={(
+              <h5 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h5>
+            )}
+            refreshFunction={this.refresh}
+            next={loadMore}
+            route={this.props.location.pathname}
+            hasMore={true}
+            loader={<Loading active={true} position="fixed"/>}>
+              {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
+              {showOverDue && this.state.overDueTasks.map((task: ITask) => (
+                <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+                  <TaskUpcomingView task={task} />
                 </div>
-              </div>
-            )
-          }
-          {this.state.reachedTheEnd &&
-          <div className={privateStyle.emptyMessage}>No more tasks here!</div>
-          }
-          {!this.state.reachedTheEnd &&
-          !this.state.loadingBefore && !this.state.loadingAfter && (
-            <div className={privateStyle.loadMore}>
-              {/* Load More button */}
-              <Button onClick={loadMore}>Load More</Button>
-            </div>
-          )}
-          <div className={privateStyle.bottomSpace}/>
+              ))}
+              {showCandidate && <h3 className={style.pending}>You’ve been Candidated to do this…</h3>}
+              {showCandidate && this.state.candidateTasks.map((task: ITask) => (
+                <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+                  <TaskUpcomingView task={task} />
+                </div>
+              ))}
+              {this.state.route === 'glance' && <h3>Upcomings</h3>}
+              {this.state.tasks.map((task: ITask) => (
+                <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+                  <TaskUpcomingView task={task} withDetails={this.state.route !== 'glance'}
+                    from={this.state.route !== 'created_by_me' && this.state.route !== 'created_by_me_completed'}
+                    to={this.state.route !== 'assigned_to_me' && this.state.route !== 'assigned_to_me_completed'}/>
+                </div>
+              ))}
+              {
+                !this.state.reachedTheEnd &&
+                !this.state.loadingAfter &&
+                !this.state.loadingBefore &&
+                this.state.tasks.length === 0 &&
+                (
+                  <div className={privateStyle.emptyMessage}>
+                    You have no Tasks until next year...
+                    <div className={style.loadMore}>
+                      <Button onClick={loadMore}>Try again</Button>
+                    </div>
+                  </div>
+                )
+              }
+              {this.state.reachedTheEnd &&
+                <div className={privateStyle.emptyMessage}>No more tasks here!</div>
+              }
+              <div className={privateStyle.bottomSpace}/>
+          </InfiniteScroll>
         </div>
       </div>
     );

@@ -24,4 +24,5 @@
   -webkit-overflow-scrolling: touch;
   will-change: scroll;
   touch-action: auto;
+  background-color: #EEEFEF;
 }

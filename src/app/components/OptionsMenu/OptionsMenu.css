@@ -12,8 +12,11 @@
   padding: 0 8px;
   align-items: center;
   z-index: 4;
-  background-color: white;
   position: relative;
+  background-color: transparent
+}
+.visible.havePop {
+  background-color: white;
 }
 .invisible {
   position: absolute;

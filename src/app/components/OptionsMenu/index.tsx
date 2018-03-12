@@ -213,7 +213,9 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     return (
       <div className={style.container}>
         {/*  always visible area contains icons element */}
-        <div className={style.visible}>
+        <div className={[style.visible,
+          (this.props.leftItem.menu.length !== 0 || this.props.rightItems.length !== 0) ?
+            style.havePop : ''].join(' ')}>
           <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}
              className={this.state.titlePopup ? style.title + ' ' + style.active : style.title}>
             {this.props.leftItem.name}
