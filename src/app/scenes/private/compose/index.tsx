@@ -16,7 +16,7 @@ import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
 import {connect} from 'react-redux';
@@ -224,15 +224,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
               };
 
               return chipsItem;
-            }).concat(post.post_recipients.map((i) => {
-              const chipsItem: IChipsItem = {
-                _id: i._id,
-                name: i.name,
-                picture: i.picture,
-              };
+            });
+            if (post.post_recipients) {
+              targets = targets.concat(post.post_recipients.map((i) => {
+                const chipsItem: IChipsItem = {
+                  _id: i._id,
+                  name: i.name,
+                  picture: i.picture,
+                };
 
-              return chipsItem;
-            }));
+                return chipsItem;
+              }));
+            }
           }
 
           this.setState({
@@ -460,7 +463,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         sending: false,
       });
 
-      browserHistory.goBack();
+      hashHistory.goBack();
     }).catch(() => {
       message.error('An error has been occured in sharing the post!');
     });
@@ -474,7 +477,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   private draft = () => {
     this.props.setDraft(this.state);
-    browserHistory.goBack();
+    hashHistory.goBack();
   }
 
   /**
@@ -485,7 +488,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   private discard = () => {
     this.props.unsetDraft();
-    browserHistory.goBack();
+    hashHistory.goBack();
   }
 
   /**
@@ -504,7 +507,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         okText: 'No',
         onCancel: () => {
           this.attachments.abortAll();
-          browserHistory.goBack();
+          hashHistory.goBack();
         },
       });
 
@@ -525,7 +528,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         onOk: this.draft,
       });
     } else {
-      browserHistory.goBack();
+      hashHistory.goBack();
     }
   }
 

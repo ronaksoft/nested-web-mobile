@@ -4,6 +4,8 @@ import IUser from '../../../api/account/interfaces/IUser';
 import {IAppAction} from '../IAppStore';
 import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../../api/post/interfaces/IPost';
+import ITask from '../../../api/task/interfaces/ITask';
+import ICustomFilter from '../../../api/task/interfaces/ICustomFilter';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IComposeState from 'api/post/interfaces/IComposeState';
 
@@ -97,6 +99,71 @@ export function setCurrentPost(post: IPost): IAppAction {
 export function unsetCurrentPost(): IAppAction {
   return {
     type: ActionTypes.APP_CURRENT_POST_UNSET,
+  };
+}
+
+export function setScroll(payload: any): IAppAction {
+  return {
+    type: ActionTypes.APP_SCROLL_POSITION_SET,
+    payload,
+  };
+}
+
+export function unsetScroll(): IAppAction {
+  return {
+    type: ActionTypes.APP_SCROLL_POSITION_UNSET,
+  };
+}
+
+export function setTasks(payload: any | ITask[]): IAppAction {
+  return {
+    type: ActionTypes.APP_TASKS_SET,
+    payload,
+  };
+}
+
+export function unsetTasks(): IAppAction {
+  return {
+    type: ActionTypes.APP_TASKS_UNSET,
+  };
+}
+
+export function setTasksRoute(route: string): IAppAction {
+  return {
+    type: ActionTypes.APP_TASKS_ROUTE_SET,
+    payload: route,
+  };
+}
+
+export function unsetTasksRoute(): IAppAction {
+  return {
+    type: ActionTypes.APP_TASKS_ROUTE_UNSET,
+  };
+}
+
+export function setTasksFilter(customFilters: ICustomFilter[]): IAppAction {
+  return {
+    type: ActionTypes.APP_TASK_FILTER_SET,
+    payload: customFilters,
+  };
+}
+
+export function unsetTasksFilter(): IAppAction {
+  return {
+    type: ActionTypes.APP_TASK_FILTER_UNSET,
+  };
+}
+
+export function setCurrentTask(task: ITask): IAppAction {
+  return {
+    type: ActionTypes.APP_CURRENT_TASK_SET,
+    payload: task,
+  };
+}
+
+export function unsetCurrentTask(): IAppAction {
+  return {
+    type: ActionTypes.APP_CURRENT_TASK_UNSET,
   };
 }
 

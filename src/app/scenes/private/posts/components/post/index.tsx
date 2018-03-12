@@ -18,7 +18,7 @@ import {connect} from 'react-redux';
 import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import IUser from '../../../../../api/account/interfaces/IUser';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
@@ -291,7 +291,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private leave() {
-    browserHistory.goBack();
+    hashHistory.goBack();
   }
 
   /**
@@ -302,7 +302,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private postPlaceClick(pid) {
-    browserHistory.push(`/m/places/${pid}/messages`);
+    hashHistory.push(`/places/${pid}/messages`);
   }
 
   /**
@@ -513,10 +513,10 @@ class Post extends React.Component<IProps, IState> {
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
-            <Link to={`/m/forward/${post._id}`}>
+            <Link to={`/forward/${post._id}`}>
               <IcoN size={24} name="forward24"/>
             </Link>
-            <Link to={`/m/reply/${post._id}`}>
+            <Link to={`/reply/${post._id}`}>
               <IcoN size={24} name="reply24"/>
             </Link>
             <a onClick={this.toggleMoreOpts}>
@@ -535,17 +535,17 @@ class Post extends React.Component<IProps, IState> {
               <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'reply16'}/>
-                <Link to={`/m/reply/${post._id}`}>Reply</Link>
+                <Link to={`/reply/${post._id}`}>Reply</Link>
               </li>
               <li>
                 <IcoN size={16} name={'reply16'}/>
-                <Link to={`/m/reply/${post._id}/sender`}>
+                <Link to={`/reply/${post._id}/sender`}>
                   Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
                 </Link>
               </li>
               <li>
                 <IcoN size={16} name={'forward16'}/>
-                <Link to={`/m/forward/${post._id}`}>Forward</Link>
+                <Link to={`/forward/${post._id}`}>Forward</Link>
               </li>
             </ul>
           </div>
@@ -606,11 +606,19 @@ class Post extends React.Component<IProps, IState> {
                 {post.post_places.map((place: IPlace, index: number) => {
                   if (index < 2) {
                     return (
-                      <span key={place._id} onClick={this.postPlaceClick.bind(this, place._id)}>
+                      <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
                         {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       </span>
                     );
                   }
+                })}
+                {post.post_recipients &&
+                post.post_recipients.map((email: string, index: number) => {
+                  return (
+                    <span key={email + 'em' + index}>
+                      {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                  );
                 })}
                 {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
               </div>

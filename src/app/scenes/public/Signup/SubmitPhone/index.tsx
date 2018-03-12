@@ -16,7 +16,7 @@
  */
 
 import * as React from 'react';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import PhoneInput from 'components/PhoneInput';
 import {Button, Form} from 'antd';
 import AccountApi from 'api/account';
@@ -29,6 +29,7 @@ const publicStyle = require('../../public.css');
 
 interface IState {
   validation: IValidationResult;
+  done: boolean;
 }
 
 class Phone extends React.Component<any, IState> {
@@ -74,6 +75,7 @@ class Phone extends React.Component<any, IState> {
     super();
     // sets the a default value for the component state
     this.state = {
+      done: false,
       validation: {
         message: null,
         status: null,
@@ -141,18 +143,22 @@ class Phone extends React.Component<any, IState> {
           };
         }
 
-        this.setState({
-          validation,
-        });
+        if (!this.state.done) {
+          this.setState({
+            validation,
+          });
+        }
         resolve(isAvailable);
-      }, () => {
+      }).catch(() => {
         validation = {
           message: 'Sorry, We can not validate your phone number! Please contact us.',
           status: 'error',
         };
-        this.setState({
-          validation,
-        });
+        if (!this.state.done) {
+          this.setState({
+            validation,
+          });
+        }
         resolve(false);
       });
     });
@@ -199,10 +205,12 @@ class Phone extends React.Component<any, IState> {
       }).then((data) => {
 
         // TODO: Use es6 string interpolation
-        const nextStep = `/m/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
-
-        browserHistory.push(nextStep);
-      }, (error: IErrorResponseData) => {
+        const nextStep = `/signup/verify/${this.country}/${this.code}/${this.phone}/${data.vid}`;
+        this.setState({
+          done: true,
+        });
+        hashHistory.push(nextStep);
+      }).catch((error: IErrorResponseData) => {
         if (error.err_code === Failure.INVALID) {
           this.setState({
             validation: {
@@ -256,7 +264,7 @@ class Phone extends React.Component<any, IState> {
               phone={this.props.params.phone}
               country={this.props.params.country}/>
           </Form.Item>
-          <p className={publicStyle.detail}>Have an account? <Link to="/m/signin">Sign in</Link></p>
+          <p className={publicStyle.detail}>Have an account? <Link to="/signin">Sign in</Link></p>
           <Button type="primary" className={publicStyle.submit} onClick={this.submit}>
             <b>Next</b>
           </Button>

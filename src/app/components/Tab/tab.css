@@ -1,0 +1,22 @@
+.tabHead{
+  display: flex;
+  width: 100%;
+  min-height: 32px;
+  border-bottom: 1px solid rgba(50, 61, 71, .16);
+}
+.tabHead a{
+  display: flex;
+  flex: 1;
+  opacity: .72;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 30px;
+  color: #323D47;
+}
+.tabHead a:hover{
+  color: #323D47;
+}
+.tabHead a[class='active']{
+  font-weight: bold;
+  border-bottom: 2px solid #323C47
+}

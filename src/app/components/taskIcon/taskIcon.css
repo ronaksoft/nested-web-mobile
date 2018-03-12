@@ -1,0 +1,24 @@
+.taskProgressIcon {
+  position: relative;
+  display: flex;
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+.taskProgressIcon .progress svg {
+  position: absolute;
+  top: 19px;
+  right: 19px;
+  height: 18px;
+  width: 18px;
+  transform: rotate(-90deg);
+  border-radius: 50%;
+}
+  
+.taskProgressIcon .progress svg circle {
+  fill: transparent;
+  stroke: #0079F2;
+  stroke-width: 18px;
+  stroke-dasharray: 0 60;
+  transition: stroke-dasharray .3s ease;
+}

@@ -1,0 +1,169 @@
+.fill {
+  flex: 1!important;
+  margin-top: 0!important;
+}
+.taskItem {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #fff;
+}
+.taskItemInner {
+  display: flex;
+  width: 100%;
+}
+.taskItemInner > div:first-child {
+  padding: 12px;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: flex;
+}
+.taskContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 16px 16px 0;
+  border-bottom: 1px solid rgba(50, 61, 71, .08);
+}
+.taskHead {
+  display: flex;
+  flex: 1;
+}
+.taskHead h4{
+  display: flex;
+  line-height: 23px;
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1;
+}
+.taskHead span{
+  opacity: 0.8;
+  font-size: 12px;
+  line-height: 24px;
+  display: flex;
+  flex: none;
+  white-space: nowrap;
+}
+
+.taskDetail {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 17px;
+  opacity: 0.64;
+}
+.taskExtra {
+  font-size: 12px;
+  line-height: 17px;
+  opacity: 0.64;
+  display: flex;
+}
+.taskExtra > * {
+  margin-top: 12px;
+  margin-right: 16px;
+}
+.taskExtra svg {
+  opacity: 0.4;
+}
+.taskExtra > div {
+  display: flex;
+  flex: none;
+}
+.taskExtra > div:last-child {
+  margin-right: 0px;
+}
+.taskExtra > div span{
+  display: flex;
+  flex: none;
+  margin-right: 4px;
+  opacity: 0.8;
+  font-size: 12px;
+}
+/*  */
+.overDueItem .taskContent{
+  border-bottom: 1px solid rgba(255, 51, 68, .08);
+}
+.overDueItem .taskHead h4,
+.overDueItem .taskHead span,
+.overDueItem .taskDetail{
+  color: rgba(255, 51, 68, 1);
+}
+
+/*  */
+.candidateItem {
+  box-shadow: 0px 8px 16px rgba(50, 61, 71, 0.32);
+  margin-bottom: 24px;
+}
+.candidateItem .taskDetail {
+  color: #0079F2;
+  font-weight: bold;
+  opacity: 1;
+}
+
+.candidateItem .taskContent{
+  border-bottom: none;
+}
+.candidateItem .taskItemInner{
+  border-bottom: 1px solid rgba(50, 61, 71, .08);
+}
+.candidateButtons {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+.candidateButtons::before {
+  position: absolute;
+  content: ' ';
+  width: 1px;
+  background-color: rgba(50, 61, 71, .08);
+  height: 32px;
+  left: 50%;
+  top: 50%;
+  transform: translateY(-50%)
+}
+.candidateButtons > * {
+  display: flex;
+  flex: 1;
+  height: 48px;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+}
+.acceptButton {
+  color: #0079F2;
+}
+.declineButton {
+  opacity: 0.64;
+}
+
+.overDueItem .taskItemInner {
+  background-image: url("../../../../../assets/icons/horizontal_stripes_force.png");
+  background-repeat: repeat;
+}
+.candidateItem .taskItemInner {
+  background-image: url("../../../../../assets/icons/horizontal_stripes_pending.png");
+  background-repeat: repeat;
+}
+.completedItem .taskItemInner {
+  background-image: url("../../../../../assets/icons/horizontal_stripes_solid.png");
+  background-repeat: repeat;
+}
+
+
+.completedItem .taskHead h4 {
+  font-size: 16px;
+  opacity: 0.8;
+  text-decoration: line-through;
+  text-decoration-line: strikethrough;
+}
+
+.rejectedItem .taskItemInner > div:first-child svg {
+  fill: #F2C230;
+}
+
+.rejectedItem .taskDetail {
+  color: #F2C230;
+  font-weight: bold;
+  opacity: 1;
+}

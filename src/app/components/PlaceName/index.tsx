@@ -13,25 +13,26 @@ import IPlace from '../../api/place/interfaces/IPlace';
 import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
+import {isObject} from 'lodash';
 
 interface IOwnProps {
   /**
    * @property place_id
    * @desc Includes `place_id` of places
-   * @type {string}
+   * @type {any}
    * @memberof IOwnProps
    */
-  place_id: string;
+  place_id: any;
 }
 
 interface IProps {
   /**
    * @property place_id
    * @desc Includes `place_id` of places
-   * @type {string}
+   * @type {any}
    * @memberof IProps
    */
-  place_id: string;
+  place_id: any;
   /**
    * @property places
    * @desc Includes places as an array of IPlace
@@ -90,6 +91,19 @@ class PlaceName extends React.Component<IProps, IState> {
    * @param placeId
    */
   private setPlace(placeId) {
+    /**
+     * if it was user model it just copy it to user in State
+     */
+    if (isObject(placeId)) {
+      this.setState({
+        place: placeId,
+      });
+      /**
+       * store account in redux store
+       */
+      this.props.placeAdd(placeId);
+      return;
+    }
     /**
      * search resdux store for any place have the same id with props id
      */

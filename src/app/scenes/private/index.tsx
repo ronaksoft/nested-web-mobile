@@ -9,19 +9,22 @@
  */
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 
 import Feed from './posts/feed';
 import {Files} from './files';
 import Compose from './compose';
 import Sidebar from './sidebar/';
+import TaskSidebar from './sidebar/task';
 import {Navbar} from 'components';
 import {Activities} from './activities';
 import Signout from './Signout';
 import FeedByActivity from './posts/feedByActivity';
 import Bookmarked from './posts/bookmarked';
 import Shared from './posts/shared';
+import Tasks from './tasks';
+import TaskEdit from './tasks/components/editTask/';
 import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
 import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
 import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';
@@ -47,6 +50,7 @@ const style = require('./private.css');
 interface IState {
   isLogin: boolean;
   sidebarOpen: boolean;
+  isPostsApp: boolean;
   notificationsCount: number;
 };
 
@@ -77,7 +81,7 @@ interface IProps {
  * @classdesc wrapper for all private scenses also
  * checks the user authentication state
  * @extends {React.Component<IProps, IState>}
- * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>,<InvitationItem>]
+ * @requires [<IcoN>,<sortBy>,<PlaceApi>,<SidebarItem>]
  */
 class Private extends React.Component<IProps, IState> {
   // private xStart: number;
@@ -124,8 +128,15 @@ class Private extends React.Component<IProps, IState> {
     this.state = {
       isLogin: false,
       sidebarOpen: false,
+      isPostsApp: true,
       notificationsCount: this.props.notificationsCount.unread_notifications,
     };
+  }
+
+  public isiOS() {
+    if (typeof window !== 'undefined' && window.document) {
+      return navigator && navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    }
   }
 
   /**
@@ -184,14 +195,14 @@ class Private extends React.Component<IProps, IState> {
         this.props.setLogin(response.account);
       }, () => {
         aaa.clearCredentials();
-        browserHistory.push('/m/signin');
+        hashHistory.push('/signin');
       });
     };
 
     /** clear credentials in some unexpected situations */
     if (!credential.sk || !credential.ss) {
       aaa.clearCredentials();
-      browserHistory.push('/m/signin');
+      hashHistory.push('/signin');
       return;
     }
 
@@ -235,17 +246,17 @@ class Private extends React.Component<IProps, IState> {
   }
 
   private scrollPreventer = (e) => {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    console.log('scrollPreventer');
     e = e || window.event;
-    if (isSafari) {
+    // if (this.isiOS()) {
       e.returnValue = false;
-      e.cancelBubble = true;
+      e.cancelBubble = false;
       if (e.preventDefault) {
           e.preventDefault();
           e.stopPropagation();
       }
       return false; // or return e, doesn't matter
-    }
+    // }
   }
 
   /**
@@ -258,8 +269,8 @@ class Private extends React.Component<IProps, IState> {
   public componentDidMount() {
     document.body.scrollTop = 0;
     document.addEventListener('scroll', this.scrollPreventer, false);
-    document.addEventListener('touchmove', this.scrollPreventer, false);
     document.body.addEventListener('scroll', this.scrollPreventer, false);
+    document.addEventListener('touchmove', this.scrollPreventer, false);
     document.body.addEventListener('touchmove', this.scrollPreventer, false);
 
     // document.addEventListener('touchstart', (e) => {
@@ -284,9 +295,9 @@ class Private extends React.Component<IProps, IState> {
      * @function
      * @event
      */
-    this.unListenChangeRoute = browserHistory.listen(() => {
+    this.unListenChangeRoute = hashHistory.listen(() => {
       this.closeSidebar();
-      this.getNotificationCounts();
+      // this.getNotificationCounts();
       document.body.scrollTop = document.documentElement.scrollTop = 0;
     });
   }
@@ -298,8 +309,8 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    * @public
    */
-  public sampleF = () => {
-    browserHistory.push('/m/feed');
+  public FeedPage = () => {
+    hashHistory.push('/');
   }
 
   /**
@@ -328,6 +339,12 @@ class Private extends React.Component<IProps, IState> {
     });
   }
 
+  public changeApp = (isPostsApp) => {
+    this.setState({
+      isPostsApp,
+    });
+  }
+
   /**
    * stop listening to route change
    * @name componentWillUnmount
@@ -338,22 +355,10 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     this.unListenChangeRoute();
-  }
-
-  /**
-   * creates scenses Jsx elemnts with navbar
-   * @name createLayout
-   * @function
-   * @public
-   * @memberof Private
-   */
-  public createLayout = () => {
-    return (
-      <div ref={this.refHandler} className={style.container}>
-        <Navbar sidebarOpen={this.openSidebar} composeOpen={this.sampleF} notifCount={this.state.notificationsCount}/>
-        {this.props.children}
-      </div>
-    );
+    document.removeEventListener('touchmove', this.scrollPreventer);
+    document.body.removeEventListener('touchmove', this.scrollPreventer);
+    document.removeEventListener('scroll', this.scrollPreventer);
+    document.body.removeEventListener('scroll', this.scrollPreventer);
   }
 
   /**
@@ -374,34 +379,24 @@ class Private extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    // if ( this.privatePagesWrapper ) {
-      // this.privatePagesWrapper.addEventListener('touchmove', (e: any) => {
-      //   e = e || window.event;
-      //   document.body.scrollTop = 0;
-      //   e.stopImmediatePropagation();
-      //   e.cancelBubble = true;
-      //   e.stopPropagation();
-      //   const xMovement = e.touches[0].screenY - this.xStart;
-      //   console.log(xMovement, this.privatePagesWrapper.scrollTop);
-      //   if ( xMovement < 0 || this.privatePagesWrapper.scrollTop > 0 ) {
-      //     return true;
-      //   } else {
-      //     e.preventDefault();
-      //     e.returnValue = false;
-      //     return false;
-      //   }
-      // }, false);
-    // }
     return (
       <div>
         {
           this.state.isLogin &&
           (
             <div>
-              {this.createLayout()}
+              <div ref={this.refHandler} className={style.container}>
+                <Navbar sidebarOpen={this.openSidebar} composeOpen={this.FeedPage}
+                  changeApp={this.changeApp}
+                  notifCount={this.state.notificationsCount} user={this.props.user} />
+                {this.props.children}
+              </div>
               {/* Sidebar elemnt with visibility state check */}
-              {this.state.sidebarOpen &&
+              {(this.state.sidebarOpen && this.state.isPostsApp) &&
               <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
+              }
+              {(this.state.sidebarOpen && !this.state.isPostsApp) &&
+              <TaskSidebar closeSidebar={this.closeSidebar}/>
               }
             </div>
           )
@@ -446,5 +441,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Private);
 export {
   Feed, FeedByActivity, Bookmarked, Shared, PlacePostsAllSortedByActivity,
   PlacePostsAllSortedByRecent, PlacePostsUnreadSortedByRecent, Activities, Files, Notifications, Compose,
-  Signout
+  Signout, Tasks, TaskEdit,
 };

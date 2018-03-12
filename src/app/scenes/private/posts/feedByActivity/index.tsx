@@ -8,7 +8,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
-import {OptionsMenu} from 'components';
+import {OptionsMenu, InfiniteScroll, IcoN} from 'components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../../api/post/index';
@@ -16,9 +16,9 @@ import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
 import ArrayUntiles from '../../../../services/utils/array';
-import {Button, message} from 'antd';
+import {message} from 'antd';
 import Post from '../components/post/index';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Loading} from '../../../../components/Loading/index';
 import {NewBadge} from '../../../../components/NewBadge/index';
 import SyncActivity from '../../../../services/syncActivity/index';
@@ -448,11 +448,15 @@ class FeedByActivity extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/message/${post._id}`);
+  }
+
+  private refresh = () => {
+    this.getPost(true);
   }
 
   private gotoFeed() {
-    browserHistory.push('/m/feed');
+    hashHistory.push('/feed');
   }
   /**
    * renders the component
@@ -503,7 +507,10 @@ class FeedByActivity extends React.Component<IProps, IState> {
         ],
       },
     ];
-
+    const doms = this.state.posts.map((post: IPost) => (
+      <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+        <Post post={post}/>
+      </div>));
     return (
       <div className={style.container}>
         {/* rendering NewBadge component in receiving new post case */}
@@ -513,43 +520,24 @@ class FeedByActivity extends React.Component<IProps, IState> {
                   visibility={this.state.newPostCount > 0}/>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
         <div className={privateStyle.postsArea} ref={this.refHandler}>
-          {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter}/>
-          {/* after Loading component render posts list */}
-          {this.state.posts.map((post: IPost) => (
-            <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-              <Post post={post}/>
-            </div>))}
-          {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore}/>
-          {/* rendering following text when there is no post in Feed */}
-          {
-            !this.state.reachedTheEnd &&
-            !this.state.loadingAfter &&
-            !this.state.loadingBefore &&
-            this.state.posts.length === 0 &&
-            (
-              <div className={privateStyle.emptyMessage}>
-                You have no message in your feed
-                <div>
-                  <Button onClick={loadMore}>Try again</Button>
-                </div>
-              </div>
-            )
-          }
-          {this.state.reachedTheEnd &&
-          <div className={privateStyle.emptyMessage}>No more messages here!</div>
-          }
-          {!this.state.reachedTheEnd &&
-          !this.state.loadingBefore && !this.state.loadingAfter &&
-          (
-            <div className={privateStyle.loadMore}>
-              {/* Load More button */}
-              <Button onClick={loadMore}>Load More</Button>
-            </div>
-          )
-          }
-          <div className={privateStyle.bottomSpace}/>
+        {this.state.posts.length > 0 && (
+          <InfiniteScroll
+            pullDownToRefresh={true}
+            pullDownToRefreshContent={(
+              <h3 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h3>
+            )}
+            releaseToRefreshContent={(
+              <h3 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h3>
+            )}
+            refreshFunction={this.refresh}
+            next={loadMore}
+            route={this.props.location.pathname}
+            hasMore={true}
+            loader={<Loading active={true} position="fixed"/>}>
+              {doms}
+              <div className={privateStyle.bottomSpace}/>
+          </InfiniteScroll>
+        )}
         </div>
       </div>
     );

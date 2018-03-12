@@ -14,7 +14,7 @@
   z-index: 3;
   transform: translateZ(0);
 }
-.navbar a {
+.navbar > a {
   width: 40px;
   display: flex;
   height: 40px;
@@ -23,7 +23,16 @@
   align-items: center;
   position: relative;
 }
-.navbar a span{
+.navbar > a.active {
+  border-radius: 8px;
+  background-color: rgba(50, 61, 71, .08)!important;
+}
+.navbar > a img {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+}
+.navbar > a span{
   position: absolute;
   right: 0px;
   top: 0px;
@@ -40,15 +49,71 @@
   margin: 0;
   /*height: 24px;*/
 }
-.navbar a:first-child {
+.navbar > a:first-child {
   margin-left: 0;
 }
-.navbar a {
+.navbar > a {
   margin-left: 16px;
 }
-.active {
-  border-radius: 8px;
-  background-color: rgba(50, 61, 71, .08)!important;
+.appSwitcher {
+  display: flex;
+  -webkit-tap-highlight-color: transparent;
+  flex-direction: column;
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+}
+.appSwitcher.active {
+  transition: all .2s;
+}
+.appSwitcher.active > a{
+  transform: translate3d(0, 24px, 0);
+  font-size: 11px;
+  font-weight: normal;
+  color: rgba(50, 61, 71, .24);
+  transition: all .2s;
+}
+.appSwitcher.active small a{
+  transform: translate3d(0, -18px, 0);
+  font-size: 14px;
+  font-weight: bold;
+  transition: all .2s;
+  color: rgba(50, 61, 71, .8);
+}
+.appSwitcher.deActive > a{
+  transform: translate3d(0, 0, 0);
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(50, 61, 71, .8);
+  transition: all .2s;
+}
+.appSwitcher.deActive small a{
+  transform: translate3d(0, 0, 0);
+  font-size: 11px;
+  font-weight: normal;
+  color: rgba(50, 61, 71, .24);
+  transition: all .2s;
+}
+.appSwitcher a {
+  font-size: 14px;
+  width: auto;
+  transform: translate3d(0, 0, 0);
+  font-weight: bold;
+  transition: all .2s;
+  text-align: center;
+  color: rgba(50, 61, 71, .8);
+  user-select: none;
+}
+.appSwitcher small {
+  display: flex;
+  transition: all .2s;
+  justify-content: center;
+}
+.appSwitcher small a {
+  font-size: 11px;
+  font-weight: normal;
+  transition: all .2s;
+  color: rgba(50, 61, 71, .24);
 }
 .navbar svg {
   max-width: 40px;

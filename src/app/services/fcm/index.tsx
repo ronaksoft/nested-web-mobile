@@ -1,7 +1,7 @@
 import * as firebase from 'firebase';
 import INotificationTypes from './../../api/notification/interfaces/INotificationTypes';
 import SyncActions from '../syncActivity/syncActions';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 export default class FCM {
 
@@ -95,12 +95,12 @@ export default class FCM {
           switch (subject) {
             case INotificationTypes.COMMENT:
             case INotificationTypes.MENTION:
-              browserHistory.push(`/m/post/${body.payload.post_id}`);
+              hashHistory.push(`/post/${body.payload.post_id}`);
               break;
             case INotificationTypes.PLACE_SETTINGS_CHANGED:
             case INotificationTypes.DEMOTED:
             case INotificationTypes.PROMOTED:
-              browserHistory.push(`/m/post/${body.payload.place_id}`);
+              hashHistory.push(`/post/${body.payload.place_id}`);
               // service.broadcastOpenPlace(body.payload.place_id, body.payload.notification_id);
               break;
             case INotificationTypes.INVITE:
@@ -113,7 +113,7 @@ export default class FCM {
           const action = parseInt(body.payload.action, 0);
           switch (action) {
             case SyncActions.POST_ADD:
-              browserHistory.push(`/m/post/${body.payload.post_id}`);
+              hashHistory.push(`/post/${body.payload.post_id}`);
               break;
             default :
               break;

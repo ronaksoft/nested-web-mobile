@@ -8,6 +8,7 @@
  * Reviewed by:           -
  * Date of review:        -
  */
+import {forEach, startsWith} from 'lodash';
 import {Server, IRequest, IResponse} from 'services/server';
 import IRequestKeyList from './cache/interface/IRequestKeyList';
 import Unique from './../services/utils/unique';
@@ -199,35 +200,33 @@ class Api {
     return new Promise((resolve, reject) => {
 
       // create request path
-      const getConfigUrl = `/getConfig/${domain}`;
+      const getConfigUrl = `https://npc.nested.me/dns/discover/${domain}`;
       // const getConfigUrl = `https://webapp.nested.me/getConfig/${domain}`;
 
       // create xhr request
       const xhr = new XMLHttpRequest();
       xhr.open('GET', getConfigUrl, true);
-      // These request headers are required for talking to Xerxes
-      xhr.setRequestHeader('Cache-Control', 'no-cache');
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
       xhr.onload = () => {
         if (xhr.status === 200) {
+          const response: any = JSON.parse(xhr.response);
           let newConfigs: any;
-
           // try to parse response text
           try {
-            newConfigs = JSON.parse(xhr.response);
+            newConfigs = this.parseConfigFromRemote(response.data);
           } catch (e) {
             reject();
             return;
           }
 
-          if (newConfigs.status === 'ok') {
+          if (response.status === 'ok') {
 
             // replace configs with new configs
             setNewConfig(
               domain,
-              newConfigs.data.cyrus.ws[0],
-              newConfigs.data.cyrus.http[0],
-              newConfigs.data.xerxes.http[0],
+              newConfigs.websocket,
+              newConfigs.register,
+              newConfigs.store,
             );
 
             // close server socket and remove current server
@@ -252,6 +251,58 @@ class Api {
       xhr.send();
 
     });
+  }
+
+  private parseConfigFromRemote(data: any) {
+    const cyrus = [];
+    const xerxes = [];
+    const admin = [];
+    forEach(data, (configs) => {
+      const config = configs.split(';');
+      forEach(config, (item) => {
+        if (startsWith(item, 'cyrus:')) {
+          cyrus.push(item);
+        } else if (startsWith(item, 'xerxes:')) {
+          xerxes.push(item);
+        }
+        if (startsWith(item, 'admin:')) {
+          admin.push(item);
+        }
+      });
+    });
+    let cyrusHttpUrl = '';
+    let cyrusWsUrl = '';
+    let xerxesUrl;
+    let config: any = {};
+    forEach(cyrus, (item) => {
+      config = this.parseConfigData(item);
+      if (config.protocol === 'http' || config.protocol === 'https') {
+        cyrusHttpUrl = this.getCompleteUrl(config);
+      } else if (config.protocol === 'ws' || config.protocol === 'wss') {
+        cyrusWsUrl = this.getCompleteUrl(config);
+      }
+    });
+    xerxesUrl = this.getCompleteUrl(this.parseConfigData(xerxes[0]));
+
+    return {
+      websocket: cyrusWsUrl + '/api',
+      register: cyrusHttpUrl + '/api',
+      store: cyrusHttpUrl + '/file',
+    };
+  }
+
+  private parseConfigData(data: any) {
+    const items = data.split(':');
+    return {
+      name: items[0],
+      protocol: items[1],
+      port: items[2],
+      url: items[3],
+    };
+  }
+
+  private getCompleteUrl(config: any) {
+    return config.protocol + '://' + config.url + ':' + config.port;
   }
 
 }

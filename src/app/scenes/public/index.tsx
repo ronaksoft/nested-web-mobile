@@ -12,7 +12,7 @@ import Signin from './Signin';
 import Signup from './Signup';
 import NotFound from './notfound';
 import AAA from 'services/aaa';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 /**
  * @class Public
@@ -45,7 +45,7 @@ class Public extends React.Component<any, any> {
     const hasCredentials = !!(credentials.sk && credentials.ss);
 
     if (hasCredentials) {
-      browserHistory.push('/m/feed');
+      hashHistory.push('/feed');
     }
 
     return (

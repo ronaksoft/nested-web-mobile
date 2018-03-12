@@ -11,7 +11,7 @@ import * as React from 'react';
 import ILeftItem from './ILeftItem';
 import IRightItem from './IRightItem';
 import {IcoN} from 'components';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 const style = require('./OptionsMenu.css');
 
@@ -57,7 +57,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
   }
 
   public componentDidMount() {
-    this.listener = browserHistory.listen(() => {
+    this.listener = hashHistory.listen(() => {
       this.closeAll();
     });
   }
@@ -72,6 +72,9 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
    * @memberof OptionsMenu
    */
   public openPopUp = (wrapper: string) => {
+    if (this.props.leftItem.menu.length === 0 && this.props.rightItems.length === 0) {
+      return;
+    }
     const key = wrapper + 'Popup';
     let state;
     state = {
@@ -97,36 +100,34 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
     this.setState(state);
   }
 
-  private renderLeftItems = () => {
-    const LeftItemMenuDOM = [];
-    this.props.leftItem.menu.forEach((menuItem, index) => {
-      LeftItemMenuDOM.push(
-        <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
-            onClick={menuItem.onClick}>
+  private renderLeftItems = () => this.props.leftItem.menu.map((menuItem, index) => (
+      <li key={menuItem.name + index} className={menuItem.isChecked ? style.activeItem : null}
+          onClick={menuItem.onClick}>
+        {/* {menuItem.icon && ( */}
           <div>
-            <IcoN size={16} name={menuItem.icon.name}/>
+            <IcoN size={16} name={menuItem.icon}/>
           </div>
-          <div>
-            <span>{menuItem.name}</span>
-            {menuItem.isChecked &&
-            <IcoN size={16} name="heavyCheck16"/>
-            }
-          </div>
-        </li>,
-      );
-    });
-    return LeftItemMenuDOM;
-  }
-  private touchMove = (e: any) => {
-    e = e || window.event;
-    e.returnValue = false;
-    e.cancelBubble = true;
-    if (e.preventDefault) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    return false;
-  }
+        {/* )} */}
+        <div>
+          <span>{menuItem.name}</span>
+          {menuItem.isChecked &&
+          <IcoN size={16} name="heavyCheck16"/>
+          }
+        </div>
+      </li>
+    ),
+  )
+
+  // private touchMove = (e: any) => {
+    // e = e || window.event;
+    // e.returnValue = false;
+    // e.cancelBubble = true;
+    // if (e.preventDefault) {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    // }
+    // return false;
+  // }
 
   /**
    * Creats the right icon and popover elemnts
@@ -209,16 +210,17 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
 
     // Get right menu items with show condition
     const rightMenu = this.renderRightMenus();
-
     return (
-      <div className={style.container} onTouchMove={this.touchMove}>
+      <div className={style.container}>
         {/*  always visible area contains icons element */}
-        <div className={style.visible}>
+        <div className={[style.visible,
+          (this.props.leftItem.menu.length !== 0 || this.props.rightItems.length !== 0) ?
+            style.havePop : ''].join(' ')}>
           <a onClick={this.openPopUp.bind(this, this.props.leftItem.type)}
              className={this.state.titlePopup ? style.title + ' ' + style.active : style.title}>
             {this.props.leftItem.name}
-            {this.props.leftItem.place &&
-            <IcoN size={24} name="arrowSense16"/>
+            {this.props.leftItem.menu.length > 0 &&
+              <IcoN size={24} name="arrowSense24"/>
             }
           </a>
           <div className={style.filler}/>

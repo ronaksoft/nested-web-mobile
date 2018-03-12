@@ -8,7 +8,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {logout} from 'redux/app/actions';
 import AccountApi from 'api/account';
@@ -63,7 +63,7 @@ class Signout extends React.Component<IProps, {}> {
   public componentWillReceiveProps(newProbs: IProps) {
     if (newProbs.isLogin === false) {
       AAA.getInstance().clearCredentials();
-      browserHistory.push('/m/signin');
+      hashHistory.push('/signin');
       window.location.reload();
     }
   }

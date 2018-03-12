@@ -8,7 +8,7 @@
  * Date of review:         2107-07-27
  */
 import * as React from 'react';
-import {OptionsMenu} from 'components';
+import {OptionsMenu, InfiniteScroll, Loading, IcoN} from 'components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../../api/post/index';
@@ -18,8 +18,7 @@ import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/act
 import ArrayUntiles from '../../../../services/utils/array';
 import {Button, message} from 'antd';
 import Post from '../components/post/index';
-import {browserHistory} from 'react-router';
-import {Loading} from '../../../../components/Loading/index';
+import {hashHistory} from 'react-router';
 
 const privateStyle = require('../../private.css');
 const style = require('../posts.css');
@@ -168,18 +167,6 @@ class Bookmarked extends React.Component<IProps, IState> {
   }
 
   /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Bookmarked
-   */
-  private scrollWrapper: HTMLDivElement;
-
-  private refHandler = (value) => {
-    this.scrollWrapper = value;
-  }
-  /**
    * Component Did Mount
    * @desc Get post from redux store
    * Calls the Api and store it in redux store
@@ -188,58 +175,11 @@ class Bookmarked extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    if ( this.scrollWrapper ) {
-      if (isSafari) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
     /**
      * define the Post Api
      */
     this.postApi = new PostApi();
     this.getPost(true);
-    /**
-     * handle window scroll in current post after user return from a post view page
-     * (by going to a post view page, selected post will store in `currentPost`)
-     */
-    if (this.props.currentPost) {
-      setTimeout(() => {
-          window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
-        },
-        200);
-    }
 
   }
 
@@ -331,19 +271,8 @@ class Bookmarked extends React.Component<IProps, IState> {
       });
   }
 
-  /**
-   * @function getOffset
-   * @desc Get offset of post by `id` of html element
-   * @param {string} id   id of html element
-   * @returns {{left: number, top: number}}
-   * @private
-   */
-  private getOffset(id: string) {
-    const el = document.getElementById(id).getBoundingClientRect();
-    return {
-      left: el.left + window.scrollX,
-      top: el.top + window.scrollY,
-    };
+  private refresh = () => {
+    this.getPost(true);
   }
 
   /**
@@ -354,7 +283,7 @@ class Bookmarked extends React.Component<IProps, IState> {
    */
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
-    browserHistory.push(`/m/message/${post._id}`);
+    hashHistory.push(`/message/${post._id}`);
   }
 
   /**
@@ -385,43 +314,53 @@ class Bookmarked extends React.Component<IProps, IState> {
     return (
       <div className={style.container}>
         <OptionsMenu leftItem={leftItem} rightItems={rightMenu}/>
-        <div className={privateStyle.postsArea} ref={this.refHandler}>
-          {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter}/>
-          {/* after Loading component render posts list */}
-          {this.state.posts.map((post: IPost) => (
-            <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-              <Post post={post}/>
-            </div>))}
-          {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore}/>
-          {/* rendering following text when there is no post */}
-          {
-            !this.state.reachedTheEnd &&
-            !this.state.loadingAfter &&
-            !this.state.loadingBefore &&
-            this.state.posts.length === 0 &&
-            (
-              <div className={privateStyle.emptyMessage}>
-                <b>You haven't bookmarked anything yet!</b>
-                <div>There's a bookmark icon on the upper-right corner of each post.</div>
-                Click on it to save the post to be viewed later.
-                <div>
-                  {/* Try again button */}
-                  <Button onClick={loadMore}>Try again</Button>
-                </div>
-              </div>
-            )
-          }
-          {/* rendering following text in `reachedTheEnd` case */}
-          {this.state.reachedTheEnd &&
-          <div className={privateStyle.emptyMessage}>No more messages here!</div>
-          }
-          {!this.state.reachedTheEnd &&
-          !this.state.loadingBefore && !this.state.loadingAfter &&
-          <div><Button onClick={loadMore}>Load More</Button></div>
-          }
-          <div className={privateStyle.bottomSpace}/>
+        <div className={privateStyle.postsArea}>
+          {this.state.posts.length > 0 && (
+            <InfiniteScroll
+              pullDownToRefresh={true}
+              pullDownToRefreshContent={(
+                <h3 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h3>
+              )}
+              releaseToRefreshContent={(
+                <h3 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h3>
+              )}
+              refreshFunction={this.refresh}
+              next={loadMore}
+              route={this.props.location.pathname}
+              hasMore={true}
+              loader={<Loading active={true} position="fixed"/>}>
+                
+                {/* after Loading component render posts list */}
+                {this.state.posts.map((post: IPost) => (
+                  <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+                    <Post post={post}/>
+                  </div>
+                ))}
+                {/* rendering following text when there is no post */}
+                {
+                  !this.state.reachedTheEnd &&
+                  !this.state.loadingAfter &&
+                  !this.state.loadingBefore &&
+                  this.state.posts.length === 0 &&
+                  (
+                    <div className={privateStyle.emptyMessage}>
+                      <b>You haven't bookmarked anything yet!</b>
+                      <div>There's a bookmark icon on the upper-right corner of each post.</div>
+                      Click on it to save the post to be viewed later.
+                      <div>
+                        {/* Try again button */}
+                        <Button onClick={loadMore}>Try again</Button>
+                      </div>
+                    </div>
+                  )
+                }
+                {/* rendering following text in `reachedTheEnd` case */}
+                {this.state.reachedTheEnd &&
+                <div className={privateStyle.emptyMessage}>No more messages here!</div>
+                }
+                <div className={privateStyle.bottomSpace}/>
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     );

@@ -132,7 +132,7 @@ class AttachmentApi {
             switch (response.status) {
               case 'ok':
                 if (mission.onFinish) {
-                  mission.onFinish(response.data[0]);
+                  mission.onFinish(response.data.files[0]);
                 }
                 break;
 

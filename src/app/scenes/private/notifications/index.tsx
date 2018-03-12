@@ -21,6 +21,7 @@ import {IcoN} from 'components';
 import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
 
 const style = require('./notifications.css');
+const tabStyle = require('../../../components/Tab/tab.css');
 const privateStyle = require('../private.css');
 
 /**
@@ -29,7 +30,9 @@ const privateStyle = require('../private.css');
  * @interface IState
  */
 interface IState {
-  notifications: INotification[];
+  activeTab: number;
+  postNotifications: INotification[];
+  taskNotifications: INotification[];
 }
 
 /**
@@ -38,8 +41,10 @@ interface IState {
  * @interface IProps
  */
 interface IProps {
-  setNotification: (notifications: INotification[]) => {};
-  notifications: INotification[];
+  setPostNotification: (notifications: INotification[]) => {};
+  setTaskNotification: (notifications: INotification[]) => {};
+  postNotifications: INotification[];
+  taskNotifications: INotification[];
   notificationsCount: INotificationCountResponse;
   setNotificationCount: (counts: INotificationCountResponse) => {};
 }
@@ -83,7 +88,9 @@ class Notifications extends React.Component<IProps, IState> {
      * @property {string} notifications - notification items
      */
     this.state = {
-      notifications: this.props.notifications,
+      postNotifications: this.props.postNotifications || [],
+      taskNotifications: this.props.taskNotifications || [],
+      activeTab: 0,
     };
   }
 
@@ -166,32 +173,39 @@ class Notifications extends React.Component<IProps, IState> {
 
     // define the notification Api class
     const notificationApi = new NotificationApi();
-
+    const {activeTab} = this.state;
+    const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications ;
     // receive notifications with declared limits and before timestamp of
     // the latest notification item in state, otherwise the current timestamp.
     notificationApi.get({
       limit: this.requestLimit,
-      before: getFromNow === true ? Date.now() : (this.state.notifications.length > 0) ?
-        this.state.notifications[this.state.notifications.length - 1].timestamp : Date.now(),
+      before: getFromNow === true ? Date.now() : (thisNotifs.length > 0) ?
+        thisNotifs[thisNotifs.length - 1].timestamp : Date.now(),
+      details: true,
+      subject: activeTab === 0 ? 'post' : 'task',
     }).then((notificationsResponse: INotificationData) => {
 
       // check saveInStore value and store notification items in redux store
       if (saveInStore) {
-        this.props.setNotification(notificationsResponse.notifications);
+        if (activeTab === 0) {
+          this.props.setPostNotification(notificationsResponse.notifications);
+        } else {
+          this.props.setTaskNotification(notificationsResponse.notifications);
+        }
       }
 
       // concat recieved notifications items with current items and unique array by identifiers
       // and sorting the notification items by date
       const notifs =
-        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(this.state.notifications), '_id')
+        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(thisNotifs), '_id')
           .sort((a: INotification, b: INotification) => {
             return b.timestamp - a.timestamp;
           });
 
       // Update state with new notifications array
-      this.setState({
-        notifications: notifs,
-      });
+      const state = {};
+      state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
+      this.setState(state);
     });
   }
 
@@ -204,31 +218,39 @@ class Notifications extends React.Component<IProps, IState> {
 
     // define the notification Api class
     const notificationApi = new NotificationApi();
+    const {activeTab} = this.state;
+    const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications;
 
     // recieve notifications with declared limits and after timestamp of
     // the first notification item in state, otherwise the current timestamp.
     notificationApi.get({
       limit: this.requestLimit,
-      after: this.state.notifications[0].timestamp,
+      after: thisNotifs[0].timestamp,
+      details: true,
+      subject: activeTab === 0 ? 'post' : 'task',
     }).then((notificationsResponse: INotificationData) => {
 
       // store notification items in redux store
       if (notificationsResponse.notifications.length > 0) {
-        this.props.setNotification(notificationsResponse.notifications);
+        if (activeTab === 0) {
+          this.props.setPostNotification(notificationsResponse.notifications);
+        } else {
+          this.props.setTaskNotification(notificationsResponse.notifications);
+        }
       }
 
       // concat recieved notifications items with current items and unique array by identifiers
       // and sorting the notification items by date
       const notifs =
-        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(this.state.notifications), '_id')
+        ArrayUntiles.uniqueObjects(notificationsResponse.notifications.concat(thisNotifs), '_id')
           .sort((a: INotification, b: INotification) => {
             return b.timestamp - a.timestamp;
           });
 
       // Update state with new notifications array
-      this.setState({
-        notifications: notifs,
-      });
+      const state = {};
+      state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
+      this.setState(state);
     });
   }
 
@@ -257,7 +279,13 @@ class Notifications extends React.Component<IProps, IState> {
     notificationApi.markAllRead();
 
     // Set the `read` property of all notification items to true
-    const notifs = this.state.notifications.map((notif: INotification) => {
+    const postNotifications = this.state.postNotifications.map((notif: INotification) => {
+      let newNotif;
+      newNotif = JSON.parse(JSON.stringify(notif));
+      newNotif.read = true;
+      return newNotif;
+    });
+    const taskNotifications = this.state.taskNotifications.map((notif: INotification) => {
       let newNotif;
       newNotif = JSON.parse(JSON.stringify(notif));
       newNotif.read = true;
@@ -265,11 +293,13 @@ class Notifications extends React.Component<IProps, IState> {
     });
 
     // store the new notification items in redux store
-    this.props.setNotification(notifs);
+    this.props.setPostNotification(postNotifications);
+    this.props.setTaskNotification(taskNotifications);
 
     // update the state with new notification items
     this.setState({
-      notifications: notifs,
+      postNotifications,
+      taskNotifications,
     });
   }
 
@@ -287,7 +317,9 @@ class Notifications extends React.Component<IProps, IState> {
     // define the notification Api class
     const notificationApi = new NotificationApi();
     notificationApi.markAsRead({notification_id: notification._id});
-    const notifs = this.state.notifications.map((notif: INotification) => {
+    const {activeTab} = this.state;
+    const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications;
+    const notifs = thisNotifs.map((notif: INotification) => {
       if (notification._id !== notif._id) {
         return notif;
       }
@@ -299,12 +331,27 @@ class Notifications extends React.Component<IProps, IState> {
     });
 
     // store the new notification items in redux store
-    this.props.setNotification(notifs);
+    if (activeTab === 0) {
+      this.props.setPostNotification(notifs);
+      // update the state with new notification items
+      this.setState({
+        postNotifications: notifs,
+      });
+    } else {
+      this.props.setTaskNotification(notifs);
+      // update the state with new notification items
+      this.setState({
+        taskNotifications: notifs,
+      });
+    }
+  }
 
-    // update the state with new notification items
-    this.setState({
-      notifications: notifs,
-    });
+  private setTabPost = () => {
+    this.setState({activeTab: 0}, () => this.getNotificationBefore(true, true));
+  }
+
+  private setTabTask = () => {
+    this.setState({activeTab: 1}, () => this.getNotificationBefore(true, true));
   }
 
   /**
@@ -358,9 +405,23 @@ class Notifications extends React.Component<IProps, IState> {
             <IcoN size={24} name="listCheck24"/>
           </a>
         </div>
+        <div className={tabStyle.tabHead}>
+          <a onClick={this.setTabPost} className={this.state.activeTab === 0 ? 'active' : ''}>
+            Post
+          </a>
+          <a onClick={this.setTabTask} className={this.state.activeTab === 1 ? 'active' : ''}>
+            Task
+          </a>
+        </div>
         <div className={style.notificationWrp}>
           {/* render items for all notification items */}
-          {this.state.notifications.map((notification) =>
+          {this.state.activeTab === 1 && this.state.taskNotifications.map((notification) =>
+            (
+              <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
+                <NotificationItem notification={notification}/>
+              </div>
+            ))}
+          {this.state.activeTab === 0 && this.state.postNotifications.map((notification) =>
             (
               <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
                 <NotificationItem notification={notification}/>
@@ -383,7 +444,8 @@ class Notifications extends React.Component<IProps, IState> {
  * @returns store item object
  */
 const mapStateToProps = (store) => ({
-  notifications: store.app.notifications,
+  postNotifications: store.app.postNotifications,
+  taskNotifications: store.app.taskNotifications,
   notificationsCount: store.app.notificationsCount,
 });
 
@@ -394,7 +456,10 @@ const mapStateToProps = (store) => ({
  */
 const mapDispatchToProps = (dispatch) => {
   return {
-    setNotification: (notifications: INotification[]) => {
+    setPostNotification: (notifications: INotification[]) => {
+      dispatch(setNotification(notifications));
+    },
+    setTaskNotification: (notifications: INotification[]) => {
       dispatch(setNotification(notifications));
     },
     setNotificationCount: (counts: INotificationCountResponse) => {

@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {browserHistory, Link} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import {Input, Button, Form} from 'antd';
 import AccountApi from 'api/account';
 import Waiting from './Waiting';
@@ -241,13 +241,13 @@ class Verify extends React.Component<IProps, IState> {
       code: this.state.verificationCode,
       vid: this.props.params.vid,
     }).then(() => {
-      const nextStepRoute = '/m/signup/register/:country/:code/:phone/:vid'
+      const nextStepRoute = '/signup/register/:country/:code/:phone/:vid'
         .replace(':country', this.props.params.country)
         .replace(':code', this.props.params.code)
         .replace(':phone', this.props.params.phone)
         .replace(':vid', this.props.params.vid);
 
-      browserHistory.push(nextStepRoute);
+      hashHistory.push(nextStepRoute);
     }, (error: IErrorResponseData) => {
       if (error.err_code === Failure.INVALID) {
         this.setState({
@@ -358,7 +358,7 @@ class Verify extends React.Component<IProps, IState> {
         <div className={[publicStyle.publicForm, style.verify].join(' ')}>
           <p className={publicStyle.formParagraph}>We've sent a verification code via SMS to
             &nbsp;<Link
-              to={`/m/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
+              to={`/signup/phone/${this.props.params.country}/${this.props.params.code}/${this.props.params.phone}`}>
               {`+${this.props.params.code} ${this.props.params.phone}`}
             </Link>
             &nbsp;Check your phone and enter the code below:

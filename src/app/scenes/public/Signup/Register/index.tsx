@@ -14,7 +14,7 @@
  */
 
 import * as React from 'react';
-import {browserHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 import {Input, Button, Form, message} from 'antd';
 import AccountApi from 'api/account';
 import * as md5 from 'md5';
@@ -516,11 +516,11 @@ class Register extends React.Component<IProps, IState> {
           this.props.setLogin(response.account);
 
           // Navigates to the default route which is `/feed`
-          browserHistory.push('/m');
+          hashHistory.push('/m');
           message.success('Congratulations! Your account has been created successfully. Now you can explore Nested :)');
         }, () => {
           // Navigates to signin page if could not log the user in
-          browserHistory.push('/m/signin');
+          hashHistory.push('/signin');
         });
       }, () => {
         // Enable the button again and let the user to try once more!

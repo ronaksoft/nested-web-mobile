@@ -13,25 +13,26 @@ import IUser from '../../../api/account/interfaces/IUser';
 import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';
+import {isObject} from 'lodash';
 
 interface IOwnProps {
   /**
    * @property user_id
-   * @desc Includes user_id of users
-   * @type {string}
+   * @desc Includes user_id or model of users
+   * @type {any}
    * @memberof IOwnProps
    */
-  user_id: string;
+  user_id?: any;
 }
 
 interface IUserItemProps {
   /**
    * @property user_id
-   * @desc Includes user_id of users
-   * @type {string}
+   * @desc Includes user_id or model of users
+   * @type {any}
    * @memberof IUserItemProps
    */
-  user_id: string;
+  user_id: any;
   /**
    * @property accounts
    * @desc Includes array of IUser's objects
@@ -92,17 +93,28 @@ class FullName extends React.Component<IUserItemProps, IState> {
    */
   public componentDidMount() {
     /**
+     * if it was user model it just copy it to user in State
+     */
+    if (isObject(this.props.user_id)) {
+      this.setState({
+        user: this.props.user_id,
+      });
+      /**
+       * store account in redux store
+       */
+      this.props.accountAdd(this.props.user_id);
+      return;
+    }
+    /**
      * search redux store for any user which has the same id with `user_id`
      */
-    const user = this.props.accounts.filter((user: IUser) => {
-      return user._id === this.props.user_id;
-    });
+    const user = this.props.accounts.find((user: IUser) => user._id === this.props.user_id);
     /**
      * determine user is stored in redux already
      */
-    if (user.length > 0) {
+    if (user) {
       this.setState({
-        user: user[0],
+        user,
       });
     } else {
       /**
@@ -141,7 +153,7 @@ class FullName extends React.Component<IUserItemProps, IState> {
       return null;
     }
     return (
-      <span>{user.fname} {user.lname}</span>
+      <span>{user.fname}&nbsp;{user.lname}</span>
     );
   }
 }

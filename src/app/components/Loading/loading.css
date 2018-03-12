@@ -1,138 +1,96 @@
-@-webkit-keyframes spin {
+@keyframes loading-first-circ {
   0% {
-    -webkit-transform: rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  25% {
-    -webkit-transform: rotate(270deg);
+    transform: scale3d(.5,.5,1) translateZ(1px);
     opacity: 1;
   }
   50% {
-    -webkit-transform: rotate(960deg);
-    opacity: 1;
-  }
-  80% {
-    -webkit-transform: rotate(1300deg);
-    opacity: 1;
+    transform: scale3d(.25,.25,1) translateZ(1px);
+    opacity: 0;
   }
   100% {
-    -webkit-transform: rotate(1820deg);
+    transform: scale3d(.25,.25,1) translateZ(1px);
     opacity: 0;
   }
 }
-@-moz-keyframes spin {
+@keyframes loading-second-circ {
   0% {
-    -moz-transform: rotate(0deg);
+    transform: scale3d(1,1,1) translateZ(1px);
     opacity: 0;
-  }
-  15% {
-    opacity: 1;
   }
   25% {
-    -moz-transform: rotate(270deg);
-    opacity: 1;
+    transform: scale3d(1,1,1) translateZ(1px);
+    opacity: 0;
   }
-  50% {
-    -moz-transform: rotate(960deg);
-    opacity: 1;
-  }
-  80% {
-    -moz-transform: rotate(1300deg);
+  75% {
+    transform: scale3d(.5,.5,1) translateZ(1px);
     opacity: 1;
   }
   100% {
-    -moz-transform: rotate(1820deg);
-    opacity: 0;
+    transform: scale3d(.5,.5,1) translateZ(1px);
+    opacity: 1;
   }
 }
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  25% {
-    transform: rotate(270deg);
-    opacity: 1;
-  }
-  50% {
-    transform: rotate(960deg);
-    opacity: 1;
-  }
-  80% {
-    transform: rotate(1300deg);
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(1820deg);
-    opacity: 0;
-  }
+.nstLoading {
+  width: 48px;
+  height: 48px;
+  position: relative;
 }
-
-.loading {
-  height: 44px;
+.nstLoading.sm {
+  width: 32px;
+  height: 32px;
+}
+.nstLoading.xsm {
+  width: 16px;
+  height: 16px;
+}
+.nstLoading.absolute {
   left: 50%;
-  margin-left: -22px;
-  margin-top: -20px;
+  margin-left: -24px;
+  margin-top: -24px;
   position: absolute;
   top: 50%;
-  width: 44px;
 }
-.loading .animation {
-  -webkit-animation: spin 5s linear 0s infinite;
-  -moz-animation: spin 5s linear 0s infinite;
-  animation: spin 5s linear 0s infinite;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-perspective: 1000;
-  -moz-perspective: 1000;
-  perspective: 1000;
-  opacity: 0;
+.nstLoading.fixed {
+  left: 50%;
+  margin-left: -24px;
+  margin-top: -24px;
+  position: fixed;
+  transform: translate3d(0, 0, 2px);
+  backface-visibility: hidden;
+  top: 50%;
 }
-.loading .animation:nth-child(2) {
-  -webkit-animation-delay: 125ms;
-  -moz-animation-delay: 125ms;
-  animation-delay: 125ms;
+.nstLoading.absolute.sm,
+.nstLoading.fixed.sm {
+  margin-left: -16px;
+  margin-top: -16px;
 }
-.loading .animation:nth-child(3) {
-  -webkit-animation-delay: 250ms;
-  -moz-animation-delay: 250ms;
-  animation-delay: 250ms;
+.nstLoading.absolute.xsm,
+.nstLoading.fixed.xsm {
+  margin-left: -8px;
+  margin-top: -8px;
 }
-.loading .animation:nth-child(4) {
-  -webkit-animation-delay: 375ms;
-  -moz-animation-delay: 375ms;
-  animation-delay: 375ms;
+.nstLoading.white::before,
+.nstLoading.white::after{
+  background-color: #fff;
 }
-.loading .animation:nth-child(5) {
-  -webkit-animation-delay: 500ms;
-  -moz-animation-delay: 500ms;
-  animation-delay: 500ms;
-}
-.loading > div > div {
-  background: none repeat scroll 0 0 #14D769;
-  border-radius: 100% 100% 100% 100%;
-  height: 6px;
+.nstLoading::after,
+.nstLoading::before {
+  content: ' ';
   left: 0;
-  position: absolute;
   top: 0;
-  width: 6px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background-color: #14D769;
+  transform-origin: center;
+  perspective: 1000;
+  backface-visibility: hidden;
+  will-change: transform;
 }
-.loading > div > div.two {
-  background: rgba(20, 215, 105, 0.8);
+.nstLoading::after {
+  animation: loading-first-circ 1s linear 0s infinite normal running;
 }
-.loading > div > div.three {
-  background: rgba(20, 215, 105, 0.6);
-}
-.loading > div > div.four {
-  background: rgba(20, 215, 105, 0.4);
-}
-.loading > div > div.five {
-  background: rgba(20, 215, 105, 0.2);
+.nstLoading::before {
+  animation: loading-second-circ 1s linear 0s infinite normal running;
 }
