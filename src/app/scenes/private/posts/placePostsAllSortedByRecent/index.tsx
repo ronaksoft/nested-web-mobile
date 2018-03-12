@@ -8,7 +8,7 @@
  * Date of review:         --
  */
 import * as React from 'react';
-import {OptionsMenu, PlaceName} from '../../../../components';
+import {OptionsMenu, PlaceName, InfiniteScroll, Loading, IcoN} from '../../../../components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../../api/post/index';
@@ -16,10 +16,9 @@ import IPost from '../../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../../redux/app/actions/index';
 import ArrayUntiles from '../../../../services/utils/array';
-import {Button, Modal} from 'antd';
+import {Modal} from 'antd';
 import Post from '../components/post/index';
 import {hashHistory} from 'react-router';
-import {Loading} from '../../../../components/Loading/index';
 import {NewBadge} from '../../../../components/NewBadge/index';
 import SyncActions from '../../../../services/syncActivity/syncActions';
 import IActivity from '../../../../api/activity/interfaces/IActivitiy';
@@ -211,43 +210,6 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    if ( this.scrollWrapper ) {
-      if (isSafari) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
     if (this.props.params.placeId) {
       this.currentPlaceId = this.props.params.placeId;
     }
@@ -256,16 +218,6 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
      */
     this.postApi = new PostApi();
     this.getPost(true);
-    /**
-     * handle window scroll in current post after user return from a post view page
-     * (by going to a post view page, selected post will store in `currentPost`)
-     */
-    if (this.props.currentPost) {
-      setTimeout(() => {
-          window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
-        },
-        200);
-    }
 
     this.syncActivityListeners.push(
       this.syncActivity.openChannel(
@@ -436,20 +388,11 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
         console.log('====================================');
       });
   }
-  /**
-   * @function getOffset
-   * @desc Get offset of post by `id` of html element
-   * @param {string} id, id of html element
-   * @returns {{left: number, top: number}}
-   * @private
-   */
-  private getOffset(id: string) {
-    const el = document.getElementById(id).getBoundingClientRect();
-    return {
-      left: el.left + window.scrollX,
-      top: el.top + window.scrollY,
-    };
+
+  private refresh = () => {
+    this.getPost(true);
   }
+
   /**
    * @function gotoPlacePostsAllSortedByRecentPost
    * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
@@ -634,33 +577,44 @@ class PlacePostsAllSortedByRecent extends React.Component<IProps, IState> {
                   count={this.state.newPostCount}
                   visibility={this.state.newPostCount > 0}/>
         <div className={privateStyle.postsArea} ref={this.refHandler}>
-          {/* rendering Loading component in  `loadingAfter` case */}
-          <Loading active={this.state.loadingAfter}/>
-          {/* after Loading component render posts list */}
-          {this.state.posts.map((post: IPost) => (
-            <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
-              <Post post={post}/>
-            </div>))}
-          {/* rendering Loading component in  `loadingBefore` case */}
-          <Loading active={this.state.loadingBefore}/>
-          {!this.state.reachedTheEnd && !this.state.loadingAfter &&
-          !this.state.loadingBefore && this.state.posts.length === 0 &&
-          <div className={privateStyle.emptyMessage}>You don't have any post.</div>
-          }
-          {/* rendering following text when there is no post */}
-          {this.state.reachedTheEnd &&
-          <div className={privateStyle.emptyMessage}>No more messages here!</div>
-          }
-          {!this.state.reachedTheEnd && this.state.posts.length > 0 &&
-          !this.state.loadingBefore && !this.state.loadingAfter &&
-          (
-            <div className={privateStyle.loadMore}>
-              {/* Load More button */}
-              <Button onClick={loadMore}>Load More</Button>
-            </div>
-          )
-          }
-          <div className={privateStyle.bottomSpace}/>
+          {this.state.posts.length > 0 && (
+          <InfiniteScroll
+            pullDownToRefresh={true}
+            pullDownToRefreshContent={(
+              <h3 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h3>
+            )}
+            releaseToRefreshContent={(
+              <h3 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h3>
+            )}
+            refreshFunction={this.refresh}
+            next={loadMore}
+            route={this.props.location.pathname}
+            hasMore={true}
+            loader={<Loading active={true} position="fixed"/>}>
+              
+              {/* after Loading component render posts list */}
+              {this.state.posts.map((post: IPost) => (
+                <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+                  <Post post={post}/>
+                </div>
+              ))}
+              {/* rendering following text when there is no post */}
+              {
+                !this.state.reachedTheEnd &&
+                !this.state.loadingAfter &&
+                !this.state.loadingBefore &&
+                this.state.posts.length === 0 &&
+                (
+                  <div className={privateStyle.emptyMessage}>You don't have any post.</div>
+                )
+              }
+              {/* rendering following text in `reachedTheEnd` case */}
+              {this.state.reachedTheEnd &&
+              <div className={privateStyle.emptyMessage}>No more messages here!</div>
+              }
+              <div className={privateStyle.bottomSpace}/>
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     );

@@ -207,16 +207,6 @@ class Feed extends React.Component<IProps, IState> {
       .then((placesId: string[]) => {
         this.favoritePlacesId = placesId;
       });
-    /**
-     * handle window scroll in current post after user return from a post view page
-     * (by going to a post view page, selected post will store in `currentPost`)
-     */
-    if (this.props.currentPost) {
-      setTimeout(() => {
-          window.scrollTo(0, this.getOffset(this.props.currentPost._id).top - 400);
-        },
-        200);
-    }
 
     // Needs documentation
     this.syncActivityListeners.push(
@@ -375,26 +365,6 @@ class Feed extends React.Component<IProps, IState> {
     this.setState({
       newPostCount: 0,
     });
-  }
-  /**
-   * @function getOffset
-   * @desc Get offset of post by `id` of html element
-   * @param {string} id, id of html element
-   * @returns {{left: number, top: number}}
-   * @private
-   */
-  private getOffset(id: string) {
-    if (!document.getElementById(id)) {
-      return {
-        top : 0,
-        left : 0,
-      };
-    }
-    const el = document.getElementById(id).getBoundingClientRect();
-    return {
-      left: el.left + window.scrollX,
-      top: el.top + window.scrollY,
-    };
   }
 
   private refresh = () => {
