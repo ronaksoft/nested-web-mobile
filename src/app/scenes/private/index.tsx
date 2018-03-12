@@ -133,6 +133,12 @@ class Private extends React.Component<IProps, IState> {
     };
   }
 
+  public isiOS() {
+    if (typeof window !== 'undefined' && window.document) {
+      return navigator && navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    }
+  }
+
   /**
    * Update state on changing component passed data
    * @override
@@ -240,15 +246,14 @@ class Private extends React.Component<IProps, IState> {
   }
 
   private scrollPreventer = (e) => {
-    console.log('scrollPreventer', 'scrollPreventer');
-    // const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
+    console.log('scrollPreventer');
     e = e || window.event;
-    // if (isSafari) {
+    // if (this.isiOS()) {
       e.returnValue = false;
       e.cancelBubble = false;
       if (e.preventDefault) {
           e.preventDefault();
-          // e.stopPropagation();
+          e.stopPropagation();
       }
       return false; // or return e, doesn't matter
     // }
@@ -265,13 +270,8 @@ class Private extends React.Component<IProps, IState> {
     document.body.scrollTop = 0;
     document.addEventListener('scroll', this.scrollPreventer, false);
     document.body.addEventListener('scroll', this.scrollPreventer, false);
-    // if ('PointerEvent' in window) {
-    //   document.addEventListener('pointermove', this.scrollPreventer, false);
-    //   document.body.addEventListener('pointermove', this.scrollPreventer, false);
-    // } else {
-      document.addEventListener('touchmove', this.scrollPreventer, false);
-      document.body.addEventListener('touchmove', this.scrollPreventer, false);
-    // }
+    document.addEventListener('touchmove', this.scrollPreventer, false);
+    document.body.addEventListener('touchmove', this.scrollPreventer, false);
 
     // document.addEventListener('touchstart', (e) => {
     //   this.xStart = e.touches[0].screenY;
@@ -355,15 +355,10 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     this.unListenChangeRoute();
+    document.removeEventListener('touchmove', this.scrollPreventer);
+    document.body.removeEventListener('touchmove', this.scrollPreventer);
     document.removeEventListener('scroll', this.scrollPreventer);
     document.body.removeEventListener('scroll', this.scrollPreventer);
-    if ('PointerEvent' in window) {
-      document.removeEventListener('pointermove', this.scrollPreventer);
-      document.body.removeEventListener('pointermove', this.scrollPreventer);
-    } else {
-      document.removeEventListener('touchmove', this.scrollPreventer);
-      document.body.removeEventListener('touchmove', this.scrollPreventer);
-    }
   }
 
   /**

@@ -66,7 +66,6 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     public dragging: boolean;
     public maxPullDownDistance: number;
     public el: HTMLElement;
-    public isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
     public throttledOnScrollListener: () => void;
     public infScroll: any;
     public pullDown: any;
@@ -108,19 +107,19 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       this.el.scrollTo(0, this.props.initialScrollY);
     }
     if (this.props.pullDownToRefresh) {
-        if ('PointerEvent' in window) {
-            this.el.addEventListener('pointerdown', this.onStart, false);
-            this.el.addEventListener('pointermove', this.onMove, false);
-            this.el.addEventListener('pointerup', this.onEnd, false);
-            this.el.addEventListener('pointercancel', this.onEnd, false);
-        } else {
-            this.el.addEventListener('touchstart', this.onStart, false);
-            this.el.addEventListener('touchmove', this.onMove, false);
-            this.el.addEventListener('touchend', this.onEnd, false);
-            this.el.addEventListener('mousedown', this.onStart, false);
-            this.el.addEventListener('mousemove', this.onMove, false);
-            this.el.addEventListener('mouseup', this.onEnd, false);
-        }
+        // if ('PointerEvent' in window) {
+        //   this.el.addEventListener('pointerdown', this.onStart, false);
+        //   this.el.addEventListener('pointermove', this.onMove, false);
+        //   this.el.addEventListener('pointerup', this.onEnd, false);
+        //   this.el.addEventListener('pointercancel', this.onEnd, false);
+        // } else {
+          this.el.addEventListener('touchstart', this.onStart, false);
+          this.el.addEventListener('touchmove', this.onMove, false);
+          this.el.addEventListener('touchend', this.onEnd, false);
+          this.el.addEventListener('mousedown', this.onStart, false);
+          this.el.addEventListener('mousemove', this.onMove, false);
+          this.el.addEventListener('mouseup', this.onEnd, false);
+        // }
         // get BCR of pullDown element to position it above
         this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
         this.forceUpdate();
@@ -135,22 +134,28 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     }
   }
 
+  public isiOS() {
+    if (typeof window !== 'undefined' && window.document) {
+      return navigator && navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    }
+  }
+
   public componentWillUnmount() {
     this.el.removeEventListener('scroll', this.throttledOnScrollListener);
     if (this.props.pullDownToRefresh) {
-        if ('PointerEvent' in window) {
-            this.el.removeEventListener('pointerdown', this.onStart);
-            this.el.removeEventListener('pointermove', this.onMove);
-            this.el.removeEventListener('pointerup', this.onEnd);
-            this.el.removeEventListener('pointercancel', this.onEnd);
-        } else {
-            this.el.removeEventListener('touchstart', this.onStart);
-            this.el.removeEventListener('touchmove', this.onMove);
-            this.el.removeEventListener('touchend', this.onEnd);
-            this.el.removeEventListener('mousedown', this.onStart);
-            this.el.removeEventListener('mousemove', this.onMove);
-            this.el.removeEventListener('mouseup', this.onEnd);
-        }
+      // if ('PointerEvent' in window) {
+      //     this.el.removeEventListener('pointerdown', this.onStart);
+      //     this.el.removeEventListener('pointermove', this.onMove);
+      //     this.el.removeEventListener('pointerup', this.onEnd);
+      //     this.el.removeEventListener('pointercancel', this.onEnd);
+      // } else {
+          this.el.removeEventListener('touchstart', this.onStart);
+          this.el.removeEventListener('touchmove', this.onMove);
+          this.el.removeEventListener('touchend', this.onEnd);
+          this.el.removeEventListener('mousedown', this.onStart);
+          this.el.removeEventListener('mousemove', this.onMove);
+          this.el.removeEventListener('mouseup', this.onEnd);
+      // }
     }
   }
 
@@ -165,16 +170,13 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public onStart(evt: any) {
-    if (this.infScroll.scrollTop === 0) {
-      this.infScroll.scrollTop = 1;
-    } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
-        this.infScroll.scrollTop -= 1;
-    }
     evt.stopImmediatePropagation();
     evt.cancelBubble = true;
     evt.stopPropagation();
+    this.preventZeroScroll(this.infScroll);
+
     if (this.state.lastScrollTop > 1) {
-        return;
+      return;
     };
 
     this.dragging = true;
@@ -190,8 +192,10 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     evt.stopImmediatePropagation();
     evt.cancelBubble = true;
     evt.stopPropagation();
-    if (this.infScroll.scrollTop === 0) {
-      evt.preventDefault();
+    if (this.isiOS()) {
+      if (this.infScroll.scrollTop === 0) {
+        evt.preventDefault();
+      }
     }
     if (!this.dragging) {
         return;
@@ -216,22 +220,16 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     if (this.currentY - this.startY > this.maxPullDownDistance * 1.5) {
         return;
     }
-
     this.infScroll.style.overflow = 'visible';
     this.infScroll.style.transform = `translate3d(0px, ${this.currentY - this.startY}px, 0px)`;
     return true;
   }
 
   public onEnd(evt: any) {
-    if (this.infScroll.scrollTop === 0) {
-        this.infScroll.scrollTop = 1;
-    } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
-        this.infScroll.scrollTop -= 1;
-    }
     evt.stopImmediatePropagation();
     evt.cancelBubble = true;
     evt.stopPropagation();
-    // e.returnValue = true;
+    this.preventZeroScroll(this.infScroll);
     this.startY = 0;
     this.currentY = 0;
 
@@ -255,6 +253,15 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     const scrolled = scrollThreshold * (target.scrollHeight - target.scrollTop);
     return scrolled <= clientHeight;
   }
+  private preventZeroScroll(target) {
+    if (this.isiOS()) {
+      if (target.scrollTop === 0) {
+        target.scrollTop = 1;
+      } else if (target.scrollHeight === target.clientHeight + target.scrollTop) {
+        target.scrollTop -= 1;
+      }
+    }
+  }
 
   public onScrollListener(event) {
     if (typeof this.props.onScroll === 'function') {
@@ -270,11 +277,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     event.stopImmediatePropagation();
     event.cancelBubble = true;
     event.stopPropagation();
-    if (target.scrollTop === 0) {
-        target.scrollTop = 1;
-    } else if (target.scrollHeight === target.clientHeight + target.scrollTop) {
-        target.scrollTop -= 1;
-    }
+    this.preventZeroScroll(target);
     event.returnValue = true;
     // save scroll in redux
     if (typeof this.props.setScroll === 'function') {
@@ -315,7 +318,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   }
 
   public render() {
-    if (this.infScroll) {
+    if (this.infScroll && this.isiOS()) {
       if (this.infScroll.scrollTop === 0) {
           this.infScroll.scrollTop = 1;
       } else if (this.infScroll.scrollHeight === this.infScroll.clientHeight + this.infScroll.scrollTop) {
