@@ -147,7 +147,9 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
           <div className={style.taskContent}>
             <div className={style.taskHead}>
               <h4>{task.title}</h4>
-              <span>{TimeUntiles.dynamic(task.due_date)}</span>
+              {task.due_date > 0 &&
+                <span>{TimeUntiles.dynamicTask(task.due_date, task.due_data_has_clock)}</span>
+              }
             </div>
             {(!isCandidate && !isRejected && this.props.withDetails) && (
               <div className={style.taskDetail}>

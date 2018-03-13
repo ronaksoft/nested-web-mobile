@@ -63,6 +63,53 @@ class TimeUntiles {
 
   }
 
+  /**
+   * @func dynamic
+   * @desc Formates the given timestamp dynamically.
+   * @param {number} timestamp
+   * @returns {string} Time related to now
+   * @memberof TimeUntiles
+   */
+  public dynamicTask(timestamp: number, haveTime: boolean) {
+    let date;
+    if (!haveTime) {
+      date = moment(timestamp).startOf('day').add(23, 'hours').add(59, 'minutes');
+    } else {
+      date = moment(timestamp);
+    }
+    const current = Date.now();
+    let diffDate = date.diff(moment(current));
+    let str = ' left';
+
+    if (diffDate < 0) {
+      diffDate = diffDate * -1;
+      str = ' ago';
+    }
+
+    const diffDateDay = Math.floor(diffDate / (1000 * 60 * 60 * 24));
+    const diffDateHour = Math.floor(diffDate / (1000 * 60 * 60));
+    const diffDateMin = Math.floor(diffDate / (1000 * 60));
+
+    if (diffDateDay > 1 || diffDateDay === 1 && haveTime) {
+      return diffDateDay + ' ' + (diffDateDay > 1 ? 'days' : 'day') + str;
+    } else if (diffDateHour > 0) {
+      const tonight = moment(current).startOf('day').add(1, 'days');
+      const lastNight = moment(current).startOf('day');
+      if (date.isSameOrBefore(lastNight)) {
+        return date.format(haveTime ? '[Yesterday at] HH:mm' : '[Yesterday]');
+      } else if (date.isSameOrBefore(tonight)) {
+        return date.format(haveTime ? '[Today at] HH:mm' : '[Today]');
+      } else {
+        return date.format(haveTime ? '[Tomorrow at] HH:mm' : '[Tomorrow]');
+      }
+    } else if (diffDateMin > 0) {
+      return diffDateMin + ' ' + (diffDateMin > 1 ? 'minutes' : 'minute') + str;
+    } else {
+      // return 'Less than a minute';
+    }
+    return date.format('DD[/]MM[/]YYYY');
+  }
+
 }
 
 export default new TimeUntiles();

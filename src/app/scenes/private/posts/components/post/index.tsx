@@ -496,7 +496,7 @@ class Post extends React.Component<IProps, IState> {
     }
     const postView = !this.props.post;
     if (!this.state.post) {
-      return <Loading active={true}/>;
+      return <Loading active={true} position="absolute"/>;
     }
 
     const {post} = this.state;
