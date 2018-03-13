@@ -206,13 +206,16 @@ class Post extends React.Component<IProps, IState> {
             post,
           });
           this.updatePostsInStore('post_read', true);
+          setTimeout( () => {
+            this.loadBodyEv(this.htmlBodyRef);
+          }, 300);
         });
 
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
 
-    setTimeout( () => {
+    setTimeout(() => {
       this.loadBodyEv(this.htmlBodyRef);
     }, 300);
 
@@ -337,7 +340,7 @@ class Post extends React.Component<IProps, IState> {
       const newH = el.getBoundingClientRect().height;
       // console.log(delta, newH);
       el.parentElement.style.height = delta + newH + 'px';
-    }, 500);
+    }, 1500);
     this.resizeFont(el, ratio);
   }
 
