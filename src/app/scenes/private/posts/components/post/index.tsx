@@ -609,7 +609,6 @@ class Post extends React.Component<IProps, IState> {
               {!this.props.post && (
                 <ul className={style.postLabels}>
                   {post.post_labels.map((label: ILabel, index: number) => {
-                    console.log(label);
                     return (
                     <li key={label._id + index}>
                       <LabelChips label={label}/>

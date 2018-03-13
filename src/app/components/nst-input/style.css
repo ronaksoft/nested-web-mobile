@@ -1,0 +1,110 @@
+.nstInput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.nstInput label {
+  margin-bottom: 6px;
+  color: #323D47;
+  Opacity: 80%;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.nstInput p {
+  opacity: .8;
+  background-color: rgba(50, 61, 71, .1);
+  padding: 4px 6px;
+  color: #323D47;
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="password"] {
+  height: 40px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0, 0, 0, .16);
+  box-shadow: inset 0px 0px 1px transparent;
+  color: #323D47;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: all .2s;
+}
+
+input[type="text"]:hover,
+input[type="password"]:hover {
+  border: 1px solid rgba(50, 61, 71, .72);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border: 1px solid #323D47;
+  box-shadow: inset 0px 0px 1px #323D47;
+}
+
+input[type="text"].error,
+input[type="password"].error {
+  color: rgb(255, 51, 68);
+  border: 1px solid rgb(255, 51, 68);
+}
+
+input[type="text"].error:hover,
+input[type="password"].error:hover {
+  border: 1px solid rgb(255, 51, 68);
+}
+
+input[type="text"].error:focus,
+input[type="password"].error:focus {
+  border: 1px solid #323D47;
+  box-shadow: inset 0px 0px 1px #323D47;
+}
+
+input[type="text"].error+p,
+input[type="password"].error+p {
+  color: #323D47;
+  background-color: fade(#323D47, 10%);
+}
+
+input[type="text"].success,
+input[type="password"].success {
+  color: #323D47;
+  border: 1px solid rgba(20, 215, 105, 1);
+}
+input[type="text"].success:hover,
+input[type="password"].success:hover {
+  border: 1px solid rgba(20, 215, 105, 1);
+}
+input[type="text"].success:focus,
+input[type="password"].success:focus {
+  border: 1px solid rgba(20, 215, 105, 1);
+  box-shadow: inset 0px 0px 1px rgba(20, 215, 105, 1);
+}
+input[type="text"].success + p,
+input[type="password"].success + p {
+  color: rgba(20, 215, 105, 1);
+  background-color: rgba(20, 215, 105, .1);
+}
+
+input {
+  outline: none;
+}
+
+input::-webkit-input-placeholder {
+  color: rgba(50, 61, 71, .4);
+  font-size: 16px;
+}
+
+input:-moz-placeholder {
+  color: rgba(50, 61, 71, .4);
+  font-size: 16px;
+}
+
+input::-moz-placeholder {
+  color: rgba(50, 61, 71, .4);
+  font-size: 16px;
+}

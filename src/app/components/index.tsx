@@ -9,6 +9,7 @@ export {AddLabel} from './labels/';
 export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
 export {LabelChips} from './Chips/label';
+export {NstInput} from './nst-input/index';
 
 import InfiniteScroll from './scroll/infinite-scroll';
 import UserAvatar from './user/Avatar';

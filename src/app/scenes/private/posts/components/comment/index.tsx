@@ -11,8 +11,7 @@
 import * as React from 'react';
 import PostApi from 'api/post/index';
 import IComment from 'api/comment/interfaces/IComment';
-import {UserAvatar, FullName} from 'components';
-import {Input} from 'antd';
+import {UserAvatar, FullName, NstInput} from 'components';
 import CommentApi from 'api/comment/index';
 import ArrayUntiles from 'services/utils/array';
 import TimeUntiles from 'services/utils/time';
@@ -312,10 +311,10 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @param {*} e
    * @memberof CommentsBoard
    */
-  private handleChangeComment(e: any) {
+  private handleChangeComment(text: string) {
 
     this.setState({
-      newCommentTxt: e.target.value,
+      newCommentTxt: text,
     });
   }
 
@@ -334,7 +333,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
             <div id={'load-older-comments'} className={style.loadMore}
                  onClick={this.getBeforeComments.bind(this, '')}
             >
-              <IcoN size={16} name={'comment24'}/>
+              <IcoN size={16} name={'comments16'}/>
               Load older comments
             </div>
           )
@@ -353,13 +352,10 @@ class CommentsBoard extends React.Component<IProps, IState> {
         ))}
         {!this.props.no_comment && (
           <div className={style.commentInput}>
-            <UserAvatar user_id={this.props.user._id} size={24} borderRadius={'16px'}/>
-            <Input
-              placeholder={'write your comment...'}
-              value={this.state.newCommentTxt}
-              onChange={this.handleChangeComment}
-              disabled={this.state.sendingComment}
-              onPressEnter={this.addComment.bind(this, '')}/>
+            <UserAvatar user_id={this.props.user} size={24} borderRadius={'16px'}/>
+            <NstInput placeholder={'write your comment...'} value={this.state.newCommentTxt}
+              onChange={this.handleChangeComment} disabled={this.state.sendingComment}
+              onPressEnter={this.addComment.bind(this, '')} />
           </div>
         )}
       </div>

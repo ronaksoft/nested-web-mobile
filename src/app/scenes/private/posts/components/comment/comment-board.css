@@ -64,24 +64,26 @@
   word-break: break-word;
 }
 .commentInput {
-  height: 56px;
-  background-color: white;
-  box-shadow: 0 0 16px rgba(50,61,71,.32);
+  height: 64px;
+  background-color: #F6F6F7;
+  /* box-shadow: 0 0 16px rgba(50,61,71,.32); */
   position: fixed;
   left: 0;
+  display: flex;
+  align-items: center;
   bottom: 0;
   right: 0;
+  padding: 12px;
 }
-.commentInput > div {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  top: 14px;
-  left: 12px
+.commentInput > div:first-child {
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+  display: flex;
+  flex: none;
 }
 .commentInput input{
   height: 100%;
-  background-color: transparent;
   border-radius: 0;
   z-index: 1;
   color: rgba(50,61,71,1);
@@ -89,13 +91,18 @@
   border: none;
   font-size: 13px;
   font-weight: 300;
-  padding: 8px 16px 8px 56px;
+  background: #FFFFFF;
+  border: 1px solid #DDDFE0;
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex: 1;
 }
 .commentInput input:hover ,
 .commentInput input:focus {
   border: none;
   outline: none;
-  box-shadow: 0 0 16px rgba(50,61,71,.32);
+  box-shadow: none;
 }
 .Rtl {
   direction: rtl;
