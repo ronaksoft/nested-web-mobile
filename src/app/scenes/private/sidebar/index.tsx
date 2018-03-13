@@ -550,27 +550,27 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div>
           {/* Close Sidebar button */}
           <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-            <IcoN size={24} name={'xcross24White'}/>
+            <IcoN size={24} name={'xcrossWhite24'}/>
           </div>
           <ul className={style.sidebarActions}>
             {/* Feed scene link */}
             <li>
               <Link to={`/feed`}>
-                <IcoN size={16} name={'bookmarkMessage1White'}/>
+                <IcoN size={16} name={'bookmarkMessageBWhite16'}/>
                 Feed
               </Link>
             </li>
             {/* bookmarks scene link */}
             <li>
               <Link to={`/bookmarks`}>
-                <IcoN size={16} name={'bookmarkMessage16White'}/>
+                <IcoN size={16} name={'bookmarkMessageWhite16'}/>
                 Bookmarked Posts
               </Link>
             </li>
             {/* Shared messages scene link */}
             <li>
               <Link to={`/shared`}>
-                <IcoN size={16} name={'sentMessage16White'}/>
+                <IcoN size={16} name={'sentMessageWhite16'}/>
                 Shared by me
               </Link>
             </li>
@@ -583,7 +583,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           <hr className={style.hrLight}/>
           <ul className={style.sidebarActions}>
             {/*<li>
-              <IcoN size={16} name={'gear16White'}/>
+              <IcoN size={16} name={'gearWhite16'}/>
               Profile and Settings
             </li>*/}
             {/* Help center external link */}

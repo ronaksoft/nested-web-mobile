@@ -10,7 +10,8 @@
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel} from 'components';
+import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
+  LabelChips} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
@@ -556,10 +557,10 @@ class Post extends React.Component<IProps, IState> {
         <div className={style.postScrollContainer} ref={this.refScrollHandler}>
           <div className={style.postScrollContent}>
             <div className={style.postHead}>
-              <UserAvatar user_id={sender._id} size={32} borderRadius={'16px'}/>
-              {post.reply_to && <IcoN size={16} name={'replied16Green'}/>}
+              <UserAvatar user_id={sender} size={32} borderRadius={'16px'}/>
+              {post.reply_to && <IcoN size={16} name={'repliedGreen16'}/>}
               {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
-              {post.sender && <FullName user_id={post.sender._id}/>}
+              {post.sender && <FullName user_id={post.sender}/>}
               {post.email_sender && (
                 <span>
                   {`${post.email_sender._id}`}
@@ -585,22 +586,37 @@ class Post extends React.Component<IProps, IState> {
                                 postId={post._id}
                 />
               )}
-              {post.post_attachments.length > 0 && this.props.post && (
-                <div className={style.postAttachs}>
-                  <IcoN size={16} name={'attach24'}/>
-                  {post.post_attachments.length}
-                  {post.post_attachments.length === 1 && <span>Attachment</span>}
-                  {post.post_attachments.length > 1 && <span>Attachments</span>}
+              {this.props.post && (
+                <div className={style.postDetails}>
+                {post.post_attachments.length > 0 && (
+                  <div>
+                    <IcoN size={16} name={'attach16'}/>
+                    {post.post_attachments.length}
+                    {post.post_attachments.length === 1 && <span> Attachment</span>}
+                    {post.post_attachments.length > 1 && <span> Attachments</span>}
+                  </div>
+                )}
+                {post.post_labels.length > 0 && (
+                  <div>
+                    <IcoN size={16} name={'tag16'}/>
+                    {post.post_labels.length}
+                    {post.post_labels.length === 1 && <span> Label</span>}
+                    {post.post_labels.length > 1 && <span> Labels</span>}
+                  </div>
+                )}
                 </div>
               )}
-              <ul className={style.postLabels}>
-                {post.post_labels.map((label: ILabel, index: number) => {
-                  return (
-                  <li key={label._id + index} className={[style.postLabel, style['label' + label.code]].join(' ')}>
-                    {label.title}
-                  </li>
-                  ); })}
-              </ul>
+              {!this.props.post && (
+                <ul className={style.postLabels}>
+                  {post.post_labels.map((label: ILabel, index: number) => {
+                    console.log(label);
+                    return (
+                    <li key={label._id + index}>
+                      <LabelChips label={label}/>
+                    </li>
+                    ); })}
+                </ul>
+              )}
               <div className={style.postPlaces}>
                 {postView && <a>Shared with:</a>}
                 {post.post_places.map((place: IPlace, index: number) => {
@@ -623,7 +639,7 @@ class Post extends React.Component<IProps, IState> {
                 {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
               </div>
 
-              {!postView && (
+              {!postView && post.counters.comments > 1 && (
                 <div className={style.postFooter}>
                   <IcoN size={16} name={'comment24'}/>
                   {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}

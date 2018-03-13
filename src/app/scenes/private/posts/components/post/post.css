@@ -112,15 +112,21 @@
   font-size: 13px;
   line-height: 20px;
 }
-.postBody .postAttachs {
+.postBody .postDetails {
   font-size: 13px;
   margin-top: 8px;
   line-height: 18px;
+  display: flex;
   padding: 0 24px;
 }
-.postBody .postAttachs i{
+.postBody .postDetails > div {
+  display: flex;
+  margin-right: 16px;
+}
+.postBody .postDetails i{
   margin-right: 6px;
   opacity: .72;
+  flex: none;
 }
 .postBody .postPlaces{
   margin-top: 12px;
@@ -129,7 +135,7 @@
   color: rgba(50,61,71,.40);
   flex-wrap: wrap;
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding: 0 24px;
 }
 .postBody .postPlaces a{

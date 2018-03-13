@@ -29,3 +29,6 @@
   display: inline-block;
   height : 40px;
 }
+.nstIcon {
+  display: flex;
+}

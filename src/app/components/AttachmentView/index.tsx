@@ -476,7 +476,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         <div className={style.navigation}>
           {/* Attachment view close button */}
           <a onClick={this.props.onClose}>
-            <IcoN size={24} name={'xcross24White'}/>
+            <IcoN size={24} name={'xcrossWhite24'}/>
           </a>
           <span>
             {indexOfAttachment + 1} of {this.state.attachments.length}
@@ -518,7 +518,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           </div>
           {/* Attachment view download button */}
           <a onClick={this.download} href={this.state.downloadUrl}>
-            <IcoN size={24} name={'downloads24White'}/>
+            <IcoN size={24} name={'downloadsWhite24'}/>
           </a>
         </div>
         {prv && prvElement}

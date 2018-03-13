@@ -8,6 +8,7 @@ export {Loading} from './Loading/';
 export {AddLabel} from './labels/';
 export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
+export {LabelChips} from './Chips/label';
 
 import InfiniteScroll from './scroll/infinite-scroll';
 import UserAvatar from './user/Avatar';

@@ -40,9 +40,20 @@ class IcoN extends React.Component<IOptionsMenuProps, any> {
      * @namespace
      * className - css classname related to the size of icon
      */
-    const className = 's' + this.props.size;
+    let width;
+    let height;
+    const size = this.props.size.toString() || this.props.name.replace( /^\D+/g, '').toString();
+    if (size.length === 4) {
+      width = size.slice(0, 2);
+      height = size.slice(2, 4);
+    } else {
+      width = height = size;
+    }
+    const headSvgContent = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
+      version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">`;
     return (
-    <i dangerouslySetInnerHTML={{__html: Icons[this.props.name]}} className={style[className]} />
+      <i dangerouslySetInnerHTML={{__html: headSvgContent + Icons[this.props.name] + '</svg>'}}
+        className={style.nstIcon} />
     );
   }
 }

@@ -101,7 +101,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
                 backgroundColor: 'black',
                 borderRadius : '24px',
               }}>
-               <IcoN size={16} name="play16White"/>
+               <IcoN size={16} name="playWhite16"/>
              </div>
       </li>
     );

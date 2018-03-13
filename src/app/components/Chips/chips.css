@@ -1,17 +1,19 @@
 .selectedItem {
-  background-color: #83d8ad!important;
+  background-color: #83d8ad !important;
   color: #323D47;
 }
+
 .selectedItem:hover {
   color: #323D47;
 }
-.placechips{
+
+.placechips {
   height: 24px;
   border-radius: 3px;
   display: flex;
   align-items: center;
-  background-color: rgba(50,61,71,.16);
-  color: rgba(50,61,71,1);
+  background-color: rgba(50, 61, 71, .16);
+  color: rgba(50, 61, 71, 1);
   overflow: hidden;
   margin-right: 8px;
   align-self: center;
@@ -20,8 +22,208 @@
   margin-bottom: 6px;
   flex: none;
 }
-.placechips img{
+
+.placechips img {
   height: 24px;
   width: 24px;
   margin-right: 3px;
+}
+
+.labelEdge {
+  display: 'flex';
+  flex: 'none';
+  height: '100%';
+  flex: 'none';
+  width: '100%';
+}
+
+.labelChipsWrapper {
+  max-width: 128px;
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 5px 5px 0;
+}
+
+.labelChipsWrapper .labelEdge {
+  width: 18px;
+  height: 22px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px 0 0 2px;
+}
+
+.labelChipsWrapper .labelEdge i:last-child {
+  position: absolute;
+  display: none;
+  fill: #fff;
+  width: 16px;
+  height: 16px;
+}
+
+.labelChipsWrapper:not(:hover) {
+  box-shadow: none;
+}
+
+.labelChipsWrapper:not(:hover) .labelEdge {
+  background-color: transparent;
+  background: transparent !important;
+}
+
+.labelChipsWrapper:not(.isSelected) {
+  box-shadow: none;
+}
+
+.labelChipsWrapper:not(.access) .labelEdge {
+  background: transparent !important;
+  background-color: transparent;
+}
+
+.labelChipsWrapper span {
+  max-width: 102px;
+  line-height: 22px;
+  height: 22px;
+  font-size: 12px;
+  padding: 0 4px;
+  color: #fff;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.labelChipsWrapper.isSelected span {
+  background-color: #323D47;
+  background: #323D47 !important;
+}
+
+.labelChipsWrapper.isSelected .labelEdge .labelEdge path {
+  fill: #323D47;
+}
+
+.labelChipsWrapper.isSelected .labelEdge .closer path {
+  fill: #fff;
+}
+
+.labelChipsWrapper.isSelected:hover .labelEdge {
+  background-color: #323D47;
+  background: #323D47 !important;
+}
+
+.labelChipsWrapper:hover.access .labelEdge i:first-child {
+  display: none;
+}
+
+.labelChipsWrapper:hover.access .labelEdge i:last-child {
+  display: block;
+  fill: #fff;
+}
+
+.color-lbl-A ,
+.color-lbl-A svg{
+  color: #8895A1;
+  fill: #8895A1
+}
+
+.color-lbl-bg-A {
+  background: #8895A1!important;
+  background-color: #8895A1
+}
+
+.color-lbl-B ,
+.color-lbl-B svg{
+  color: rgba(90,191,112,1);
+  fill: rgba(90,191,112,1);
+}
+
+.color-lbl-bg-B {
+  background: rgba(90,191,112,1)!important;
+  background-color: rgba(90,191,112,1);
+}
+
+.color-lbl-C ,
+.color-lbl-C svg{
+  color: rgba(235,194,70,1);
+  fill: rgba(235,194,70,1);
+}
+
+.color-lbl-bg-C {
+  background: rgba(235,194,70,1)!important;
+  background-color: rgba(235,194,70,1);
+}
+
+.color-lbl-D ,
+.color-lbl-D svg{
+  color: rgba(242,97,97,1);
+  fill: rgba(242,97,97,1);
+}
+
+.color-lbl-bg-D {
+  background: rgba(242,97,97,1)!important;
+  background-color: rgba(242,97,97,1);
+}
+
+.color-lbl-E ,
+.color-lbl-E svg{
+  color: rgba(134,105,191,1);
+  fill: rgba(134,105,191,1);
+}
+
+.color-lbl-bg-E {
+  background: rgba(134,105,191,1)!important;
+  background-color: rgba(134,105,191,1);
+}
+
+.color-lbl-F ,
+.color-lbl-F svg{
+  color: rgba(80,142,230,1);
+  fill: rgba(80,142,230,1);
+}
+
+.color-lbl-bg-F {
+  background: rgba(80,142,230,1)!important;
+  background-color: rgba(80,142,230,1);
+}
+
+.color-lbl-G ,
+.color-lbl-G svg{
+  color: rgba(108,217,217,1);
+  fill: rgba(108,217,217,1);
+}
+
+.color-lbl-bg-G {
+  background: rgba(108,217,217,1)!important;
+  background-color: rgba(108,217,217,1);
+}
+
+.color-lbl-shadow-A {
+  box-shadow: 0 0 8px #8895A1
+}
+
+.color-lbl-shadow-B {
+  box-shadow: 0 0 8px rgba(90,191,112,1);
+}
+
+.color-lbl-shadow-C {
+  box-shadow: 0 0 8px rgba(235,194,70,1);
+}
+
+.color-lbl-shadow-D {
+  box-shadow: 0 0 8px rgba(242,97,97,1);
+}
+
+.color-lbl-shadow-E {
+  box-shadow: 0 0 8px rgba(134,105,191,1);
+}
+
+.color-lbl-shadow-F {
+  box-shadow: 0 0 8px rgba(80,142,230,1);
+}
+
+.color-lbl-shadow-G {
+  box-shadow: 0 0 8px rgba(108,217,217,1);
 }

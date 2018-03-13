@@ -131,7 +131,7 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div>
           {/* Close TaskSidebar button */}
           <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-            <IcoN size={24} name={'xcross24White'}/>
+            <IcoN size={24} name={'xcrossWhite24'}/>
           </div>
           <ul className={style.sidebarActions}>
             <li>
