@@ -1,0 +1,49 @@
+.playerHandler {
+  margin: 0 12px;
+  width: 100%;
+  height: 24px;
+  position: relative;
+}
+
+.playerHandler .bgBar {
+  height: 2px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 1px;
+  position: absolute;
+  top: 11px;
+  left: 0;
+  transition: all 0.5s linear;
+  opacity: .16;
+}
+
+.playerHandler .playedBar {
+  height: 2px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 1px;
+  position: absolute;
+  top: 11px;
+  left: 0;
+  transition: all 0.5s linear;
+  transform-origin: left center;
+  transform: scaleX(0.5);
+}
+
+.playerHandler .playerDragger {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 0 4px #323D47;
+  transform: translateX(-50%);
+  transition: all 0.5s linear;
+}
+
+.playerHandler.noTransition .playedBar,
+.playerHandler.noTransition .playerDragger {
+  transition: none;
+}

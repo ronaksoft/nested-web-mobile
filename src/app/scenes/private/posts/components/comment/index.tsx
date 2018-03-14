@@ -21,6 +21,7 @@ import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
 import IUser from '../../../../../api/account/interfaces/IUser';
 import RTLDetector from '../../../../../components/RTLDetector/';
+import VoiceComment from '../VoiceComment';
 
 const style = require('./comment-board.css');
 
@@ -346,7 +347,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
                 <a><FullName user_id={comment.sender._id}/></a>
                 <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
               </div>
-              <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
+              {comment.attachment_id === '' &&
+                <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
+              }
+              {comment.attachment_id !== '' &&
+                <VoiceComment comment={comment}/>
+              }
             </div>
           </div>
         ))}
