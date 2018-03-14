@@ -132,6 +132,12 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private inProgress: boolean;
+  /**
+   * is the component reiszed the post body
+   * @property {boolean} inProgress
+   * @memberof Post
+   */
+  private resizedPostBody: boolean;
 
   /**
    * Subject RTL flag for RTL mails
@@ -160,6 +166,7 @@ class Post extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.inProgress = false;
+    this.resizedPostBody = false;
     this.state = {
       post: this.props.post,
       showMoreOptions: false,
@@ -206,18 +213,18 @@ class Post extends React.Component<IProps, IState> {
             post,
           });
           this.updatePostsInStore('post_read', true);
-          setTimeout( () => {
-            this.loadBodyEv(this.htmlBodyRef);
-          }, 300);
+          // setTimeout( () => {
+          //   this.loadBodyEv(this.htmlBodyRef);
+          // }, 300);
         });
 
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
 
-    setTimeout(() => {
-      this.loadBodyEv(this.htmlBodyRef);
-    }, 300);
+    // setTimeout(() => {
+    //   this.loadBodyEv(this.htmlBodyRef);
+    // }, 300);
 
   }
 
@@ -319,6 +326,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private loadBodyEv(el: HTMLDivElement) {
+    console.log('loadBodyEv');
     if (!el) {
       return setTimeout( () => {
         this.loadBodyEv(this.htmlBodyRef);
@@ -454,6 +462,31 @@ class Post extends React.Component<IProps, IState> {
     return false;
   }
 
+  public componentDidUpdate() {
+    // setTimeout(() => {
+    // }, 1000);
+    if (this.htmlBodyRef && !this.resizedPostBody) {
+      this.resizedPostBody = true;
+      const images = this.htmlBodyRef.querySelectorAll('img');
+      let imagesLoaded = 0;
+      this.htmlBodyRef.querySelectorAll('img').forEach((image, index) => {
+        if (image.complete) {
+          imagesLoaded++;
+        } else {
+          image.onload = () => {
+            imagesLoaded++;
+            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
+            if (imagesLoaded === images.length - 1) {
+              this.loadBodyEv(this.htmlBodyRef);
+            }
+          };
+        }
+        if (index === images.length - 1 && imagesLoaded === images.length - 1) {
+          this.loadBodyEv(this.htmlBodyRef);
+        }
+      });
+    }
+  }
   /**
    * @func render
    * @desc Renders the component

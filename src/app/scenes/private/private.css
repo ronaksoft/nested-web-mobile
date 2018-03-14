@@ -130,6 +130,10 @@ svg {
   width: 100%;
 }
 .release i{
-  transform: rotateZ(180deg) translateY(-26px);
+  transform: rotateZ(180deg) translateY(16px);
+  transform-origin: center center;
+}
+.pull i{
+  transform: translateY(16px);
   transform-origin: center center;
 }
