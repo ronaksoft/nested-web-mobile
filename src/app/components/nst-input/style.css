@@ -23,8 +23,8 @@
   width: 100%;
 }
 
-input[type="text"],
-input[type="password"] {
+input[type="text"].nstInput, .nstInput input[type="text"],
+input[type="password"].nstInput, .nstInput input[type="password"] {
   height: 40px;
   padding: 0 8px;
   margin-bottom: 8px;
@@ -36,56 +36,56 @@ input[type="password"] {
   transition: all .2s;
 }
 
-input[type="text"]:hover,
-input[type="password"]:hover {
+input[type="text"].nstInput, .nstInput input[type="text"]:hover,
+input[type="password"].nstInput, .nstInput input[type="password"]:hover {
   border: 1px solid rgba(50, 61, 71, .72);
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
+input[type="text"].nstInput, .nstInput input[type="text"]:focus,
+input[type="password"].nstInput, .nstInput input[type="password"]:focus {
   border: 1px solid #323D47;
   box-shadow: inset 0px 0px 1px #323D47;
 }
 
-input[type="text"].error,
-input[type="password"].error {
+input[type="text"].nstInput, .nstInput input[type="text"].error,
+input[type="password"].nstInput, .nstInput input[type="password"].error {
   color: rgb(255, 51, 68);
   border: 1px solid rgb(255, 51, 68);
 }
 
-input[type="text"].error:hover,
-input[type="password"].error:hover {
+input[type="text"].nstInput, .nstInput input[type="text"].error:hover,
+input[type="password"].nstInput, .nstInput input[type="password"].error:hover {
   border: 1px solid rgb(255, 51, 68);
 }
 
-input[type="text"].error:focus,
-input[type="password"].error:focus {
+input[type="text"].nstInput, .nstInput input[type="text"].error:focus,
+input[type="password"].nstInput, .nstInput input[type="password"].error:focus {
   border: 1px solid #323D47;
   box-shadow: inset 0px 0px 1px #323D47;
 }
 
-input[type="text"].error+p,
-input[type="password"].error+p {
+input[type="text"].nstInput, .nstInput input[type="text"].error+p,
+input[type="password"].nstInput, .nstInput input[type="password"].error+p {
   color: #323D47;
   background-color: fade(#323D47, 10%);
 }
 
-input[type="text"].success,
-input[type="password"].success {
+input[type="text"].nstInput, .nstInput input[type="text"].success,
+input[type="password"].nstInput, .nstInput input[type="password"].success {
   color: #323D47;
   border: 1px solid rgba(20, 215, 105, 1);
 }
-input[type="text"].success:hover,
-input[type="password"].success:hover {
+input[type="text"].nstInput, .nstInput input[type="text"].success:hover,
+input[type="password"].nstInput, .nstInput input[type="password"].success:hover {
   border: 1px solid rgba(20, 215, 105, 1);
 }
-input[type="text"].success:focus,
-input[type="password"].success:focus {
+input[type="text"].nstInput, .nstInput input[type="text"].success:focus,
+input[type="password"].nstInput, .nstInput input[type="password"].success:focus {
   border: 1px solid rgba(20, 215, 105, 1);
   box-shadow: inset 0px 0px 1px rgba(20, 215, 105, 1);
 }
-input[type="text"].success + p,
-input[type="password"].success + p {
+input[type="text"].nstInput, .nstInput input[type="text"].success + p,
+input[type="password"].nstInput, .nstInput input[type="password"].success + p {
   color: rgba(20, 215, 105, 1);
   background-color: rgba(20, 215, 105, .1);
 }
