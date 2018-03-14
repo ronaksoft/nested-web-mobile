@@ -263,6 +263,14 @@ class FileUtil {
     }
   }
 
+  public static parseSize(bytes: number, precision: number = 1) {
+    if (isNaN(bytes) || !isFinite(bytes)) {
+      return '-';
+    }
+    const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const numberV = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, Math.floor(numberV))).toFixed(precision) + ' ' + units[numberV];
+  }
 }
 
 export default FileUtil;

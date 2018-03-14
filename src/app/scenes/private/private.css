@@ -1,3 +1,6 @@
+:root {
+  --color-force: #ff3344;
+}
 @font-face{
   font-family: 'OpenSans';
   font-weight: 300;

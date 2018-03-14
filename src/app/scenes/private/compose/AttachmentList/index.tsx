@@ -443,6 +443,7 @@ class AttachmentList extends React.Component<IProps, IState> {
     };
     // calculate total progress by size
     let totalSize: number = 1;
+    let totalSizeByte: number = 0;
     let totalLoaded: number = 0;
     let isUploading: boolean = false;
     let inProgressCount: number = 0;
@@ -452,7 +453,7 @@ class AttachmentList extends React.Component<IProps, IState> {
       if (!item) {
         return;
       }
-
+      totalSizeByte += item.size;
       // render Items if is in expanded mode
       if (this.state.isExpanded) {
         items.push(renderItem(item));
@@ -467,24 +468,6 @@ class AttachmentList extends React.Component<IProps, IState> {
       isUploading = isUploading || item.uploading;
     });
     const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
-    const getInProgressMessage = () => {
-      switch (inProgressCount) {
-        case 1:
-          return `One item is uploading ${totalProgress}%`;
-        default:
-          return `${inProgressCount} attachments are uploading ${totalProgress}%`;
-      }
-    };
-    const getMessage = () => {
-      switch (this.state.items.length) {
-        case 0:
-          return 'No attachment';
-        case 1:
-          return 'One attachment';
-        default:
-          return `${this.state.items.length} attachments`;
-      }
-    };
 
     // The component must be hidden if there is not any item in the list
     if (this.state.items.length === 0) {
@@ -502,20 +485,19 @@ class AttachmentList extends React.Component<IProps, IState> {
           {
             isUploading && (
               <span>
-                {getInProgressMessage()}
+                <b>Attachments</b> uploading{inProgressCount} files {totalProgress}%
               </span>
             )
           }
           {
             !isUploading && (
               <span>
-                {getMessage()}
+                <b>Attachments</b> ({this.state.items.length} Files, {FileUtil.parseSize(totalSizeByte)})
               </span>
             )
           }
           <div className={[style.attachListAnchor, this.state.isExpanded ? style.expanded : null].join(' ')}
-               onClick={this.toggleView}
-          >
+               onClick={this.toggleView}>
             <IcoN size={24} name="arrow16" />
           </div>
         </div>

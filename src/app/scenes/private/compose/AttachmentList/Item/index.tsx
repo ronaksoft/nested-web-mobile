@@ -10,7 +10,6 @@
  */
 
 import * as React from 'react';
-// import FileUtil from 'services/utils/file';
 const style = require('./style.css');
 import IAttachmentItem from './IAttachmentItem';
 import OtherThumbnail from './otherThumbnail';
@@ -25,7 +24,6 @@ import AttachmentType from '../../../../../api/attachment/constants/AttachmentTy
 // import IComposeAttachment from '../../../../../api/post/interfaces/IComposeAttachment';
 import Mode from './mode';
 import {IcoN} from 'components';
-import {Progress} from 'antd';
 /*
  const EMPTY_PICTURE = require('../default.gif');
  */
@@ -187,23 +185,47 @@ class AttachmentItem extends React.Component<IProps, IState> {
                 : this.props.item.model.name
             }
           </span>
-          {
-            this.props.item.mode === Mode.UPLOAD &&
-            (
-              <div className={style.progress}>
-                <Progress percent={this.state.progress}
-                          strokeWidth={3}
-                          showInfo={false}
-                          className={style.progressLine}
-                          status={this.props.item.failed || this.props.item.aborted ? 'exception' : 'active'}
-                />
-              </div>
-            )
-          }
-          <div className={style.remove} onClick={handleRemoveClick}>
+          {!(this.props.item.failed || this.props.item.aborted) && (
+            <span className={style.size}>
+              {
+                this.props.item.mode === Mode.UPLOAD
+                  ? FileUtil.parseSize(this.props.item.size, 1)
+                  : FileUtil.parseSize(this.props.item.model.size, 1)
+              }
+            </span>
+          )}
+          {(this.props.item.failed || this.props.item.aborted) && (
+            <span className={style.size}>
+              Upload faild!
+            </span>
+          )}
+        </div>
+        {this.props.item.mode === Mode.UPLOAD && (
+          <div onClick={handleRemoveClick}>
             <IcoN size={24} name="xcross24"/>
           </div>
-        </div>
+        )}
+        {this.props.item.mode !== Mode.UPLOAD && (
+          <div className={style.removeForce} onClick={handleRemoveClick}>
+            <IcoN size={24} name="bin24"/>
+          </div>
+        )}
+        {
+          (this.props.item.mode === Mode.UPLOAD && !(this.props.item.failed || this.props.item.aborted)) &&
+          (
+            <div className={style.uploadprogress} style={{width: 100 - this.state.progress + '%'}}>
+              <div/>
+            </div>
+          )
+        }
+        {
+          (this.props.item.failed || this.props.item.aborted) &&
+          (
+            <div className={style.failedprogress}>
+              <div/>
+            </div>
+          )
+        }
       </div>
     );
   }
