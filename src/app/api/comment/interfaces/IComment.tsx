@@ -8,7 +8,10 @@ interface IComment {
   sender: IUser;
   removedById: string;
   removedBy: string;
-  removed: string;
+  removed: boolean;
+  attachmentId?: string;
+  isSending?: boolean;
+  isFailed?: boolean;
 }
 
 export default IComment;

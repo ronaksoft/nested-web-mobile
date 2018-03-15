@@ -29,7 +29,8 @@ input[type="password"].nstInput, .nstInput input[type="password"] {
   padding: 0 8px;
   margin-bottom: 8px;
   border: 1px solid rgba(0, 0, 0, .16);
-  box-shadow: inset 0px 0px 1px transparent;
+  /* box-shadow: inset 0px 0px 1px transparent; */
+  box-shadow: none;
   color: #323D47;
   border-radius: 4px;
   font-size: 16px;
@@ -44,7 +45,7 @@ input[type="password"].nstInput, .nstInput input[type="password"]:hover {
 input[type="text"].nstInput, .nstInput input[type="text"]:focus,
 input[type="password"].nstInput, .nstInput input[type="password"]:focus {
   border: 1px solid #323D47;
-  box-shadow: inset 0px 0px 1px #323D47;
+  /* box-shadow: inset 0px 0px 1px #323D47; */
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error,
@@ -61,7 +62,7 @@ input[type="password"].nstInput, .nstInput input[type="password"].error:hover {
 input[type="text"].nstInput, .nstInput input[type="text"].error:focus,
 input[type="password"].nstInput, .nstInput input[type="password"].error:focus {
   border: 1px solid #323D47;
-  box-shadow: inset 0px 0px 1px #323D47;
+  /* box-shadow: inset 0px 0px 1px #323D47; */
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error+p,
@@ -82,7 +83,7 @@ input[type="password"].nstInput, .nstInput input[type="password"].success:hover 
 input[type="text"].nstInput, .nstInput input[type="text"].success:focus,
 input[type="password"].nstInput, .nstInput input[type="password"].success:focus {
   border: 1px solid rgba(20, 215, 105, 1);
-  box-shadow: inset 0px 0px 1px rgba(20, 215, 105, 1);
+  /* box-shadow: inset 0px 0px 1px rgba(20, 215, 105, 1); */
 }
 input[type="text"].nstInput, .nstInput input[type="text"].success + p,
 input[type="password"].nstInput, .nstInput input[type="password"].success + p {

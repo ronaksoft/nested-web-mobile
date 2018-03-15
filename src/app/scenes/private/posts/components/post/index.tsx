@@ -326,7 +326,6 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private loadBodyEv(el: HTMLDivElement) {
-    console.log('loadBodyEv');
     if (!el) {
       return setTimeout( () => {
         this.loadBodyEv(this.htmlBodyRef);
@@ -334,8 +333,8 @@ class Post extends React.Component<IProps, IState> {
     }
     const DOMHeight = el.offsetHeight;
     const DOMWidth = el.offsetWidth;
-    const ParentDOMHeight = el.parentElement.offsetHeight;
-    const delta = ParentDOMHeight - DOMHeight;
+    const parentDOMHeight = el.parentElement.offsetHeight;
+    const delta = parentDOMHeight - DOMHeight;
     // console.log(ParentDOMHeight, delta);
     const WinWidth = window.screen.width;
     const ratio = WinWidth / DOMWidth;
@@ -355,7 +354,7 @@ class Post extends React.Component<IProps, IState> {
   private resizeFont(el, ratio: number) {
     if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
       const fontSize = parseInt(el.style.fontSize, 10);
-      if ( fontSize > 0 ) {
+      if ( fontSize > 1 ) {
         el.style.fontSize = fontSize * (1 / ratio) + 'px';
       } else {
         el.style.fontSize = 14 * (1 / ratio) + 'px';
@@ -469,6 +468,7 @@ class Post extends React.Component<IProps, IState> {
       this.resizedPostBody = true;
       const images = this.htmlBodyRef.querySelectorAll('img');
       let imagesLoaded = 0;
+      let imagesNotLoaded = 0;
       this.htmlBodyRef.querySelectorAll('img').forEach((image, index) => {
         if (image.complete) {
           imagesLoaded++;
@@ -476,17 +476,29 @@ class Post extends React.Component<IProps, IState> {
           image.onload = () => {
             imagesLoaded++;
             // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
-            if (imagesLoaded === images.length - 1) {
+            if (imagesLoaded + imagesNotLoaded === images.length - 1) {
+              this.loadBodyEv(this.htmlBodyRef);
+            }
+          };
+          image.onerror = () => {
+            imagesNotLoaded++;
+            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
+            if (imagesLoaded + imagesNotLoaded === images.length - 1) {
               this.loadBodyEv(this.htmlBodyRef);
             }
           };
         }
-        if (index === images.length - 1 && imagesLoaded === images.length - 1) {
+        if (index === images.length - 1 && imagesLoaded + imagesNotLoaded === images.length - 1) {
           this.loadBodyEv(this.htmlBodyRef);
         }
       });
     }
   }
+
+  public newCommentReceived = () => {
+    this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
+  }
+
   /**
    * @func render
    * @desc Renders the component
@@ -686,7 +698,7 @@ class Post extends React.Component<IProps, IState> {
             {!this.props.post && (
               <CommentsBoard no_comment={this.state.post.no_comment}
               post_id={this.state.post._id} post={this.state.post}
-              user={this.props.user}/>
+              user={this.props.user} newComment={this.newCommentReceived}/>
             )}
            {postView && <div className={privateStyle.bottomSpace}/>}
           </div>

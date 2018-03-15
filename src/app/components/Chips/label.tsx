@@ -29,7 +29,6 @@ class LabelChips extends React.Component<IChipsProps, IChipsState> {
     }
     public render() {
         const {label, editable, access} = this.props;
-        console.log(label);
         return (
             <div className={[style.labelChipsWrapper, style['color-lbl-shadow-' + label.code]
                 , this.state.isSelected ? style.isSelected : '', editable ? style.access : ''].join(' ')}

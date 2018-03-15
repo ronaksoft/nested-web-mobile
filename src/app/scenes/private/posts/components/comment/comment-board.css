@@ -65,6 +65,7 @@
 }
 .commentInput {
   height: 64px;
+  border-top: 1px solid rgba(50, 61, 71, 0.08);
   background-color: #F6F6F7;
   /* box-shadow: 0 0 16px rgba(50,61,71,.32); */
   position: fixed;

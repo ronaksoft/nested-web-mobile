@@ -17,8 +17,9 @@ interface IState {
 }
 class NstInput extends React.Component<IProps, IState> {
   public inputChange = (event) => {
-    if (event.which === 13 && typeof this.props.onPressEnter === 'function') {
+    if (event.key === 'Enter' && typeof this.props.onPressEnter === 'function') {
         this.props.onPressEnter(event.target.value);
+        event.target.value = '';
     } else {
         this.props.onChange(event.target.value);
     }
@@ -30,7 +31,7 @@ class NstInput extends React.Component<IProps, IState> {
         <label htmlFor={id}>{this.props.label}</label>
         <input id={id} type="text" placeholder={this.props.placeholder}
             disabled={this.props.disabled} className={this.props.className}
-            defaultValue={this.props.value} onChange={this.inputChange}/>
+            defaultValue={this.props.value} onKeyDown={this.inputChange} />
         {this.props.description && <p>{this.props.description}</p>}
       </div>
     );

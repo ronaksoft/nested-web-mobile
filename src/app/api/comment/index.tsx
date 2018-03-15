@@ -64,6 +64,13 @@ export default class CommentApi {
       'comment', data.comment_id, false, '_id', 'comments', this.getPrivateMany);
   }
 
+  public getOne(data: IGetCommentRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/get_many_comments',
+      data,
+    });
+  }
+
   /**
    * @func getPrivateMany
    * @desc Requests for some comments using the provided comma separated Ids

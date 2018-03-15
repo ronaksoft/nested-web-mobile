@@ -11,7 +11,7 @@
 import * as React from 'react';
 import PostApi from 'api/post/index';
 import IComment from 'api/comment/interfaces/IComment';
-import {UserAvatar, FullName, NstInput} from 'components';
+import {UserAvatar, FullName} from 'components';
 import CommentApi from 'api/comment/index';
 import ArrayUntiles from 'services/utils/array';
 import TimeUntiles from 'services/utils/time';
@@ -21,6 +21,8 @@ import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
 import IUser from '../../../../../api/account/interfaces/IUser';
 import RTLDetector from '../../../../../components/RTLDetector/';
+import {some, orderBy, filter, findIndex, chain} from 'lodash';
+import {message} from 'antd';
 
 const style = require('./comment-board.css');
 
@@ -57,6 +59,7 @@ interface IProps {
    * @memberof IProps
    */
   user?: IUser;
+  newComment?: () => void;
 }
 
 /**
@@ -100,6 +103,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private postApi;
+  private sendCommentCount: number = 0;
   /**
    * @prop syncActivity
    * @desc An instance SyncActivity
@@ -123,6 +127,8 @@ class CommentsBoard extends React.Component<IProps, IState> {
    */
   private hasBeforeComments: boolean = true;
 
+  private notifyNewComment: () => void = () => console.log('no notify registered!');
+
   /**
    * @constructor
    * Creates an instance of CommentsBoard.
@@ -138,7 +144,9 @@ class CommentsBoard extends React.Component<IProps, IState> {
     };
     // binds handleChangeComment by `this`.
     this.handleChangeComment = this.handleChangeComment.bind(this);
-
+    if (typeof this.props.newComment === 'function') {
+      this.notifyNewComment = this.props.newComment;
+    }
   }
 
   /**
@@ -162,12 +170,10 @@ class CommentsBoard extends React.Component<IProps, IState> {
         }
 
         this.setState({
-          comments,
+          comments: orderBy(comments, 'timestamp', 'asc'),
         });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.log);
 
     // set sync listeners
     if (this.props.post && this.props.post.post_places) {
@@ -176,12 +182,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.props.post.post_places[0]._id,
           SyncActions.COMMENT_ADD,
           () => {
-            if (document.documentElement.scrollHeight - 20 >
-            document.documentElement.scrollTop + document.documentElement.clientHeight) {
               this.getAfterComments(true);
-            } else {
-              this.getAfterComments(false);
-            }
           },
         ));
     }
@@ -210,46 +211,43 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private getAfterComments(scrollToBottom?: boolean) {
+      // const lastCommeent = last(orderBy(filter(
+      //   this.state.comments, (cm) => cm._id.length > 4),
+      //   'timestamp'));
+    // The sync do not work well so we get comments after before last comment temporary
+      const lastCommeents = orderBy(filter(
+      this.state.comments, (cm) => cm._id.length > 4),
+      'timestamp');
+    const lastComment = lastCommeents[lastCommeents.length - 2];
     this.postApi.getComments({
-      after: this.state.comments.length > 0 ?
-        this.state.comments[this.state.comments.length - 1].timestamp : Date.now() - 60000,
+      after: this.state.comments.length > 0 && lastComment ?
+        lastComment.timestamp : Date.now() - 60000,
       limit: 20,
       post_id: this.props.post_id,
     })
       .then((comments: IComment[]) => {
 
-        if (comments.length === 20) {
-          this.getAfterComments(true);
-        }
+        const newComments = chain(comments)
+          .filter((comment) => !some(this.state.comments, {_id: comment._id}))
+          .orderBy('timestamp', 'asc').value();
 
+        const sentComments = filter(this.state.comments, (cm) => cm._id.length < 10);
+        const newCommentsFromOthers = filter(newComments,
+          (cm) => !some(sentComments, (sentCm) => sentCm.body === cm.body && sentCm.sender._id === cm.sender._id));
         this.setState({
-          comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
+          comments: ArrayUntiles.uniqueObjects(newCommentsFromOthers.concat(this.state.comments), '_id')
             .sort((a: IComment, b: IComment) => {
               return a.timestamp - b.timestamp;
             }),
+        }, () => {
+          if (scrollToBottom) {
+            this.notifyNewComment();
+          }
+          if (comments.length === 20) {
+            this.getAfterComments(true);
+          }
         });
-
-        if (scrollToBottom) {
-          document.body.scrollTop = document.body.scrollHeight - document.body.clientHeight;
-        }
       });
-  }
-
-  /**
-   * @func setScrollPositionOnId
-   * @desc Scrolls body into an element with the given Id
-   * @private
-   * @param {string} id
-   * @memberof CommentsBoard
-   */
-  private setScrollPositionOnId(id: string) {
-    const elementOffsetBottom = document.documentElement.scrollHeight - document.getElementById(id).offsetHeight;
-
-    setTimeout(() => {
-      document.body.scrollTop = document.documentElement.scrollTop =
-        document.documentElement.scrollHeight - elementOffsetBottom;
-    }, 100);
-
   }
 
   /**
@@ -270,8 +268,6 @@ class CommentsBoard extends React.Component<IProps, IState> {
           this.hasBeforeComments = false;
         }
 
-        this.setScrollPositionOnId(this.state.comments[this.state.comments.length - 1]._id);
-
         this.setState({
           comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
             .sort((a: IComment, b: IComment) => {
@@ -287,20 +283,21 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @private
    * @memberof CommentsBoard
    */
-  private addComment() {
-    this.setState({
-      sendingComment: true,
-    });
+  private addComment(txt: string) {
     const commentApi = new CommentApi();
-    commentApi.addComment({
-      post_id: this.props.post_id,
-      txt: this.state.newCommentTxt,
-    }).then(() => {
-      this.setState({
-        sendingComment: false,
-        newCommentTxt: '',
-      });
-      this.getAfterComments(true);
+    return new Promise((resolve, reject) => {
+      commentApi.addComment({
+        post_id: this.props.post_id,
+        txt,
+      }).then((res) => {
+        return commentApi.getOne({
+          comment_id: res.comment_id,
+          post_id: this.props.post_id,
+        }).then((res) => {
+          resolve(res.comments[0]);
+        });
+      }).catch(reject);
+
     });
   }
 
@@ -311,13 +308,72 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @param {*} e
    * @memberof CommentsBoard
    */
-  private handleChangeComment(text: string) {
+  private handleChangeComment(event: any) {
+    const text = event.target.value;
+    if (text.length === 0 || event.key !== 'Enter') {
+      return;
+    }
+
+    const commentModel: IComment = {
+      attachmentId: '',
+      text,
+      _id: this.sendCommentCount + '',
+      removed: false,
+      removedBy: '',
+      removedById: '',
+      sender: this.props.user,
+      senderId: '',
+      timestamp: Date.now(),
+      isSending: true,
+    };
+
+    this.sendCommentCount++;
 
     this.setState({
-      newCommentTxt: text,
+      comments: [...this.state.comments, commentModel],
+    }, () => {
+      this.notifyNewComment();
+    });
+    event.target.value = '';
+    // event.target.focus();
+    this.addComment(text).then((comment) => {
+      this.addCommentCallback(comment, commentModel);
+    }).catch(() => this.addCommentFailedCallback(commentModel));
+  }
+
+  private addCommentCallback(comment, commentModel) {
+    const comments = this.state.comments;
+    const index = findIndex(comments, {_id: commentModel._id});
+    if (some(comments, {
+        _id: comment._id,
+      })) {
+        comments.splice(index, 1);
+    } else {
+      comments[index] = comment;
+    }
+    this.setState({comments}, () => {
+      this.getAfterComments(true);
     });
   }
 
+  private addCommentFailedCallback(commentModel) {
+    const comments = this.state.comments;
+    const index = findIndex(comments, {_id: commentModel._id});
+    if (index > -1) {
+      comments[index].isSending = false;
+      comments[index].isFailed = true;
+    }
+    this.setState({comments});
+    message.error('Sorry, an error has occurred in sending your comment');
+  }
+
+  // private retrySendComment(commentModel: IComment) {
+  //   this.addComment(commentModel.text).then((comment) => {
+  //     this.addCommentCallback(comment, commentModel);
+  //   }).catch(() => {
+  //     this.addCommentFailedCallback(commentModel);
+  //   });
+  // }
   /**
    * @func render
    * @desc Renders the component
@@ -353,9 +409,8 @@ class CommentsBoard extends React.Component<IProps, IState> {
         {!this.props.no_comment && (
           <div className={style.commentInput}>
             <UserAvatar user_id={this.props.user} size={24} borderRadius={'16px'}/>
-            <NstInput placeholder={'write your comment...'} value={this.state.newCommentTxt}
-              onChange={this.handleChangeComment} disabled={this.state.sendingComment}
-              onPressEnter={this.addComment.bind(this, '')} />
+            <input type="text" placeholder={'write your comment...'} defaultValue={this.state.newCommentTxt}
+              onKeyDown={this.handleChangeComment}/>
           </div>
         )}
       </div>
