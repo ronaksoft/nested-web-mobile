@@ -4,12 +4,12 @@ interface IComment {
   _id: string;
   text: string;
   timestamp: number;
-  senderId: string;
+  sender_id: string;
   sender: IUser;
-  removedById: string;
-  removedBy: string;
+  removed_by_id: string;
+  removed_by: string;
   removed: boolean;
-  attachmentId?: string;
+  attachment_id?: string;
   isSending?: boolean;
   isFailed?: boolean;
 }

@@ -23,6 +23,7 @@ import IUser from '../../../../../api/account/interfaces/IUser';
 import RTLDetector from '../../../../../components/RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
 import {message} from 'antd';
+import VoiceComment from '../VoiceComment';
 
 const style = require('./comment-board.css');
 
@@ -315,14 +316,14 @@ class CommentsBoard extends React.Component<IProps, IState> {
     }
 
     const commentModel: IComment = {
-      attachmentId: '',
+      attachment_id: '',
       text,
       _id: this.sendCommentCount + '',
       removed: false,
-      removedBy: '',
-      removedById: '',
+      removed_by: '',
+      removed_by_id: '',
       sender: this.props.user,
-      senderId: '',
+      sender_id: '',
       timestamp: Date.now(),
       isSending: true,
     };
@@ -402,7 +403,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
                 <a><FullName user_id={comment.sender._id}/></a>
                 <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
               </div>
-              <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
+              {comment.attachment_id === '' &&
+                <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
+              }
+              {comment.attachment_id !== '' &&
+                <VoiceComment comment={comment}/>
+              }
             </div>
           </div>
         ))}
