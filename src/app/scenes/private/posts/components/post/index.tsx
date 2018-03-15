@@ -688,7 +688,7 @@ class Post extends React.Component<IProps, IState> {
 
               {!postView && post.counters.comments > 1 && (
                 <div className={style.postFooter}>
-                  <IcoN size={16} name={'comment24'}/>
+                  <IcoN size={16} name={'comment16'}/>
                   {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
                   {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
                 </div>
