@@ -1,0 +1,57 @@
+.voiceComment {
+  height: 24px;
+  background: rgba(50, 61, 71, 0.08);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  margin: 4px 0 0;
+  width: 100%;
+}
+
+.voiceComment .playVoice {
+  fill: #323D47;
+}
+
+.voiceComment .playVoice svg {
+  fill: #323D47;
+}
+
+.voiceComment .playVoice svg:last-of-type {
+  display: none;
+}
+
+.voiceComment .trailerVoice {
+  display: flex;
+  width: 100%;
+  height: 24px;
+}
+
+.voiceComment .trailerVoice .bgBar {
+  background: #323D47;
+}
+
+.voiceComment.isPlay {
+  background-color: #14d769;
+}
+
+.voiceComment.isPlay .playVoice svg {
+  fill: #fff;
+}
+
+.voiceComment.isPlay .playVoice svg:first-of-type {
+  display: none;
+}
+
+.voiceComment.isPlay .playVoice svg:last-of-type {
+  display: block;
+}
+
+.voiceComment.isPlay .trailerVoice .bgBar {
+  background: #fff;
+  opacity: 1;
+}
+
+.voiceComment.isPlay .trailerVoice .playedBar {
+  background: #fff;
+}
