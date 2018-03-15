@@ -15,7 +15,7 @@ import {UserAvatar, FullName} from 'components';
 import CommentApi from 'api/comment/index';
 import ArrayUntiles from 'services/utils/array';
 import TimeUntiles from 'services/utils/time';
-import {IcoN} from 'components';
+import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
@@ -368,13 +368,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
     message.error('Sorry, an error has occurred in sending your comment');
   }
 
-  // private retrySendComment(commentModel: IComment) {
-  //   this.addComment(commentModel.text).then((comment) => {
-  //     this.addCommentCallback(comment, commentModel);
-  //   }).catch(() => {
-  //     this.addCommentFailedCallback(commentModel);
-  //   });
-  // }
+  private retrySendComment(commentModel: IComment) {
+    this.addComment(commentModel.text).then((comment) => {
+      this.addCommentCallback(comment, commentModel);
+    }).catch(() => {
+      this.addCommentFailedCallback(commentModel);
+    });
+  }
   /**
    * @func render
    * @desc Renders the component
@@ -397,12 +397,14 @@ class CommentsBoard extends React.Component<IProps, IState> {
         }
         {this.state.comments.map((comment: IComment) => (
           <div id={comment._id} key={comment._id} className={style.commentRow}>
-            <UserAvatar user_id={comment.sender._id} size={24} borderRadius={'16px'}/>
+            {!comment.isSending && <UserAvatar user_id={comment.sender._id} size={24} borderRadius={'16px'}/>}
+            {comment.isSending && <Loading active={true} size="sm24"/>}
             <div className={style.commentContent}>
               <div className={style.commentHead}>
                 <a><FullName user_id={comment.sender._id}/></a>
                 <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
               </div>
+              {comment.isFailed && <a onClick={this.retrySendComment.bind(this, comment)}>Failed ! Retry</a>}
               {comment.attachment_id === '' &&
                 <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
               }
