@@ -46,6 +46,7 @@ interface IState {
   loadingAfter: boolean;
   loadingBefore: boolean;
   reachedTheEnd: boolean;
+  initialLoading: boolean;
   newPostCount: number;
   location: any;
   route: string;
@@ -79,6 +80,7 @@ class Tasks extends React.Component<IProps, IState> {
       loadingBefore: false,
       customFilters: this.props.customFilters || [],
       reachedTheEnd: false,
+      initialLoading: true,
       newPostCount: 0,
       route: initiateRoute || 'glance',
     };
@@ -94,7 +96,10 @@ class Tasks extends React.Component<IProps, IState> {
       }
     }
     const oldLocation = this.state.location;
-    this.setState({tasks: newProps.tasks[route] || [], location: newProps.location.pathname, route}, () => {
+    this.setState({tasks: newProps.tasks[route] || [],
+      location: newProps.location.pathname,
+      route,
+      initialLoading: true}, () => {
       if (oldLocation !== newProps.location.pathname) {
         if (route.indexOf('filter') > -1) {
           if (this.state && this.state.customFilters.length > 0) {
@@ -258,6 +263,7 @@ class Tasks extends React.Component<IProps, IState> {
         this.props.setTasks({overDueTasks});
         this.setState({
           overDueTasks,
+          initialLoading: false,
         });
       })
       .catch(() => {
@@ -284,6 +290,7 @@ class Tasks extends React.Component<IProps, IState> {
         this.props.setTasks({candidateTasks});
         this.setState({
           candidateTasks,
+          initialLoading: false,
         });
       })
       .catch(() => {
@@ -396,6 +403,7 @@ class Tasks extends React.Component<IProps, IState> {
         this.setState({
           loadingBefore: false,
           loadingAfter: false,
+          initialLoading: false,
         });
       })
       .catch(() => {
@@ -464,6 +472,7 @@ class Tasks extends React.Component<IProps, IState> {
         this.setState({
           loadingBefore: false,
           loadingAfter: false,
+          initialLoading: false,
         });
       })
       .catch(() => {
@@ -695,6 +704,7 @@ class Tasks extends React.Component<IProps, IState> {
               <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         </div>
+        <Loading position="absolute" active={this.state.initialLoading && this.state.tasks.length === 0}/>
       </div>
     );
   }

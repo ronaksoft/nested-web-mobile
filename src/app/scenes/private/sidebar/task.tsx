@@ -137,7 +137,7 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
             <li>
               <Link to={`/task/glance`}>
                 <IcoN size={16} name={'glance16'}/>
-                Glamce
+                Glance
               </Link>
             </li>
             <li>
