@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import {OptionsMenu, InfiniteScroll, IcoN} from 'components';
+import {OptionsMenu, InfiniteScroll} from 'components';
 
 import {connect} from 'react-redux';
 import TaskApi from '  ../../../api/task/index';
@@ -650,12 +650,6 @@ class Tasks extends React.Component<IProps, IState> {
         <div className={privateStyle.tasksArea + ' ' + style.tasksList}>
           <InfiniteScroll
             pullDownToRefresh={true}
-            pullDownToRefreshContent={(
-              <h5 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h5>
-            )}
-            releaseToRefreshContent={(
-              <h5 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h5>
-            )}
             refreshFunction={this.refresh}
             next={loadMore}
             route={this.props.location.pathname}

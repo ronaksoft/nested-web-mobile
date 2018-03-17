@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {IcoN} from 'components';
 import {setScroll, unsetScroll} from '../../redux/app/actions/index';
 
 import {throttle} from 'lodash';
+const style = require('./infinitie-scroll.css');
 interface IState {
     showLoader: boolean;
     lastScrollTop: number;
@@ -77,8 +79,18 @@ class InfiniteScroll extends React.Component<IProps, IState> {
             lastScrollTop: 0,
             actionTriggered: false,
             pullToRefreshThresholdBreached: false,
-            pullDownToRefreshContent: props.pullDownToRefreshContent || <h3>Pull down to refresh</h3>,
-            releaseToRefreshContent: props.releaseToRefreshContent || <h3>Release to refresh</h3>,
+            pullDownToRefreshContent: props.pullDownToRefreshContent || (
+              <h3 className={style.pull}>
+                <IcoN size={16} name={'arrow16'}/>
+                <span>Pull down to refresh</span>
+              </h3>
+            ),
+            releaseToRefreshContent: props.releaseToRefreshContent || (
+              <h3 className={style.release}>
+                <IcoN size={16} name={'arrow16'}/>
+                <span>Release to refresh</span>
+              </h3>
+            ),
             pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
             disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
         };

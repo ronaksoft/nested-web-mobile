@@ -16,8 +16,7 @@ import INotification from 'api/notification/interfaces/INotification';
 import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification, setNotificationCount} from '../../../redux/app/actions/index';
-import {Button} from 'antd';
-import {IcoN} from 'components';
+import {IcoN, InfiniteScroll, Loading} from 'components';
 import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
 
 const style = require('./notifications.css');
@@ -102,44 +101,6 @@ class Notifications extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-    this.notificationScrollbar.scrollTop = 1;
-    if ( this.notificationScrollbar ) {
-      if (isSafari) {
-        this.notificationScrollbar.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.notificationScrollbar.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-
-      }
-      this.notificationScrollbar.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, true);
-    }
 
     // recieve notification before now
     this.getNotificationBefore(true, true);
@@ -162,6 +123,14 @@ class Notifications extends React.Component<IProps, IState> {
     }, 1000);
   }
 
+  private refresh = () => {
+    this.getNotificationBefore(true, true);
+  }
+
+  private loadMore = () => {
+    this.getNotificationBefore(true, false);
+  }
+
   /**
    * Gets the notification items from server before latest notification item time or now
    * @private
@@ -170,11 +139,11 @@ class Notifications extends React.Component<IProps, IState> {
    * @memberof Notifications
    */
   private getNotificationBefore(saveInStore: boolean, getFromNow?: boolean) {
-
     // define the notification Api class
     const notificationApi = new NotificationApi();
     const {activeTab} = this.state;
     const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications ;
+    console.log('getNotificationBefore', activeTab === 0 ? 'post' : 'task');
     // receive notifications with declared limits and before timestamp of
     // the latest notification item in state, otherwise the current timestamp.
     notificationApi.get({
@@ -184,15 +153,6 @@ class Notifications extends React.Component<IProps, IState> {
       details: true,
       subject: activeTab === 0 ? 'post' : 'task',
     }).then((notificationsResponse: INotificationData) => {
-
-      // check saveInStore value and store notification items in redux store
-      if (saveInStore) {
-        if (activeTab === 0) {
-          this.props.setPostNotification(notificationsResponse.notifications);
-        } else {
-          this.props.setTaskNotification(notificationsResponse.notifications);
-        }
-      }
 
       // concat recieved notifications items with current items and unique array by identifiers
       // and sorting the notification items by date
@@ -206,6 +166,15 @@ class Notifications extends React.Component<IProps, IState> {
       const state = {};
       state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
       this.setState(state);
+      console.log(state);
+      // check saveInStore value and store notification items in redux store
+      if (saveInStore) {
+        if (activeTab === 0) {
+          this.props.setPostNotification(notifs);
+        } else {
+          this.props.setTaskNotification(notifs);
+        }
+      }
     });
   }
 
@@ -363,31 +332,6 @@ class Notifications extends React.Component<IProps, IState> {
   private refHandler = (value) => {
     this.notificationScrollbar = value;
   }
-  // private onTouchStart() {
-  //   if (window.scrollY === 0) {
-  //     this.isInTop = true;
-  //     const touch = arguments[1].touches[0];
-  //     this.startTouchPoint = touch.clientY;
-  //     console.log(touch.clientY);
-  //   }
-  // }
-
-  // private onTouchEnd() {
-  //   console.log(arguments[1].touches[0]);
-  // }
-
-  // private onTouchMove() {
-  //   console.log(arguments[1].touches[0]);
-  //   const touch = arguments[1].touches[0];
-  //   const trasnlated = touch.clientY - this.startTouchPoint > 0 ? touch.clientY - this.startTouchPoint : 0;
-  //   if ( trasnlated > 80 ) {
-  //     return;
-  //   }
-  //   console.log(trasnlated);
-
-  //   document.getElementById('scrollWrp').style.maxHeight = trasnlated + 'px';
-  // }
-
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -415,23 +359,40 @@ class Notifications extends React.Component<IProps, IState> {
         </div>
         <div className={style.notificationWrp}>
           {/* render items for all notification items */}
-          {this.state.activeTab === 1 && this.state.taskNotifications.map((notification) =>
-            (
-              <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
-                <NotificationItem notification={notification}/>
-              </div>
-            ))}
-          {this.state.activeTab === 0 && this.state.postNotifications.map((notification) =>
-            (
-              <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
-                <NotificationItem notification={notification}/>
-              </div>
-            ))}
-          {/* Load more notifications button */}
-          <div className={privateStyle.loadMore}>
-            <Button onClick={this.getNotificationBefore.bind(this, false)}>Load More</Button>
-          </div>
-          <div className={privateStyle.bottomSpace}/>
+          {this.state.activeTab === 1 && this.state.taskNotifications.length > 0 && (
+            <InfiniteScroll
+              pullDownToRefresh={true}
+              refreshFunction={this.refresh}
+              next={this.loadMore}
+              route={'taskNotifications'}
+              hasMore={true}
+              loader={<Loading active={true} position="fixed"/>}>
+                {this.state.taskNotifications.map((notification) =>
+                  (
+                    <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
+                      <NotificationItem notification={notification}/>
+                    </div>
+                  ))}
+                <div className={privateStyle.bottomSpace}/>
+            </InfiniteScroll>
+          )}
+          {this.state.activeTab === 0 && this.state.postNotifications.length > 0 && (
+            <InfiniteScroll
+              pullDownToRefresh={true}
+              refreshFunction={this.refresh}
+              next={this.loadMore}
+              route={'postNotifications'}
+              hasMore={true}
+              loader={<Loading active={true} position="fixed"/>}>
+                {this.state.postNotifications.map((notification) =>
+                  (
+                    <div onClick={this.readNotif.bind(this, notification)} key={notification._id}>
+                      <NotificationItem notification={notification}/>
+                    </div>
+                  ))}
+                <div className={privateStyle.bottomSpace}/>
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     );

@@ -8,7 +8,7 @@
  * Date of review:         --
  */
 import * as React from 'react';
-import {OptionsMenu, PlaceName, InfiniteScroll, Loading, IcoN} from '../../../../components';
+import {OptionsMenu, PlaceName, InfiniteScroll, Loading} from '../../../../components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../../api/post/index';
@@ -509,12 +509,6 @@ class PlacePostsUnreadSortedByRecent extends React.Component<IProps, IState> {
         {this.state.posts.length > 0 && (
           <InfiniteScroll
             pullDownToRefresh={true}
-            pullDownToRefreshContent={(
-              <h3 className={privateStyle.pull}><IcoN size={16} name={'arrow16'}/>Pull down to refresh</h3>
-            )}
-            releaseToRefreshContent={(
-              <h3 className={privateStyle.release}><IcoN size={16} name={'arrow16'}/>Release to refresh</h3>
-            )}
             refreshFunction={this.refresh}
             next={loadMore}
             route={this.props.location.pathname}
