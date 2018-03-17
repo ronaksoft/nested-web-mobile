@@ -627,7 +627,7 @@ class Post extends React.Component<IProps, IState> {
             {!this.props.post && <hr/>}
             <div className={style.postBody}>
               <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
-              <div dangerouslySetInnerHTML={{__html: post.body}}
+              <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
               ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
               {post.post_attachments.length > 0 && !this.props.post && (
                 <PostAttachment attachments={post.post_attachments}

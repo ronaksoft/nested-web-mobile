@@ -256,9 +256,7 @@ class Tasks extends React.Component<IProps, IState> {
     this.taskApi.getByFilter(params)
       .then((response: IGetTasksResponse) => {
         const overDueTasks = ArrayUntiles.uniqueObjects(response.tasks.concat(this.state.overDueTasks), '_id')
-          .sort((a: ITask, b: ITask) => {
-            return b.timestamp - a.timestamp;
-          });
+          .sort((a: ITask, b: ITask) => b.timestamp - a.timestamp);
 
         this.props.setTasks({overDueTasks});
         this.setState({

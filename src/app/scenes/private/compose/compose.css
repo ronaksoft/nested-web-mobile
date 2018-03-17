@@ -194,3 +194,26 @@ input::-ms-input-placeholder {
   overflow: hidden;
   color: rgba(50,61,71,.40);
 }
+div[contenteditable] {
+  outline: none;
+}
+div[contenteditable]:before{
+  content: 'Write some thing';
+  display: block;
+  pointer-events: none;
+  color: rgba(50, 61, 71, .4);
+  position: absolute;
+  font-size: 14px;
+  font-weight: 300;
+  user-select: text;
+  transition: opacity .2s;
+}
+.filled div[contenteditable]:before{
+  pointer-events: none;
+  opacity: 0!important;
+}
+[contenteditable]:focus:before,
+[contenteditable]:active:before  {
+  pointer-events: none;
+  opacity: 0!important;
+}

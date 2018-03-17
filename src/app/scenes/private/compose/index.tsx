@@ -16,6 +16,7 @@ import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
+import clientApi from 'api/client';
 import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
@@ -110,7 +111,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @type {boolean}
    * @memberof Compose
    */
-  private isHtml: boolean = false;
+  private isHtml: boolean = true;
 
   /**
    * @prop htmlBodyRef
@@ -148,6 +149,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private postApi: PostApi;
+  private clientApi: clientApi;
 
   /**
    * @prop file
@@ -181,8 +183,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const defaultState: IComposeState = {
       attachments: [],
       targets: [],
-      contentType: 'text/plain',
+      contentType: 'text/html',
+      // contentType: 'text/plain',
+      userSignature: {},
       allowComment: true,
+      addSignature: true,
       sending: false,
       body: '',
       subject: '',
@@ -274,6 +279,14 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         message.error('An error has occured in loading the post!');
       });
     }
+    this.clientApi = new clientApi();
+    this.clientApi.read('general.setting.signature').then((v: string) => {
+      if (v && v.length > 0) {
+        this.setState({
+          userSignature: JSON.parse(v),
+        });
+      }
+    });
   }
 
   /**
@@ -404,6 +417,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       allowComment: !this.state.allowComment,
     });
   }
+  /**
+   * @func allowComment
+   * @desc Toggles allow comment on/off in the component state
+   * @private
+   * @memberof Compose
+   */
+  private addSignature = () => {
+    this.setState({
+      addSignature: !this.state.addSignature,
+    });
+  }
 
   /**
    * @func send
@@ -421,6 +445,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
     if (!(this.state.subject ||
         this.state.body ||
+        this.htmlBodyRef.innerHTML ||
         this.state.attachments.length > 0)) {
       message.error('You can not send an empty message');
 
@@ -442,7 +467,13 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
-      body: this.isHtml ? this.htmlBodyRef.innerHTML : this.state.body,
+      body: this.isHtml
+      ? this.htmlBodyRef.innerHTML + (this.state.addSignature
+        ? (this.state.userSignature.active
+          ? this.state.userSignature.data
+          : '')
+        : '')
+      : this.state.body,
       no_comment: !this.state.allowComment,
       content_type: this.isHtml ? 'text/html' : 'text/plain',
       subject: this.state.subject,
@@ -675,6 +706,14 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                 </label>
                 <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment}/>
               </li>
+              {this.isHtml && (
+                <li>
+                  <label htmlFor="">
+                    Add signature on end of post body
+                  </label>
+                  <Switch defaultChecked={this.state.addSignature} onChange={this.addSignature}/>
+                </li>
+              )}
             </ul>
           </div>
         )}
@@ -720,7 +759,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </div>
         </div>
         {/* compose body */}
-        <div ref={this.refHandler} className={style.scrollWrapper}>
+        <div ref={this.refHandler} className={[style.scrollWrapper,
+          this.state.body.length > 0 || (this.htmlBodyRef && this.htmlBodyRef.innerHTML.length > 34)
+            ? style.filled : ''].join(' ')}>
           {!this.isHtml && (
             <textarea
               onFocus={this.bodyFocus}

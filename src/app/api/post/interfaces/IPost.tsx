@@ -6,6 +6,7 @@ import IPostAttachment from './IPostAttachment';
 
 interface IPost {
   body: string;
+  preview: string;
   content_type: string;
   counters: IPostCounters;
   ellipsis: boolean;

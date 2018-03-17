@@ -8,6 +8,8 @@ interface IComposeState {
   attachments: IAttachment[];
   targets: IChipsItem[];
   allowComment: boolean;
+  addSignature: boolean;
+  userSignature: any;
   sending: boolean;
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
