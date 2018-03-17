@@ -631,6 +631,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private textAreaRefHandler = (value) => {
     this.textArea = value;
   }
+  private contentEditableChange = () => {
+    this.forceUpdate();
+  }
 
   /**
    * @func render
@@ -772,7 +775,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             />
           )}
           {this.isHtml && (
-            <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}/>
+            <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}
+              onInput={this.contentEditableChange}/>
           )}
         </div>
         {/* attachments uploading/uploaded list */}
