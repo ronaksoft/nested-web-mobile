@@ -368,9 +368,9 @@ class InfiniteScroll extends React.Component<IProps, IState> {
                 top: (-1 * this.maxPullDownDistance),
               }}>
                 {!this.state.pullToRefreshThresholdBreached &&
-                  this.props.pullDownToRefreshContent}
+                  this.state.pullDownToRefreshContent}
                 {this.state.pullToRefreshThresholdBreached &&
-                  this.props.releaseToRefreshContent}
+                  this.state.releaseToRefreshContent}
               </div>
             </div>
           )}

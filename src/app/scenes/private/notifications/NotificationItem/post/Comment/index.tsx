@@ -85,7 +85,7 @@ class Comment extends React.Component <IProps, any> {
             <div className={style.multiAvatars}>
               {others && othersDoms}
               <div className={style.filler}/>
-              <IcoN size={16} name={'comment24Crown'}/>
+              <IcoN size={16} name={'commentCrown16'}/>
             </div>
             <div className={style.notifData}>
               <p>
@@ -128,7 +128,7 @@ class Comment extends React.Component <IProps, any> {
                 <span className={style.time}> •{TimeUntiles.dynamic(notification.timestamp)}</span>
               </p>
             </div>
-            <IcoN size={16} name={'comment24Crown'}/>
+            <IcoN size={16} name={'commentCrown16'}/>
           </div>
         )}
       </Link>
