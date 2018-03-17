@@ -17,7 +17,11 @@
   fill: #323D47;
 }
 
-.voiceComment .playVoice svg:last-of-type {
+.voiceComment .playVoice i {
+  height: 16px;
+}
+
+.voiceComment .playVoice i:last-of-type {
   display: none;
 }
 
@@ -35,15 +39,16 @@
   background-color: #14d769;
 }
 
+.voiceComment.isPlay .playVoice i,
 .voiceComment.isPlay .playVoice svg {
   fill: #fff;
 }
 
-.voiceComment.isPlay .playVoice svg:first-of-type {
+.voiceComment.isPlay .playVoice i:first-of-type {
   display: none;
 }
 
-.voiceComment.isPlay .playVoice svg:last-of-type {
+.voiceComment.isPlay .playVoice i:last-of-type {
   display: block;
 }
 
