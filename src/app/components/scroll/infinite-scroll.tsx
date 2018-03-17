@@ -12,6 +12,7 @@ interface IState {
     pullToRefreshThresholdBreached: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
+    route: string;
     scrollPositions: any;
     pullDownToRefreshThreshold: number;
     disableBrowserPullToRefresh: boolean;
@@ -79,6 +80,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
             lastScrollTop: 0,
             actionTriggered: false,
             pullToRefreshThresholdBreached: false,
+            route: props.route,
             pullDownToRefreshContent: props.pullDownToRefreshContent || (
               <h3 className={style.pull}>
                 <IcoN size={16} name={'arrow16'}/>
@@ -113,8 +115,8 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     this.el = this.infScroll || window;
     this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
 
-    if (this.props.route && this.props.scrollPositions[this.props.route]) {
-      this.el.scrollTo(0, this.props.scrollPositions[this.props.route]);
+    if (this.state.route && this.props.scrollPositions[this.state.route]) {
+      this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
     } else if (this.el.scrollHeight > this.props.initialScrollY) {
       this.el.scrollTo(0, this.props.initialScrollY);
     }
@@ -178,6 +180,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       actionTriggered: false,
       pullToRefreshThresholdBreached: false,
       scrollPositions: props.scrollPositions,
+      route: props.route,
     });
   }
 
@@ -294,7 +297,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     // save scroll in redux
     if (typeof this.props.setScroll === 'function') {
         const payload = {};
-        payload[this.props.route] = target.scrollTop;
+        payload[this.state.route] = target.scrollTop;
         this.props.setScroll(payload);
     }
     // if user scrolls up, remove action trigger lock
