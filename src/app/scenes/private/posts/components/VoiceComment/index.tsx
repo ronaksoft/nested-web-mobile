@@ -129,7 +129,9 @@ class VoiceComment extends React.Component<IProps, IState> {
   }
 
   private onBarClick = (ratio) => {
-    this.miniPlayer.seekTo(ratio);
+    if (this.currentPlayingId === this.props.comment._id) {
+      this.miniPlayer.seekTo(ratio);
+    }
   }
 
   /**
