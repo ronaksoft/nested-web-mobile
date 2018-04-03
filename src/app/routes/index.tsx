@@ -13,6 +13,7 @@ import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
 import {Provider} from 'react-redux';
 import {Router, Route, hashHistory, IndexRoute, Redirect} from 'react-router';
 import {configureStore} from 'redux/store';
+import Members from '../scenes/private/place/members';
 
 const store = configureStore(hashHistory);
 
@@ -39,6 +40,7 @@ export default (
 
         <Route path="/places/:placeId/activities" component={Activities}/>
         <Route path="/places/:placeId/files" component={Files}/>
+        <Route path="/places/:placeId/members" component={Members}/>
         <Route path="/messages/latest-activity" component={Activities}/>
         <Route path="/message/:postId" component={Post}/>
         <Route path="/task/glance" component={Tasks}/>

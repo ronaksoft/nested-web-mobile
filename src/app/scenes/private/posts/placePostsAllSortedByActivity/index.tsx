@@ -448,6 +448,10 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
     this.props.setCurrentPost(post);
     hashHistory.push(`/message/${post._id}`);
   }
+
+  private gotoMember() {
+    hashHistory.push(`/places/${this.currentPlaceId}/members`);
+  }
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -464,7 +468,12 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
     const leftItem = {
       name: <PlaceName place_id={this.currentPlaceId}/>,
       type: 'title',
-      menu: [
+      menu: [{
+          onClick: this.gotoMember.bind(this),
+          name: 'Members',
+          type: 'kind',
+          isChecked: false,
+        },
         // {
         //   onClick: this.gotoUnreadPosts.bind(this, ''),
         //   name: 'Posts',
@@ -608,7 +617,7 @@ class PlacePostsAllSortedByActivity extends React.Component<IProps, IState> {
               route={this.props.location.pathname}
               hasMore={true}
               loader={<Loading active={true} position="fixed"/>}>
-                
+
                 {/* after Loading component render posts list */}
                 {this.state.posts.map((post: IPost) => (
                   <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>

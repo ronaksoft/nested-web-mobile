@@ -14,6 +14,8 @@ import IGetUnreadsRequest from './interfaces/IGetUnreadsRequest';
 import IGetUnreadsResponse from './interfaces/IGetUnreadsResponse';
 import IGetRequest from './interfaces/IGetRequest';
 import IPlace from './interfaces/IPlace';
+import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
+import IUser from '../account/interfaces/IUser';
 
 export default class PlaceApi {
   /**
@@ -78,6 +80,40 @@ export default class PlaceApi {
     return this.api.request({
       cmd: 'place/get',
       data,
+    });
+  }
+
+  /**
+   * @func getMangers
+   * @desc Get Mangers of a place
+   * @param {IGetWithSkipRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getMangers(data: IGetWithSkipRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_creators',
+      data,
+    }).then( (res) => {
+      const users = res.creators as IUser[];
+      return users;
+    });
+  }
+
+  /**
+   * @func getMembers
+   * @desc Get Members of a place
+   * @param {IGetWithSkipRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getMembers(data: IGetWithSkipRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_key_holders',
+      data,
+    }).then( (res) => {
+      const users = res.key_holders as IUser[];
+      return users;
     });
   }
 
