@@ -29,6 +29,7 @@ interface IPost {
   reply_to: string;
   forward_from: string;
   post_labels: ILabel[];
+  iframe_url: string;
   _id: string;
 }
 

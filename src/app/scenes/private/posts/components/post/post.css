@@ -36,6 +36,12 @@
 .postView .postBody {
   border-bottom: none;
 }
+.postBody iframe {
+  /* height: 100vh */
+  box-shadow: none;
+  outline: none;
+  border: none;
+}
 .postCard hr{
   border-top: none;
   width: calc(100% - 32px);

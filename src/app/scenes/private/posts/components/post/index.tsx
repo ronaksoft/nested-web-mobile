@@ -499,6 +499,10 @@ class Post extends React.Component<IProps, IState> {
     this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
   }
 
+  public resizeIframe(obj) {
+      obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  }
+
   /**
    * @func render
    * @desc Renders the component
@@ -627,6 +631,9 @@ class Post extends React.Component<IProps, IState> {
             {!this.props.post && <hr/>}
             <div className={style.postBody}>
               <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
+              {post.iframe_url && (
+                <iframe width="100%" src={post.iframe_url} scrolling="auto" onLoad={this.resizeIframe(this)}/>
+              )}
               <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
               ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
               {post.post_attachments.length > 0 && !this.props.post && (
