@@ -289,10 +289,10 @@ export default class MiniPlayer {
         id: id,
         fn: callback
       });
-
+      const that = this;
       return function () {
         const tempId = id;
-        this.unbindFn(fnRef, tempId);
+        that.unbindFn(fnRef, tempId);
       };
     }
   }
@@ -305,9 +305,10 @@ export default class MiniPlayer {
         id: id,
         fn: callback
       });
+      const that = this;
       return function () {
         var tempId = id;
-        this.unbindFn(fnRef, tempId);
+        that.unbindFn(fnRef, tempId);
       };
     }
   }
@@ -350,10 +351,10 @@ export default class MiniPlayer {
         id: id,
         fn: callback
       });
-
+      const that = this;
       return function () {
         const tempId = id;
-        this.unbindFn(fnRef, tempId);
+        that.unbindFn(fnRef, tempId);
       };
     }
   }
