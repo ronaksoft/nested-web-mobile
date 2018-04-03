@@ -632,7 +632,7 @@ class Post extends React.Component<IProps, IState> {
             <div className={style.postBody}>
               <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
               {post.iframe_url && (
-                <iframe width="100%" src={post.iframe_url} scrolling="auto" onLoad={this.resizeIframe(this)}/>
+                <iframe width="100%" src={post.iframe_url} scrolling="auto" onLoad={this.resizeIframe}/>
               )}
               <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
               ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
