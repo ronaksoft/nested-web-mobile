@@ -24,6 +24,7 @@ import RTLDetector from '../../../../../components/RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
 import {message} from 'antd';
 import VoiceComment from '../VoiceComment';
+import MiniPlayer from '../../../../../../app/services/miniplayer';
 
 const style = require('./comment-board.css');
 
@@ -148,6 +149,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
     if (typeof this.props.newComment === 'function') {
       this.notifyNewComment = this.props.newComment;
     }
+    MiniPlayer.getInstance().setPlaylist('voice-comment-' + this.props.post_id, true);
   }
 
   /**
@@ -409,7 +411,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
                 <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
               }
               {comment.attachment_id !== '' &&
-                <VoiceComment comment={comment}/>
+                <VoiceComment comment={comment} post={this.props.post}/>
               }
             </div>
           </div>

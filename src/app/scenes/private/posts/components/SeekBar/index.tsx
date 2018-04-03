@@ -2,7 +2,7 @@
  * @file scenes/private/posts/components/comment/index.tsx
  * @author Sina Hosseini <ehosseiniir@gmail.com>
  * @description A comment-board component
- * @export CommentsBoard
+ * @export SeekBar
  * Documented by:          Soroush Torkzadeh <sorousht@nested.me>
  * Date of documentation:  2017-07-27
  * Reviewed by:            robzizo <me@robzizo.ir>
@@ -18,8 +18,8 @@ const style = require('./seek-bar.css');
  * @desc Interface of the component props
  */
 interface IProps {
-  onBarClick: () => void;
-  currentTime: number;
+  onBarClick: (e: number) => void;
+  ratio: number;
   isPlaying: boolean;
 }
 
@@ -40,17 +40,19 @@ interface IState {
 }
 
 /**
- * @class CommentsBoard
+ * @class SeekBar
  * @desc A list of a post comment with a new comment input box
  * @extends {React.Component<IProps, IState>}
  */
 class SeekBar extends React.Component<IProps, IState> {
-  private barWidth;
+  private barElem;
+  private draggerElem;
+
   /**
    * @constructor
-   * Creates an instance of CommentsBoard.
+   * Creates an instance of SeekBar.
    * @param {IProps} props
-   * @memberof CommentsBoard
+   * @memberof SeekBar
    */
   constructor(props: IProps) {
     super(props);
@@ -59,31 +61,42 @@ class SeekBar extends React.Component<IProps, IState> {
       mouseDown: false,
       panX: 0,
     };
-    window.addEventListener('mousemove', this.mouseMove);
-    window.addEventListener('mouseup', this.mouseUp);
+    window.addEventListener('touchmove', this.mouseMove, true);
+    window.addEventListener('touchend', this.mouseUp, true);
   }
 
   /**
    * @func componentDidMount
    * @desc When the component has been mounted successfully, It retreives the post last 3 comments
    * and opens a channel for getting notified for new comments.
-   * @memberof CommentsBoard
+   * @memberof SeekBar
    * @override
    */
   public componentDidMount() {
-    window.console.log('hey');
+    this.draggerElem.addEventListener('touchstart', this.mouseDown, true);
   }
 
   /**
    * @func componentWillUnmount
    * @desc Stops listening to the sync channels when the component is going to be destroyed
-   * @memberof CommentsBoard
+   * @memberof SeekBar
    * @override
    */
   public componentWillUnmount() {
-    window.console.log('bye');
-    window.removeEventListener('mousemove', this.mouseMove);
-    window.removeEventListener('mouseup', this.mouseUp);
+    window.removeEventListener('touchstart', this.mouseMove);
+    window.removeEventListener('touchend', this.mouseUp);
+    this.draggerElem.removeEventListener('touchstart', this.mouseDown);
+  }
+
+  /**
+   * @func componentWillReceiveProps
+   * @memberof SeekBar
+   * @override
+   */
+  public componentWillReceiveProps(props) {
+    this.setState({
+      panX: props.ratio * 100,
+    });
   }
 
   private mouseDown = () => {
@@ -93,22 +106,27 @@ class SeekBar extends React.Component<IProps, IState> {
   }
 
   private mouseUp = () => {
-    this.setState({
-      mouseDown: false,
-    });
+    if (this.state.mouseDown) {
+      this.setState({
+        mouseDown: false,
+      });
+      this.props.onBarClick(this.state.panX);
+    }
   }
 
   private mouseMove = (e) => {
     if (this.state.mouseDown) {
-      let range = e.pageX - 68;
+      const touch = e.touches[0];
+      let range = touch.pageX - 86;
+      const width = this.barElem.clientWidth;
       if (range < 0) {
         range = 0;
       }
-      if (range > this.barWidth) {
-        range = this.barWidth;
+      if (range > width) {
+        range = width;
       }
       this.setState({
-        panX: range,
+        panX: (range / width) * 100,
       });
     }
   }
@@ -121,28 +139,33 @@ class SeekBar extends React.Component<IProps, IState> {
    * @param {HTMLDivElement} value
    */
   private refHandler = (value) => {
-    this.barWidth = value.clientWidth - 24;
+    this.barElem = value;
+  }
+
+  private draggerHandler = (value) => {
+    this.draggerElem = value;
   }
 
   /**
    * @func render
    * @desc Renders the component
    * @returns
-   * @memberof CommentsBoard
+   * @memberof SeekBar
    * @generator
    */
   public render() {
     const draggerStyle = {
-      left: this.state.panX + 'px',
+      left: this.state.panX + '%',
     };
     const playedBarStyle = {
-      width: this.state.panX * 2 + 'px',
+      width: this.state.panX * 2 + '%',
     };
     return (
       <div className={style.playerHandler + ' ' + (this.state.mouseDown ? style.noTransition : '')}>
         <div className={style.bgBar} ref={this.refHandler}/>
         <div className={style.playedBar} style={playedBarStyle}/>
-        <div className={style.playerDragger} onMouseDown={this.mouseDown} style={draggerStyle}/>
+        <div className={style.playerDragger} ref={this.draggerHandler}
+             style={draggerStyle}/>
       </div>
     );
   }

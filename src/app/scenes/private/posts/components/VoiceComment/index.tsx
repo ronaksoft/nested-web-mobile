@@ -12,6 +12,11 @@ import * as React from 'react';
 import IComment from 'api/comment/interfaces/IComment';
 import {IcoN} from '../../../../../components/Icons';
 import SeekBar from '../SeekBar';
+import MiniPlayer from '../../../../../../app/services/miniplayer';
+import AttachmentApi from '../../../../../api/attachment';
+import FileUtil from '../../../../../services/utils/file';
+import IPost from '../../../../../api/post/interfaces/IPost';
+import * as _ from 'lodash';
 
 const style = require('./voice-comment.css');
 
@@ -21,6 +26,14 @@ const style = require('./voice-comment.css');
  */
 interface IProps {
   comment: IComment;
+
+  /**
+   * @prop post
+   * @desc The post that the comments belogs to
+   * @type {IPost}
+   * @memberof IProps
+   */
+  post: IPost;
 }
 
 /**
@@ -35,6 +48,10 @@ interface IState {
    * @memberof IState
    */
   comment: IComment;
+
+  ratio: number;
+
+  play: boolean;
 }
 
 /**
@@ -43,7 +60,9 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  */
 class VoiceComment extends React.Component<IProps, IState> {
-
+  private miniPlayer: any;
+  private eventReferences: any[];
+  private currentPlayingId: string;
   /**
    * @constructor
    * Creates an instance of CommentsBoard.
@@ -54,33 +73,94 @@ class VoiceComment extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       comment: null,
+      ratio: 0.0,
+      play: false,
     };
+    this.miniPlayer = MiniPlayer.getInstance();
+    this.eventReferences = [];
+    this.eventReferences.push(this.miniPlayer.timeChanged((t) => {
+      if (this.currentPlayingId !== this.props.comment._id) {
+        return;
+      }
+      this.setState({
+        ratio: t.ratio,
+      });
+    }));
+    this.eventReferences.push(this.miniPlayer.statusChanged((result) => {
+      if (result.status === 'play' || result.status === 'end') {
+        this.currentPlayingId = result.id;
+      }
 
+      if (result.status === 'play' || result.status === 'pause' || result.status === 'end') {
+        this.setState({
+          play: (result.status === 'play' && this.currentPlayingId === this.props.comment._id),
+        });
+      }
+
+      if (this.currentPlayingId === this.props.comment._id && result.status === 'end') {
+        this.setState({
+          ratio: 1.0,
+        });
+        this.miniPlayer.next();
+      }
+    }));
   }
 
   /**
    * @func componentDidMount
-   * @desc When the component has been mounted successfully, It retreives the post last 3 comments
-   * and opens a channel for getting notified for new comments.
    * @memberof CommentsBoard
    * @override
    */
   public componentDidMount() {
-    window.console.log('hey');
+    this.addVoiceTrack(this.props.comment, this.props.post._id);
   }
 
   /**
    * @func componentWillUnmount
-   * @desc Stops listening to the sync channels when the component is going to be destroyed
    * @memberof CommentsBoard
    * @override
    */
   public componentWillUnmount() {
-    window.console.log('bye');
+    _.forEach(this.eventReferences, (canceler) => {
+      if (_.isFunction(canceler)) {
+        canceler();
+      }
+    });
   }
 
-  private onBarClick = () => {
-    window.console.log('bye');
+  private onBarClick = (ratio) => {
+    if (this.currentPlayingId === this.props.comment._id) {
+      this.miniPlayer.seekTo(ratio);
+    }
+  }
+
+  /**
+   * generates download url of attachment and update component state `downloadUrl` property
+   * @function setDownloadUrl
+   * @param {IComment} comment
+   * @param {string} postId
+   * @memberof CommentsBoard
+   */
+  public addVoiceTrack(comment: IComment, postId: string): void {
+    AttachmentApi.getDownloadToken({
+      universal_id: comment.attachment_id,
+      post_id: postId,
+    }).then((token: string) => {
+      const item = {
+        id: comment._id,
+        src: FileUtil.getDownloadUrl(comment.attachment_id, token),
+        isPlayed: false,
+      };
+      this.miniPlayer.addTrack(item, comment.sender, comment.timestamp);
+    });
+  }
+
+  private onPlay = () => {
+    if (!this.state.play) {
+      this.miniPlayer.play(this.props.comment._id);
+    } else {
+      this.miniPlayer.pause();
+    }
   }
 
   /**
@@ -92,13 +172,13 @@ class VoiceComment extends React.Component<IProps, IState> {
    */
   public render() {
     return (
-      <div className={style.voiceComment}>
-        <div className={style.playVoice}>
-          <IcoN size={16} name={'play'}/>
-          <IcoN size={16} name={'pause'}/>
+      <div className={style.voiceComment + ' ' + (this.state.play ? style.isPlay : '')}>
+        <div className={style.playVoice} onClick={this.onPlay}>
+          <IcoN size={16} name={'play16'}/>
+          <IcoN size={16} name={'pause16'}/>
         </div>
         <div className={style.trailerVoice}>
-          <SeekBar onBarClick={this.onBarClick} currentTime={2} isPlaying={true}/>
+          <SeekBar onBarClick={this.onBarClick} ratio={this.state.ratio} isPlaying={true}/>
         </div>
       </div>
     );
