@@ -11,8 +11,9 @@ import * as React from 'react';
 import PlaceApi from '../../../../api/place';
 import IGetWithSkipRequest from '../../../../api/place/interfaces/IGetWithSkipRequest';
 import IUser from '../../../../api/account/interfaces/IUser';
-import {IcoN, UserAvatar, FullName, Loading} from 'components';
+import {IcoN, UserAvatar, FullName, OptionsMenu, PlaceName} from 'components';
 import * as _ from 'lodash';
+import {hashHistory} from 'react-router';
 
 const style = require('./members.css');
 
@@ -68,7 +69,7 @@ interface IState {
 class Members extends React.Component<IProps, IState> {
 
   private placeApi: PlaceApi;
-
+  private topMenu: any;
   /**
    * Creates an instance of Members.
    * @constructor
@@ -90,6 +91,52 @@ class Members extends React.Component<IProps, IState> {
       members: [],
       editMode: false,
     };
+
+    this.topMenu = {
+      left: {
+        name: <PlaceName place_id={this.state.placeId}/>,
+        type: 'title',
+        menu: [
+          {
+            onClick: this.gotoPlacePosts.bind(this, ''),
+            name: 'Posts',
+            isChecked: true,
+            icon: {
+              name: 'message16',
+              size: 16,
+            },
+          },
+          {
+            onClick: null,
+            name: 'Members',
+            isChecked: false,
+            icon: {
+              name: 'placeMember16',
+              size: 16,
+            },
+          },
+        ],
+      },
+      right: [{
+        name: 'moreOption',
+        type: 'title',
+        menu: [
+          {
+            onClick: this.gotoPlacePosts.bind(this, ''),
+            name: 'Add Member',
+            isChecked: true,
+            icon: {
+              name: 'message16',
+              size: 16,
+            },
+          },
+        ],
+      }],
+    };
+  }
+
+  private gotoPlacePosts() {
+    hashHistory.push(`/places/${this.state.placeId}/messages`);
   }
 
   /**
@@ -176,6 +223,7 @@ class Members extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
+        <OptionsMenu leftItem={this.topMenu.left} rightItems={this.topMenu.right}/>
         {this.state.editMode &&
         <div className={style.editModeOverlay} onClick={this.closeAll}/>
         }
