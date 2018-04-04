@@ -172,6 +172,13 @@ export default class PostApi {
     });
   }
 
+  public getMany(data: IGetPostRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/get_many',
+      data,
+    });
+  }
+
   /**
    * @func send
    * @desc Shares a post with the specified targets

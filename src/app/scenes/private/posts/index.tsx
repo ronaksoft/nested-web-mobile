@@ -12,6 +12,7 @@ import {OptionsMenu, InfiniteScroll, Loading, PlaceName} from 'components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../api/post/index';
+import placeApi from '../../../api/place/index';
 import IPost from '../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../redux/app/actions/index';
@@ -142,6 +143,7 @@ interface IState {
   route: string;
   location: any;
   initialLoading: boolean;
+  getPinnedPosts: boolean;
 }
 
 /**
@@ -154,6 +156,7 @@ class Posts extends React.Component<IProps, IState> {
 
   // (needs documentation)
   private postApi: PostApi;
+  private placeApi: placeApi;
   private syncActivity = SyncActivity.getInstance();
   private syncActivityListeners = [];
   private favoritePlacesId = [];
@@ -180,6 +183,7 @@ class Posts extends React.Component<IProps, IState> {
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
+      getPinnedPosts: false,
       initialLoading: true,
       newPostCount: 0,
       location: this.props.location.pathname,
@@ -202,6 +206,9 @@ class Posts extends React.Component<IProps, IState> {
     const pageIsChanged = this.state.route !== route;
     if (pageIsChanged) {
       state.initialLoading = true;
+      if (state.posts.length === 0) {
+        state.getPinnedPosts = false;
+      }
     }
     this.setState(state, () => {
       if (pageIsChanged) {
@@ -249,6 +256,7 @@ class Posts extends React.Component<IProps, IState> {
      * define the Post Api
      */
     this.postApi = new PostApi();
+    this.placeApi = new placeApi();
     this.getFavPlaces();
     this.getPosts(true);
 
@@ -378,6 +386,7 @@ class Posts extends React.Component<IProps, IState> {
   private getPosts(fromNow?: boolean, after?: number) {
     let params: IPostsListRequest;
     let fnName: string = 'getFavoritePosts';
+    let requirePinnedMessages: boolean = false;
     if (fromNow === true) {
       params = {
         before: Date.now(),
@@ -429,10 +438,12 @@ class Posts extends React.Component<IProps, IState> {
     if (this.state.route.indexOf('place') > -1) {
       fnName = 'getPlacePosts';
       params.place_id = this.currentPlaceId;
+      requirePinnedMessages = true;
     }
 
     if (this.state.route.indexOf('unread') > -1) {
       fnName = 'getPlaceUnreadPosts';
+      requirePinnedMessages = false;
     }
     // call get Favorite posts
     this.postApi[fnName](params)
@@ -454,7 +465,7 @@ class Posts extends React.Component<IProps, IState> {
          * and sorting the post items by date
          * @type {IPost[]}
          */
-        const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id');
+        const posts = ArrayUntiles.uniqueObjects([...this.state.posts, ...response.posts], '_id');
           // .sort((a: IPost, b: IPost) => {
           //   return b.timestamp - a.timestamp;
           // });
@@ -490,6 +501,43 @@ class Posts extends React.Component<IProps, IState> {
           initialLoading: false,
         });
       });
+
+    if (requirePinnedMessages && fromNow) {
+      this.placeApi.get({place_id: this.currentPlaceId}).then((place) => {
+        if (place.pinned_posts) {
+          this.postApi.getMany({post_id: place.pinned_posts.join(',')}).then((response) => {
+            let posts = response.posts;
+            const statePosts = [...this.state.posts];
+            statePosts.forEach((post, index) => {
+              if (place.pinned_posts.indexOf(post._id) > -1) {
+                statePosts.splice(index, 1);
+              }
+            });
+            posts.forEach((post) => {
+              post.pinnedInPlace = true;
+            });
+            posts = [...posts, ...statePosts];
+            this.setState({
+              posts,
+              getPinnedPosts: true,
+            });
+
+            const postsObj = {};
+            postsObj[this.state.route] = posts;
+            this.props.setPosts(postsObj);
+            this.props.setPostsRoute(this.props.location.pathname);
+          });
+        } else {
+          this.setState({
+            getPinnedPosts: true,
+          });
+        }
+      });
+    } else {
+      this.setState({
+        getPinnedPosts: true,
+      });
+    }
   }
   /**
    * @function showNewPosts
@@ -709,7 +757,7 @@ class Posts extends React.Component<IProps, IState> {
    */
   public render() {
     const loadMore = this.getPosts.bind(this);
-    const {route} = this.state;
+    const {route, getPinnedPosts} = this.state;
     /**
      * @name leftItem
      * @desc setting of left Item
@@ -718,8 +766,8 @@ class Posts extends React.Component<IProps, IState> {
      */
     const menu = this.getLeftItemMenu();
 
-    const doms = this.state.posts.map((post: IPost) => (
-      <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+    const doms = this.state.posts.map((post: IPost, index: number) => (
+      <div key={post._id + index} id={post._id} onClick={this.gotoPost.bind(this, post)}>
         <Post post={post}/>
       </div>));
     return (
@@ -755,9 +803,9 @@ class Posts extends React.Component<IProps, IState> {
             </div>
           )
         }
-        <Loading position="absolute" active={this.state.initialLoading}/>
+        <Loading position="absolute" active={this.state.initialLoading || !getPinnedPosts}/>
         <div className={privateStyle.postsArea}>
-          {this.state.posts.length > 0 && (
+          {(this.state.posts.length > 0 && getPinnedPosts) && (
             <InfiniteScroll
               pullDownToRefresh={true}
               refreshFunction={this.refresh}

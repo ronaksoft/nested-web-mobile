@@ -31,6 +31,7 @@ interface IPost {
   post_labels: ILabel[];
   iframe_url: string;
   _id: string;
+  pinnedInPlace?: boolean;
 }
 
 export default IPost;
