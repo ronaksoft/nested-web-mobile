@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {
-  Feed, FeedByActivity, Bookmarked, Shared,
-  PlacePostsAllSortedByActivity, PlacePostsAllSortedByRecent,
-  PlacePostsUnreadSortedByRecent,
+  Posts,
   Notifications, Activities, Files, Compose, Signout,
   Tasks, TaskEdit,
 } from 'scenes/private';
@@ -21,28 +19,29 @@ export default (
   <Provider store={store}>
     <Router history={hashHistory}>
       <Route component={Private}>
-        <IndexRoute component={Feed}/>
+        <IndexRoute component={Posts}/>
         <Redirect from="/" to="/feed" />
         {/*<Route path="/" component={Feed} />*/}
-        <Route path="/feed" component={Feed}/>
-        <Route path="/feed/latest-activity" component={FeedByActivity}/>
-        <Route path="/shared" component={Shared}/>
-        <Route path="/bookmarks" component={Bookmarked}/>
+        <Route path="/feed" component={Posts}/>
+        <Route path="/feed/latest-activity" component={Posts}/>
+        <Route path="/shared" component={Posts}/>
+        <Route path="/bookmarks" component={Posts}/>
 
         {/* All post sorted by activity*/}
-        <Route path="/places/:placeId/messages" component={PlacePostsAllSortedByRecent}/>
+        <Route path="/places/:placeId/messages" component={Posts}/>
 
         {/* All recent post */}
-        <Route path="/places/:placeId/messages/latest-activity" component={PlacePostsAllSortedByActivity}/>
+        <Route path="/places/:placeId/messages/latest-activity" component={Posts}/>
 
         {/* Unread post sorted by activity*/}
-        <Route path="/places/:placeId/unread" component={PlacePostsUnreadSortedByRecent}/>
+        <Route path="/places/:placeId/unread" component={Posts}/>
 
         <Route path="/places/:placeId/activities" component={Activities}/>
         <Route path="/places/:placeId/files" component={Files}/>
         <Route path="/places/:placeId/members" component={Members}/>
-        <Route path="/messages/latest-activity" component={Activities}/>
+        {/* <Route path="/messages/latest-activity" component={Activities}/> */}
         <Route path="/message/:postId" component={Post}/>
+
         <Route path="/task/glance" component={Tasks}/>
         <Route path="/task/assigned_to_me/normal" component={Tasks}/>
         <Route path="/task/assigned_to_me/completed" component={Tasks}/>

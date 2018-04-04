@@ -47,7 +47,6 @@ interface IState {
   loadingBefore: boolean;
   reachedTheEnd: boolean;
   initialLoading: boolean;
-  newPostCount: number;
   location: any;
   route: string;
 }
@@ -81,12 +80,12 @@ class Tasks extends React.Component<IProps, IState> {
       customFilters: this.props.customFilters || [],
       reachedTheEnd: false,
       initialLoading: true,
-      newPostCount: 0,
       route: initiateRoute || 'glance',
     };
   }
 
   public componentWillReceiveProps(newProps: IProps) {
+    console.log('componentWillReceiveProps');
     let route = this.state.route;
     if (this.state.location !== newProps.location.pathname) {
       route = this.findRouteFromPath(newProps);

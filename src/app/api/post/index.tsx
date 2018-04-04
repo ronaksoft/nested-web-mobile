@@ -101,43 +101,14 @@ export default class PostApi {
   }
 
   /**
-   * @func getFavoritePostsSortedByActivity
-   * @desc Retrieves the posts of places that where added to feed sorted by recent activity
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getFavoritePostsSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    // TODO: Remove this function. It's exactly equal to `getFavoritePosts`
-    return this.api.request({
-      cmd: 'account/get_favorite_posts',
-      data: params,
-    });
-  }
-
-  /**
    * @func getPlacePostsAllSortedByActivity
    * @desc Retrieves a list of the given place's posts sorted by latest activity
    * @param {IPostsListRequest} [params={limit: 10}]
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
-  public getPlacePostsAllSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+  public getPlacePosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     params.by_update = true;
-    return this.api.request({
-      cmd: 'place/get_posts',
-      data: params,
-    });
-  }
-
-  /**
-   * @func getPlacePostsAllSortedByRecent
-   * @desc Retrieves a list of the given place's posts sorted by date
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getPlacePostsAllSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     return this.api.request({
       cmd: 'place/get_posts',
       data: params,
@@ -151,22 +122,7 @@ export default class PostApi {
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
-  public getPlacePostsUnreadSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    return this.api.request({
-      cmd: 'place/get_unread_posts',
-      data: params,
-    });
-  }
-
-  /**
-   * @func getPlacePostsUnreadSortedByActivity
-   * @desc Retrieves unread posts of the given place, sorted by latest activity
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getPlacePostsUnreadSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    params.by_update = true;
+  public getPlaceUnreadPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     return this.api.request({
       cmd: 'place/get_unread_posts',
       data: params,

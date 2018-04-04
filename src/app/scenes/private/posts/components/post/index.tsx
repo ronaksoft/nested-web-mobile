@@ -499,8 +499,16 @@ class Post extends React.Component<IProps, IState> {
     this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
   }
 
-  public resizeIframe(obj) {
-      obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  public resizeIframe = (obj) => {
+      try {
+        if (obj.contentWindow) {
+          obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        } else {
+          this.resizeIframe(obj);
+        }
+      } catch (error) {
+        console.log(error);
+      }
   }
 
   /**

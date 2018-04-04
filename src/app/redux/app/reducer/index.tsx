@@ -11,8 +11,8 @@ const initialState = Immutable.from<IAppAction>({
   userPlaces: [],
   notifications: [],
   notificationsCount: 0,
-  posts: [],
-  tasks: [],
+  posts: {},
+  tasks: {},
   sidebarPlaces: [],
   currentPost: null,
   scrollPositions: {},
@@ -49,12 +49,12 @@ export default function appReducer(state = initialState, action?: IAppAction) {
 
     case ActionTypes.APP_POSTS_SET:
       return Immutable.merge(state, {
-        posts: action.payload,
+        posts: Immutable.merge(state.posts, action.payload),
       });
 
     case ActionTypes.APP_POSTS_UNSET:
       return Immutable.merge(state, {
-        posts: [],
+        posts: {},
       });
 
     case ActionTypes.APP_POSTS_ROUTE_SET:

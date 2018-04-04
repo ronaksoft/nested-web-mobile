@@ -63,7 +63,7 @@ export function unsetNotification(notifications: any[]): IAppAction {
   };
 }
 
-export function setPosts(posts: IPost[]): IAppAction {
+export function setPosts(posts: any | IPost[]): IAppAction {
   return {
     type: ActionTypes.APP_POSTS_SET,
     payload: posts,

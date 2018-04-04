@@ -1,0 +1,820 @@
+/**
+ * @file scenes/private/posts/feed/index.tsx
+ * @author sina hosseini <ehosseiniir@gmail.com>
+ * @description This component is designed for rendering posts which are bookmarked.
+ * Documented by:          Shayesteh Naeimabadi <naamesteh@nested.me>
+ * Date of documentation:  2017-07-27
+ * Reviewed by:            robzizo <me@robzizo.ir>
+ * Date of review:         2017-07-31
+ */
+import * as React from 'react';
+import {OptionsMenu, InfiniteScroll, Loading, PlaceName} from 'components';
+import {connect} from 'react-redux';
+import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
+import PostApi from '../../../api/post/index';
+import IPost from '../../../api/post/interfaces/IPost';
+import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
+import {setCurrentPost, setPosts, setPostsRoute} from '../../../redux/app/actions/index';
+import ArrayUntiles from '../../../services/utils/array';
+import {Button, message, Modal} from 'antd';
+import Post from './components/post/index';
+import {hashHistory} from 'react-router';
+import SyncActivity from '../../../services/syncActivity/index';
+import IActivity from '../../../api/activity/interfaces/IActivitiy';
+import SyncActions from '../../../services/syncActivity/syncActions';
+import AccountApi from '../../../api/account/index';
+import {NewBadge} from 'components/NewBadge';
+import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
+import Failure from 'services/server/failure';
+
+const style = require('./posts.css');
+const privateStyle = require('../private.css');
+
+/**
+ * @interface IProps
+ */
+interface IProps {
+  /**
+   * @property postsRoute
+   * @desc  posts route that the message is going to it
+   * @type {string}
+   * @memberof IProps
+   */
+  postsRoute: string;
+  /**
+   * @property routing
+   * @desc routing state receive from react-router-redux
+   * @type {any}
+   * @memberof IProps
+   */
+  // fixme:: set type
+  routing: any;
+  /**
+   * @property posts
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
+   * @memberof IProps
+   */
+  posts: IPost[] | any;
+  /**
+   * @property currentPost
+   * @desc object of current post
+   * @type {IPost | null}
+   * @memberof IProps
+   */
+  currentPost: IPost | null;
+  /**
+   * @property setPosts
+   * @desc setPosts action which store a list of IPost objects in redux store
+   * @type {function}
+   * @memberof IProps
+   */
+  setPosts: (posts: IPost[] | any) => {};
+  /**
+   * @property setPostsRoute
+   * @desc setPostsRoute action which store route of stored posts in redux store
+   * @type {function}
+   * @memberof IProps
+   */
+  setPostsRoute: (route: string) => {};
+  /**
+   * @property setCurrentPost
+   * @desc  setCurrentPost action which store current post in redux store
+   * @type {function}
+   * @memberof IProps
+   */
+  setCurrentPost: (post: IPost) => {};
+  /**
+   * @property params
+   * @desc parameters that received from route (react-router)
+   * @type {any}
+   * @memberof IProps
+   */
+  params?: any;
+  /**
+   * @property location
+   * @desc location object that received from react-router
+   * @type {any}
+   * @memberof IProps
+   */
+  location: any;
+}
+
+/**
+ * @interface IState
+ */
+interface IState {
+  /**
+   * @property posts
+   * @desc  list of posts (IPost) that stored in redux store
+   * @type {array<IPost>}
+   * @memberof IState
+   */
+  posts: IPost[];
+  /**
+   * @property loadingAfter
+   * @desc  display loading in top if `loadingAfter` in post list is true
+   * @type {boolean}
+   * @memberof IState
+   */
+  loadingAfter: boolean;
+  /**
+   * @property loadingBefore
+   * @desc  display loading in bottom if `loadingBefore` in post list is true
+   * @type {boolean}
+   * @memberof IState
+   */
+  loadingBefore: boolean;
+  /**
+   * @property reachedTheEnd
+   * @desc hide loading  if `reachedTheEnd` is true
+   * @type {boolean}
+   * @memberof IState
+   */
+  reachedTheEnd: boolean;
+  /**
+   * @property newPostCount
+   * @desc display new post count badge when receive a new post
+   * @type {boolean}
+   * @memberof IState
+   */
+  newPostCount: number;
+  route: string;
+  location: any;
+  initialLoading: boolean;
+}
+
+/**
+ * @class Feed
+ * @classdesc Component renders the Feed posts page
+ * @extends {React.Component<IProps, IState>}
+ */
+class Posts extends React.Component<IProps, IState> {
+  private currentPlaceId: string | null;
+
+  // (needs documentation)
+  private postApi: PostApi;
+  private syncActivity = SyncActivity.getInstance();
+  private syncActivityListeners = [];
+  private favoritePlacesId = [];
+  private newPostsIds = [];
+
+  /**
+   * Creates an instance of Feed.
+   * @constructor
+   * @param {*} props
+   * @memberof Feed
+   */
+  constructor(props: IProps) {
+
+    super(props);
+    const initiateRoute = this.findRouteFromPath(props);
+    /**
+     * read the data from props and set to the state and
+     * setting initial state
+     * @type {object}
+     */
+    this.state = {
+      // if postsRoute is equal to current path, stored posts in redux set as component state posts
+      posts: this.props.posts[initiateRoute] || [],
+      loadingAfter: false,
+      loadingBefore: false,
+      reachedTheEnd: false,
+      initialLoading: true,
+      newPostCount: 0,
+      location: this.props.location.pathname,
+      route: initiateRoute || 'feed',
+    };
+  }
+
+  /**
+   * @desc updates the state object when the parent changes the props
+   * @param {IProps} newProps
+   * @memberof Feed
+   */
+  public componentWillReceiveProps(newProps: IProps) {
+    const route = this.findRouteFromPath(newProps);
+    const state: any = {
+      posts: newProps.posts[route] || [],
+      location: newProps.location.pathname,
+      route,
+    };
+    const pageIsChanged = this.state.route !== route;
+    if (pageIsChanged) {
+      state.initialLoading = true;
+    }
+    this.setState(state, () => {
+      if (pageIsChanged) {
+        this.getPosts(true);
+      }
+    });
+  }
+
+  public findRouteFromPath(newProps) {
+    switch (newProps.location.pathname) {
+      case '/feed':
+        return 'feed';
+      case '/feed/latest-activity':
+        return 'feed_latest_activity';
+
+      case '/shared':
+        return 'shared';
+      case '/bookmarks':
+        return 'bookmarks';
+
+      default:
+        const routeSplit = newProps.location.pathname.split('/');
+        const placeId = routeSplit[2];
+        this.currentPlaceId = placeId;
+        if (routeSplit[4] && routeSplit[4] === 'latest-activity') {
+          return 'place_latest_activity_' + placeId;
+        } else if ( routeSplit[3] === 'unread') {
+          return 'place_unread_' + placeId;
+        } else {
+          return 'place_' + placeId;
+        }
+    }
+  }
+
+  /**
+   * Component Did Mount ( what ?!)
+   * @desc Get post from redux store
+   * Calls the Api and store it in redux store
+   * @func componentDidMount
+   * @memberof Feed
+   * @override
+   */
+  public componentDidMount() {
+    /**
+     * define the Post Api
+     */
+    this.postApi = new PostApi();
+    this.getFavPlaces();
+    this.getPosts(true);
+
+    // Needs documentation
+    this.syncActivityListeners.push(
+      this.syncActivity.openAllChannel(
+        (activity: IActivity) => {
+          switch (activity.action) {
+            case SyncActions.COMMENT_ADD:
+            case SyncActions.COMMENT_REMOVE:
+              return this.addCommentToPostActivity(activity);
+            case SyncActions.POST_ADD:
+              return this.addNewPostActivity(activity);
+            default :
+              return;
+          }
+        },
+      ));
+  }
+
+  public getFavPlaces() {
+    /**
+     * define the account Api
+     */
+    const accountApi = new AccountApi();
+    accountApi.getFavoritePlaces()
+      .then((placesId: string[]) => {
+        this.favoritePlacesId = placesId;
+      });
+  }
+
+  /**
+   * @function addNewPostActivity
+   * @desc add new post by activity sort
+   * @param {IActivity} activity
+   * @private
+   */
+  private addNewPostActivity(activity: IActivity) {
+    if (this.favoritePlacesId.filter((placeId) => (placeId === activity.place_id)).length === 0 &&
+      this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+      this.newPostsIds.push(activity.post_id);
+      this.setState({
+        newPostCount: this.newPostsIds.length,
+      });
+    }
+  }
+
+  /**
+   * @function addCommentToPostActivity
+   * @desc add comment to post activity sort ( unclear )
+   * @param {IActivity} activity
+   * @private
+   */
+  private addCommentToPostActivity(activity: IActivity) {
+
+    const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
+
+    if (indexOfPost > -1) {
+      let posts;
+      posts = JSON.parse(JSON.stringify(this.state.posts));
+      // call get posts
+      this.postApi.get({post_id: activity.post_id})
+        .then((post: IPost) => {
+          posts[indexOfPost].counters = post.counters;
+          this.setState({
+            posts,
+          });
+          this.props.setPosts(posts);
+        });
+    }
+  }
+
+  /**
+   * @function gotoFeedByActivity
+   * @desc set Feed sort by latest activity
+   * @private
+   */
+  private gotoFeedByActivity() {
+    hashHistory.push(`/feed/latest-activity`);
+  }
+  private gotoFeed() {
+    hashHistory.push('/feed');
+  }
+
+  private gotoMember() {
+    hashHistory.push(`/places/${this.currentPlaceId}/members`);
+  }
+
+  private gotoPlacePosts() {
+    hashHistory.push(`/places/${this.currentPlaceId}/messages`);
+  }
+  /**
+   * @function gotoPlacePostsAllSortedByRecentPost
+   * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
+   * @param {IPost} post
+   * @private
+   */
+  private gotoPlacePostsAllSortedByRecentPost = () => {
+    hashHistory.push(`/places/${this.currentPlaceId}/messages`);
+  }
+  /**
+   * @function gotoPlacePostsAllSortedByActivity
+   * @desc Go to Place post route which are sorted by recent activity by its `currentPlaceId`
+   * @param {IPost} post
+   * @private
+   */
+  private gotoPlacePostsAllSortedByActivity = () => {
+    hashHistory.push(`/places/${this.currentPlaceId}/messages/latest-activity`);
+  }
+  /**
+   * @function gotoPlacePostsUnreadSortedByRecent
+   * @desc Go to unread posts route which are sorted by recent post by its `currentPlaceId`
+   * @param {IPost} post
+   * @private
+   */
+  private gotoPlacePostsUnreadSortedByRecent = () => {
+    hashHistory.push(`/places/${this.currentPlaceId}/unread`);
+  }
+  /**
+   * @function getPost
+   * @desc Get posts with declared limits and `before` timestamp of
+   * the latest post item in state, otherwise the current timestamp.
+   * @param {boolean} fromNow receive post from now (set Date.now for `before`)
+   * @param {number} after after timestamp
+   * @private
+   */
+  private getPosts(fromNow?: boolean, after?: number) {
+    let params: IPostsListRequest;
+    let fnName: string = 'getFavoritePosts';
+    if (fromNow === true) {
+      params = {
+        before: Date.now(),
+      };
+      // show bottom loading
+      this.setState({
+        loadingBefore: true,
+      });
+    } else if (typeof after === 'number') {
+      params = {
+        after,
+      };
+      // show top loading
+      this.setState({
+        loadingAfter: true,
+      });
+    } else {
+      // show bottom loading
+      this.setState({
+        loadingBefore: true,
+      });
+      /**
+       * check state posts length for state `before` timestamp
+       */
+      if (this.state.posts.length === 0) {
+        params = {
+          before: Date.now(),
+        };
+      } else {
+        params = {
+          before: this.state.posts[this.state.posts.length - 1].timestamp,
+        };
+      }
+    }
+    params.limit = 20;
+
+    if (this.state.route.indexOf('latest_activity') > -1) {
+      params.by_update = true;
+    }
+
+    if (this.state.route.indexOf('bookmarks') > -1) {
+      fnName = 'getBockmarkedPosts';
+    }
+
+    if (this.state.route.indexOf('shared') > -1) {
+      fnName = 'getSentPosts';
+    }
+
+    if (this.state.route.indexOf('place') > -1) {
+      fnName = 'getPlacePosts';
+      params.place_id = this.currentPlaceId;
+    }
+
+    if (this.state.route.indexOf('unread') > -1) {
+      fnName = 'getPlaceUnreadPosts';
+    }
+    // call get Favorite posts
+    this.postApi[fnName](params)
+      .then((response: IPostsListResponse) => {
+        this.setState({
+          loadingBefore: false,
+          loadingAfter: false,
+          initialLoading: false,
+        });
+
+        // if length of received post is less than limit, set `reachedTheEnd` as true
+        if (response.posts.length < params.limit) {
+          this.setState({
+            reachedTheEnd: true,
+          });
+        }
+        /**
+         * concat received post items with current items and unique array by identifiers (`_id`)
+         * and sorting the post items by date
+         * @type {IPost[]}
+         */
+        const posts = ArrayUntiles.uniqueObjects(response.posts.concat(this.state.posts), '_id');
+          // .sort((a: IPost, b: IPost) => {
+          //   return b.timestamp - a.timestamp;
+          // });
+
+        // if (fromNow === true) {
+          const postsObj = {};
+          postsObj[this.state.route] = posts;
+          // console.log('setPosts', postsObj);
+          this.props.setPosts(postsObj);
+          this.props.setPostsRoute(this.props.location.pathname);
+        // }
+      })
+      .catch((error: IErrorResponseData) => {
+        message.success('An error has occurred.', 10);
+        if (params.place_id) {
+          if (error.err_code === Failure.ACCESS_DENIED
+            || error.err_code === Failure.UNAVAILABLE
+            || error.err_code === Failure.INVALID) {
+            Modal.error({
+              title: 'Error',
+              content: 'Either the Place doesn\'t exist, or you haven\'t been permitted to enter the Place.',
+              okText: 'Return',
+              onOk: () => hashHistory.goBack(),
+            });
+          }
+          console.log('====================================');
+          console.log(error);
+          console.log('====================================');
+        }
+        this.setState({
+          loadingBefore: false,
+          loadingAfter: false,
+          initialLoading: false,
+        });
+      });
+  }
+  /**
+   * @function showNewPosts
+   * @desc display new posts
+   * @private
+   */
+  private showNewPosts() {
+    // this.props.setPosts([]);
+    this.getPosts(true);
+    this.newPostsIds = [];
+    this.setState({
+      newPostCount: 0,
+    });
+  }
+
+  private refresh = () => {
+    this.getPosts(true);
+  }
+
+  /**
+   * @function gotoPost
+   * @desc Go to pst route by its `post_id`
+   * @param {IPost} post
+   * @private
+   */
+  private gotoPost(post: IPost) {
+    this.props.setCurrentPost(post);
+    hashHistory.push(`/message/${post._id}`);
+  }
+
+  private getLeftItemMenu() {
+    const latestActivity = this.state.route.indexOf('latest_activity') > 0;
+    let menu: any = {
+      leftItem: {
+        name: 'Feed',
+        type: 'title',
+        menu: [],
+      },
+      rightMenu: [
+        {
+          name: 'sort24',
+          type: 'iconI',
+          menu: [
+            {
+              onClick: null,
+              name: 'Sort',
+              type: 'kind',
+              isChecked: false,
+            },
+            {
+              onClick: this.gotoFeed,
+              name: 'Recent Posts',
+              isChecked: !latestActivity,
+            },
+            {
+              onClick: this.gotoFeedByActivity,
+              name: 'Latest Activity',
+              isChecked: latestActivity,
+            },
+          ],
+        },
+      ],
+    };
+    if (this.state.route === 'bookmarks') {
+      menu = {
+        leftItem: {
+          name: 'Bookmarked Posts',
+          type: 'title',
+          menu: [],
+        },
+        rightMenu:  [],
+      };
+    } else if (this.state.route === 'shared') {
+      menu = {
+        leftItem: {
+          name: 'Shared by me',
+          type: 'title',
+          menu: [],
+        },
+        rightMenu:  [],
+      };
+    } else if (this.state.route.indexOf('place') > -1) {
+
+      menu = {
+        leftItem: {
+          name: <PlaceName place_id={this.currentPlaceId}/>,
+          type: 'title',
+          menu: [
+            {
+              onClick: this.gotoPlacePosts.bind(this, ''),
+              name: 'Posts',
+              isChecked: true,
+              icon: {
+                name: 'message16',
+                size: 16,
+              },
+            },
+            // {
+            //   onClick: this.sampleF,
+            //   name: 'Files',
+            //   isChecked: false,
+            //   icon: {
+            //     name: 'file16',
+            //     size: 16,
+            //   },
+            // },
+            // {
+            //   onClick: this.sampleF,
+            //   name: 'Activity',
+            //   isChecked: false,
+            //   icon: {
+            //     name: 'log16',
+            //     size: 16,
+            //   },
+            // },
+            {
+              onClick: this.gotoMember.bind(this),
+              name: 'Members',
+              isChecked: false,
+              icon: {
+                name: 'placeMember16',
+                size: 16,
+              },
+            },
+          ],
+        },
+        rightMenu: [
+          {
+            name: 'sort24',
+            type: 'iconI',
+            menu: [
+              {
+                name: 'Sort',
+                type: 'kind',
+                isChecked: false,
+              },
+              {
+                onClick: this.gotoPlacePostsAllSortedByRecentPost,
+                name: 'Recent Posts',
+                isChecked: !latestActivity,
+              },
+              {
+                onClick: this.gotoPlacePostsAllSortedByActivity,
+                name: 'Latest Activity',
+                isChecked: latestActivity,
+              },
+              {
+                name: 'Filter',
+                type: 'kind',
+                isChecked: false,
+              },
+              {
+                onClick: this.gotoPlacePosts.bind(this, ''),
+                name: 'All',
+                isChecked: this.state.route.indexOf('place_unread_') === -1,
+              },
+              {
+                onClick: this.gotoPlacePostsUnreadSortedByRecent,
+                name: 'Unseens',
+                isChecked: this.state.route.indexOf('place_unread_') > -1,
+              },
+            ],
+          },
+          // {
+          //   name: 'filter24',
+          //   type: 'iconII',
+          //   menu: [
+          //     {
+          //       onClick: this.gotoUnreadPosts,
+          //       name: 'Place Settings',
+          //       isChecked: false,
+          //       icon: {
+          //         name: 'message16',
+          //         size: 16,
+          //       },
+          //     },
+          //     {
+          //       onClick: this.gotoUnreadPosts,
+          //       name: 'Invite Members',
+          //       isChecked: false,
+          //       icon: {
+          //         name: 'message16',
+          //         size: 16,
+          //       },
+          //     },
+          //     {
+          //       onClick: this.gotoUnreadPosts,
+          //       name: 'Create a Private Place',
+          //       isChecked: false,
+          //       icon: {
+          //         name: 'message16',
+          //         size: 16,
+          //       },
+          //     },
+          //     {
+          //       onClick: this.gotoUnreadPosts,
+          //       name: 'Create a Common Place',
+          //       isChecked: false,
+          //       icon: {
+          //         name: 'message16',
+          //         size: 16,
+          //       },
+          //     },
+          //   ],
+          // },
+        ],
+      };
+    }
+    return menu;
+  }
+
+  /**
+   * renders the component
+   * @returns {ReactElement} markup
+   * @memberof Feed
+   * @generator
+   */
+  public render() {
+    const loadMore = this.getPosts.bind(this);
+    const {route} = this.state;
+    /**
+     * @name leftItem
+     * @desc setting of left Item
+     * @const
+     * @type {object}
+     */
+    const menu = this.getLeftItemMenu();
+
+    const doms = this.state.posts.map((post: IPost) => (
+      <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+        <Post post={post}/>
+      </div>));
+    return (
+      <div className={style.container}>
+        {/* rendering NewBadge component in receiving new post case */}
+        <NewBadge onClick={this.showNewPosts.bind(this, '')}
+                  text="New Post"
+                  count={this.state.newPostCount}
+                  visibility={this.state.newPostCount > 0}/>
+        <OptionsMenu leftItem={menu.leftItem} rightItems={menu.rightMenu}/>
+        {this.state.initialLoading}
+        {
+          this.state.reachedTheEnd &&
+          !this.state.loadingAfter &&
+          !this.state.loadingBefore &&
+          this.state.posts.length === 0 &&
+          (
+            <div className={privateStyle.emptyMessage}>
+              {route.indexOf('feed') > -1 && <span>You have no message in your feed</span>}
+              {(route.indexOf('place') > -1 && route.indexOf('unread') === -1) &&
+                <span>This Place don't have any messages</span>
+              }
+              {route.indexOf('unread') > -1 && <span>You don't have any unread messages.</span>}
+              {route === 'shared' && <span>You did not shared anything yet.</span>}
+              {route === 'bookmarks' && (
+                <span>You haven't bookmarked anything yet!<br/>
+                  There's a bookmark icon on the upper-right corner of each post.<br/>
+                  Click on it to save the post to be viewed later.</span>
+              )}
+              <div className={style.loadMore}>
+                <Button onClick={loadMore}>Try again</Button>
+              </div>
+            </div>
+          )
+        }
+        <Loading position="absolute" active={this.state.initialLoading}/>
+        <div className={privateStyle.postsArea}>
+          {this.state.posts.length > 0 && (
+            <InfiniteScroll
+              pullDownToRefresh={true}
+              refreshFunction={this.refresh}
+              next={loadMore}
+              route={route}
+              hasMore={true}
+              loader={<Loading active={true} position="fixed"/>}>
+                {doms}
+                {this.state.reachedTheEnd &&
+                  <div className={privateStyle.emptyMessage}>No more messages here!</div>
+                }
+                {
+                  !this.state.reachedTheEnd &&
+                  !this.state.loadingBefore &&
+                  !this.state.loadingAfter && (
+                    <div className={privateStyle.loadMore}>
+                      {/* Load More button */}
+                      <Button onClick={loadMore}>Load More</Button>
+                    </div>
+                  )
+                }
+                <div className={privateStyle.bottomSpace}/>
+            </InfiniteScroll>
+          )}
+        </div>
+      </div>
+    );
+  }
+}
+
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store) => ({
+  postsRoute: store.app.postsRoute,
+  posts: store.app.posts,
+  currentPost: store.app.currentPost,
+});
+
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setPosts: (posts: IPost[]) => {
+      dispatch(setPosts(posts));
+    },
+    setCurrentPost: (post: IPost) => {
+      dispatch(setCurrentPost(post));
+    },
+    setPostsRoute: (route: string) => {
+      dispatch(setPostsRoute(route));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);

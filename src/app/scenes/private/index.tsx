@@ -12,7 +12,6 @@ import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 
-import Feed from './posts/feed';
 import {Files} from './files';
 import Compose from './compose';
 import Sidebar from './sidebar/';
@@ -20,14 +19,9 @@ import TaskSidebar from './sidebar/task';
 import {Navbar} from 'components';
 import {Activities} from './activities';
 import Signout from './Signout';
-import FeedByActivity from './posts/feedByActivity';
-import Bookmarked from './posts/bookmarked';
-import Shared from './posts/shared';
+import Posts from './posts';
 import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
-import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
-import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
-import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';
 import Notifications from './notifications';
 
 import AccountApi from 'api/account';
@@ -439,7 +433,6 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
-  Feed, FeedByActivity, Bookmarked, Shared, PlacePostsAllSortedByActivity,
-  PlacePostsAllSortedByRecent, PlacePostsUnreadSortedByRecent, Activities, Files, Notifications, Compose,
+  Posts, Activities, Files, Notifications, Compose,
   Signout, Tasks, TaskEdit,
 };
