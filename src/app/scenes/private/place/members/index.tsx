@@ -14,6 +14,8 @@ import IUser from '../../../../api/account/interfaces/IUser';
 import {IcoN, UserAvatar, FullName, OptionsMenu, PlaceName, InfiniteScroll, Loading} from 'components';
 import * as _ from 'lodash';
 import {hashHistory} from 'react-router';
+import IPlaceMemberRequest from '../../../../api/place/interfaces/IPlaceMemberRequest';
+import {Modal, message} from 'antd';
 
 const style = require('./members.css');
 
@@ -59,6 +61,10 @@ interface IState {
   members: IMUser[];
 
   editMode: boolean;
+
+  skip: number;
+
+  limit: number;
 }
 
 /**
@@ -70,6 +76,8 @@ class Members extends React.Component<IProps, IState> {
 
   private placeApi: PlaceApi;
   private topMenu: any;
+  private loading: boolean;
+
   /**
    * Creates an instance of Members.
    * @constructor
@@ -90,8 +98,11 @@ class Members extends React.Component<IProps, IState> {
       placeId: props.params.placeId,
       members: [],
       editMode: false,
+      skip: 0,
+      limit: 16,
     };
 
+    this.loading = false;
     this.topMenu = {
       left: {
         name: <PlaceName place_id={this.state.placeId}/>,
@@ -118,21 +129,21 @@ class Members extends React.Component<IProps, IState> {
         ],
       },
       right: [
-      {
-        name: 'cross24',
-        type: 'iconII',
-        menu: [
-          {
-            onClick: this.gotoPlacePosts.bind(this, ''),
-            name: 'Add Member',
-            isChecked: true,
-            icon: {
-              name: 'person16',
-              size: 16,
+        {
+          name: 'cross24',
+          type: 'iconII',
+          menu: [
+            {
+              onClick: this.gotoPlacePosts.bind(this, ''),
+              name: 'Add Member',
+              isChecked: true,
+              icon: {
+                name: 'person16',
+                size: 16,
+              },
             },
-          },
-        ],
-      }],
+          ],
+        }],
     };
   }
 
@@ -167,15 +178,31 @@ class Members extends React.Component<IProps, IState> {
     const params: IGetWithSkipRequest = {
       place_id: this.state.placeId,
       skip: 0,
-      limit: 16,
+      limit: this.state.limit,
     };
 
+    this.loading = true;
     this.placeApi.getMangers(params).then((users) => {
       this.addToMembers(users, true);
+      this.loading = false;
+    }).catch(() => {
+      this.loading = false;
     });
 
     this.placeApi.getMembers(params).then((users) => {
       this.addToMembers(users, false);
+      if (users.length < this.state.limit) {
+        this.setState({
+          reachedTheEnd: true,
+        });
+      } else {
+        this.setState({
+          skip: this.state.skip + this.state.limit,
+        });
+      }
+      this.loading = false;
+    }).catch(() => {
+      this.loading = false;
     });
   }
 
@@ -220,8 +247,84 @@ class Members extends React.Component<IProps, IState> {
   }
 
   private loadMore = () => {
-    console.log('todo load more');
+    if (!this.state.reachedTheEnd && !this.loading) {
+      const params: IGetWithSkipRequest = {
+        place_id: this.state.placeId,
+        skip: this.state.skip,
+        limit: this.state.limit,
+      };
+      this.loading = true;
+      this.placeApi.getMembers(params).then((users) => {
+        this.addToMembers(users, false);
+        if (users.length < this.state.limit) {
+          this.setState({
+            reachedTheEnd: true,
+          });
+        } else {
+          this.setState({
+            skip: this.state.skip + this.state.limit,
+          });
+        }
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      });
+    }
   }
+
+  private setManager = (id: string, admin: boolean) => {
+    let promise;
+    const param: IPlaceMemberRequest = {
+      place_id: this.state.placeId,
+      member_id: id,
+    };
+    if (admin) {
+      promise = this.placeApi.demoteMember(param);
+    } else {
+      promise = this.placeApi.promoteMember(param);
+    }
+    promise.then(() => {
+      const index = _.findIndex(this.state.members, {_id: id});
+      const tempList = this.state.members;
+      if (index > -1) {
+        tempList[index].tmpManger = !tempList[index].tmpManger;
+      }
+      this.setState({
+        members: tempList,
+      });
+    }).catch(() => {
+      message.error('An error has occurred.', 10);
+    });
+  }
+
+  private removeMember = (id: string) => {
+    const param: IPlaceMemberRequest = {
+      place_id: this.state.placeId,
+      member_id: id,
+    };
+    Modal.confirm({
+      title: 'Remove Member',
+      content: 'are you sure for removing this member?',
+      cancelText: 'No',
+      okText: 'Yes',
+      onOk: () => {
+        this.placeApi.removeMember(param).then(() => {
+          const index = _.findIndex(this.state.members, {_id: id});
+          const tempList = this.state.members;
+          if (index > -1) {
+            tempList.splice(index, 1);
+          }
+          this.setState({
+            members: tempList,
+            editMode: false,
+          });
+        }).catch(() => {
+          message.error('An error has occurred.', 10);
+        });
+      },
+    });
+  }
+
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -232,9 +335,6 @@ class Members extends React.Component<IProps, IState> {
     return (
       <div>
         <OptionsMenu leftItem={this.topMenu.left} rightItems={this.topMenu.right}/>
-        {this.state.editMode &&
-        <div className={style.editModeOverlay} onClick={this.closeAll}/>
-        }
         {this.state.members.length > 0 && (
           <InfiniteScroll
             pullDownToRefresh={true}
@@ -242,17 +342,20 @@ class Members extends React.Component<IProps, IState> {
             next={this.loadMore}
             route={'members_' + this.state.placeId}
             hasMore={true}
-            loader={<Loading active={true} position="fixed"/>}>
+            loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
+            {this.state.editMode &&
+            <div className={style.editModeOverlay} onClick={this.closeAll}/>
+            }
             {this.state.members.map((member) => (
               <div key={'member_wrapper_' + member._id}>
                 <div key={'member_' + member._id}
-                  className={style.item + ' ' + (member.tmpEditing ? style.editMode : '')}>
+                     className={style.item + ' ' + (member.tmpEditing ? style.editMode : '')}>
                   <div className={style.userAvatar}>
                     <UserAvatar user_id={member} size={32} borderRadius={'16px'}/>
                     {member.tmpManger && (
-                    <div className={style.managerBadge}>
-                      <IcoN size={16} name="crown16"/>
-                    </div>
+                      <div className={style.managerBadge}>
+                        <IcoN size={16} name="crown16"/>
+                      </div>
                     )}
                   </div>
                   <div className={style.user}>
@@ -274,7 +377,8 @@ class Members extends React.Component<IProps, IState> {
                 </div>
                 {member.tmpEditing && (
                   <div>
-                    <div className={style.item + ' ' + style.secondary}>
+                    <div className={style.item + ' ' + style.secondary}
+                         onClick={this.setManager.bind(this, member._id, member.tmpManger)}>
                       <div className={style.icon}>
                         {member.tmpManger &&
                         <IcoN size={16} name="person16"/>
@@ -287,7 +391,8 @@ class Members extends React.Component<IProps, IState> {
                         {member.tmpManger ? 'Demote' : 'Promote'}
                       </div>
                     </div>
-                    <div className={style.item + ' ' + style.secondary + ' ' + style.red}>
+                    <div className={style.item + ' ' + style.secondary + ' ' + style.red}
+                         onClick={this.removeMember.bind(this, member._id)}>
                       <div className={style.icon}>
                         <IcoN size={16} name="exit16"/>
                       </div>

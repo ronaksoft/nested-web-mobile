@@ -16,6 +16,7 @@ import IGetRequest from './interfaces/IGetRequest';
 import IPlace from './interfaces/IPlace';
 import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
 import IUser from '../account/interfaces/IUser';
+import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
 
 export default class PlaceApi {
   /**
@@ -114,6 +115,48 @@ export default class PlaceApi {
     }).then( (res) => {
       const users = res.key_holders as IUser[];
       return users;
+    });
+  }
+
+  /**
+   * @func promoteMember
+   * @desc Promote Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public promoteMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/promote_member',
+      data,
+    });
+  }
+
+  /**
+   * @func demoteMember
+   * @desc Demote Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public demoteMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/demote_member',
+      data,
+    });
+  }
+
+  /**
+   * @func removeMember
+   * @desc Remove Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public removeMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/remove_member',
+      data,
     });
   }
 
