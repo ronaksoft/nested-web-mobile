@@ -174,7 +174,10 @@ class Members extends React.Component<IProps, IState> {
      * define the Post Api
      */
     this.placeApi = new PlaceApi();
+    this.initialLoad();
+  }
 
+  private initialLoad() {
     const params: IGetWithSkipRequest = {
       place_id: this.state.placeId,
       skip: 0,
@@ -243,7 +246,13 @@ class Members extends React.Component<IProps, IState> {
   }
 
   private refresh = () => {
-    console.log('todo refresh');
+    this.setState({
+      reachedTheEnd: false,
+      members: [],
+      skip: 0,
+    }, () => {
+      this.initialLoad();
+    });
   }
 
   private loadMore = () => {
