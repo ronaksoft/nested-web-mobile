@@ -115,11 +115,13 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     this.el = this.infScroll || window;
     this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
 
-    if (this.state.route && this.props.scrollPositions[this.state.route]) {
-      this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
-    } else if (this.el.scrollHeight > this.props.initialScrollY) {
-      this.el.scrollTo(0, this.props.initialScrollY);
-    }
+    setTimeout(() => {
+      if (this.state.route && this.props.scrollPositions[this.state.route]) {
+        this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
+      } else if (this.el.scrollHeight > this.props.initialScrollY) {
+        this.el.scrollTo(0, this.props.initialScrollY);
+      }
+    }, 100);
     if (this.props.pullDownToRefresh) {
         // if ('PointerEvent' in window) {
         //   this.el.addEventListener('pointerdown', this.onStart, false);

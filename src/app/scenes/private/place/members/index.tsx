@@ -235,70 +235,72 @@ class Members extends React.Component<IProps, IState> {
         {this.state.editMode &&
         <div className={style.editModeOverlay} onClick={this.closeAll}/>
         }
-        <InfiniteScroll
-          pullDownToRefresh={true}
-          refreshFunction={this.refresh}
-          next={this.loadMore}
-          route={'members_' + this.state.placeId}
-          hasMore={true}
-          loader={<Loading active={true} position="fixed"/>}>
-          {this.state.members.map((member) => (
-            <div key={'member_wrapper_' + member._id}>
-              <div key={'member_' + member._id}
-                className={style.item + ' ' + (member.tmpEditing ? style.editMode : '')}>
-                <div className={style.userAvatar}>
-                  <UserAvatar user_id={member} size={32} borderRadius={'16px'}/>
-                  {member.tmpManger && (
-                  <div className={style.managerBadge}>
-                    <IcoN size={16} name="crown16"/>
-                  </div>
-                  )}
-                </div>
-                <div className={style.user}>
-                <span className={style.userName}>
-                  <FullName user_id={member}/>
-                </span>
-                  <span className={style.userId}>{member._id}</span>
-                </div>
-                <div className={style.moreOption}>
-                  <a onClick={this.toggleMoreOpts.bind(this, member._id)}>
-                    {!member.tmpEditing &&
-                    <IcoN size={24} name="more24"/>
-                    }
-                    {member.tmpEditing &&
-                    <IcoN size={24} name="xcross24"/>
-                    }
-                  </a>
-                </div>
-              </div>
-              {member.tmpEditing && (
-                <div>
-                  <div className={style.item + ' ' + style.secondary}>
-                    <div className={style.icon}>
-                      {member.tmpManger &&
-                      <IcoN size={16} name="person16"/>
-                      }
-                      {!member.tmpManger &&
+        {this.state.members.length > 0 && (
+          <InfiniteScroll
+            pullDownToRefresh={true}
+            refreshFunction={this.refresh}
+            next={this.loadMore}
+            route={'members_' + this.state.placeId}
+            hasMore={true}
+            loader={<Loading active={true} position="fixed"/>}>
+            {this.state.members.map((member) => (
+              <div key={'member_wrapper_' + member._id}>
+                <div key={'member_' + member._id}
+                  className={style.item + ' ' + (member.tmpEditing ? style.editMode : '')}>
+                  <div className={style.userAvatar}>
+                    <UserAvatar user_id={member} size={32} borderRadius={'16px'}/>
+                    {member.tmpManger && (
+                    <div className={style.managerBadge}>
                       <IcoN size={16} name="crown16"/>
-                      }
                     </div>
-                    <div className={style.label}>
-                      {member.tmpManger ? 'Demote' : 'Promote'}
-                    </div>
+                    )}
                   </div>
-                  <div className={style.item + ' ' + style.secondary + ' ' + style.red}>
-                    <div className={style.icon}>
-                      <IcoN size={16} name="exit16"/>
-                    </div>
-                    <div className={style.label}>
-                      Remove from Place
-                    </div>
+                  <div className={style.user}>
+                  <span className={style.userName}>
+                    <FullName user_id={member}/>
+                  </span>
+                    <span className={style.userId}>{member._id}</span>
+                  </div>
+                  <div className={style.moreOption}>
+                    <a onClick={this.toggleMoreOpts.bind(this, member._id)}>
+                      {!member.tmpEditing &&
+                      <IcoN size={24} name="more24"/>
+                      }
+                      {member.tmpEditing &&
+                      <IcoN size={24} name="xcross24"/>
+                      }
+                    </a>
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
-        </InfiniteScroll>
+                {member.tmpEditing && (
+                  <div>
+                    <div className={style.item + ' ' + style.secondary}>
+                      <div className={style.icon}>
+                        {member.tmpManger &&
+                        <IcoN size={16} name="person16"/>
+                        }
+                        {!member.tmpManger &&
+                        <IcoN size={16} name="crown16"/>
+                        }
+                      </div>
+                      <div className={style.label}>
+                        {member.tmpManger ? 'Demote' : 'Promote'}
+                      </div>
+                    </div>
+                    <div className={style.item + ' ' + style.secondary + ' ' + style.red}>
+                      <div className={style.icon}>
+                        <IcoN size={16} name="exit16"/>
+                      </div>
+                      <div className={style.label}>
+                        Remove from Place
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </InfiniteScroll>
+        )}
       </div>
     );
   }
