@@ -1,0 +1,8 @@
+/** ACTION TYPES */
+export const ATTACHMENT_ADD: string = 'ATTACHMENT/ADD';
+export const ATTACHMENT_UPDATE: string = 'ATTACHMENT/UPDATE';
+export const SET_CURRENT_ATTACHMENT: string = 'ATTACHMENT/SET';
+export const UNSET_CURRENT_ATTACHMENT: string = 'ATTACHMENT/UNSET';
+export const SET_CURRENT_ATTACHMENT_LIST: string = 'ATTACHMENT/SET/LIST';
+export const SET_CURRENT_PLACE: string = 'ATTACHMENT/SET/PLACE';
+export const SET_CURRENT_POST: string = 'ATTACHMENT/SET/POST';

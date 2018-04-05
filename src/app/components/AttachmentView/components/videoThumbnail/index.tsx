@@ -8,8 +8,6 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
-import AttachmentApi from 'api/attachment';
 import FileUtiles from '../../../../services/utils/file';
 
 /**
@@ -20,8 +18,8 @@ import FileUtiles from '../../../../services/utils/file';
  * @property {IPostAttachment} attachment
  */
 interface IProps {
-  attachment: IPostAttachment;
-  postId: string;
+  attachmentId: string;
+  getDownloadUrl: (id: string) => any;
 }
 
 /**
@@ -50,23 +48,16 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      viewUrl : '',
+      viewUrl: '',
     };
   }
 
-  private viewUrl() {
-    AttachmentApi.getDownloadToken({
-        universal_id: this.props.attachment._id,
-        post_id: this.props.postId,
-      }).then((token: string) => {
-        this.setState({
-          viewUrl : FileUtiles.getDownloadUrl(this.props.attachment._id, token),
-        });
-      });
-  }
-
   public componentDidMount() {
-    this.viewUrl();
+    this.props.getDownloadUrl(this.props.attachmentId).then((viewUrl) => {
+      this.setState({
+        viewUrl,
+      });
+    });
   }
 
   /**
@@ -84,7 +75,6 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @const
      * @type {object}
      */
-    const {attachment} = this.props;
 
     /**
      * preview image
@@ -92,7 +82,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @var
      * @type {string}
      */
-    const srcPoster: string = FileUtiles.getViewUrl(attachment._id);
+    const srcPoster: string = FileUtiles.getViewUrl(this.props.attachmentId);
     return (
       <div>
         {this.state.viewUrl && (

@@ -7,6 +7,7 @@ import appReducer from './app/reducer/index';
 import commentReducer from './comments/reducer/index';
 import postReducer from './posts/reducer/index';
 import taskReducer from './tasks/reducer/index';
+import attachmentReducer from './attachment/reducer/index';
 
 const {reducer} = require('redux-connect');
 
@@ -18,6 +19,7 @@ const rootReducer: Redux.Reducer<IStore> = combineReducers<IStore>({
   accounts: accountReducer,
   app : appReducer,
   tasks : taskReducer,
+  attachments : attachmentReducer,
   reduxAsyncConnect: reducer,
 });
 

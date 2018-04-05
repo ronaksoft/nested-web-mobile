@@ -257,6 +257,9 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     }
 
     requestAnimationFrame(() => {
+      if (!this.infScroll) {
+        return;
+      }
       this.infScroll.style.overflow = 'auto';
       this.infScroll.style.transform = 'none';
       this.infScroll.style.willChange = 'none';
