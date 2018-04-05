@@ -126,7 +126,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  bottom: 0;
+  bottom: -100000px;
   left: 0;
   background-color: rgba(0, 0, 0, 0.64);
   z-index: 10;
