@@ -279,11 +279,11 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private getMyPlaces() {
-
+    console.log(this.props.sidebarPlaces, !this.props.openPlace.placeId);
     /**
      * Detemines if recieved data is exists assigns to 'places'
      */
-    if (this.props.sidebarPlaces.length > 0 && !this.props.openPlace.placeId) {
+    if (this.props.sidebarPlaces.length > 0) {
       this.setState({
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
         loading: false,
