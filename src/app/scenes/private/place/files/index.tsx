@@ -235,7 +235,9 @@ class Files extends React.Component<IProps, IState> {
     this.setState({
       reachedTheEnd: false,
       files: [],
+      selectedFiles: [],
       skip: 0,
+      initialLoad: false,
     }, () => {
       this.initialLoad();
     });
@@ -295,7 +297,7 @@ class Files extends React.Component<IProps, IState> {
             name: 'Posts',
             isChecked: false,
             icon: {
-              name: 'message16',
+              name: 'messages16',
               size: 16,
             },
           },
@@ -304,7 +306,7 @@ class Files extends React.Component<IProps, IState> {
             name: 'files',
             isChecked: true,
             icon: {
-              name: 'message16',
+              name: 'file16',
               size: 16,
             },
           },
@@ -324,6 +326,11 @@ class Files extends React.Component<IProps, IState> {
           name: 'filter24',
           type: 'iconI',
           menu: [
+            {
+              name: 'Filter',
+              type: 'kind',
+              isChecked: false,
+            },
             {
               onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.all),
               name: 'All',
@@ -365,13 +372,13 @@ class Files extends React.Component<IProps, IState> {
         {this.state.selectedFiles.length !== 0 && (
           <div className={style.selectedsMenu}>
             <div onClick={this.closeAll}>
-              <IcoN name="xcross16" size={16}/>
+              <IcoN name="negativeXCross16" size={16}/>
             </div>
             <span>
-              <b>{this.state.selectedFiles.length}</b>&nbsp;files selected
+              <b>{this.state.selectedFiles.length}</b>&nbsp;&nbsp;&nbsp;files selected
             </span>
             {/* <div onClick={this.forwardFiles}>
-              <IcoN name='forward24' size={24}/>
+              <IcoN name='forwardWhite24' size={24}/>
             </div> */}
           </div>
         )}

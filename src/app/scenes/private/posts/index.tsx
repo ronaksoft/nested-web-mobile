@@ -348,6 +348,10 @@ class Posts extends React.Component<IProps, IState> {
   private gotoPlacePosts() {
     hashHistory.push(`/places/${this.currentPlaceId}/messages`);
   }
+
+  private gotoPlaceFilses() {
+    hashHistory.push(`/places/${this.currentPlaceId}/files`);
+  }
   /**
    * @function gotoPlacePostsAllSortedByRecentPost
    * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
@@ -631,19 +635,19 @@ class Posts extends React.Component<IProps, IState> {
               name: 'Posts',
               isChecked: true,
               icon: {
-                name: 'message16',
+                name: 'messages16',
                 size: 16,
               },
             },
-            // {
-            //   onClick: this.sampleF,
-            //   name: 'Files',
-            //   isChecked: false,
-            //   icon: {
-            //     name: 'file16',
-            //     size: 16,
-            //   },
-            // },
+            {
+              onClick: this.gotoPlaceFilses.bind(this, ''),
+              name: 'Files',
+              isChecked: false,
+              icon: {
+                name: 'file16',
+                size: 16,
+              },
+            },
             // {
             //   onClick: this.sampleF,
             //   name: 'Activity',

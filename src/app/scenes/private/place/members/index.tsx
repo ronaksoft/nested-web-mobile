@@ -113,7 +113,16 @@ class Members extends React.Component<IProps, IState> {
             name: 'Posts',
             isChecked: false,
             icon: {
-              name: 'message16',
+              name: 'messages16',
+              size: 16,
+            },
+          },
+          {
+            onClick: this.gotoPlaceFilses.bind(this, ''),
+            name: 'Files',
+            isChecked: false,
+            icon: {
+              name: 'file16',
               size: 16,
             },
           },
@@ -149,6 +158,10 @@ class Members extends React.Component<IProps, IState> {
 
   private gotoPlacePosts() {
     hashHistory.push(`/places/${this.state.placeId}/messages`);
+  }
+
+  private gotoPlaceFilses() {
+    hashHistory.push(`/places/${this.state.placeId}/files`);
   }
 
   /**
