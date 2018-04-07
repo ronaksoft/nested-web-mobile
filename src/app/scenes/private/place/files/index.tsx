@@ -271,11 +271,8 @@ class Files extends React.Component<IProps, IState> {
   }
 
   private openAttachment(file: IFile) {
-    if ( 5 - 4 === 1) {
-      return;
-    }
     this.props.setCurrentAttachment(file);
-    this.props.setCurrentAttachmentList(this.state.files);
+    this.props.setCurrentAttachmentList(_.uniqBy(this.state.files, '_id'));
     this.props.setCurrentPlace(this.props.params.placeId);
   }
 

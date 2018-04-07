@@ -99,10 +99,9 @@ class FileItem extends React.Component<IProps, any> {
     this.type = this.getType(this.props.file.mimetype);
   }
   public toggleSelect = (event) => {
-    console.log(event.nativeEvent);
-    event.nativeEvent.cancelBubble = true;
-    event.nativeEvent.preventDefault();
-    event.nativeEvent.stopPropagation();
+    event.cancelBubble = true;
+    event.preventDefault();
+    event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
     this.props.onSelect(this.props.file._id, this.props.index);
   }
