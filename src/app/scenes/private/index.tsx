@@ -23,6 +23,7 @@ import Posts from './posts';
 import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
 import Notifications from './notifications';
+import AttachmentView from '../../components/AttachmentView/index';
 
 import AccountApi from 'api/account';
 import {IUser, IRecallResponse} from 'api/account/interfaces';
@@ -387,11 +388,18 @@ class Private extends React.Component<IProps, IState> {
               </div>
               {/* Sidebar elemnt with visibility state check */}
               {(this.state.sidebarOpen && this.state.isPostsApp) &&
-              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
+                <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
               }
               {(this.state.sidebarOpen && !this.state.isPostsApp) &&
-              <TaskSidebar closeSidebar={this.closeSidebar}/>
+                <TaskSidebar closeSidebar={this.closeSidebar}/>
               }
+              {/* Attachments modal view component */}
+              <AttachmentView/>
+              {/* <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
+                              selectedAttachment={this.state.selectedAttachment}
+                              attachments={this.props.attachments}
+                              postId={this.props.postId}
+              /> */}
             </div>
           )
         }

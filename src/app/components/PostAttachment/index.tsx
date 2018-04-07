@@ -8,13 +8,15 @@
  *              Date of review:         2017-07-27
  */
 import * as React from 'react';
+import {connect} from 'react-redux';
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
 import AttachmentType from '../../api/attachment/constants/AttachmentType';
 import ImageSingle from 'components/PostAttachment/components/imageSingle';
 import ImageThumbnail from 'components/PostAttachment/components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
-import AttachmentView from '../AttachmentView/index';
+import {setCurrentAttachment, setCurrentAttachmentList,
+  setCurrentPost} from '../../redux/attachment/actions/index';
 
 const style = require('./postattachment.css');
 
@@ -24,6 +26,16 @@ const style = require('./postattachment.css');
  * This interface pass the required parameters to component.
  * @type {object}
  */
+interface IOwnProps {
+  /**
+   * @property {Array<IPostAttachment>} attachments - list of attachments
+   * @desc routing state receive from react-router-redux
+   * @type {array<IPostAttachment>}
+   * @memberof IProps
+   */
+  attachments: IPostAttachment[];
+  postId: string;
+}
 interface IProps {
   /**
    * @property {Array<IPostAttachment>} attachments - list of attachments
@@ -33,6 +45,11 @@ interface IProps {
    */
   attachments: IPostAttachment[];
   postId: string;
+  currentAttachment: IPostAttachment[];
+  currentAttachmentList: IPostAttachment[];
+  setCurrentPost: (postId: string) => void;
+  setCurrentAttachment: (attachment: IPostAttachment) => void;
+  setCurrentAttachmentList: (attachments: IPostAttachment[]) => void;
 }
 
 /**
@@ -48,14 +65,6 @@ interface IState {
    * @memberof IState
    */
   selectedAttachment: IPostAttachment | null;
-
-  /**
-   * @property showAttachmentView
-   * @desc a flag for AttachmentView active state
-   * @type {boolean}
-   * @memberof IState
-   */
-  showAttachmentView: boolean;
 }
 
 /**
@@ -63,7 +72,7 @@ interface IState {
  * @classdesc this class commiunicate with render components andattachments view
  * @extends {React.Component<IProps, IState>}
  */
-export default class PostAttachment extends React.Component<IProps, IState> {
+class PostAttachment extends React.Component<IProps, IState> {
 
   /**
    * @constructor
@@ -79,7 +88,6 @@ export default class PostAttachment extends React.Component<IProps, IState> {
      */
     this.state = {
       selectedAttachment: null,
-      showAttachmentView: false,
     };
   }
 
@@ -92,22 +100,24 @@ export default class PostAttachment extends React.Component<IProps, IState> {
   private showAttachment(attachment: IPostAttachment) {
     this.setState({
       selectedAttachment: attachment,
-      showAttachmentView: true,
     });
+    this.props.setCurrentPost(this.props.postId);
+    this.props.setCurrentAttachment(attachment);
+    this.props.setCurrentAttachmentList(this.props.attachments);
   }
 
-  /**
-   * children component notifies component on close event
-   * @private
-   * @callback
-   * @memberof PostAttachment
-   */
-  private onHiddenAttachment() {
-    this.setState({
-      selectedAttachment: null,
-      showAttachmentView: false,
-    });
-  }
+  // /**
+  //  * children component notifies component on close event
+  //  * @private
+  //  * @callback
+  //  * @memberof PostAttachment
+  //  */
+  // private onHiddenAttachment() {
+  //   this.setState({
+  //     selectedAttachment: null,
+  //     showAttachmentView: false,
+  //   });
+  // }
 
   /**
    * renders the component
@@ -167,15 +177,39 @@ export default class PostAttachment extends React.Component<IProps, IState> {
                          attachment={this.props.attachments[0]}/>
           </div>
         )}
-        {/* Attachments modal view component */}
-        {this.state.showAttachmentView && (
-          <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
-                          selectedAttachment={this.state.selectedAttachment}
-                          attachments={this.props.attachments}
-                          postId={this.props.postId}
-          />
-        )}
       </div>
     );
   }
 }
+
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store, ownProps: IOwnProps) => ({
+  currentAttachment: store.attachments.currentAttachment,
+  currentAttachmentList: store.attachments.currentAttachmentList,
+  attachments: ownProps.attachments,
+  postId: ownProps.postId,
+});
+
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentAttachment: (attach: IPostAttachment) => {
+      dispatch(setCurrentAttachment(attach));
+    },
+    setCurrentAttachmentList: (attachs: IPostAttachment[]) => {
+      dispatch(setCurrentAttachmentList(attachs));
+    },
+    setCurrentPost: (postId: string) => {
+      dispatch(setCurrentPost(postId));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostAttachment);
