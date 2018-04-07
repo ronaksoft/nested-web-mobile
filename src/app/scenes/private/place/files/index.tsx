@@ -22,6 +22,7 @@ import {setCurrentAttachment, setCurrentAttachmentList,
 // import {Modal, message} from 'antd';
 
 const style = require('./files.css');
+const privateStyle = require('../../private.css');
 
 interface IOwnProps {
   /**
@@ -77,10 +78,11 @@ interface IState {
   reachedTheEnd: boolean;
   placeId: string;
   files: IFile[];
-  selectedFiles: IFile[];
+  selectedFiles: string[];
   skip: number;
   limit: number;
   filter: C_PLACE_FILES_FILTER;
+  initialLoad: boolean;
 }
 
 /**
@@ -92,6 +94,7 @@ class Files extends React.Component<IProps, IState> {
 
   private placeApi: PlaceApi;
   private loading: boolean;
+  private optionMenu: any;
 
   /**
    * Creates an instance of Members.
@@ -115,6 +118,7 @@ class Files extends React.Component<IProps, IState> {
       selectedFiles: [],
       skip: 0,
       limit: 16,
+      initialLoad: false,
       filter: C_PLACE_FILES_FILTER.all,
     };
 
@@ -132,7 +136,13 @@ class Files extends React.Component<IProps, IState> {
   private setFilter(filter: C_PLACE_FILES_FILTER) {
     this.setState({
       filter,
+      files: [],
+      selectedFiles: [],
+      initialLoad: false,
+    }, () => {
+      this.initialLoad();
     });
+    this.optionMenu.closeAll();
   }
 
   /**
@@ -165,10 +175,12 @@ class Files extends React.Component<IProps, IState> {
       if (files.length < this.state.limit) {
         this.setState({
           reachedTheEnd: true,
+          initialLoad: true,
         });
       } else {
         this.setState({
           skip: this.state.skip + this.state.limit,
+          initialLoad: true,
         });
       }
       this.loading = false;
@@ -180,8 +192,8 @@ class Files extends React.Component<IProps, IState> {
 
   private addToFiles(files: IFile[]) {
     const temp = this.state.files;
-    files.forEach((user) => {
-      const tmp = user as IFile;
+    files.forEach((file) => {
+      const tmp = file as IFile;
       tmp.tmpEditing = false;
       temp.push(tmp);
     });
@@ -190,14 +202,21 @@ class Files extends React.Component<IProps, IState> {
     });
   }
 
-  private toggleSelect = (id: string) => {
-    const index = _.findIndex(this.state.files, {_id: id});
-    const tempList = this.state.files;
+  private toggleSelect = (id: string, index: number) => {
+    const indexSelected = _.findIndex(this.state.selectedFiles, (file) => file === id + ',' + index);
+    const files = this.state.files;
+    let selectedFiles = this.state.selectedFiles;
     if (index > -1) {
-      tempList[index].tmpEditing = !tempList[index].tmpEditing;
+      files[index].tmpEditing = !files[index].tmpEditing;
+    }
+    if (indexSelected > -1) {
+      selectedFiles.splice(indexSelected, 1);
+    } else {
+      selectedFiles = [...this.state.selectedFiles, id + ',' + index];
     }
     this.setState({
-      files: tempList,
+      files,
+      selectedFiles,
     });
   }
 
@@ -208,6 +227,7 @@ class Files extends React.Component<IProps, IState> {
     });
     this.setState({
       files: tempList,
+      selectedFiles: [],
     });
   }
 
@@ -249,11 +269,15 @@ class Files extends React.Component<IProps, IState> {
   }
 
   private openAttachment(file: IFile) {
+    if ( 5 - 4 === 1) {
+      return;
+    }
     this.props.setCurrentAttachment(file);
     this.props.setCurrentAttachmentList(this.state.files);
     this.props.setCurrentPlace(this.props.params.placeId);
   }
 
+  private optionMenuHandler = (dom) => this.optionMenu = dom;
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -263,7 +287,7 @@ class Files extends React.Component<IProps, IState> {
   public render() {
     const topMenu = {
       left: {
-        name: <span><strong>Files:</strong><PlaceName place_id={this.state.placeId}/></span>,
+        name: <span><strong>Files:</strong> <PlaceName place_id={this.state.placeId}/></span>,
         type: 'title',
         menu: [
           {
@@ -333,11 +357,10 @@ class Files extends React.Component<IProps, IState> {
           ],
         }],
     };
-    console.log(this.state.files.length > 0);
     return (
       <div>
         {this.state.selectedFiles.length === 0 &&
-          <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right}/>
+          <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right} ref={this.optionMenuHandler}/>
         }
         {this.state.selectedFiles.length !== 0 && (
           <div className={style.selectedsMenu}>
@@ -345,14 +368,14 @@ class Files extends React.Component<IProps, IState> {
               <IcoN name="xcross16" size={16}/>
             </div>
             <span>
-              <b>{this.state.selectedFiles.length}</b> file selected
+              <b>{this.state.selectedFiles.length}</b>&nbsp;files selected
             </span>
             {/* <div onClick={this.forwardFiles}>
               <IcoN name='forward24' size={24}/>
             </div> */}
           </div>
         )}
-        {this.state.files && (
+        {this.state.files.length > 0 && (
           <InfiniteScroll
             pullDownToRefresh={true}
             refreshFunction={this.refresh}
@@ -362,11 +385,21 @@ class Files extends React.Component<IProps, IState> {
             loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
             {this.state.files.map((file, index) => (
               <div key={file._id + index} onClick={this.openAttachment.bind(this, file)}>
-                <FileItem file={file} onSelect={this.toggleSelect}/>
+                <FileItem file={file} onSelect={this.toggleSelect} index={index}/>
               </div>
             ))}
+            {this.state.reachedTheEnd &&
+                <div className={privateStyle.emptyMessage}>No more files here!</div>
+              }
           </InfiniteScroll>
         )}
+        {this.state.files.length === 0 && this.state.initialLoad && (
+          <div className={privateStyle.emptyMessage}>
+            {this.state.filter === 0 && <span>There are no files here yet...</span>}
+            {this.state.filter > 0 && <span>There are no files with this filter</span>}
+          </div>
+        )}
+        <Loading position="absolute" active={!this.state.initialLoad && this.state.files.length === 0}/>
       </div>
     );
   }

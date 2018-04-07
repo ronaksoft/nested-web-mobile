@@ -28,7 +28,8 @@ interface IProps {
    * @memberof IProps
    */
   file: IFile;
-  onSelect: (id: string) => void;
+  index: number;
+  onSelect: (id: string, index: number) => void;
 }
 
 /**
@@ -97,8 +98,13 @@ class FileItem extends React.Component<IProps, any> {
   public componentDidMount() {
     this.type = this.getType(this.props.file.mimetype);
   }
-  public toggleSelect = () => {
-    this.props.onSelect(this.props.file._id);
+  public toggleSelect = (event) => {
+    console.log(event.nativeEvent);
+    event.nativeEvent.cancelBubble = true;
+    event.nativeEvent.preventDefault();
+    event.nativeEvent.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+    this.props.onSelect(this.props.file._id, this.props.index);
   }
 
   private getType = (mimetype: string): string => {

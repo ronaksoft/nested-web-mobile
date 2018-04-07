@@ -16,7 +16,7 @@ import C_TASK_CUSTOM_FILTER from '../../../api/consts/CTaskCustomFilter';
 import C_TASK_STATUS from '../../../api/consts/CTaskStatus';
 import {setCurrentTask, setTasks, setTasksRoute, setTasksFilter} from '  ../../../redux/app/actions/index';
 import ArrayUntiles from '  ../../../services/utils/array';
-import {Button, message} from 'antd';
+import {message} from 'antd';
 import {hashHistory} from 'react-router';
 import {Loading} from '  ../../../components/Loading/index';
 // import TaskCandidateView from './components/list/candidateItem/index';
@@ -689,9 +689,9 @@ class Tasks extends React.Component<IProps, IState> {
                 (
                   <div className={privateStyle.emptyMessage}>
                     You have no Tasks until next year...
-                    <div className={style.loadMore}>
+                    {/* <div className={style.loadMore}>
                       <Button onClick={loadMore}>Try again</Button>
-                    </div>
+                    </div> */}
                   </div>
                 )
               }
