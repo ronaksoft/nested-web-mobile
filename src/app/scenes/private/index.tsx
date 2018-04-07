@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 
-import {Files} from './files';
+import Files from './place/files';
 import Compose from './compose';
 import Sidebar from './sidebar/';
 import TaskSidebar from './sidebar/task';

@@ -8,8 +8,8 @@
  * Date of review : 07/31/2017
  */
 import * as React from 'react';
-import {Checkbox} from 'antd';
 import IFile from '../IFile';
+import FileUtiles from '../../../services/utils/file';
 
 const style = require('../FileItem.css');
 
@@ -39,21 +39,18 @@ class Aud extends React.Component <IProps, any> {
     return (
       <div className={style.fileContainer}>
         <div className={style.imageContainer}>
-          <div>
-            <Checkbox/>
-          </div>
           <div className={style.filesTypesImages}>
-            <div className={style.fileBadge + ' ' + style[this.props.file.type]}>
-              {this.props.file.id}
+            <div className={style.fileBadge + ' ' + style.audio}>
+              {FileUtiles.getSuffix(this.props.file.filename).toUpperCase()}
             </div>
           </div>
         </div>
         <div className={style.fileData}>
           <div>
-            <span className={style.fileName}>{this.props.file.name}</span>
+            <span className={style.fileName}>{this.props.file.filename}</span>
           </div>
           <div>
-            <span className={style.sizeText}>{this.props.file.size}</span>
+            <span className={style.sizeText}>{FileUtiles.parseSize(this.props.file.size)}</span>
           </div>
         </div>
       </div>

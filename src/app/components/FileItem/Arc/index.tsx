@@ -1,12 +1,3 @@
-/**
- * @file component/FileItem/Oth/index.tsx
- * @auther naamesteh < naemabadei.shayesteh@gmail.com >
- * @desc This file renders Others file types.
- * Document By : naamesteh
- * Date of documantion : 07/24/2017
- * Review by : robzizo
- * Date of review : 07/31/2017
- */
 import * as React from 'react';
 import IFile from '../IFile';
 import FileUtiles from '../../../services/utils/file';
@@ -24,11 +15,11 @@ interface IProps {
 }
 
 /**
- * renders the Img element
- * @class Img
+ * renders the Arc element
+ * @class Arc
  * @extends {React.Component<IProps, any>}
  */
-class Oth extends React.Component <IProps, any> {
+class Arc extends React.Component <IProps, any> {
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -40,7 +31,7 @@ class Oth extends React.Component <IProps, any> {
       <div className={style.fileContainer}>
         <div className={style.imageContainer}>
           <div className={style.filesTypesImages}>
-            <div className={style.fileBadge + ' ' + style.other}>
+            <div className={style.fileBadge + ' ' + style.archive}>
               {FileUtiles.getSuffix(this.props.file.filename).toUpperCase()}
             </div>
           </div>
@@ -58,4 +49,4 @@ class Oth extends React.Component <IProps, any> {
   }
 }
 
-export {Oth}
+export {Arc}

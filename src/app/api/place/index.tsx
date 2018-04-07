@@ -17,6 +17,8 @@ import IPlace from './interfaces/IPlace';
 import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
 import IUser from '../account/interfaces/IUser';
 import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
+import IGetFilesRequest from './interfaces/IGetFilesRequest';
+import IFile from '../../components/FileItem/IFile';
 
 export default class PlaceApi {
   /**
@@ -115,6 +117,23 @@ export default class PlaceApi {
     }).then( (res) => {
       const users = res.key_holders as IUser[];
       return users;
+    });
+  }
+
+  /**
+   * @func getFiles
+   * @desc Get Files of a place
+   * @param {IGetFilesRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getFiles(data: IGetFilesRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_files',
+      data,
+    }).then( (res) => {
+      const files = res.files as IFile[];
+      return files;
     });
   }
 

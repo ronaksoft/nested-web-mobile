@@ -1,4 +1,5 @@
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
+import IFile from '../../components/FileItem/IFile';
 
 export interface IAttachmentStore {
   attachments: IPostAttachment[];
@@ -10,5 +11,5 @@ export interface IAttachmentStore {
 
 export interface IAttachmentAction {
   type: string;
-  payload?: IPostAttachment | IPostAttachment[] | any;
+  payload?: IPostAttachment | IPostAttachment[] | IFile | IFile[] | any;
 }
