@@ -128,7 +128,7 @@ class FileItem extends React.Component<IProps, any> {
         </div>
         {this.type === 'pdf' && <Pdf file={this.props.file}/>}
         {this.type === 'audio' && <Aud file={this.props.file}/>}
-        {this.type === 'image' && <Img file={this.props.file}/>}
+        {(this.type === 'image' || this.type === 'gif') && <Img file={this.props.file}/>}
         {this.type === 'video' && <Vid file={this.props.file}/>}
         {this.type === 'document' && <Doc file={this.props.file}/>}
         {this.type === 'archive' && <Arc file={this.props.file}/>}

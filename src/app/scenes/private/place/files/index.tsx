@@ -276,6 +276,10 @@ class Files extends React.Component<IProps, IState> {
     this.props.setCurrentPlace(this.props.params.placeId);
   }
 
+  private forwardFiles = () => {
+    console.log(this.state.selectedFiles);
+  }
+
   private optionMenuHandler = (dom) => this.optionMenu = dom;
   /**
    * renders the component
@@ -374,9 +378,9 @@ class Files extends React.Component<IProps, IState> {
             <span>
               <b>{this.state.selectedFiles.length}</b>&nbsp;&nbsp;&nbsp;files selected
             </span>
-            {/* <div onClick={this.forwardFiles}>
-              <IcoN name='forwardWhite24' size={24}/>
-            </div> */}
+            <div onClick={this.forwardFiles}>
+              {/* <IcoN name="forwardWhite24" size={24}/> */}
+            </div>
           </div>
         )}
         {this.state.files.length > 0 && (
