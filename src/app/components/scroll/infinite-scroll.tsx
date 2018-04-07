@@ -111,43 +111,43 @@ class InfiniteScroll extends React.Component<IProps, IState> {
         this.onEnd = this.onEnd.bind(this);
     }
 
-    public componentDidMount() {
-    this.el = this.infScroll || window;
-    this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
+  public componentDidMount() {
+      this.el = this.infScroll || window;
+      this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
 
-    setTimeout(() => {
-      if (this.state.route && this.props.scrollPositions[this.state.route]) {
-        this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
-      } else if (this.el.scrollHeight > this.props.initialScrollY) {
-        this.el.scrollTo(0, this.props.initialScrollY);
-      }
-    }, 100);
-    if (this.props.pullDownToRefresh) {
-        // if ('PointerEvent' in window) {
-        //   this.el.addEventListener('pointerdown', this.onStart, false);
-        //   this.el.addEventListener('pointermove', this.onMove, false);
-        //   this.el.addEventListener('pointerup', this.onEnd, false);
-        //   this.el.addEventListener('pointercancel', this.onEnd, false);
-        // } else {
-          this.el.addEventListener('touchstart', this.onStart, false);
-          this.el.addEventListener('touchmove', this.onMove, false);
-          this.el.addEventListener('touchend', this.onEnd, false);
-          this.el.addEventListener('mousedown', this.onStart, false);
-          this.el.addEventListener('mousemove', this.onMove, false);
-          this.el.addEventListener('mouseup', this.onEnd, false);
-        // }
-        // get BCR of pullDown element to position it above
-        this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
-        this.forceUpdate();
-
-        if (typeof this.props.refreshFunction !== 'function') {
-          throw new Error(
-            `Mandatory prop "refreshFunction" missing.
-            Pull Down To Refresh functionality will not work
-            as expected. Check README.md for usage'`,
-          );
+      setTimeout(() => {
+        if (this.state.route && this.props.scrollPositions[this.state.route]) {
+          this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
+        } else if (this.el.scrollHeight > this.props.initialScrollY) {
+          this.el.scrollTo(0, this.props.initialScrollY);
         }
-    }
+      }, 100);
+      if (this.props.pullDownToRefresh) {
+          // if ('PointerEvent' in window) {
+          //   this.el.addEventListener('pointerdown', this.onStart, false);
+          //   this.el.addEventListener('pointermove', this.onMove, false);
+          //   this.el.addEventListener('pointerup', this.onEnd, false);
+          //   this.el.addEventListener('pointercancel', this.onEnd, false);
+          // } else {
+            this.el.addEventListener('touchstart', this.onStart, false);
+            this.el.addEventListener('touchmove', this.onMove, false);
+            this.el.addEventListener('touchend', this.onEnd, false);
+            this.el.addEventListener('mousedown', this.onStart, false);
+            this.el.addEventListener('mousemove', this.onMove, false);
+            this.el.addEventListener('mouseup', this.onEnd, false);
+          // }
+          // get BCR of pullDown element to position it above
+          this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
+          this.forceUpdate();
+
+          if (typeof this.props.refreshFunction !== 'function') {
+            throw new Error(
+              `Mandatory prop "refreshFunction" missing.
+              Pull Down To Refresh functionality will not work
+              as expected. Check README.md for usage'`,
+            );
+          }
+      }
   }
 
   public isiOS() {

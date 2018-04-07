@@ -12,11 +12,12 @@ export {LabelChips} from './Chips/label';
 export {NstInput} from './nst-input/index';
 
 import InfiniteScroll from './scroll/infinite-scroll';
+import Scrollable from './scroll/scroll-children';
 import UserAvatar from './user/Avatar';
 import FullName from './user/FullName';
 import PlaceName from './PlaceName';
 import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
 
-export {UserAvatar, FullName, PlaceName,
+export {UserAvatar, FullName, PlaceName, Scrollable,
     PlaceItem, RTLDetector, InfiniteScroll};

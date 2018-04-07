@@ -8,12 +8,12 @@
   overflow: hidden;
 }
 .postScrollContainer {
-  height: calc(100% - 56px);
+  /* height: calc(100% - 56px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 22;
-  will-change: scroll;
-  touch-action: auto;
+  will-change: scroll; */
+  /* touch-action: auto; */
   display: flex;
   flex-direction: column;
 }

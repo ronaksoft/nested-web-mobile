@@ -11,7 +11,7 @@
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  LabelChips} from 'components';
+  LabelChips, Scrollable} from 'components';
 import IPlace from '../../../../../api/place/interfaces/IPlace';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
@@ -175,19 +175,6 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Feed
-   */
-  private scrollWrapper: HTMLDivElement;
-
-  private refScrollHandler = (value) => {
-    this.scrollWrapper = value;
-  }
-
-  /**
    * @function componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
    * the given `postId` parameter in route also Marks the post as read.
@@ -281,6 +268,9 @@ class Post extends React.Component<IProps, IState> {
 
     const posts = JSON.parse(JSON.stringify(this.props.posts));
     let newPosts;
+    if (!Array.isArray(posts)) {
+      return;
+    }
     newPosts = posts.map((post: IPost) => {
       if (post._id === this.state.post._id) {
         post[key] = value;
@@ -496,7 +486,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public newCommentReceived = () => {
-    this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
+    // this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
   }
 
   public resizeIframe = (obj) => {
@@ -519,42 +509,6 @@ class Post extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    if ( this.scrollWrapper && !this.props.post) {
-      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, false);
-    }
     const postView = !this.props.post;
     if (!this.state.post) {
       return <Loading active={true} position="absolute"/>;
@@ -614,110 +568,112 @@ class Post extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <div className={style.postScrollContainer} ref={this.refScrollHandler}>
-          <div className={style.postScrollContent}>
-            <div className={style.postHead}>
-              <UserAvatar user_id={sender} size={32} borderRadius={'16px'}/>
-              {post.reply_to && <IcoN size={16} name={'repliedGreen16'}/>}
-              {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
-              {post.sender && <FullName user_id={post.sender}/>}
-              {post.email_sender && (
-                <span>
-                  {`${post.email_sender._id}`}
-                </span>
-              )}
-              <p>
-                {TimeUntiles.dynamic(post.timestamp)}
-              </p>
-              {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
-              <div className={post.pinned ? style.postPinned : style.postPin}
-                  onClick={bookmarkClick}>
-                {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
-                {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
-              </div>
-            </div>
-            {!this.props.post && <hr/>}
-            <div className={style.postBody}>
-              <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
-              {post.iframe_url && (
-                <iframe width="100%" src={post.iframe_url} scrolling="auto" onLoad={this.resizeIframe}/>
-              )}
-              <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
-              ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
-              {post.post_attachments.length > 0 && !this.props.post && (
-                <PostAttachment attachments={post.post_attachments}
-                                postId={post._id}
-                />
-              )}
-              {this.props.post && (
-                <div className={style.postDetails}>
-                {post.post_attachments.length > 0 && (
-                  <div>
-                    <IcoN size={16} name={'attach16'}/>
-                    {post.post_attachments.length}
-                    {post.post_attachments.length === 1 && <span> Attachment</span>}
-                    {post.post_attachments.length > 1 && <span> Attachments</span>}
-                  </div>
+        <Scrollable active={postView}>
+          <div className={style.postScrollContainer}>
+            <div className={style.postScrollContent}>
+              <div className={style.postHead}>
+                <UserAvatar user_id={sender} size={32} borderRadius={'16px'}/>
+                {post.reply_to && <IcoN size={16} name={'repliedGreen16'}/>}
+                {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
+                {post.sender && <FullName user_id={post.sender}/>}
+                {post.email_sender && (
+                  <span>
+                    {`${post.email_sender._id}`}
+                  </span>
                 )}
-                {post.post_labels.length > 0 && (
-                  <div>
-                    <IcoN size={16} name={'tag16'}/>
-                    {post.post_labels.length}
-                    {post.post_labels.length === 1 && <span> Label</span>}
-                    {post.post_labels.length > 1 && <span> Labels</span>}
-                  </div>
-                )}
+                <p>
+                  {TimeUntiles.dynamic(post.timestamp)}
+                </p>
+                {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
+                <div className={post.pinned ? style.postPinned : style.postPin}
+                    onClick={bookmarkClick}>
+                  {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
+                  {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
                 </div>
-              )}
-              {!this.props.post && (
-                <ul className={style.postLabels}>
-                  {post.post_labels.map((label: ILabel, index: number) => {
+              </div>
+              {!this.props.post && <hr/>}
+              <div className={style.postBody}>
+                <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
+                {post.iframe_url && (
+                  <iframe width="100%" src={post.iframe_url} scrolling="auto" onLoad={this.resizeIframe}/>
+                )}
+                <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
+                ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
+                {post.post_attachments.length > 0 && !this.props.post && (
+                  <PostAttachment attachments={post.post_attachments}
+                                  postId={post._id}
+                  />
+                )}
+                {this.props.post && (
+                  <div className={style.postDetails}>
+                  {post.post_attachments.length > 0 && (
+                    <div>
+                      <IcoN size={16} name={'attach16'}/>
+                      {post.post_attachments.length}
+                      {post.post_attachments.length === 1 && <span> Attachment</span>}
+                      {post.post_attachments.length > 1 && <span> Attachments</span>}
+                    </div>
+                  )}
+                  {post.post_labels.length > 0 && (
+                    <div>
+                      <IcoN size={16} name={'tag16'}/>
+                      {post.post_labels.length}
+                      {post.post_labels.length === 1 && <span> Label</span>}
+                      {post.post_labels.length > 1 && <span> Labels</span>}
+                    </div>
+                  )}
+                  </div>
+                )}
+                {!this.props.post && (
+                  <ul className={style.postLabels}>
+                    {post.post_labels.map((label: ILabel, index: number) => {
+                      return (
+                      <li key={label._id + index}>
+                        <LabelChips label={label}/>
+                      </li>
+                      ); })}
+                  </ul>
+                )}
+                <div className={style.postPlaces}>
+                  {postView && <a>Shared with:</a>}
+                  {post.post_places.map((place: IPlace, index: number) => {
+                    if (index < 2) {
+                      return (
+                        <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
+                          {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      );
+                    }
+                  })}
+                  {post.post_recipients &&
+                  post.post_recipients.map((email: string, index: number) => {
                     return (
-                    <li key={label._id + index}>
-                      <LabelChips label={label}/>
-                    </li>
-                    ); })}
-                </ul>
-              )}
-              <div className={style.postPlaces}>
-                {postView && <a>Shared with:</a>}
-                {post.post_places.map((place: IPlace, index: number) => {
-                  if (index < 2) {
-                    return (
-                      <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
-                        {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span key={email + 'em' + index}>
+                        {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       </span>
                     );
-                  }
-                })}
-                {post.post_recipients &&
-                post.post_recipients.map((email: string, index: number) => {
-                  return (
-                    <span key={email + 'em' + index}>
-                      {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  );
-                })}
-                {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
-              </div>
-
-              {!postView && post.counters.comments > 1 && (
-                <div className={style.postFooter}>
-                  <IcoN size={16} name={'comments16'}/>
-                  {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-                  {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+                  })}
+                  {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
                 </div>
+
+                {!postView && post.counters.comments > 1 && (
+                  <div className={style.postFooter}>
+                    <IcoN size={16} name={'comments16'}/>
+                    {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
+                    {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+                  </div>
+                )}
+              </div>
+              {/* renders the comments and comment input in post view */}
+              {!this.props.post && (
+                <CommentsBoard no_comment={this.state.post.no_comment}
+                post_id={this.state.post._id} post={this.state.post}
+                user={this.props.user} newComment={this.newCommentReceived}/>
               )}
+            {postView && <div className={privateStyle.bottomSpace}/>}
             </div>
-            {/* renders the comments and comment input in post view */}
-            {!this.props.post && (
-              <CommentsBoard no_comment={this.state.post.no_comment}
-              post_id={this.state.post._id} post={this.state.post}
-              user={this.props.user} newComment={this.newCommentReceived}/>
-            )}
-           {postView && <div className={privateStyle.bottomSpace}/>}
           </div>
-        </div>
+        </Scrollable>
         {this.state.showAddLabel && (
           <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}
