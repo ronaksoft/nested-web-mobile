@@ -281,7 +281,7 @@ class Activities extends React.Component<IProps, IState> {
             {this.state.activities.map((act, index) => {
               return (
                 <div key={act._id + index} className={style.actsContainer}>
-                  <ActivityItem act={act}/>
+                  <ActivityItem act={act} placeId={this.props.params.placeId}/>
                 </div>
               );
             })}

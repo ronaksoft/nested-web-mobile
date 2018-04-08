@@ -14,6 +14,7 @@ interface IProps {
    * @memberof IProps
    */
   act: IActivity;
+  placeId?: string;
 }
 
 /**
@@ -78,7 +79,11 @@ class ActivityItem extends React.Component<IProps, any> {
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
-            {act.member._id !== act.actor._id && 'removed @' + act.member._id + '.'}
+            {act.member._id !== act.actor._id && (
+              <span>
+                removed <b>@{act.member._id}</b>.
+              </span>
+            )}
             {act.member._id === act.actor._id && 'left.'}
           </p>
         );
@@ -103,7 +108,7 @@ class ActivityItem extends React.Component<IProps, any> {
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
-            attached {act.new_place ? act.new_place._id : act.place_id} to
+            attached {act.new_place ? act.new_place._id : act.place_id}&nbsp;to&nbsp;
             {act.post.subject.length > 0 && act.post.subject}
             {act.post.preview.length > 0 && act.post.subject.length === 0 &&
               <span dangerouslySetInnerHTML={{__html: act.post.preview}}/>
@@ -113,16 +118,17 @@ class ActivityItem extends React.Component<IProps, any> {
       case C_ACTIVITY_ACTION.POST_MOVE:
       this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         this.icon = 'messageSense16';
+        console.log(act);
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
-            moved
+            moved&nbsp;
             {act.post.subject.length > 0 && act.post.subject}
             {act.post.preview.length > 0 && act.post.subject.length === 0 &&
               <span dangerouslySetInnerHTML={{__html: act.post.preview}}/>
-            }
-            from here
-            to here
+            }&nbsp;
+            {this.props.placeId === act.new_place._id && <span>to here</span>}
+            {this.props.placeId !== act.new_place._id && <span>to {act.new_place._id}</span>}
           </p>
         );
       case C_ACTIVITY_ACTION.POST_REMOVE_PLACE:
