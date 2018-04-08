@@ -99,7 +99,7 @@ class Activities extends React.Component<IProps, IState> {
       placeId: props.params.placeId,
       activities: this.props.activities[props.params.placeId] || [],
       skip: 0,
-      limit: 16,
+      limit: 100,
       initialLoad: false,
     };
 

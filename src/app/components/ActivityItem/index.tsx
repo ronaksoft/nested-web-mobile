@@ -118,7 +118,6 @@ class ActivityItem extends React.Component<IProps, any> {
       case C_ACTIVITY_ACTION.POST_MOVE:
       this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         this.icon = 'messageSense16';
-        console.log(act);
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
