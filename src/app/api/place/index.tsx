@@ -19,6 +19,9 @@ import IUser from '../account/interfaces/IUser';
 import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
 import IGetFilesRequest from './interfaces/IGetFilesRequest';
 import IFile from '../../components/FileItem/IFile';
+import IGetActivitiesRequest from './interfaces/IGetActivitiesRequest';
+import IGetActivitiesResponse from './interfaces/IGetActivitiesResponse';
+import IActivity from './interfaces/IActivity';
 
 export default class PlaceApi {
   /**
@@ -54,6 +57,14 @@ export default class PlaceApi {
     });
   }
 
+  public getActivities(data: IGetActivitiesRequest): Promise<IActivity[]> {
+    return this.api.request({
+      cmd: 'place/get_activities',
+      data,
+    }).then((res: IGetActivitiesResponse) => {
+      return res.activities;
+    });
+  }
   /**
    * @func getUnreads
    * @desc Retrieves the place unread posts count. If you want to get the number of

@@ -36,7 +36,7 @@ export default (
         {/* Unread post sorted by activity*/}
         <Route path="/places/:placeId/unread" component={Posts}/>
 
-        <Route path="/places/:placeId/activities" component={Activities}/>
+        <Route path="/places/:placeId/activity" component={Activities}/>
         <Route path="/places/:placeId/files" component={Files}/>
         <Route path="/places/:placeId/members" component={Members}/>
         {/* <Route path="/messages/latest-activity" component={Activities}/> */}

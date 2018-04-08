@@ -21,7 +21,7 @@ import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
 import {hashHistory} from 'react-router';
 import SyncActivity from '../../../services/syncActivity/index';
-import IActivity from '../../../api/activity/interfaces/IActivitiy';
+import IActivity from '../../../api/place/interfaces/IActivity';
 import SyncActions from '../../../services/syncActivity/syncActions';
 import AccountApi from '../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';
@@ -352,6 +352,10 @@ class Posts extends React.Component<IProps, IState> {
   private gotoPlaceFilses() {
     hashHistory.push(`/places/${this.currentPlaceId}/files`);
   }
+
+  private gotoPlaceActivities() {
+    hashHistory.push(`/places/${this.currentPlaceId}/activity`);
+  }
   /**
    * @function gotoPlacePostsAllSortedByRecentPost
    * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
@@ -648,15 +652,15 @@ class Posts extends React.Component<IProps, IState> {
                 size: 16,
               },
             },
-            // {
-            //   onClick: this.sampleF,
-            //   name: 'Activity',
-            //   isChecked: false,
-            //   icon: {
-            //     name: 'log16',
-            //     size: 16,
-            //   },
-            // },
+            {
+              onClick: this.gotoPlaceActivities.bind(this, ''),
+              name: 'Activity',
+              isChecked: false,
+              icon: {
+                name: 'log16',
+                size: 16,
+              },
+            },
             {
               onClick: this.gotoMember.bind(this),
               name: 'Members',

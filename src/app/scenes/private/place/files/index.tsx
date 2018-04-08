@@ -133,6 +133,10 @@ class Files extends React.Component<IProps, IState> {
     hashHistory.push(`/places/${this.state.placeId}/members`);
   }
 
+  private gotoPlaceActivities() {
+    hashHistory.push(`/places/${this.state.placeId}/activity`);
+  }
+
   private setFilter(filter: C_PLACE_FILES_FILTER) {
     this.setState({
       filter,
@@ -312,6 +316,15 @@ class Files extends React.Component<IProps, IState> {
             },
           },
           {
+            onClick: this.gotoPlaceActivities.bind(this, ''),
+            name: 'Activity',
+            isChecked: false,
+            icon: {
+              name: 'log16',
+              size: 16,
+            },
+          },
+          {
             onClick: this.gotoPlaceMembers.bind(this, ''),
             name: 'Members',
             isChecked: false,
@@ -397,8 +410,9 @@ class Files extends React.Component<IProps, IState> {
               </div>
             ))}
             {this.state.reachedTheEnd &&
-                <div className={privateStyle.emptyMessage}>No more files here!</div>
-              }
+              <div className={privateStyle.emptyMessage}>No more files here!</div>
+            }
+            <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         )}
         {this.state.files.length === 0 && this.state.initialLoad && (

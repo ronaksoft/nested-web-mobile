@@ -17,7 +17,7 @@ import Compose from './compose';
 import Sidebar from './sidebar/';
 import TaskSidebar from './sidebar/task';
 import {Navbar} from 'components';
-import {Activities} from './activities';
+import Activities from './place/activities';
 import Signout from './Signout';
 import Posts from './posts';
 import Tasks from './tasks';

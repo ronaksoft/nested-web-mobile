@@ -127,6 +127,15 @@ class Members extends React.Component<IProps, IState> {
             },
           },
           {
+            onClick: this.gotoPlaceActivities.bind(this, ''),
+            name: 'Activity',
+            isChecked: false,
+            icon: {
+              name: 'log16',
+              size: 16,
+            },
+          },
+          {
             onClick: null,
             name: 'Members',
             isChecked: true,
@@ -164,6 +173,9 @@ class Members extends React.Component<IProps, IState> {
     hashHistory.push(`/places/${this.state.placeId}/files`);
   }
 
+  private gotoPlaceActivities() {
+    hashHistory.push(`/places/${this.state.placeId}/activity`);
+  }
   /**
    * @desc updates the state object when the parent changes the props
    * @param {IProps} newProps

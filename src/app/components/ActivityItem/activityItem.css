@@ -1,0 +1,34 @@
+.actContainer{
+  display: flex;
+  flex: 1;
+}
+.avatar {
+  width: 56px;
+  padding: 12px;
+  display: flex;
+  flex: none;
+}
+.actData {
+  display: flex;
+  flex: 1;
+  border-bottom: 1px solid rgba(50, 61, 71, .16);
+  padding: 19px 8px 19px 0;
+}
+.actSummory {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.actData p{
+  font-size: 13px;
+  color: #323D47;
+  line-height: 18px;
+}
+.actData time{
+  opacity: .64;
+}
+.icon {
+  width: 32px;
+  padding: 0 8px;
+  opacity: .64;
+}
