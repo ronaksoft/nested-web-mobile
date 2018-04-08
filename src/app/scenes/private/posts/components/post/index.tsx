@@ -555,7 +555,7 @@ class Post extends React.Component<IProps, IState> {
               <li>
                 <IcoN size={16} name={'reply16'}/>
                 <Link to={`/reply/${post._id}/sender`}>
-                  Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
+                  Reply to "{post.sender ? (post.sender.fname + post.sender.lname) : post.email_sender._id}"
                 </Link>
               </li>
               <li>
