@@ -3,6 +3,7 @@ import C_ACTIVITY_ACTION from '../../api/place/interfaces/C_ACTIVITY_ACTION';
 import {UserAvatar, IcoN} from 'components';
 import IActivity from '../../api/place/interfaces/IActivity';
 import TimeUntiles from '../../services/utils/time';
+import {hashHistory} from 'react-router';
 const style = require('./activityItem.css');
 
 interface IProps {
@@ -23,6 +24,7 @@ interface IProps {
 class ActivityItem extends React.Component<IProps, any> {
   private template: JSX.Element;
   private icon: string;
+  private onclick: () => void = () => console.log('register proper on click event to activity');
   public constructor() {
     super();
   }
@@ -36,12 +38,14 @@ class ActivityItem extends React.Component<IProps, any> {
     switch (act.action) {
       case C_ACTIVITY_ACTION.COMMENT_ADD:
         this.icon = 'commentCrown16';
+        this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         return <p><b>{act.actor.fname} {act.actor.lname}: </b>{act.comment_text}</p>;
       case C_ACTIVITY_ACTION.COMMENT_REMOVE:
         this.icon = 'commentForce16';
         return <p><b>{act.actor.fname} {act.actor.lname}: </b>removed a comment</p>;
       case C_ACTIVITY_ACTION.LABEL_ADD:
         this.icon = 'tagSense16';
+        this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
@@ -83,6 +87,7 @@ class ActivityItem extends React.Component<IProps, any> {
         return <p><b>{act.actor.fname} {act.actor.lname}: </b>created here.</p>;
       case C_ACTIVITY_ACTION.POST_ADD:
         this.icon = 'messageSense16';
+        this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
@@ -94,6 +99,7 @@ class ActivityItem extends React.Component<IProps, any> {
         );
       case C_ACTIVITY_ACTION.POST_ATTACH_PLACE:
         this.icon = 'messageSense16';
+        this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
@@ -105,6 +111,7 @@ class ActivityItem extends React.Component<IProps, any> {
           </p>
         );
       case C_ACTIVITY_ACTION.POST_MOVE:
+      this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
         this.icon = 'messageSense16';
         return (
           <p>
@@ -149,7 +156,7 @@ class ActivityItem extends React.Component<IProps, any> {
         <div className={style.avatar}>
           <UserAvatar user_id={this.props.act.actor} size={32} borderRadius={'16px'}/>
         </div>
-        <div className={style.actData}>
+        <div className={style.actData} onClick={this.onclick}>
           <div className={style.actSummory}>
             {this.template}
             <time dateTime={new Date(this.props.act.timestamp) + ''}>
