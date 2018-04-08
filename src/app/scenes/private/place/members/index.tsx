@@ -18,6 +18,7 @@ import IPlaceMemberRequest from '../../../../api/place/interfaces/IPlaceMemberRe
 import {Modal, message} from 'antd';
 
 const style = require('./members.css');
+const privateStyle = require('../../private.css');
 
 interface IMUser extends IUser {
   tmpManger: boolean;
@@ -105,7 +106,7 @@ class Members extends React.Component<IProps, IState> {
     this.loading = false;
     this.topMenu = {
       left: {
-        name: <PlaceName place_id={this.state.placeId}/>,
+        name: <span><strong>Members:</strong> <PlaceName place_id={this.state.placeId}/></span>,
         type: 'title',
         menu: [
           {
@@ -438,6 +439,7 @@ class Members extends React.Component<IProps, IState> {
                 )}
               </div>
             ))}
+            <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         )}
       </div>

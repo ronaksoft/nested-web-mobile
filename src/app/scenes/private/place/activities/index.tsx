@@ -141,7 +141,6 @@ class Activities extends React.Component<IProps, IState> {
       details: true,
       limit: this.state.limit,
     };
-
     this.loading = true;
     this.placeApi.getActivities(params).then((acts) => {
       this.addToActivities(acts);
@@ -166,12 +165,18 @@ class Activities extends React.Component<IProps, IState> {
   private addToActivities(activities: IActivity[]) {
     const state = {};
     state[this.props.params.placeId] = [...this.state.activities, ...activities];
-    this.setState({
-      activities: state[this.props.params.placeId],
-    });
     this.props.setActivities(state);
+    // this.setState({
+    //   activities: state[this.props.params.placeId],
+    // }, () => console.log(this.state.activities));
   }
 
+  public componentWillReceiveProps(newProps: IProps) {
+    this.setState({
+      activities: newProps.activities[this.props.params.placeId] || [],
+      initialLoad: true,
+    });
+  }
   private refresh = () => {
     this.setState({
       reachedTheEnd: false,
@@ -273,11 +278,13 @@ class Activities extends React.Component<IProps, IState> {
             route={'activities_' + this.state.placeId}
             hasMore={true}
             loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
-            {this.state.activities.map((act, index) => (
-              <div key={act._id + index} className={style.actsContainer}>
-                <ActivityItem act={act}/>
-              </div>
-            ))}
+            {this.state.activities.map((act, index) => {
+              return (
+                <div key={act._id + index} className={style.actsContainer}>
+                  <ActivityItem act={act}/>
+                </div>
+              );
+            })}
             {this.state.reachedTheEnd &&
               <div className={privateStyle.emptyMessage}>No more files here!</div>
             }

@@ -103,7 +103,7 @@ class ActivityItem extends React.Component<IProps, any> {
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
-            attached {act.new_place._id} to
+            attached {act.new_place ? act.new_place._id : act.place_id} to
             {act.post.subject.length > 0 && act.post.subject}
             {act.post.preview.length > 0 && act.post.subject.length === 0 &&
               <span dangerouslySetInnerHTML={{__html: act.post.preview}}/>
