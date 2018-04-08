@@ -286,15 +286,14 @@ class Activities extends React.Component<IProps, IState> {
               );
             })}
             {this.state.reachedTheEnd &&
-              <div className={privateStyle.emptyMessage}>No more files here!</div>
+              <div className={privateStyle.emptyMessage}>No more activity here!</div>
             }
             <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         )}
         {this.state.activities.length === 0 && this.state.initialLoad && (
           <div className={privateStyle.emptyMessage}>
-            {this.state.activities.length === 0 && <span>There are no files here yet...</span>}
-            {this.state.activities.length > 0 && <span>There are no files with this filter</span>}
+            {this.state.activities.length === 0 && <span>There are no activity here yet...</span>}
           </div>
         )}
         <Loading position="absolute" active={!this.state.initialLoad && this.state.activities.length === 0}/>
