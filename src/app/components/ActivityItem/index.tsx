@@ -127,8 +127,18 @@ class ActivityItem extends React.Component<IProps, any> {
             {act.post.preview.length > 0 && act.post.subject.length === 0 &&
               <span dangerouslySetInnerHTML={{__html: act.post.preview}}/>
             }&nbsp;
-            {this.props.placeId === act.new_place._id && <span>to here</span>}
-            {this.props.placeId !== act.new_place._id && <span>to {act.new_place._id}</span>}
+            {act.new_place && (
+              <span>
+                {this.props.placeId === act.new_place._id && <span>to here</span>}
+                {this.props.placeId !== act.new_place._id && <span>to {act.new_place._id}</span>}
+              </span>
+            )}
+            {act.old_place && (
+              <span>
+                {this.props.placeId === act.old_place._id && <span>from here</span>}
+                {this.props.placeId !== act.old_place._id && <span>to here</span>}
+              </span>
+            )}
           </p>
         );
       case C_ACTIVITY_ACTION.POST_REMOVE_PLACE:

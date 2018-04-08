@@ -13,11 +13,13 @@
   flex: 1;
   border-bottom: 1px solid rgba(50, 61, 71, .16);
   padding: 19px 8px 19px 0;
+  overflow: hidden;
 }
 .actSummory {
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow: hidden;
 }
 .actData p{
   font-size: 13px;
