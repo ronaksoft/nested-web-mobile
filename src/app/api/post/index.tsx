@@ -172,6 +172,15 @@ export default class PostApi {
     });
   }
 
+  public markAsRead(postId: string): Promise<any> {
+    return this.api.request({
+      cmd: 'post/mark_as_read',
+      data: {
+        post_id: postId,
+      },
+    });
+  }
+
   public getMany(data: IGetPostRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/get_many',

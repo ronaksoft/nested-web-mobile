@@ -217,6 +217,23 @@ class Posts extends React.Component<IProps, IState> {
     });
   }
 
+  private updatePostsInStore(postId: string, key: string, value: any) {
+
+    const posts = JSON.parse(JSON.stringify(this.props.posts));
+    let newPosts;
+    if (!Array.isArray(posts)) {
+      return;
+    }
+    newPosts = posts.map((post: IPost) => {
+      if (post._id === postId) {
+        post[key] = value;
+      }
+      return post;
+    });
+
+    this.props.setPosts(newPosts);
+
+  }
   public findRouteFromPath(newProps) {
     switch (newProps.location.pathname) {
       case '/feed':
@@ -574,6 +591,8 @@ class Posts extends React.Component<IProps, IState> {
   private gotoPost(post: IPost) {
     this.props.setCurrentPost(post);
     hashHistory.push(`/message/${post._id}`);
+    this.postApi.markAsRead(post._id);
+    this.updatePostsInStore(post._id, 'post_read', true);
   }
 
   private getLeftItemMenu() {
