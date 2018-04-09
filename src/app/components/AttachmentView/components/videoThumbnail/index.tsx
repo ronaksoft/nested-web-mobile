@@ -54,7 +54,6 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     this.props.getDownloadUrl(this.props.attachmentId).then((viewUrl) => {
-      console.log(viewUrl);
       this.setState({
         viewUrl,
       });

@@ -188,9 +188,8 @@ class AttachmentView extends React.Component<IProps, IState> {
   private getViewUrl = (id: string = this.state.currentAttachment._id) => {
     const obj: any = {
       universal_id: id,
-      post_id: this.state.currentAttachment.post_id,
+      post_id: this.state.currentPost ? this.state.currentPost : this.state.currentAttachment.post_id,
     };
-    console.log(obj);
     return new Promise((res, rej) => {
       AttachmentApi.getDownloadToken(obj).then((token: string) => {
         res(FileUtiles.getDownloadUrl(id, token));

@@ -90,6 +90,10 @@ class FileUtil {
         return `${Configurations().STORE.URL}/view/${sessionKey}/${id}/`;
     }
   }
+  public static getThumbUrl(id: string) {
+    const sessionKey = AAA.getInstance().getCredentials().sk;
+    return `${Configurations().STORE.URL}/view/${sessionKey}/${id}/`;
+  }
 
   /**
    * @const groups

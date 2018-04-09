@@ -8,7 +8,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-// import FileUtiles from '../../../../services/utils/file';
+import FileUtiles from '../../../../services/utils/file';
 
 /**
  * @name IProps
@@ -57,7 +57,7 @@ export default class AudioThumbnail extends React.Component<IProps, IState> {
       this.setState({
         viewUrl,
       });
-    });
+    }).catch(console.log);
   }
 
   /**
@@ -82,13 +82,16 @@ export default class AudioThumbnail extends React.Component<IProps, IState> {
      * @var
      * @type {string}
      */
-    // const srcPoster: string = FileUtiles.getViewUrl(this.props.attachmentId);
-    console.log(this.props.attachment);
+    const srcPoster: string = this.props.attachment.thumbs.pre ?
+      FileUtiles.getThumbUrl(this.props.attachment.thumbs.pre) :
+      '';
     return (
-      <div>
-        {/* {srcPoster.length > 0 &&
-          <img src={srcPoster} />
-        } */}
+      <div style={{flexDirection: 'column'}}>
+        {srcPoster.length > 0 && (
+          <div style={{width: '192px', height: '192px', alignSelf: 'center', marginBottom: '16px'}}>
+            <img src={srcPoster} style={{width: '192px', height: '192px', objFit: 'contain'}}/>
+          </div>
+        )}
         {this.state.viewUrl && (
           <audio controls={true} preload="auto">
             <source src={this.state.viewUrl} type={this.props.attachment.mimeType}/>
