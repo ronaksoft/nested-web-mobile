@@ -157,6 +157,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private htmlBodyRef: HTMLDivElement;
+  private scrollRef: HTMLDivElement;
 
   /**
    * Creates an instance of Post.
@@ -238,7 +239,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberOf Post
    */
   public componentWillUnmount() {
-    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
+    this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
   }
 
   /**
@@ -395,6 +396,9 @@ class Post extends React.Component<IProps, IState> {
   private refHandler = (value) => {
     this.htmlBodyRef = value;
   }
+  private scrollRefHandler = (value) => {
+    this.scrollRef = value;
+  }
 
   /**
    * @func Pins/Unpins the post and updates the post in store's posts list
@@ -486,7 +490,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public newCommentReceived = () => {
-    // this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
+    this.scrollRef.scrollDown();
   }
 
   public resizeIframe = (obj) => {
@@ -568,7 +572,7 @@ class Post extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <Scrollable active={postView}>
+        <Scrollable active={postView} ref={this.scrollRefHandler}>
           <div className={style.postScrollContainer}>
             <div className={style.postScrollContent}>
               <div className={style.postHead}>
