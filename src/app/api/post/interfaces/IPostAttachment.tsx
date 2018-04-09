@@ -10,6 +10,7 @@ interface IPostAttachment {
   upload_time: number;
   upload_type: string;
   width: number;
+  post_id: string;
   _id: string;
 }
 

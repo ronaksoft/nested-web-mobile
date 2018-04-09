@@ -15,6 +15,7 @@ import AttachmentType from '../../api/attachment/constants/AttachmentType';
 import ImageThumbnail from './components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
+import AudioThumbnail from './components/AudioThumbnail/index';
 import {IcoN} from 'components';
 import AttachmentApi from 'api/attachment';
 import {message} from 'antd';
@@ -187,12 +188,9 @@ class AttachmentView extends React.Component<IProps, IState> {
   private getViewUrl = (id: string = this.state.currentAttachment._id) => {
     const obj: any = {
       universal_id: id,
+      post_id: this.state.currentAttachment.post_id,
     };
-    if (this.state.currentPost) {
-      obj.post_id = this.state.currentPost;
-    } else {
-      obj.place_id = this.state.currentPlace;
-    }
+    console.log(obj);
     return new Promise((res, rej) => {
       AttachmentApi.getDownloadToken(obj).then((token: string) => {
         res(FileUtiles.getDownloadUrl(id, token));
@@ -485,8 +483,16 @@ class AttachmentView extends React.Component<IProps, IState> {
             />
           </div>
           )}
+          {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.AUDIO && (
+          <div>
+            <AudioThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}
+                            getDownloadUrl={this.getViewUrl}
+            />
+          </div>
+          )}
           {this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.IMAGE &&
+          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.AUDIO &&
           this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.VIDEO && (
             <div>
               <OtherThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
@@ -509,9 +515,14 @@ class AttachmentView extends React.Component<IProps, IState> {
               getDownloadUrl={this.getViewUrl}/>
           )
           }
+          {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.AUDIO && (
+            <AudioThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}
+              getDownloadUrl={this.getViewUrl}/>
+          )}
           {this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.IMAGE &&
-          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO && (
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO &&
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.AUDIO && (
           <div>
             <OtherThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
           </div>
@@ -546,11 +557,16 @@ class AttachmentView extends React.Component<IProps, IState> {
               (
                 <VideoThumbnail attachmentId={this.state.currentAttachment._id}
                   getDownloadUrl={this.getViewUrl}/>
-              )
-              }
+              )}
+              {this.state.currentAttachment.type === AttachmentType.AUDIO &&
+              (
+                <AudioThumbnail attachment={this.state.currentAttachment}
+                  getDownloadUrl={this.getViewUrl}/>
+              )}}
               {this.state.currentAttachment.type !== AttachmentType.GIF &&
               this.state.currentAttachment.type !== AttachmentType.IMAGE &&
               this.state.currentAttachment.type !== AttachmentType.VIDEO &&
+              this.state.currentAttachment.type !== AttachmentType.AUDIO &&
               <OtherThumbnail attachment={this.state.currentAttachment}/>
               }
             </div>

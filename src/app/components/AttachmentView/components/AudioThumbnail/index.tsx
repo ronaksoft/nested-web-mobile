@@ -8,7 +8,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import FileUtiles from '../../../../services/utils/file';
+// import FileUtiles from '../../../../services/utils/file';
 
 /**
  * @name IProps
@@ -18,7 +18,7 @@ import FileUtiles from '../../../../services/utils/file';
  * @property {IPostAttachment} attachment
  */
 interface IProps {
-  attachmentId: string;
+  attachment: any;
   getDownloadUrl: (id: string) => any;
 }
 
@@ -38,7 +38,7 @@ interface IState {
  * @classdesc render the videos for attachments view
  * @extends {React.Component<IProps, IState>}
  */
-export default class VideoThumbnail extends React.Component<IProps, IState> {
+export default class AudioThumbnail extends React.Component<IProps, IState> {
   /**
    * @constructor
    * Creates an instance of Sidebar.
@@ -53,12 +53,11 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    this.props.getDownloadUrl(this.props.attachmentId).then((viewUrl) => {
-      console.log(viewUrl);
+    this.props.getDownloadUrl(this.props.attachment._id).then((viewUrl) => {
       this.setState({
         viewUrl,
       });
-    }).catch(console.log);
+    });
   }
 
   /**
@@ -83,14 +82,18 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
      * @var
      * @type {string}
      */
-    const srcPoster: string = FileUtiles.getViewUrl(this.props.attachmentId);
+    // const srcPoster: string = FileUtiles.getViewUrl(this.props.attachmentId);
+    console.log(this.props.attachment);
     return (
       <div>
+        {/* {srcPoster.length > 0 &&
+          <img src={srcPoster} />
+        } */}
         {this.state.viewUrl && (
-          <video width="100%" controls={true} preload="auto" poster={srcPoster}>
-            <source src={this.state.viewUrl} type="video/mp4" />
-            Your browser does not support HTML5 video.
-          </video>
+          <audio controls={true} preload="auto">
+            <source src={this.state.viewUrl} type={this.props.attachment.mimeType}/>
+            Your browser does not support the audio element.
+          </audio>
         )}
       </div>
     );

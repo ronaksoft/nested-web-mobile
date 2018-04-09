@@ -157,7 +157,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private htmlBodyRef: HTMLDivElement;
-  private scrollRef: HTMLDivElement;
+  private scrollRef: any;
 
   /**
    * Creates an instance of Post.
@@ -239,7 +239,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberOf Post
    */
   public componentWillUnmount() {
-    this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
+    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
   }
 
   /**
