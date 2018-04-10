@@ -712,7 +712,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
               {this.isHtml && (
                 <li>
                   <label htmlFor="">
-                    Add signature on end of post body
+                    Add signature to end of the post
                   </label>
                   <Switch defaultChecked={this.state.addSignature} onChange={this.addSignature}/>
                 </li>
