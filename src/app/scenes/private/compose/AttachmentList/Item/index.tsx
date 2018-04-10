@@ -201,7 +201,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
           )}
         </div>
         {this.props.item.mode === Mode.UPLOAD && (
-          <div onClick={handleRemoveClick}>
+          <div className={style.cancelUp} onClick={handleRemoveClick}>
             <IcoN size={24} name="xcross24"/>
           </div>
         )}

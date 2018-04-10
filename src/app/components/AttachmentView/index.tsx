@@ -557,16 +557,15 @@ class AttachmentView extends React.Component<IProps, IState> {
                 <VideoThumbnail attachmentId={this.state.currentAttachment._id}
                   getDownloadUrl={this.getViewUrl}/>
               )}
-              {this.state.currentAttachment.type === AttachmentType.AUDIO &&
-              (
+              {this.state.currentAttachment.type === AttachmentType.AUDIO && (
                 <AudioThumbnail attachment={this.state.currentAttachment}
                   getDownloadUrl={this.getViewUrl}/>
-              )}}
+              )}
               {this.state.currentAttachment.type !== AttachmentType.GIF &&
               this.state.currentAttachment.type !== AttachmentType.IMAGE &&
               this.state.currentAttachment.type !== AttachmentType.VIDEO &&
               this.state.currentAttachment.type !== AttachmentType.AUDIO &&
-              <OtherThumbnail attachment={this.state.currentAttachment}/>
+                <OtherThumbnail attachment={this.state.currentAttachment}/>
               }
             </div>
           </Hammer>
@@ -575,12 +574,12 @@ class AttachmentView extends React.Component<IProps, IState> {
               <p>{this.state.currentAttachment.filename}</p>
               {(this.state.currentAttachment.type === AttachmentType.GIF ||
                 this.state.currentAttachment.type === AttachmentType.IMAGE) ? (
-                <span>Original Image:
-                  {/*{this.state.currentAttachment.size} kb,*/}
+                <span>Original Image:&nbsp;
+                {FileUtiles.parseSize(this.state.currentAttachment.size)},&nbsp;
                   {this.state.currentAttachment.height} × {this.state.currentAttachment.width}</span>
               ) : (
                 <span>
-                  {/*{this.state.selectedAttachment.size} kb*/}
+                  {FileUtiles.parseSize(this.state.currentAttachment.size)}
                 </span>
               )}
             </div>

@@ -76,6 +76,9 @@
   box-sizing: border-box;
   object-fit: cover;
 }
+.cancelUp {
+  z-index: 2;
+}
 .removeForce svg{
   fill: #ff3344;
 }
