@@ -50,12 +50,10 @@ interface IProps {
  * @type {object}
  * @property {Array<IPostAttachment>} attachments - list of attachments
  * @property {IPostAttachment} selectedAttachment - selected attachment
- * @property {string} downloadUrl -  download url of selected attachment
  */
 interface IState {
   attachments: IPostAttachment[];
   currentAttachment: IPostAttachment;
-  downloadUrl: string;
   visible: boolean;
   currentPlace: string;
   currentPost: string;
@@ -131,7 +129,6 @@ class AttachmentView extends React.Component<IProps, IState> {
     this.state = {
       currentAttachment: this.props.currentAttachment,
       attachments: this.props.attachments || [],
-      downloadUrl: '',
       currentPlace: '',
       currentPost: '',
       visible: false,
@@ -141,7 +138,6 @@ class AttachmentView extends React.Component<IProps, IState> {
     this.onPan = this.onPan.bind(this);
     this.onPanStart = this.onPanStart.bind(this);
     this.onPanEnd = this.onPanEnd.bind(this);
-    this.setDownloadUrl = this.setDownloadUrl.bind(this);
 
     /**
      * call 'inIt' for set initial state of component
@@ -150,40 +146,26 @@ class AttachmentView extends React.Component<IProps, IState> {
   }
 
   /**
-   * After mounting component, it calls `AttachmentView.setDownloadUrl`
-   * @override
-   * @function componentDidMount
-   * @memberof AttachmentView
-   */
-  public componentDidMount() {
-    this.setDownloadUrl(this.state.currentAttachment._id);
-  }
-
-  /**
    * generates download url of attachment and update component state `downloadUrl` property
    * @function setDownloadUrl
    * @param {string} id
    * @memberof AttachmentView
    */
-  public setDownloadUrl(id: string = this.state.currentAttachment._id): void {
-    const obj: any = {
-      universal_id: id,
-    };
-    if (this.state.currentPost) {
-      obj.post_id = this.state.currentPost;
-    } else {
-      obj.place_id = this.state.currentPlace;
-    }
-      AttachmentApi.getDownloadToken(obj).then((token: string) => {
-        this.setState({
-          downloadUrl: FileUtiles.getDownloadUrl(id, token),
-        });
-      }, () => {
-        this.setState({
-          downloadUrl: null,
-        });
-      });
-  }
+  // public setDownloadUrl(id: string = this.state.currentAttachment._id): void {
+  //   const obj: any = {
+  //     universal_id: id,
+  //     post_id: this.state.currentPost || this.state.currentAttachment.post_id,
+  //   };
+  //   AttachmentApi.getDownloadToken(obj).then((token: string) => {
+  //     this.setState({
+  //       downloadUrl: FileUtiles.getDownloadUrl(id, token),
+  //     });
+  //   }, () => {
+  //     this.setState({
+  //       downloadUrl: null,
+  //     });
+  //   });
+  // }
 
   private getViewUrl = (id: string = this.state.currentAttachment._id) => {
     const obj: any = {
@@ -277,7 +259,6 @@ class AttachmentView extends React.Component<IProps, IState> {
     this.setState({currentAttachment: next}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(next._id);
   }
 
   /**
@@ -301,7 +282,6 @@ class AttachmentView extends React.Component<IProps, IState> {
     this.setState({currentAttachment: prev}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(prev._id);
   }
 
   // private onSwipe(event: any, props: any) {
@@ -422,10 +402,20 @@ class AttachmentView extends React.Component<IProps, IState> {
    * @memberof AttachmentView
    */
   private download = (e: any) => {
-    if (!this.state.downloadUrl) {
+    e.preventDefault();
+    const obj: any = {
+      universal_id: this.state.currentAttachment._id,
+      post_id: this.state.currentPost || this.state.currentAttachment.post_id,
+    };
+    AttachmentApi.getDownloadToken(obj).then((token: string) => {
+      const link = document.createElement('a');
+      link.href = FileUtiles.getDownloadUrl(obj.universal_id, token);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, () => {
       message.error('We are not able to serve the file, try again later.');
-      e.preventDefault();
-    }
+    });
   }
 
   public onClose = () => {
@@ -584,7 +574,7 @@ class AttachmentView extends React.Component<IProps, IState> {
               )}
             </div>
             {/* Attachment view download button */}
-            <a onClick={this.download} href={this.state.downloadUrl}>
+            <a onClick={this.download}>
               <IcoN size={24} name={'downloadsWhite24'}/>
             </a>
           </div>
