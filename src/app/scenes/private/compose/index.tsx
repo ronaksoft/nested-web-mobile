@@ -11,7 +11,7 @@
  */
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
-import {Suggestion, IcoN} from 'components';
+import {Suggestion, IcoN, Scrollable} from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
@@ -184,7 +184,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attachments: [],
       targets: [],
       contentType: 'text/html',
-      // contentType: 'text/plain',
       userSignature: {},
       allowComment: true,
       addSignature: true,
@@ -649,42 +648,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         }
       }
     }, 10);
-    if ( this.htmlBodyRef) {
-      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
-        this.htmlBodyRef.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.htmlBodyRef.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-      }
-      this.htmlBodyRef.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, false);
-    }
     return (
       <div className={style.compose}>
         {/* specefic compose navbar */}
@@ -761,6 +724,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           </div>
         </div>
         {/* compose body */}
+        <Scrollable active={true}>
         <div ref={this.refHandler} className={[style.scrollWrapper,
           this.state.body.length > 0 || (this.htmlBodyRef && this.htmlBodyRef.innerHTML.length > 34)
             ? style.filled : ''].join(' ')}>
@@ -778,6 +742,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
               onInput={this.contentEditableChange}/>
           )}
         </div>
+        </Scrollable>
         {/* attachments uploading/uploaded list */}
         <AttachmentList
           onItemsChanged={this.handleAttachmentsChange}
