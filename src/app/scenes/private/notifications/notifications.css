@@ -8,6 +8,8 @@
 .notificationWrp {
   opacity: 1;
   width: 100%;
+  display: flex;
+  flex: 1;
 }
 .notificationWrp > div {
   width: 100%;
@@ -17,6 +19,8 @@
   overflow: auto;
   width: 100%;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
 }
 .notificationHead {
   height: 56px;

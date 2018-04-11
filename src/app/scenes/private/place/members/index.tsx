@@ -378,7 +378,7 @@ class Members extends React.Component<IProps, IState> {
    */
   public render() {
     return (
-      <div>
+      <div style={{height: '100%'}}>
         <OptionsMenu leftItem={this.topMenu.left} rightItems={this.topMenu.right}/>
         {this.state.members.length > 0 && (
           <InfiniteScroll

@@ -379,7 +379,7 @@ class Files extends React.Component<IProps, IState> {
         }],
     };
     return (
-      <div>
+      <div style={{height: '100%'}}>
         {this.state.selectedFiles.length === 0 &&
           <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right} ref={this.optionMenuHandler}/>
         }

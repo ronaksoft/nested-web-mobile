@@ -466,7 +466,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
-      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '<div>') +
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6) +
         (this.state.addSignature
         ? (this.state.userSignature.active
           ? this.state.userSignature.data
@@ -512,7 +512,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       allowComment: this.state.allowComment,
       addSignature: this.state.addSignature,
       sending: false,
-      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '<div>'),
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6),
       subject: this.state.subject,
       composeOption: false,
       attachModal: false,

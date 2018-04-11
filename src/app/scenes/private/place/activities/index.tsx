@@ -268,7 +268,7 @@ class Activities extends React.Component<IProps, IState> {
       right: [],
     };
     return (
-      <div>
+      <div style={{height: '100%'}}>
         <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right}/>
         {this.state.activities.length > 0 && (
           <InfiniteScroll
