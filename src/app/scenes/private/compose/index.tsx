@@ -467,20 +467,19 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
-      body: this.isHtml
-      ? this.htmlBodyRef.innerHTML + (this.state.addSignature
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '<div>') +
+        (this.state.addSignature
         ? (this.state.userSignature.active
           ? this.state.userSignature.data
           : '')
-        : '')
-      : this.state.body,
+        : ''),
       no_comment: !this.state.allowComment,
       content_type: this.isHtml ? 'text/html' : 'text/plain',
       subject: this.state.subject,
       attaches: this.state.attachments.map((i) => i.universal_id).join(','),
       targets: this.state.targets.map((i) => i._id).join(','),
     };
-
+    params.body = params.body;
     this.postApi.send(params).then((response: ISendResponse) => {
       if (response.no_permit_places.length === 0) {
         message.success(`Your post has been shared.`);
