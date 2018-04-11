@@ -81,7 +81,7 @@ class PlaceItem extends React.Component<IProps, IState> {
       // Define the place Api
       const placeApi = new PlaceApi();
       // call place Api for get place obj of the passed place Id
-      placeApi.get({place_id: this.props.place_id})
+      placeApi.get(this.props.place_id)
         .then((p: IPlace) => {
           this.setState({
             place: p,

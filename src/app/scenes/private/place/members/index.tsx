@@ -66,6 +66,7 @@ interface IState {
   skip: number;
 
   limit: number;
+  place: any;
 }
 
 /**
@@ -99,6 +100,7 @@ class Members extends React.Component<IProps, IState> {
       placeId: props.params.placeId,
       members: [],
       editMode: false,
+      place: {},
       skip: 0,
       limit: 16,
     };
@@ -182,10 +184,10 @@ class Members extends React.Component<IProps, IState> {
    * @param {IProps} newProps
    * @memberof Members
    */
-  public componentWillReceiveProps(newProps: IProps) {
-    console.log(newProps);
+  // public componentWillReceiveProps(newProps: IProps) {
+    // console.log(newProps);
     // this.setState({posts: newProps.posts});
-  }
+  // }
 
   /**
    * Component Did Mount ( what ?!)
@@ -204,34 +206,36 @@ class Members extends React.Component<IProps, IState> {
   }
 
   private initialLoad() {
-    const params: IGetWithSkipRequest = {
-      place_id: this.state.placeId,
-      skip: 0,
-      limit: this.state.limit,
-    };
-
+    const {placeId} = this.state;
     this.loading = true;
-    this.placeApi.getMangers(params).then((users) => {
-      this.addToMembers(users, true);
-      this.loading = false;
+    this.placeApi.get(placeId).then((place) => {
+      this.setState({place});
+      const params: IGetWithSkipRequest = {
+        place_id: placeId,
+        skip: 0,
+        limit: place.limits.creators + 1,
+      };
+      this.placeApi.getMangers(params).then((users) => {
+        this.addToMembers(users, true);
+        this.loading = false;
+        // Load members...
+        this.loadMore();
+      }).catch(() => {
+        this.loading = false;
+      });
     }).catch(() => {
-      this.loading = false;
-    });
-
-    this.placeApi.getMembers(params).then((users) => {
-      this.addToMembers(users, false);
-      if (users.length < this.state.limit) {
-        this.setState({
-          reachedTheEnd: true,
-        });
-      } else {
-        this.setState({
-          skip: this.state.skip + this.state.limit,
-        });
-      }
-      this.loading = false;
-    }).catch(() => {
-      this.loading = false;
+      const params: IGetWithSkipRequest = {
+        place_id: placeId,
+        skip: 0,
+        limit: this.state.limit,
+      };
+      this.placeApi.getMangers(params).then((users) => {
+        this.addToMembers(users, true);
+        this.loading = false;
+        this.loadMore();
+      }).catch(() => {
+        this.loading = false;
+      });
     });
   }
 
@@ -316,6 +320,12 @@ class Members extends React.Component<IProps, IState> {
     if (admin) {
       promise = this.placeApi.demoteMember(param);
     } else {
+      if (this.state.members.filter(
+        (member) => member.tmpManger).length >= this.state.place.limits.creators
+      ) {
+        message.error(`This place configured to have ${this.state.place.limits.creators} managers.
+        Unfortunately you can not add more managers to this place.`);
+      }
       promise = this.placeApi.promoteMember(param);
     }
     promise.then(() => {

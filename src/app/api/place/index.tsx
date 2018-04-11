@@ -12,7 +12,7 @@ import Api from './../index';
 import IAccountPlacesRequest from './interfaces/IAccountPlacesRequest';
 import IGetUnreadsRequest from './interfaces/IGetUnreadsRequest';
 import IGetUnreadsResponse from './interfaces/IGetUnreadsResponse';
-import IGetRequest from './interfaces/IGetRequest';
+// import IGetRequest from './interfaces/IGetRequest';
 import IPlace from './interfaces/IPlace';
 import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
 import IUser from '../account/interfaces/IUser';
@@ -90,10 +90,18 @@ export default class PlaceApi {
    * @returns {Promise<any>}
    * @memberof PlaceApi
    */
-  public get(data: IGetRequest): Promise<any> {
+  // public get(data: IGetRequest): Promise<any> {
+  //   return this.api.request({
+  //     cmd: 'place/get',
+  //     data,
+  //   });
+  // }
+  public get(placeId: string): Promise<any> {
     return this.api.request({
       cmd: 'place/get',
-      data,
+      data: {
+        place_id: placeId,
+      },
     });
   }
 

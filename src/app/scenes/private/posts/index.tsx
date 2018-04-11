@@ -528,7 +528,7 @@ class Posts extends React.Component<IProps, IState> {
       });
 
     if (requirePinnedMessages && fromNow) {
-      this.placeApi.get({place_id: this.currentPlaceId}).then((place) => {
+      this.placeApi.get(this.currentPlaceId).then((place) => {
         if (place.pinned_posts) {
           this.postApi.getMany({post_id: place.pinned_posts.join(',')}).then((response) => {
             let posts = response.posts;
