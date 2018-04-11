@@ -478,7 +478,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       attaches: this.state.attachments.map((i) => i.universal_id).join(','),
       targets: this.state.targets.map((i) => i._id).join(','),
     };
-    params.body = params.body;
     this.postApi.send(params).then((response: ISendResponse) => {
       if (response.no_permit_places.length === 0) {
         message.success(`Your post has been shared.`);
@@ -505,7 +504,19 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private draft = () => {
-    this.props.setDraft(this.state);
+    this.props.setDraft({
+      attachments: this.state.attachments,
+      targets: this.state.targets,
+      contentType: 'text/html',
+      userSignature: this.state.userSignature,
+      allowComment: this.state.allowComment,
+      addSignature: this.state.addSignature,
+      sending: false,
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '<div>'),
+      subject: this.state.subject,
+      composeOption: false,
+      attachModal: false,
+    });
     hashHistory.goBack();
   }
 
