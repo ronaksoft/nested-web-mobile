@@ -21,7 +21,7 @@ import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
 import {connect} from 'react-redux';
-import {IAttachment} from 'api/attachment/interfaces';
+import {IAttachment} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import IPost from 'api/post/interfaces/IPost';
 import IPostAttachment from 'api/post/interfaces//IPostAttachment';

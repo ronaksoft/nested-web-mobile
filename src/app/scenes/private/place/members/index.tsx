@@ -10,7 +10,7 @@
 import * as React from 'react';
 import PlaceApi from '../../../../api/place';
 import IGetWithSkipRequest from '../../../../api/place/interfaces/IGetWithSkipRequest';
-import IUser from '../../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import {IcoN, UserAvatar, FullName, OptionsMenu, PlaceName, InfiniteScroll, Loading} from 'components';
 import * as _ from 'lodash';
 import {hashHistory} from 'react-router';

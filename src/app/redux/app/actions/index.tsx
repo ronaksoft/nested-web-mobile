@@ -1,6 +1,6 @@
 import {} from '../IAppStore';
 import * as ActionTypes from './types';
-import IUser from '../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import {IAppAction} from '../IAppStore';
 import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../../api/post/interfaces/IPost';
@@ -8,7 +8,7 @@ import ITask from '../../../api/task/interfaces/ITask';
 import ICustomFilter from '../../../api/task/interfaces/ICustomFilter';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IComposeState from 'api/post/interfaces/IComposeState';
-import IActivity from 'api/place/interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 
 export function userSet(user: IUser): IAppAction {
   return {

@@ -5,7 +5,7 @@ import IGetActivitiesRequest from '../../../../api/place/interfaces/IGetActiviti
 import {OptionsMenu, PlaceName, InfiniteScroll, Loading} from 'components';
 // import * as _ from 'lodash';
 import {hashHistory} from 'react-router';
-import IActivity from '../../../../api/place/interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 import ActivityItem from '../../../../components/ActivityItem/';
 import {setActivities} from '../../../../redux/app/actions/index';
 // import {Modal, message} from 'antd';

@@ -1,10 +1,10 @@
-import IThumbnails from './IThumbnails';
+import {IPicture} from 'api/interfaces';
 
 interface IAttachment {
   expiration_timestamp: number;
   name: string;
   size: number;
-  thumbs: IThumbnails;
+  thumbs: IPicture;
   type: string;
   universal_id: string;
 }

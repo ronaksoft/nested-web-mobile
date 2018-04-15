@@ -11,7 +11,7 @@
 import * as React from 'react';
 import AAA from '../../../services/aaa/index';
 import CONFIG from '../../../config';
-import IUser from '../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';

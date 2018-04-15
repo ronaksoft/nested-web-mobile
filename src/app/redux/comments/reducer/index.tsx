@@ -1,7 +1,7 @@
 import * as Immutable from 'seamless-immutable';
 import {ICommentAction} from '../ICommentStore';
 import * as ActionTypes from '../actions/types';
-import IComment from '../../../api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 
 /** Initial Places State */
 const initialState = Immutable.from <ICommentStore>({

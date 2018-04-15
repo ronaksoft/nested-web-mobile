@@ -1,4 +1,4 @@
-import IPlace from '../../api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 import IMenuItem from './IMenuItem';
 
 interface ILeftItem {

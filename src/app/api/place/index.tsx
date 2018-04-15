@@ -13,15 +13,14 @@ import IAccountPlacesRequest from './interfaces/IAccountPlacesRequest';
 import IGetUnreadsRequest from './interfaces/IGetUnreadsRequest';
 import IGetUnreadsResponse from './interfaces/IGetUnreadsResponse';
 // import IGetRequest from './interfaces/IGetRequest';
-import IPlace from './interfaces/IPlace';
+import {IPlace, IUser} from 'api/interfaces';
 import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
-import IUser from '../account/interfaces/IUser';
 import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
 import IGetFilesRequest from './interfaces/IGetFilesRequest';
 import IFile from '../../components/FileItem/IFile';
 import IGetActivitiesRequest from './interfaces/IGetActivitiesRequest';
 import IGetActivitiesResponse from './interfaces/IGetActivitiesResponse';
-import IActivity from './interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 
 export default class PlaceApi {
   /**

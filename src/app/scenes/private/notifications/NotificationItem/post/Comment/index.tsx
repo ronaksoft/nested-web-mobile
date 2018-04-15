@@ -15,7 +15,7 @@
  * when we have more than 3 users comment on a post.
  */
 import * as React from 'react';
-import INotification from '../../../../../../api/notification/interfaces/INotification';
+import {INotification} from 'api/interfaces/';
 import TimeUntiles from '../../../../../../services/utils/time';
 import ArrayUntiles from '../../../../../../services/utils/array';
 import {IcoN, UserAvatar, FullName} from 'components';

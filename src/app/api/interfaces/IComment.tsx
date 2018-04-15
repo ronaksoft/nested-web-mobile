@@ -1,4 +1,4 @@
-import IUser from '../../account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 
 interface IComment {
   _id: string;

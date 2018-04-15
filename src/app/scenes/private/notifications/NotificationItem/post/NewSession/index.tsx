@@ -11,7 +11,7 @@
  */
 import * as React from 'react';
 import {IcoN, UserAvatar} from 'components';
-import INotification from '../../../../../../api/notification/interfaces/INotification';
+import {INotification} from 'api/interfaces/';
 import TimeUntiles from '../../../../../../services/utils/time';
 import 'antd/dist/antd.css';
 

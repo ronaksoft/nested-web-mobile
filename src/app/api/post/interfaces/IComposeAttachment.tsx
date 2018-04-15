@@ -1,11 +1,11 @@
-import IThumbnails from '../../attachment/interfaces/IThumbnails';
+import {IPicture} from 'api/interfaces';
 
 interface IComposeAttachment {
   filename: string;
   height: number;
   mimetype: string;
   size: number;
-  thumbs: IThumbnails;
+  thumbs: IPicture;
   type: string;
   upload_time: number;
   upload_type: string;

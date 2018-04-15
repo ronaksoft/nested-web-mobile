@@ -9,7 +9,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IPlace from '../../api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';

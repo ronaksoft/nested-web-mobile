@@ -9,7 +9,7 @@
  * Date of review : 07/24/2017
  */
 import * as React from 'react';
-import IUser from '../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import {accountAdd} from '../../../redux/accounts/actions/index';
 import AccountApi from '../../../api/account/index';
 import {connect} from 'react-redux';

@@ -1,6 +1,4 @@
-import IUser from '../../account/interfaces/IUser';
-import IPlace from '../../place/interfaces/IPlace';
-import ILabel from '../../label/interfaces/ILabel';
+import {ILabel, IPlace, IUser} from 'api/interfaces/';
 
 interface INotification {
   _id: string;

@@ -85,7 +85,6 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(newProps: IProps) {
-    console.log('componentWillReceiveProps');
     let route = this.state.route;
     if (this.state.location !== newProps.location.pathname) {
       route = this.findRouteFromPath(newProps);

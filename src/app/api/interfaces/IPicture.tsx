@@ -1,5 +1,6 @@
 interface IPicture {
-    orginal : string;
+    org : string;
+    pre? : string;
     x32 : string;
     x64 : string;
     x128 : string;

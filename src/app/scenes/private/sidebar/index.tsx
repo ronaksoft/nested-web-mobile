@@ -20,7 +20,7 @@ import {SidebarItem, IcoN, Loading} from 'components';
 import PlaceApi from '../../../api/place/index';
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
-import IPlace from '../../../api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 
 const style = require('./sidebar.css');

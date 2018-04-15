@@ -9,7 +9,7 @@
  * Date of review : 07/31/2017
  */
 import * as React from 'react';
-import IComment from '../../api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 import {commentAdd} from '../../redux/comments/actions/index';
 import CommentApi from '../../api/comment/index';
 import {connect} from 'react-redux';

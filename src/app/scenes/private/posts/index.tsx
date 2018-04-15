@@ -21,7 +21,7 @@ import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
 import {hashHistory} from 'react-router';
 import SyncActivity from '../../../services/syncActivity/index';
-import IActivity from '../../../api/place/interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 import SyncActions from '../../../services/syncActivity/syncActions';
 import AccountApi from '../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';

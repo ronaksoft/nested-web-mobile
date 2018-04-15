@@ -9,7 +9,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import {IUser} from 'api/account/interfaces';
+import {IUser} from 'api/interfaces';
 
 const style = require('./navbar.css');
 import {IcoN, UserAvatar} from 'components';

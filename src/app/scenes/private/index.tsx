@@ -26,7 +26,8 @@ import Notifications from './notifications';
 import AttachmentView from '../../components/AttachmentView/index';
 
 import AccountApi from 'api/account';
-import {IUser, IRecallResponse} from 'api/account/interfaces';
+import {IUser} from 'api/interfaces';
+import {IRecallResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';

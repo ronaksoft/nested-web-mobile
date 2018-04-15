@@ -1,4 +1,4 @@
-import C_PLACE_RECEPTIVE  from './../../consts/CPlaceReceptive';
+import C_PLACE_RECEPTIVE  from 'api/consts/CPlaceReceptive';
 
 interface IPlacePolicy {
     locked: boolean;

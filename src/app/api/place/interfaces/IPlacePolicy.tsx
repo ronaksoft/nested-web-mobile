@@ -1,4 +1,4 @@
-import C_PLACE_POLICE  from './../../consts/CPlacePolicy';
+import C_PLACE_POLICE  from 'api/consts/CPlacePolicy';
 
 interface IPlacePolicy {
     add_post: C_PLACE_POLICE;

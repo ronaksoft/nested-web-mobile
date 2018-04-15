@@ -1,4 +1,4 @@
-import IPlace from './IPlace';
+import {IPlace} from '../../interfaces/';
 
 interface IPlaceListResponse {
     places: Array<IPlace>;

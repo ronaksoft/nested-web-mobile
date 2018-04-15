@@ -1,4 +1,4 @@
-import IUser from '../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import INotificationResponse from '../../api/notification/interfaces/INotificationRequest';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import IPost from '../../api/post/interfaces/IPost';
@@ -6,7 +6,7 @@ import ITask from '../../api/task/interfaces/ITask';
 import ICustomFilter from '../../api/task/interfaces/ICustomFilter';
 import ISidebarPlace from '../../api/place/interfaces/ISidebarPlace';
 import IUnreadPlace from '../../api/place/interfaces/IUnreadPlace';
-import IActivity from '../../api/place/interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 import IComposeState from 'api/post/interfaces/IComposeState';
 
 export interface IAppStore {

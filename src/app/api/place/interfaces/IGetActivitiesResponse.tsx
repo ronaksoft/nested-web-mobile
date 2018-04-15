@@ -1,4 +1,4 @@
-import IActivity from './IActivity';
+import {IActivity} from 'api/interfaces/';
 
 interface IGetActivitiesResponse {
   activities: IActivity[];

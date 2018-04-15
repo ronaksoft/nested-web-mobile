@@ -17,12 +17,13 @@ import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Input, Button, Form, message} from 'antd';
 import AccountApi from 'api/account';
+import {IUser} from 'api/interfaces';
 import * as md5 from 'md5';
 import IValidatableField from '../../IValidatableField';
 import IValidationResult from '../../IValidationResult';
 import { connect } from 'react-redux';
 import { login } from 'redux/app/actions';
-import { IUser, ILoginResponse } from 'api/account/interfaces';
+import {ILoginResponse } from 'api/account/interfaces';
 import AAA from 'services/aaa';
 import Client from 'services/utils/client';
 

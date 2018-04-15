@@ -9,7 +9,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
-import IComment from 'api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 
 const style = require('./seek-bar.css');
 

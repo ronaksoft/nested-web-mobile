@@ -1,7 +1,7 @@
 import * as React from 'react';
 import C_ACTIVITY_ACTION from '../../api/place/interfaces/C_ACTIVITY_ACTION';
 import {UserAvatar, IcoN} from 'components';
-import IActivity from '../../api/place/interfaces/IActivity';
+import {IActivity} from 'api/interfaces/';
 import TimeUntiles from '../../services/utils/time';
 import {hashHistory} from 'react-router';
 const style = require('./activityItem.css');

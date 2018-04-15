@@ -12,7 +12,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
   LabelChips, Scrollable} from 'components';
-import IPlace from '../../../../../api/place/interfaces/IPlace';
+import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
@@ -20,10 +20,8 @@ import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
-import IUser from '../../../../../api/account/interfaces/IUser';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
-import ILabel from '../../../../../api/label/interfaces/ILabel';
 import {difference} from 'lodash';
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -346,11 +344,8 @@ class Post extends React.Component<IProps, IState> {
   private resizeFont(el, ratio: number) {
     if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
       const fontSize = parseInt(el.style.fontSize, 10);
-      if ( fontSize > 1 ) {
-        el.style.fontSize = fontSize * (1 / ratio) + 'px';
-      } else {
-        el.style.fontSize = 14 * (1 / ratio) + 'px';
-      }
+      const newFontSize = (fontSize > 1 ? fontSize : 14) * (1 / ratio);
+      el.style.fontSize = newFontSize < 100 ? newFontSize : 90 + 'px';
     }
     for (const value of el.children) {
       this.resizeFont(value, ratio);

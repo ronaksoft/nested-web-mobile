@@ -1,4 +1,4 @@
-import IUser from './../../account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 
 interface IPlaceListMemberresponse {
   accounts: Array<IUser>;

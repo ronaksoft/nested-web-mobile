@@ -1,6 +1,6 @@
-import IUser from '../../account/interfaces/IUser';
+import {IUser} from './';
 
-interface IPost {
+interface ILabel {
   title: string;
   code: string;
   'public': boolean;
@@ -10,4 +10,4 @@ interface IPost {
   _id: string;
 }
 
-export default IPost;
+export default ILabel;
