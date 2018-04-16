@@ -838,7 +838,7 @@ class Posts extends React.Component<IProps, IState> {
               refreshFunction={this.refresh}
               next={loadMore}
               route={route}
-              hasMore={true}
+              hasMore={!this.state.reachedTheEnd}
               loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
                 {doms}
                 {this.state.reachedTheEnd &&

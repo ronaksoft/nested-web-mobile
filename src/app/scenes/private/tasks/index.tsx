@@ -658,8 +658,8 @@ class Tasks extends React.Component<IProps, IState> {
             refreshFunction={this.refresh}
             next={loadMore}
             route={this.props.location.pathname}
-            hasMore={true}
-            loader={<Loading active={true} position="fixed"/>}>
+            hasMore={!this.state.reachedTheEnd}
+            loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
               {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
               {showOverDue && this.state.overDueTasks.map((task: ITask) => (
                 <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
