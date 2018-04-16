@@ -839,7 +839,7 @@ class Posts extends React.Component<IProps, IState> {
               next={loadMore}
               route={route}
               hasMore={true}
-              loader={<Loading active={true} position="fixed"/>}>
+              loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
                 {doms}
                 {this.state.reachedTheEnd &&
                   <div className={privateStyle.emptyMessage}>No more messages here!</div>
