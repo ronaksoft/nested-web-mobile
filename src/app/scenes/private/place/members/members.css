@@ -89,7 +89,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 135px;
+  max-width: 70%;
   font-size: 14px;
   color: rgb(50, 61, 71);
 }

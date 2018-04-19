@@ -8,6 +8,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
+import {connect} from 'react-redux';
 import PlaceApi from '../../../../api/place';
 import IGetWithSkipRequest from '../../../../api/place/interfaces/IGetWithSkipRequest';
 import {IUser} from 'api/interfaces';
@@ -16,6 +17,7 @@ import * as _ from 'lodash';
 import {hashHistory} from 'react-router';
 import IPlaceMemberRequest from '../../../../api/place/interfaces/IPlaceMemberRequest';
 import {Modal, message} from 'antd';
+import C_PLACE_ACCESS from 'api/consts/CPlaceAccess';
 
 const style = require('./members.css');
 const privateStyle = require('../../private.css');
@@ -43,6 +45,7 @@ interface IProps {
    * @memberof IProps
    */
   location: any;
+  user: IUser;
 }
 
 /**
@@ -149,22 +152,7 @@ class Members extends React.Component<IProps, IState> {
           },
         ],
       },
-      right: [
-        {
-          name: 'cross24',
-          type: 'iconII',
-          menu: [
-            {
-              onClick: this.gotoPlacePosts.bind(this, ''),
-              name: 'Add Member',
-              isChecked: true,
-              icon: {
-                name: 'person16',
-                size: 16,
-              },
-            },
-          ],
-        }],
+      right: [],
     };
   }
 
@@ -209,7 +197,27 @@ class Members extends React.Component<IProps, IState> {
     const {placeId} = this.state;
     this.loading = true;
     this.placeApi.get(placeId).then((place) => {
-      this.setState({place});
+      this.setState({place}, () => {
+        if (this.checkAccess(C_PLACE_ACCESS.ADD_MEMBERS)) {
+          this.topMenu.right = [
+            {
+              name: 'cross24',
+              type: 'iconII',
+              menu: [
+                {
+                  onClick: this.gotoPlacePosts.bind(this, ''),
+                  name: 'Add Member',
+                  isChecked: true,
+                  icon: {
+                    name: 'person16',
+                    size: 16,
+                  },
+                },
+              ],
+            }];
+        }
+
+      });
       const params: IGetWithSkipRequest = {
         place_id: placeId,
         skip: 0,
@@ -370,6 +378,10 @@ class Members extends React.Component<IProps, IState> {
     });
   }
 
+  private checkAccess = (access) => {
+    return this.state.place.access.indexOf(access) > -1;
+  }
+
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -377,10 +389,13 @@ class Members extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
+    const accessMembers = this.state.place && this.state.place &&
+      this.state.place.access && this.checkAccess(C_PLACE_ACCESS.SEE_MEMBERS);
+
     return (
       <div style={{height: '100%'}}>
         <OptionsMenu leftItem={this.topMenu.left} rightItems={this.topMenu.right}/>
-        {this.state.members.length > 0 && (
+        {(this.state.members.length > 0 && accessMembers) && (
           <InfiniteScroll
             pullDownToRefresh={true}
             refreshFunction={this.refresh}
@@ -409,16 +424,18 @@ class Members extends React.Component<IProps, IState> {
                   </span>
                     <span className={style.userId}>{member._id}</span>
                   </div>
-                  <div className={style.moreOption}>
-                    <a onClick={this.toggleMoreOpts.bind(this, member._id)}>
-                      {!member.tmpEditing &&
-                      <IcoN size={24} name="more24"/>
-                      }
-                      {member.tmpEditing &&
-                      <IcoN size={24} name="xcross24"/>
-                      }
-                    </a>
-                  </div>
+                  {this.checkAccess(C_PLACE_ACCESS.CONTROL) && (
+                    <div className={style.moreOption}>
+                      <a onClick={this.toggleMoreOpts.bind(this, member._id)}>
+                        {!member.tmpEditing &&
+                        <IcoN size={24} name="more24"/>
+                        }
+                        {member.tmpEditing &&
+                        <IcoN size={24} name="xcross24"/>
+                        }
+                      </a>
+                    </div>
+                  )}
                 </div>
                 {member.tmpEditing && (
                   <div>
@@ -452,9 +469,18 @@ class Members extends React.Component<IProps, IState> {
             <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         )}
+        {!accessMembers && <span>you have no access</span>}
       </div>
     );
   }
 }
 
-export default Members;
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store) => ({
+  user: store.app.user,
+});
+
+export default connect(mapStateToProps, {})(Members);
