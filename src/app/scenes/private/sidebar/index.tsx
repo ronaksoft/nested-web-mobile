@@ -18,6 +18,7 @@ import {sortBy} from 'lodash';
 import {SidebarItem, IcoN, Loading} from 'components';
 
 import PlaceApi from '../../../api/place/index';
+import ClientApi from '../../../api/client/index';
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import {IPlace} from 'api/interfaces';
@@ -86,6 +87,9 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private PlaceApi: PlaceApi;
+  private ClientApi: ClientApi;
+  private placeOrders: any[] = null;
+  private places: IPlace[] = null;
 
   /**
    * @prop sidebarElement
@@ -137,9 +141,28 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
 
     /** Assign PlaceApi */
     this.PlaceApi = new PlaceApi();
+    this.ClientApi = new ClientApi();
 
     /** Get Sidebar Places */
     this.getMyPlaces();
+    this.getPlaceOrders();
+  }
+
+  public getPlaceOrders() {
+    this.ClientApi.read('general.new.setting.place-order').then((res: string) => {
+      if (res) {
+        const orders = JSON.parse(res);
+        // console.log(orders);
+        this.placeOrders = orders;
+        this.checkDataIsReach();
+      }
+    }).catch(this.getMyPlaces);
+  }
+
+  private checkDataIsReach = () => {
+    if (this.placeOrders && this.places) {
+      this.arrangePlaces();
+    }
   }
 
   /**
@@ -271,6 +294,23 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     }
   }
 
+  private getOrderFromId(obj: any, placeDep: string[], id: string, tariledDepth: string) {
+    if (obj[id]) {
+      return obj[id].o;
+    }
+    const thisObj = obj[tariledDepth + placeDep[0]];
+    if (thisObj) {
+      if (!placeDep[1]) {
+        return thisObj.o;
+      } else {
+        tariledDepth += placeDep[0];
+        placeDep.splice(0, 1);
+        return this.getOrderFromId(thisObj.s, placeDep, id, tariledDepth  + '.');
+      }
+    } else {
+      return null;
+    }
+  }
   /**
    * Get Sidebar places from Store or Server Api
    * And Creates rich object from them for Sidebar view render .
@@ -279,7 +319,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private getMyPlaces() {
-    console.log(this.props.sidebarPlaces, !this.props.openPlace.placeId);
+    // console.log(this.props.sidebarPlaces, !this.props.openPlace.placeId);
     /**
      * Detemines if recieved data is exists assigns to 'places'
      */
@@ -288,14 +328,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         places: JSON.parse(JSON.stringify(this.props.sidebarPlaces)),
         loading: false,
       }, () => {
-
         /**
          * Get Unreads of Places
          */
         this.getUnreads();
       });
     } else {
-
       /**
        * prepares the Request object for `getAllPlaces` request
        * @const params
@@ -307,140 +345,9 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         };
       this.PlaceApi.getAllPlaces(params)
         .then((response: IPlace[]) => {
-
-          /**
-           * Sort Places Array by Place Ids
-           * @const places
-           * @type {Array<IPlace>}
-           */
-          const places = sortBy(response, [(o) => o._id]);
-
-          /**
-           * Defaine Sidebar Places array
-           * @const placesConjuctions
-           * @type {Array<ISidebarPlace>}
-           * @kind SidebarPlace
-           */
-          const placesConjuctions: ISidebarPlace[] = [];
-          places.forEach((element, i) => {
-
-            /**
-             * Add place to redux store Places
-             */
-            this.props.placeAdd(element);
-
-            /**
-             * @const idSplit
-             * @type {array}
-             */
-            const idSplit = element._id.split('.');
-
-            /**
-             * @defaut
-             * @const placesConjuction
-             * @type {ISidebarPlace}
-             */
-            const placesConjuction: ISidebarPlace = {
-              id: element._id,
-              depth: idSplit.length - 1,
-              expanded: false,
-              isOpen: false,
-              hasChildren: false,
-              isChildren: false,
-            };
-            /**
-             * Determines the Place Depth
-             * User can be out of any parent places of this Place So need to determine the Place depth
-             */
-            if (idSplit.length > 1) {
-              placesConjuction.isChildren = true;
-
-              /**
-               * Split of previous Place in Places Array
-               * @const prevSplit
-               * @type {array}
-               */
-              const prevSplit = placesConjuctions[i - 1].id.split('.');
-
-              /**
-               * @var evaluateDepth
-               * how many parent layer should be check
-               * @default
-               */
-              let evaluateDepth: number = 0;
-
-              /**
-               * @var actualDepth
-               * Depth of this Place
-               * @default
-               */
-              let actualDepth: number = 0;
-
-              /**
-               * Flag for stop the iterator and prevent creating unvalid data
-               */
-              let anyUnMatch: boolean = false;
-
-              /**
-               * `evaluateDepth` is related to privious id
-               */
-              evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
-
-              /**
-               * iterate on `evaluateDepth` to Counts the same Parents of
-               * this Place and previous Place then determines `actualDepth`
-               */
-              for (let d: number = 0; d < evaluateDepth; d++) {
-                if (prevSplit[d] === idSplit[d]) {
-                  if (!anyUnMatch) {
-                    actualDepth++;
-                  }
-                } else {
-                  anyUnMatch = true;
-                }
-              }
-
-              /** Assign `actualDepth` to Sidebar Place object */
-              placesConjuction.depth = actualDepth;
-            }
-
-            /**
-             * Determines `hasChildren` of previous
-             * @fact Last item never have children
-             * @fact Place have Children if and only if ID of next place in `Places` array containts this Place ID
-             */
-            if (placesConjuction.depth > 0) {
-              const prv = placesConjuctions[i - 1].id.split('.');
-              const newVar = idSplit.slice(0);
-              const compareArray = newVar.splice(0, prv.length);
-              if (prv.join('.') === compareArray.join('.')) {
-                placesConjuctions[i - 1].hasChildren = true;
-              }
-            }
-
-            /**
-             * push The created object to `placesConjuctions`
-             */
-            placesConjuctions.push(placesConjuction);
-          });
-
-          /** set `places` State value to `placesConjuctions` for view rendering */
-          this.setState({
-            places: placesConjuctions,
-            loading: false,
-          }, () => {
-            const filteredItem = placesConjuctions.filter( (item) => {
-              return  this.props.openPlace.placeId === item.id;
-            });
-            if ( filteredItem.length > 0 ) {
-              this.toggleChildren(this.props.openPlace.placeId, filteredItem[0].depth, true);
-            }
-          });
-
-          /** save sidebar Places object in redux store */
-          this.props.setSidebarPlaces(placesConjuctions);
+          this.places = response;
+          this.checkDataIsReach();
         }, () => {
-
           /**
            * Get Unreads of Places
            */
@@ -448,6 +355,168 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       });
 
     }
+  }
+
+  private arrangePlaces() {
+    let index = 0;
+    /**
+     * Sort Places Array by Place Ids
+     * @const places
+     * @type {Array<IPlace>}
+     */
+    let places = sortBy(this.places, [(o) => o._id]);
+    places = sortBy(places, [(o) => {
+      const id = o._id;
+      let order;
+      let parentOrder;
+      const placeDep = (id + '').split('.');
+      if (placeDep.length === 1) {
+        order = this.placeOrders[id] ? this.placeOrders[id].o : id;
+        order = order * Math.pow(10, 10 - (2 * placeDep.length));
+        parentOrder = order;
+      } else {
+        try {
+          order = this.getOrderFromId(this.placeOrders, [...placeDep], id, '');
+          if (placeDep.length > places[index - 1]._id.split('.').length) {
+            parentOrder = places[index - 1].order;
+          } else {
+            parentOrder = places[index - 1].parentOrder;
+          }
+          order = parentOrder + (order * Math.pow(10, 10 - (2 * placeDep.length)));
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      o.order = order;
+      o.parentOrder = parentOrder;
+      index++;
+      return order;
+    }]);
+
+    /**
+     * Defaine Sidebar Places array
+     * @const placesConjuctions
+     * @type {Array<ISidebarPlace>}
+     * @kind SidebarPlace
+     */
+    const placesConjuctions: ISidebarPlace[] = [];
+    places.forEach((element, i) => {
+
+      /**
+       * Add place to redux store Places
+       */
+      this.props.placeAdd(element);
+
+      /**
+       * @const idSplit
+       * @type {array}
+       */
+      const idSplit = element._id.split('.');
+
+      /**
+       * @defaut
+       * @const placesConjuction
+       * @type {ISidebarPlace}
+       */
+      const placesConjuction: ISidebarPlace = {
+        id: element._id,
+        depth: idSplit.length - 1,
+        expanded: false,
+        isOpen: false,
+        hasChildren: false,
+        isChildren: false,
+      };
+      /**
+       * Determines the Place Depth
+       * User can be out of any parent places of this Place So need to determine the Place depth
+       */
+      if (idSplit.length > 1) {
+        placesConjuction.isChildren = true;
+
+        /**
+         * Split of previous Place in Places Array
+         * @const prevSplit
+         * @type {array}
+         */
+        const prevSplit = placesConjuctions[i - 1].id.split('.');
+
+        /**
+         * @var evaluateDepth
+         * how many parent layer should be check
+         * @default
+         */
+        let evaluateDepth: number = 0;
+
+        /**
+         * @var actualDepth
+         * Depth of this Place
+         * @default
+         */
+        let actualDepth: number = 0;
+
+        /**
+         * Flag for stop the iterator and prevent creating unvalid data
+         */
+        let anyUnMatch: boolean = false;
+
+        /**
+         * `evaluateDepth` is related to privious id
+         */
+        evaluateDepth = prevSplit.length < idSplit.length ? prevSplit.length : idSplit.length - 1;
+
+        /**
+         * iterate on `evaluateDepth` to Counts the same Parents of
+         * this Place and previous Place then determines `actualDepth`
+         */
+        for (let d: number = 0; d < evaluateDepth; d++) {
+          if (prevSplit[d] === idSplit[d]) {
+            if (!anyUnMatch) {
+              actualDepth++;
+            }
+          } else {
+            anyUnMatch = true;
+          }
+        }
+
+        /** Assign `actualDepth` to Sidebar Place object */
+        placesConjuction.depth = actualDepth;
+      }
+
+      /**
+       * Determines `hasChildren` of previous
+       * @fact Last item never have children
+       * @fact Place have Children if and only if ID of next place in `Places` array containts this Place ID
+       */
+      if (placesConjuction.depth > 0) {
+        const prv = placesConjuctions[i - 1].id.split('.');
+        const newVar = idSplit.slice(0);
+        const compareArray = newVar.splice(0, prv.length);
+        if (prv.join('.') === compareArray.join('.')) {
+          placesConjuctions[i - 1].hasChildren = true;
+        }
+      }
+
+      /**
+       * push The created object to `placesConjuctions`
+       */
+      placesConjuctions.push(placesConjuction);
+    });
+
+    /** save sidebar Places object in redux store */
+    this.props.setSidebarPlaces(placesConjuctions);
+
+    /** set `places` State value to `placesConjuctions` for view rendering */
+    this.setState({
+      places: placesConjuctions,
+      loading: false,
+    }, () => {
+      const filteredItem = placesConjuctions.filter( (item) => {
+        return  this.props.openPlace.placeId === item.id;
+      });
+      if ( filteredItem.length > 0 ) {
+        this.toggleChildren(this.props.openPlace.placeId, filteredItem[0].depth, true);
+      }
+    });
   }
 
   /**
