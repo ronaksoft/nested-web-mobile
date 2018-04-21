@@ -11,6 +11,7 @@
 
 import UploadType from './constants/UploadType';
 import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
+// import IGetFileResponse from './interfaces/IGetFileResponse';
 import Api from 'api';
 import Configuration from 'config';
 import AAA from 'services/aaa';
@@ -20,6 +21,7 @@ import {
   IGetDownloadTokenResponse,
 } from './interfaces';
 import IResponse from 'services/server/interfaces/IResponse';
+import IPostAttachment from 'api/post/interfaces//IPostAttachment';
 
 /**
  * @class AttachmentApi
@@ -41,6 +43,19 @@ class AttachmentApi {
         data: {},
       }).then((response: IGetUploadTokenResponse) => {
         resolve(response.token);
+      }, reject);
+    });
+  }
+
+  public get(id: string): Promise<IPostAttachment> {
+    return new Promise((resolve, reject) => {
+      Api.getInstance().request({
+        cmd: 'file/get',
+        data: {
+          universal_id: id,
+        },
+      }).then((response: IPostAttachment) => {
+        resolve(response);
       }, reject);
     });
   }

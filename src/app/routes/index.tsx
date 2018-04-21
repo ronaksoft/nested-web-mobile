@@ -50,6 +50,7 @@ export default (
         <Route path="/reply/:replyId" component={Compose}/>
         <Route path="/reply/:replyId/sender" component={Compose}/>
         <Route path="/forward/:forwardId" component={Compose}/>
+        <Route path="/compose/:attachments" component={Compose}/>
 
         <Route path="/task/glance" component={Tasks}/>
         <Route path="/task/assigned_to_me/normal" component={Tasks}/>

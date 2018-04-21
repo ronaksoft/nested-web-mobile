@@ -16,6 +16,7 @@ import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
+import AttachmentApi from 'api/attachment';
 import clientApi from 'api/client';
 import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
@@ -56,6 +57,7 @@ interface IParams {
    * @memberof IParams
    */
   placeId?: string;
+  attachments?: string;
 }
 
 /**
@@ -149,6 +151,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private postApi: PostApi;
+  private attachmentApi: AttachmentApi;
   private clientApi: clientApi;
 
   /**
@@ -206,6 +209,27 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   public componentDidMount() {
     this.postApi = new PostApi();
+    this.attachmentApi = new AttachmentApi();
+    if (this.props.params.attachments) {
+      const attachArr = this.props.params.attachments.split(',');
+      attachArr.map((id) => {
+        this.attachmentApi.get(id).then((attachment: IPostAttachment) => {
+          const attach: IAttachment = {
+            universal_id: attachment._id,
+            name: attachment.filename,
+            expiration_timestamp: 0,
+            size: attachment.size,
+            thumbs: attachment.thumbs,
+            type: attachment.type,
+          };
+          this.setState({
+            attachments: [...this.state.attachments, attach],
+          });
+          this.attachments.loadSync(attach);
+          console.log(attachment);
+        });
+      });
+    }
     if (this.props.params.replyId || this.props.params.forwardId) {
       this.postApi.get({
         post_id: this.props.params.replyId || this.props.params.forwardId,

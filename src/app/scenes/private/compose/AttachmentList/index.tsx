@@ -177,6 +177,27 @@ class AttachmentList extends React.Component<IProps, IState> {
   }
 
   /**
+   * @func load
+   * @desc Creates a list of `IAttachmentItem` from a list of `IAttachment`.
+   * The method has been used to pass a list of attachments to the component from the outside
+   * @param {IAttachment[]} attachments
+   * @memberof AttachmentList
+   */
+  public loadSync(attachment: IAttachment) {
+    this.setState({
+      items: [...this.state.items, {
+        id: Unique.get(),
+        mode: Mode.VIEW,
+        model: attachment,
+        progress: {
+          loaded: 0,
+          total: 1,
+        },
+      }],
+    });
+  };
+
+  /**
    * @func createItem
    * @desc Create an AttachmentItem using the provided Attachment model
    * @private
@@ -502,7 +523,10 @@ class AttachmentList extends React.Component<IProps, IState> {
             <IcoN size={24} name="arrow16" />
           </div>
         </div>
-        <div>
+        <div style={{
+          maxHeight: '225px',
+          overflow: 'auto',
+        }}>
           {this.state.isExpanded && items}
         </div>
       </div>

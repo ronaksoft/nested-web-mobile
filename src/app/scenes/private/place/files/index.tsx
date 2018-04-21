@@ -10,6 +10,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import PlaceApi from '../../../../api/place';
+import {hashHistory} from 'react-router';
 import IGetFilesRequest from '../../../../api/place/interfaces/IGetFilesRequest';
 import {InfiniteScroll, Loading, IcoN} from 'components';
 import * as _ from 'lodash';
@@ -286,7 +287,8 @@ class Files extends React.Component<IProps, IState> {
   }
 
   private forwardFiles = () => {
-    console.log(this.state.selectedFiles);
+    const attachments = this.state.selectedFiles.map((file) => file.split(',')[0]).join(',');
+    return hashHistory.push(`/compose/${attachments}`);
   }
 
   /**
@@ -307,7 +309,7 @@ class Files extends React.Component<IProps, IState> {
               <b>{this.state.selectedFiles.length}</b>&nbsp;&nbsp;&nbsp;files selected
             </span>
             <div onClick={this.forwardFiles}>
-              {/* <IcoN name="forwardWhite24" size={24}/> */}
+              <IcoN name="forwardWhite24" size={24}/>
             </div>
           </div>
         )}
