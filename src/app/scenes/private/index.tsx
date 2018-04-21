@@ -20,6 +20,7 @@ import {Navbar} from 'components';
 import Activities from './place/activities';
 import Signout from './Signout';
 import Posts from './posts';
+import PostsContainer from './PostsContainer';
 import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
 import Notifications from './notifications';
@@ -443,5 +444,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
   Posts, Activities, Files, Notifications, Compose,
-  Signout, Tasks, TaskEdit,
+  Signout, Tasks, TaskEdit, PostsContainer,
 };

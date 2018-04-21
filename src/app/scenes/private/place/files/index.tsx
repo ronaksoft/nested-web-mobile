@@ -11,9 +11,8 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import PlaceApi from '../../../../api/place';
 import IGetFilesRequest from '../../../../api/place/interfaces/IGetFilesRequest';
-import {OptionsMenu, PlaceName, InfiniteScroll, Loading, IcoN} from 'components';
+import {InfiniteScroll, Loading, IcoN} from 'components';
 import * as _ from 'lodash';
-import {hashHistory} from 'react-router';
 import IFile from '../../../../components/FileItem/IFile';
 import {FileItem} from '../../../../components/FileItem/';
 import C_PLACE_FILES_FILTER from './C_PLACE_FILES_FILTER';
@@ -81,7 +80,7 @@ interface IState {
   selectedFiles: string[];
   skip: number;
   limit: number;
-  filter: C_PLACE_FILES_FILTER;
+  filter: string;
   initialLoad: boolean;
 }
 
@@ -94,7 +93,6 @@ class Files extends React.Component<IProps, IState> {
 
   private placeApi: PlaceApi;
   private loading: boolean;
-  private optionMenu: any;
 
   /**
    * Creates an instance of Members.
@@ -119,25 +117,13 @@ class Files extends React.Component<IProps, IState> {
       skip: 0,
       limit: 16,
       initialLoad: false,
-      filter: C_PLACE_FILES_FILTER.all,
+      filter: this.getFilter(props.location.pathname),
     };
 
     this.loading = false;
   }
 
-  private gotoPlacePosts() {
-    hashHistory.push(`/places/${this.state.placeId}/messages`);
-  }
-
-  private gotoPlaceMembers() {
-    hashHistory.push(`/places/${this.state.placeId}/members`);
-  }
-
-  private gotoPlaceActivities() {
-    hashHistory.push(`/places/${this.state.placeId}/activity`);
-  }
-
-  private setFilter(filter: C_PLACE_FILES_FILTER) {
+  private setFilter(filter: string) {
     this.setState({
       filter,
       files: [],
@@ -146,7 +132,6 @@ class Files extends React.Component<IProps, IState> {
     }, () => {
       this.initialLoad();
     });
-    this.optionMenu.closeAll();
   }
 
   /**
@@ -165,11 +150,31 @@ class Files extends React.Component<IProps, IState> {
     this.initialLoad();
   }
 
+  public componentWillReceiveProps(newProps: IProps) {
+    const newFilter = this.getFilter(newProps.location.pathname);
+    if (this.state.filter !== newFilter) {
+      this.setFilter(newFilter);
+    }
+  }
+
+  public getFilter(path: string): string {
+    let retVal: string = 'all';
+    const pathArr = path.split('/');
+    if (pathArr.length > 3) {
+      Object.keys(C_PLACE_FILES_FILTER).forEach((key) => {
+        if (C_PLACE_FILES_FILTER[key] === pathArr[4]) {
+          retVal = key;
+        }
+      });
+    }
+    return retVal;
+  }
+
   private initialLoad() {
     const params: IGetFilesRequest = {
       place_id: this.state.placeId,
       skip: 0,
-      filter: C_PLACE_FILES_FILTER[this.state.filter],
+      filter: this.state.filter,
       limit: this.state.limit,
     };
 
@@ -252,7 +257,7 @@ class Files extends React.Component<IProps, IState> {
       const params: IGetFilesRequest = {
         place_id: this.state.placeId,
         skip: this.state.skip,
-        filter: C_PLACE_FILES_FILTER[this.state.filter],
+        filter: this.state.filter,
         limit: this.state.limit,
       };
       this.loading = true;
@@ -284,7 +289,6 @@ class Files extends React.Component<IProps, IState> {
     console.log(this.state.selectedFiles);
   }
 
-  private optionMenuHandler = (dom) => this.optionMenu = dom;
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -292,97 +296,8 @@ class Files extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    const topMenu = {
-      left: {
-        name: <span><strong>Files:</strong> <PlaceName place_id={this.state.placeId}/></span>,
-        type: 'title',
-        menu: [
-          {
-            onClick: this.gotoPlacePosts.bind(this, ''),
-            name: 'Posts',
-            isChecked: false,
-            icon: {
-              name: 'messages16',
-              size: 16,
-            },
-          },
-          {
-            onClick: null,
-            name: 'files',
-            isChecked: true,
-            icon: {
-              name: 'file16',
-              size: 16,
-            },
-          },
-          {
-            onClick: this.gotoPlaceActivities.bind(this, ''),
-            name: 'Activity',
-            isChecked: false,
-            icon: {
-              name: 'log16',
-              size: 16,
-            },
-          },
-          {
-            onClick: this.gotoPlaceMembers.bind(this, ''),
-            name: 'Members',
-            isChecked: false,
-            icon: {
-              name: 'placeMember16',
-              size: 16,
-            },
-          },
-        ],
-      },
-      right: [
-        {
-          name: 'filter24',
-          type: 'iconI',
-          menu: [
-            {
-              name: 'Filter',
-              type: 'kind',
-              isChecked: false,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.all),
-              name: 'All',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.all,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.DOC),
-              name: 'Document',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.DOC,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.IMG),
-              name: 'Photo',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.IMG,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.VID),
-              name: 'Video',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.VID,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.AUD),
-              name: 'Audio',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.AUD,
-            },
-            {
-              onClick: this.setFilter.bind(this, C_PLACE_FILES_FILTER.OTH),
-              name: 'Other',
-              isChecked: this.state.filter === C_PLACE_FILES_FILTER.OTH,
-            },
-          ],
-        }],
-    };
     return (
       <div style={{height: '100%'}}>
-        {this.state.selectedFiles.length === 0 &&
-          <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right} ref={this.optionMenuHandler}/>
-        }
         {this.state.selectedFiles.length !== 0 && (
           <div className={style.selectedsMenu}>
             <div onClick={this.closeAll}>
@@ -417,8 +332,8 @@ class Files extends React.Component<IProps, IState> {
         )}
         {this.state.files.length === 0 && this.state.initialLoad && (
           <div className={privateStyle.emptyMessage}>
-            {this.state.filter === 0 && <span>There are no files here yet...</span>}
-            {this.state.filter > 0 && <span>There are no files with this filter</span>}
+            {this.state.filter === 'all' && <span>There are no files here yet...</span>}
+            {this.state.filter !== 'all' && <span>There are no files with this filter</span>}
           </div>
         )}
         <Loading position="absolute" active={!this.state.initialLoad && this.state.files.length === 0}/>

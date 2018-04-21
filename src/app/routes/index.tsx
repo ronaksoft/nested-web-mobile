@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Posts,
+  Posts, PostsContainer,
   Notifications, Activities, Files, Compose, Signout,
   Tasks, TaskEdit,
 } from 'scenes/private';
@@ -22,25 +22,34 @@ export default (
         <IndexRoute component={Posts}/>
         <Redirect from="/" to="/feed" />
         {/*<Route path="/" component={Feed} />*/}
-        <Route path="/feed" component={Posts}/>
-        <Route path="/feed/latest-activity" component={Posts}/>
-        <Route path="/shared" component={Posts}/>
-        <Route path="/bookmarks" component={Posts}/>
 
-        {/* All post sorted by activity*/}
-        <Route path="/places/:placeId/messages" component={Posts}/>
+        <Route component={PostsContainer}>
+          <Route path="/feed" component={Posts}/>
+          <Route path="/feed/latest-activity" component={Posts}/>
+          <Route path="/shared" component={Posts}/>
+          <Route path="/bookmarks" component={Posts}/>
 
-        {/* All recent post */}
-        <Route path="/places/:placeId/messages/latest-activity" component={Posts}/>
+          {/* All post sorted by activity*/}
+          <Route path="/places/:placeId/messages" component={Posts}/>
 
-        {/* Unread post sorted by activity*/}
-        <Route path="/places/:placeId/unread" component={Posts}/>
+          {/* All recent post */}
+          <Route path="/places/:placeId/messages/latest-activity" component={Posts}/>
 
-        <Route path="/places/:placeId/activity" component={Activities}/>
-        <Route path="/places/:placeId/files" component={Files}/>
-        <Route path="/places/:placeId/members" component={Members}/>
-        {/* <Route path="/messages/latest-activity" component={Activities}/> */}
+          {/* Unread post sorted by activity*/}
+          <Route path="/places/:placeId/unread" component={Posts}/>
+
+          <Route path="/places/:placeId/activity" component={Activities}/>
+          <Route path="/places/:placeId/files/:filter/:search" component={Files}/>
+          <Route path="/places/:placeId/files/:filter" component={Files}/>
+          <Route path="/places/:placeId/files/" component={Files}/>
+          <Route path="/places/:placeId/members" component={Members}/>
+        </Route>
+
         <Route path="/message/:postId" component={Post}/>
+        <Route path="/compose" component={Compose}/>
+        <Route path="/reply/:replyId" component={Compose}/>
+        <Route path="/reply/:replyId/sender" component={Compose}/>
+        <Route path="/forward/:forwardId" component={Compose}/>
 
         <Route path="/task/glance" component={Tasks}/>
         <Route path="/task/assigned_to_me/normal" component={Tasks}/>
@@ -52,10 +61,8 @@ export default (
         <Route path="/task/edit/:taskId" component={TaskEdit}/>
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
-        <Route path="/compose" component={Compose}/>
-        <Route path="/reply/:replyId" component={Compose}/>
-        <Route path="/reply/:replyId/sender" component={Compose}/>
-        <Route path="/forward/:forwardId" component={Compose}/>
+        <Route path="/notifications/:app" component={Notifications}/>
+
         <Route path="/signout" component={Signout}/>
       </Route>
       <Route component={Public}>

@@ -145,7 +145,7 @@ class Signin extends React.Component<IProps, IState> {
       _dt: dt,
     })
       .then((response: ILoginResponse) => {
-        console.log(response);
+        // console.log(response);
           // Replaces the previous credentials that have been stored inside `AAA` service
           AAA.getInstance().setCredentials(response);
 

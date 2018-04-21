@@ -8,7 +8,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
-import {OptionsMenu, InfiniteScroll, Loading, PlaceName} from 'components';
+import {InfiniteScroll, Loading} from 'components';
 import {connect} from 'react-redux';
 import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
 import PostApi from '../../../api/post/index';
@@ -21,7 +21,7 @@ import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
 import {hashHistory} from 'react-router';
 import SyncActivity from '../../../services/syncActivity/index';
-import {IActivity} from 'api/interfaces/';
+import {IActivity, IUser} from 'api/interfaces/';
 import SyncActions from '../../../services/syncActivity/syncActions';
 import AccountApi from '../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';
@@ -99,6 +99,7 @@ interface IProps {
    * @memberof IProps
    */
   location: any;
+  user: IUser;
 }
 
 /**
@@ -347,60 +348,6 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   /**
-   * @function gotoFeedByActivity
-   * @desc set Feed sort by latest activity
-   * @private
-   */
-  private gotoFeedByActivity() {
-    hashHistory.push(`/feed/latest-activity`);
-  }
-  private gotoFeed() {
-    hashHistory.push('/feed');
-  }
-
-  private gotoMember() {
-    hashHistory.push(`/places/${this.currentPlaceId}/members`);
-  }
-
-  private gotoPlacePosts() {
-    hashHistory.push(`/places/${this.currentPlaceId}/messages`);
-  }
-
-  private gotoPlaceFilses() {
-    hashHistory.push(`/places/${this.currentPlaceId}/files`);
-  }
-
-  private gotoPlaceActivities() {
-    hashHistory.push(`/places/${this.currentPlaceId}/activity`);
-  }
-  /**
-   * @function gotoPlacePostsAllSortedByRecentPost
-   * @desc Go to Place post route which are sorted by recent posts by its `currentPlaceId`
-   * @param {IPost} post
-   * @private
-   */
-  private gotoPlacePostsAllSortedByRecentPost = () => {
-    hashHistory.push(`/places/${this.currentPlaceId}/messages`);
-  }
-  /**
-   * @function gotoPlacePostsAllSortedByActivity
-   * @desc Go to Place post route which are sorted by recent activity by its `currentPlaceId`
-   * @param {IPost} post
-   * @private
-   */
-  private gotoPlacePostsAllSortedByActivity = () => {
-    hashHistory.push(`/places/${this.currentPlaceId}/messages/latest-activity`);
-  }
-  /**
-   * @function gotoPlacePostsUnreadSortedByRecent
-   * @desc Go to unread posts route which are sorted by recent post by its `currentPlaceId`
-   * @param {IPost} post
-   * @private
-   */
-  private gotoPlacePostsUnreadSortedByRecent = () => {
-    hashHistory.push(`/places/${this.currentPlaceId}/unread`);
-  }
-  /**
    * @function getPost
    * @desc Get posts with declared limits and `before` timestamp of
    * the latest post item in state, otherwise the current timestamp.
@@ -595,187 +542,6 @@ class Posts extends React.Component<IProps, IState> {
     this.updatePostsInStore(post._id, 'post_read', true);
   }
 
-  private getLeftItemMenu() {
-    const latestActivity = this.state.route.indexOf('latest_activity') > 0;
-    let menu: any = {
-      leftItem: {
-        name: 'Feed',
-        type: 'title',
-        menu: [],
-      },
-      rightMenu: [
-        {
-          name: 'sort24',
-          type: 'iconI',
-          menu: [
-            {
-              onClick: null,
-              name: 'Sort',
-              type: 'kind',
-              isChecked: false,
-            },
-            {
-              onClick: this.gotoFeed,
-              name: 'Recent Posts',
-              isChecked: !latestActivity,
-            },
-            {
-              onClick: this.gotoFeedByActivity,
-              name: 'Latest Activity',
-              isChecked: latestActivity,
-            },
-          ],
-        },
-      ],
-    };
-    if (this.state.route === 'bookmarks') {
-      menu = {
-        leftItem: {
-          name: 'Bookmarked Posts',
-          type: 'title',
-          menu: [],
-        },
-        rightMenu:  [],
-      };
-    } else if (this.state.route === 'shared') {
-      menu = {
-        leftItem: {
-          name: 'Shared by me',
-          type: 'title',
-          menu: [],
-        },
-        rightMenu:  [],
-      };
-    } else if (this.state.route.indexOf('place') > -1) {
-
-      menu = {
-        leftItem: {
-          name: <PlaceName place_id={this.currentPlaceId}/>,
-          type: 'title',
-          menu: [
-            {
-              onClick: this.gotoPlacePosts.bind(this, ''),
-              name: 'Posts',
-              isChecked: true,
-              icon: {
-                name: 'messages16',
-                size: 16,
-              },
-            },
-            {
-              onClick: this.gotoPlaceFilses.bind(this, ''),
-              name: 'Files',
-              isChecked: false,
-              icon: {
-                name: 'file16',
-                size: 16,
-              },
-            },
-            {
-              onClick: this.gotoPlaceActivities.bind(this, ''),
-              name: 'Activity',
-              isChecked: false,
-              icon: {
-                name: 'log16',
-                size: 16,
-              },
-            },
-            {
-              onClick: this.gotoMember.bind(this),
-              name: 'Members',
-              isChecked: false,
-              icon: {
-                name: 'placeMember16',
-                size: 16,
-              },
-            },
-          ],
-        },
-        rightMenu: [
-          {
-            name: 'sort24',
-            type: 'iconI',
-            menu: [
-              {
-                name: 'Sort',
-                type: 'kind',
-                isChecked: false,
-              },
-              {
-                onClick: this.gotoPlacePostsAllSortedByRecentPost,
-                name: 'Recent Posts',
-                isChecked: !latestActivity,
-              },
-              {
-                onClick: this.gotoPlacePostsAllSortedByActivity,
-                name: 'Latest Activity',
-                isChecked: latestActivity,
-              },
-              {
-                name: 'Filter',
-                type: 'kind',
-                isChecked: false,
-              },
-              {
-                onClick: this.gotoPlacePosts.bind(this, ''),
-                name: 'All',
-                isChecked: this.state.route.indexOf('place_unread_') === -1,
-              },
-              {
-                onClick: this.gotoPlacePostsUnreadSortedByRecent,
-                name: 'Unseens',
-                isChecked: this.state.route.indexOf('place_unread_') > -1,
-              },
-            ],
-          },
-          // {
-          //   name: 'filter24',
-          //   type: 'iconII',
-          //   menu: [
-          //     {
-          //       onClick: this.gotoUnreadPosts,
-          //       name: 'Place Settings',
-          //       isChecked: false,
-          //       icon: {
-          //         name: 'message16',
-          //         size: 16,
-          //       },
-          //     },
-          //     {
-          //       onClick: this.gotoUnreadPosts,
-          //       name: 'Invite Members',
-          //       isChecked: false,
-          //       icon: {
-          //         name: 'message16',
-          //         size: 16,
-          //       },
-          //     },
-          //     {
-          //       onClick: this.gotoUnreadPosts,
-          //       name: 'Create a Private Place',
-          //       isChecked: false,
-          //       icon: {
-          //         name: 'message16',
-          //         size: 16,
-          //       },
-          //     },
-          //     {
-          //       onClick: this.gotoUnreadPosts,
-          //       name: 'Create a Common Place',
-          //       isChecked: false,
-          //       icon: {
-          //         name: 'message16',
-          //         size: 16,
-          //       },
-          //     },
-          //   ],
-          // },
-        ],
-      };
-    }
-    return menu;
-  }
-
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -785,13 +551,6 @@ class Posts extends React.Component<IProps, IState> {
   public render() {
     const loadMore = this.getPosts.bind(this);
     const {route, getPinnedPosts} = this.state;
-    /**
-     * @name leftItem
-     * @desc setting of left Item
-     * @const
-     * @type {object}
-     */
-    const menu = this.getLeftItemMenu();
 
     const doms = this.state.posts.map((post: IPost, index: number) => (
       <div key={post._id + index} id={post._id} onClick={this.gotoPost.bind(this, post)}>
@@ -804,8 +563,6 @@ class Posts extends React.Component<IProps, IState> {
                   text="New Post"
                   count={this.state.newPostCount}
                   visibility={this.state.newPostCount > 0}/>
-        <OptionsMenu leftItem={menu.leftItem} rightItems={menu.rightMenu}/>
-        {this.state.initialLoading}
         {
           this.state.reachedTheEnd &&
           !this.state.loadingAfter &&
@@ -871,6 +628,7 @@ const mapStateToProps = (store) => ({
   postsRoute: store.app.postsRoute,
   posts: store.app.posts,
   currentPost: store.app.currentPost,
+  user: store.app.user,
 });
 
 /**

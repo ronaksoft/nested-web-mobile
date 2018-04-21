@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import PlaceApi from '../../../../api/place';
 import IGetWithSkipRequest from '../../../../api/place/interfaces/IGetWithSkipRequest';
 import {IUser} from 'api/interfaces';
-import {IcoN, UserAvatar, FullName, OptionsMenu, PlaceName, InfiniteScroll, Loading} from 'components';
+import {IcoN, UserAvatar, FullName, PlaceName, InfiniteScroll, Loading} from 'components';
 import * as _ from 'lodash';
 import {hashHistory} from 'react-router';
 import IPlaceMemberRequest from '../../../../api/place/interfaces/IPlaceMemberRequest';
@@ -59,6 +59,7 @@ interface IState {
    * @memberof IState
    */
   reachedTheEnd: boolean;
+  initialLoad: boolean;
 
   placeId: string;
 
@@ -99,6 +100,7 @@ class Members extends React.Component<IProps, IState> {
      */
     this.state = {
       // if postsRoute is equal to current path, stored posts in redux set as component state posts
+      initialLoad: false,
       reachedTheEnd: false,
       placeId: props.params.placeId,
       members: [],
@@ -224,6 +226,7 @@ class Members extends React.Component<IProps, IState> {
         limit: place.limits.creators + 1,
       };
       this.placeApi.getMangers(params).then((users) => {
+        this.setState({initialLoad: true});
         this.addToMembers(users, true);
         this.loading = false;
         // Load members...
@@ -394,7 +397,6 @@ class Members extends React.Component<IProps, IState> {
 
     return (
       <div style={{height: '100%'}}>
-        <OptionsMenu leftItem={this.topMenu.left} rightItems={this.topMenu.right}/>
         {(this.state.members.length > 0 && accessMembers) && (
           <InfiniteScroll
             pullDownToRefresh={true}
@@ -469,7 +471,8 @@ class Members extends React.Component<IProps, IState> {
             <div className={privateStyle.bottomSpace}/>
           </InfiniteScroll>
         )}
-        {!accessMembers && <span>you have no access</span>}
+        {(!accessMembers && this.state.initialLoad) && <span>you have no access</span>}
+        <Loading position="absolute" active={!this.state.initialLoad}/>
       </div>
     );
   }

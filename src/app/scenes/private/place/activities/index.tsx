@@ -2,9 +2,8 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import PlaceApi from '../../../../api/place';
 import IGetActivitiesRequest from '../../../../api/place/interfaces/IGetActivitiesRequest';
-import {OptionsMenu, PlaceName, InfiniteScroll, Loading} from 'components';
+import {InfiniteScroll, Loading} from 'components';
 // import * as _ from 'lodash';
-import {hashHistory} from 'react-router';
 import {IActivity} from 'api/interfaces/';
 import ActivityItem from '../../../../components/ActivityItem/';
 import {setActivities} from '../../../../redux/app/actions/index';
@@ -106,18 +105,6 @@ class Activities extends React.Component<IProps, IState> {
     this.loading = false;
   }
 
-  private gotoPlacePosts() {
-    hashHistory.push(`/places/${this.state.placeId}/messages`);
-  }
-
-  private gotoPlaceMembers() {
-    hashHistory.push(`/places/${this.state.placeId}/members`);
-  }
-
-  private gotoPlaceFiles() {
-    hashHistory.push(`/places/${this.state.placeId}/files`);
-  }
-
   /**
    * Component Did Mount ( what ?!)
    * @desc Get post from redux store
@@ -174,7 +161,7 @@ class Activities extends React.Component<IProps, IState> {
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({
       activities: newProps.activities[this.props.params.placeId] || [],
-      initialLoad: true,
+      initialLoad: newProps.activities[this.props.params.placeId] ? true : false,
     });
   }
   private refresh = () => {
@@ -222,54 +209,8 @@ class Activities extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    const topMenu = {
-      left: {
-        name: <span><strong>Activities:</strong> <PlaceName place_id={this.state.placeId}/></span>,
-        type: 'title',
-        menu: [
-          {
-            onClick: this.gotoPlacePosts.bind(this, ''),
-            name: 'Posts',
-            isChecked: false,
-            icon: {
-              name: 'messages16',
-              size: 16,
-            },
-          },
-          {
-            onClick: this.gotoPlaceFiles.bind(this, ''),
-            name: 'files',
-            isChecked: false,
-            icon: {
-              name: 'file16',
-              size: 16,
-            },
-          },
-          {
-            onClick: null,
-            name: 'Activity',
-            isChecked: true,
-            icon: {
-              name: 'log16',
-              size: 16,
-            },
-          },
-          {
-            onClick: this.gotoPlaceMembers.bind(this, ''),
-            name: 'Members',
-            isChecked: false,
-            icon: {
-              name: 'placeMember16',
-              size: 16,
-            },
-          },
-        ],
-      },
-      right: [],
-    };
     return (
       <div style={{height: '100%'}}>
-        <OptionsMenu leftItem={topMenu.left} rightItems={topMenu.right}/>
         {this.state.activities.length > 0 && (
           <InfiniteScroll
             pullDownToRefresh={true}
