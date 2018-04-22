@@ -82,7 +82,7 @@ export default class VideoThumbnail extends React.Component<IProps, IState> {
     const src =
       `${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/` +
       `${this.props.fullWidth ? attachment.thumbs.pre : attachment.thumbs.x128}`;
-    const height = window.innerWidth - 24 * ( attachment.height / attachment.width);
+    const height = (window.innerWidth - 34) * ( attachment.height / attachment.width);
     return (
       <li style={{position: 'relative'}} key={attachment._id} onClick={this.props.onclick.bind(this, attachment)}>
         <img src={src}
