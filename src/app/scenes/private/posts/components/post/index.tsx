@@ -184,19 +184,19 @@ class Post extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.PostApi = new PostApi();
     if (this.props.post) {
-
+      let body = this.props.post.body || this.props.post.preview;
+      body = body.replace(/<div>/g, '');
       this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
-      this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
+      this.bodyRtl = RTLDetector.getInstance().direction(body);
       this.setState({
         post: this.props.post ? this.props.post : null,
       });
     } else {
       this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
-          console.log(post);
           post.post_read = true;
           this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
-          this.bodyRtl = RTLDetector.getInstance().direction(post.body.replace('<div>', ''));
+          this.bodyRtl = RTLDetector.getInstance().direction(post.body.replace(/<div>/g, ''));
           this.setState({
             post,
           });

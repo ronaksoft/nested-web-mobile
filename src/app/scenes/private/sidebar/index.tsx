@@ -99,6 +99,15 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private sidebarElement: HTMLDivElement;
+  /**
+   * @func refHandler
+   * @private
+   * @memberof Sidebar
+   * @param {HTMLDivElement} value
+   */
+  private refHandler = (value) => {
+    this.sidebarElement = value;
+  }
 
   /**
    * @constructor
@@ -123,56 +132,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     };
   }
 
-  /**
-   * After mounting component, it starts exploring data
-   * @override
-   * @function componentDidMount
-   * @memberof Sidebar
-   */
-  public componentDidMount() {
-
-    this.sidebarElement.addEventListener('touchmove', (e: any) => {
-      e = e || window.event;
-      document.body.scrollTop = 0;
-      e.stopImmediatePropagation();
-      e.cancelBubble = true;
-      e.stopPropagation();
-    }, false);
-
-    /** Assign PlaceApi */
-    this.PlaceApi = new PlaceApi();
-    this.ClientApi = new ClientApi();
-
-    /** Get Sidebar Places */
-    this.getMyPlaces();
-    this.getPlaceOrders();
-  }
-
-  public getPlaceOrders() {
-    this.ClientApi.read('general.new.setting.place-order').then((res: string) => {
-      if (res) {
-        const orders = JSON.parse(res);
-        // console.log(orders);
-        this.placeOrders = orders;
-        this.checkDataIsReach();
-      }
-    }).catch(this.getMyPlaces);
-  }
-
   private checkDataIsReach = () => {
     if (this.placeOrders && this.places) {
       this.arrangePlaces();
     }
-  }
-
-  /**
-   * @func refHandler
-   * @private
-   * @memberof Sidebar
-   * @param {HTMLDivElement} value
-   */
-  private refHandler = (value) => {
-    this.sidebarElement = value;
   }
 
   /**
@@ -294,23 +257,23 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     }
   }
 
-  private getOrderFromId(obj: any, placeDep: string[], id: string, tariledDepth: string) {
+  private getOrderFromId(obj: any, placeSplitArray: string[], id: string, tariledDepth: string) {
     if (obj[id]) {
       return obj[id].o;
     }
-    const thisObj = obj[tariledDepth + placeDep[0]];
+    const thisObj = obj[tariledDepth + placeSplitArray[0]];
     if (thisObj) {
-      if (!placeDep[1]) {
+      if (!placeSplitArray[1]) {
         return thisObj.o;
       } else {
-        tariledDepth += placeDep[0];
-        placeDep.splice(0, 1);
-        return this.getOrderFromId(thisObj.s, placeDep, id, tariledDepth  + '.');
+        tariledDepth += placeSplitArray.splice(0, 1);
+        return this.getOrderFromId(thisObj.s, placeSplitArray, id, tariledDepth  + '.');
       }
     } else {
       return null;
     }
   }
+
   /**
    * Get Sidebar places from Store or Server Api
    * And Creates rich object from them for Sidebar view render .
@@ -369,20 +332,20 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       const id = o._id;
       let order;
       let parentOrder;
-      const placeDep = (id + '').split('.');
-      if (placeDep.length === 1) {
+      const placeSplitArray = (id + '').split('.');
+      if (placeSplitArray.length === 1) {
         order = this.placeOrders[id] ? this.placeOrders[id].o : id;
-        order = order * Math.pow(10, 10 - (2 * placeDep.length));
+        order = order * Math.pow(10, 10 - (2 * placeSplitArray.length));
         parentOrder = order;
       } else {
         try {
-          order = this.getOrderFromId(this.placeOrders, [...placeDep], id, '');
-          if (placeDep.length > places[index - 1]._id.split('.').length) {
+          order = this.getOrderFromId(this.placeOrders, [...placeSplitArray], id, '');
+          if (placeSplitArray.length > places[index - 1]._id.split('.').length) {
             parentOrder = places[index - 1].order;
           } else {
             parentOrder = places[index - 1].parentOrder;
           }
-          order = parentOrder + (order * Math.pow(10, 10 - (2 * placeDep.length)));
+          order = parentOrder + (order * Math.pow(10, 10 - (2 * placeSplitArray.length)));
         } catch (e) {
           console.log(e);
         }
@@ -517,6 +480,41 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         this.toggleChildren(this.props.openPlace.placeId, filteredItem[0].depth, true);
       }
     });
+  }
+
+  /**
+   * After mounting component, it starts exploring data
+   * @override
+   * @function componentDidMount
+   * @memberof Sidebar
+   */
+  public componentDidMount() {
+    this.sidebarElement.addEventListener('touchmove', (e: any) => {
+      e = e || window.event;
+      document.body.scrollTop = 0;
+      e.stopImmediatePropagation();
+      e.cancelBubble = true;
+      e.stopPropagation();
+    }, false);
+
+    /** Assign PlaceApi */
+    this.PlaceApi = new PlaceApi();
+    this.ClientApi = new ClientApi();
+
+    /** Get Sidebar Places */
+    this.getMyPlaces();
+    this.getPlaceOrders();
+  }
+
+  public getPlaceOrders() {
+    this.ClientApi.read('general.new.setting.place-order').then((res: string) => {
+      if (res) {
+        const orders = JSON.parse(res);
+        // console.log(orders);
+        this.placeOrders = orders;
+        this.checkDataIsReach();
+      }
+    }).catch(this.getMyPlaces);
   }
 
   /**
