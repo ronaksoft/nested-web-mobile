@@ -44,6 +44,13 @@ export default class Scrollable extends React.Component<IProps, IState> {
     this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
   }
 
+  public scrollTo(id: string) {
+    const el: any = document.querySelector(`#${id}`);
+    if (el) {
+      this.scrollWrapper.scrollTop = el.offsetTop - 10;
+    }
+  }
+
   public componentDidMount() {
     if (!this.props.active) {
         return;

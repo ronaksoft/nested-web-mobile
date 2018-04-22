@@ -73,3 +73,6 @@
 .active i:first-child + i{
   display: none;
 }
+.isSelected {
+  background-color: rgba(245,245,245,.16);
+}

@@ -15,7 +15,7 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
 import {sortBy} from 'lodash';
-import {SidebarItem, IcoN, Loading} from 'components';
+import {SidebarItem, IcoN, Loading, InfiniteScroll} from 'components';
 
 import PlaceApi from '../../../api/place/index';
 import ClientApi from '../../../api/client/index';
@@ -90,23 +90,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   private ClientApi: ClientApi;
   private placeOrders: any[] = null;
   private places: IPlace[] = null;
-
-  /**
-   * @prop sidebarElement
-   * @desc Reference of sidebar element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Sidebar
-   */
-  private sidebarElement: HTMLDivElement;
-  /**
-   * @func refHandler
-   * @private
-   * @memberof Sidebar
-   * @param {HTMLDivElement} value
-   */
-  private refHandler = (value) => {
-    this.sidebarElement = value;
+  private scrollRef: any;
+  private scrollRefHandler = (value) => {
+    console.log('scrollRefHandler');
+    this.scrollRef = value;
   }
 
   /**
@@ -138,6 +125,16 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     }
   }
 
+  private refresh = () => {
+    this.places = null;
+    this.placeOrders = null;
+    this.getMyPlaces();
+    this.getPlaceOrders();
+  }
+
+  // private loadMore = () => {
+  //   console.log('s');
+  // }
   /**
    * Get unread counts of each place and add additional boolean property for children Places Unread state
    *
@@ -282,6 +279,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private getMyPlaces() {
+    console.log(this, this.props);
     // console.log(this.props.sidebarPlaces, !this.props.openPlace.placeId);
     /**
      * Detemines if recieved data is exists assigns to 'places'
@@ -295,6 +293,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
          * Get Unreads of Places
          */
         this.getUnreads();
+        const openPlace = this.props.openPlace.placeId;
+        if (openPlace) {
+          this.toggleChildren(this.props.openPlace.placeId, openPlace.split('.').length - 1, true);
+        }
+        console.log(this.scrollRef);
+        setTimeout(this.scrollRef.retviveScroll, 100);
       });
     } else {
       /**
@@ -388,6 +392,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         isOpen: false,
         hasChildren: false,
         isChildren: false,
+        isSelected: false,
       };
       /**
        * Determines the Place Depth
@@ -489,13 +494,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   public componentDidMount() {
-    this.sidebarElement.addEventListener('touchmove', (e: any) => {
-      e = e || window.event;
-      document.body.scrollTop = 0;
-      e.stopImmediatePropagation();
-      e.cancelBubble = true;
-      e.stopPropagation();
-    }, false);
+    // this.sidebarElement.addEventListener('touchmove', (e: any) => {
+    //   e = e || window.event;
+    //   document.body.scrollTop = 0;
+    //   e.stopImmediatePropagation();
+    //   e.cancelBubble = true;
+    //   e.stopPropagation();
+    // }, false);
 
     /** Assign PlaceApi */
     this.PlaceApi = new PlaceApi();
@@ -594,12 +599,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    */
   public render() {
     const placeDoms = [];
-
     /**
      * generates JSX elements for visible or grand places
      */
     this.state.places.forEach((place, i) => {
       const showCase = !place.isChildren || place.expanded;
+      place.isSelected = this.props.openPlace.placeId === place.id;
       if (showCase) {
         const placeDom = (
           <SidebarItem
@@ -613,62 +618,69 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       }
     });
     return (
-      <div className={style.sidebar} ref={this.refHandler}>
-        <div>
-          {/* Close Sidebar button */}
-          <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-            <IcoN size={24} name={'xcrossWhite24'}/>
-          </div>
-          <ul className={style.sidebarActions}>
-            {/* Feed scene link */}
-            <li>
-              <Link to={`/feed`}>
-                <IcoN size={16} name={'bookmarkMessageBWhite16'}/>
-                Feed
-              </Link>
-            </li>
-            {/* bookmarks scene link */}
-            <li>
-              <Link to={`/bookmarks`}>
-                <IcoN size={16} name={'bookmarkMessageWhite16'}/>
-                Bookmarked Posts
-              </Link>
-            </li>
-            {/* Shared messages scene link */}
-            <li>
-              <Link to={`/shared`}>
-                <IcoN size={16} name={'sentMessageWhite16'}/>
-                Shared by me
-              </Link>
-            </li>
-          </ul>
-          <ul className={style.places}>
-            <Loading active={this.state.loading} position="absolute" color="white"/>
-            {placeDoms}
-          </ul>
-          <hr className={style.hrDark}/>
-          <hr className={style.hrLight}/>
-          <ul className={style.sidebarActions}>
-            {/*<li>
-              <IcoN size={16} name={'gearWhite16'}/>
-              Profile and Settings
-            </li>*/}
-            {/* Help center external link */}
-            <li>
-              <a href={`http://help.nested.me`} target="_blank">
-                <IcoN size={16} name={'ask16White'}/>
-                Help Center
-              </a>
-            </li>
-            {/* Logging out button */}
-            <li>
-              <Link to={`/signout`}>
-                <IcoN size={16} name={'exit16White'}/>
-                Sign out
-              </Link>
-            </li>
-          </ul>
+      <div className={style.sidebar}>
+        {/* Close Sidebar button */}
+        <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
+          <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
+        <InfiniteScroll
+            pullDownToRefresh={true}
+            refreshFunction={this.refresh}
+            route={'sidebar-post'}
+            hasMore={false}
+            ref={this.scrollRefHandler}
+            loader={<Loading active={this.state.loading} position="absolute" color="white"/>}>
+          <div className={style.itemContainer}>
+            <ul className={style.sidebarActions}>
+              {/* Feed scene link */}
+              <li>
+                <Link to={`/feed`}>
+                  <IcoN size={16} name={'bookmarkMessageBWhite16'}/>
+                  Feed
+                </Link>
+              </li>
+              {/* bookmarks scene link */}
+              <li>
+                <Link to={`/bookmarks`}>
+                  <IcoN size={16} name={'bookmarkMessageWhite16'}/>
+                  Bookmarked Posts
+                </Link>
+              </li>
+              {/* Shared messages scene link */}
+              <li>
+                <Link to={`/shared`}>
+                  <IcoN size={16} name={'sentMessageWhite16'}/>
+                  Shared by me
+                </Link>
+              </li>
+            </ul>
+            <ul className={style.places}>
+              {placeDoms}
+            </ul>
+            <hr className={style.hrDark}/>
+            <hr className={style.hrLight}/>
+            <ul className={style.sidebarActions}>
+              {/*<li>
+                <IcoN size={16} name={'gearWhite16'}/>
+                Profile and Settings
+              </li>*/}
+              {/* Help center external link */}
+              <li>
+                <a href={`http://help.nested.me`} target="_blank">
+                  <IcoN size={16} name={'ask16White'}/>
+                  Help Center
+                </a>
+              </li>
+              {/* Logging out button */}
+              <li>
+                <Link to={`/signout`}>
+                  <IcoN size={16} name={'exit16White'}/>
+                  Sign out
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </InfiniteScroll>
       </div>
     );
   }

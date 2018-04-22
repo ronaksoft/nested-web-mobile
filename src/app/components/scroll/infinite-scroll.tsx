@@ -64,64 +64,67 @@ interface IProps {
 };
 
 class InfiniteScroll extends React.Component<IProps, IState> {
-    public startY: number;
-    public currentY: number;
-    public dragging: boolean;
-    public maxPullDownDistance: number;
-    public el: HTMLElement;
-    public throttledOnScrollListener: () => void;
-    public infScroll: any;
-    public pullDown: any;
-    constructor(props) {
-        super();
-        this.state = {
-            showLoader: false,
-            scrollPositions: {},
-            lastScrollTop: 0,
-            actionTriggered: false,
-            pullToRefreshThresholdBreached: false,
-            route: props.route,
-            pullDownToRefreshContent: props.pullDownToRefreshContent || (
-              <h3 className={style.pull}>
-                <IcoN size={16} name={'arrow16'}/>
-                <span>Pull down to refresh</span>
-              </h3>
-            ),
-            releaseToRefreshContent: props.releaseToRefreshContent || (
-              <h3 className={style.release}>
-                <IcoN size={16} name={'arrow16'}/>
-                <span>Release to refresh</span>
-              </h3>
-            ),
-            pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
-            disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
-        };
-        // variables to keep track of pull down behaviour
-        this.startY = 0;
-        this.currentY = 0;
-        this.dragging = false;
-        // will be populated in componentDidMount
-        // based on the height of the pull down element
-        this.maxPullDownDistance = 0;
+  public startY: number;
+  public currentY: number;
+  public dragging: boolean;
+  public maxPullDownDistance: number;
+  public el: HTMLElement;
+  public throttledOnScrollListener: () => void;
+  public infScroll: any;
+  public pullDown: any;
+  constructor(props) {
+    super();
+    this.state = {
+        showLoader: false,
+        scrollPositions: {},
+        lastScrollTop: 0,
+        actionTriggered: false,
+        pullToRefreshThresholdBreached: false,
+        route: props.route,
+        pullDownToRefreshContent: props.pullDownToRefreshContent || (
+          <h3 className={style.pull}>
+            <IcoN size={16} name={'arrow16'}/>
+            <span>Pull down to refresh</span>
+          </h3>
+        ),
+        releaseToRefreshContent: props.releaseToRefreshContent || (
+          <h3 className={style.release}>
+            <IcoN size={16} name={'arrow16'}/>
+            <span>Release to refresh</span>
+          </h3>
+        ),
+        pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
+        disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
+    };
+    // variables to keep track of pull down behaviour
+    this.startY = 0;
+    this.currentY = 0;
+    this.dragging = false;
+    // will be populated in componentDidMount
+    // based on the height of the pull down element
+    this.maxPullDownDistance = 0;
 
-        this.onScrollListener = this.onScrollListener.bind(this);
-        this.throttledOnScrollListener = throttle(this.onScrollListener, 150).bind(this);
-        this.onStart = this.onStart.bind(this);
-        this.onMove = this.onMove.bind(this);
-        this.onEnd = this.onEnd.bind(this);
-    }
+    this.onScrollListener = this.onScrollListener.bind(this);
+    this.throttledOnScrollListener = throttle(this.onScrollListener, 150).bind(this);
+    this.onStart = this.onStart.bind(this);
+    this.onMove = this.onMove.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+  }
+
+  public retviveScroll() {
+    setTimeout(() => {
+      if (this.state.route && this.props.scrollPositions[this.state.route]) {
+        this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
+      } else if (this.el.scrollHeight > this.props.initialScrollY) {
+        this.el.scrollTo(0, this.props.initialScrollY);
+      }
+    }, 10);
+  }
 
   public componentDidMount() {
       this.el = this.infScroll || window;
       this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
-
-      setTimeout(() => {
-        if (this.state.route && this.props.scrollPositions[this.state.route]) {
-          this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
-        } else if (this.el.scrollHeight > this.props.initialScrollY) {
-          this.el.scrollTo(0, this.props.initialScrollY);
-        }
-      }, 100);
+      this.retviveScroll();
       if (this.props.pullDownToRefresh) {
           // if ('PointerEvent' in window) {
           //   this.el.addEventListener('pointerdown', this.onStart, false);
