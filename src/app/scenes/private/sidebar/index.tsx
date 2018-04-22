@@ -623,64 +623,66 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
-        <InfiniteScroll
-            pullDownToRefresh={true}
-            refreshFunction={this.refresh}
-            route={'sidebar-post'}
-            hasMore={false}
-            ref={this.scrollRefHandler}
-            loader={<Loading active={this.state.loading} position="absolute" color="white"/>}>
-          <div className={style.itemContainer}>
-            <ul className={style.sidebarActions}>
-              {/* Feed scene link */}
-              <li>
-                <Link to={`/feed`}>
-                  <IcoN size={16} name={'bookmarkMessageBWhite16'}/>
-                  Feed
-                </Link>
-              </li>
-              {/* bookmarks scene link */}
-              <li>
-                <Link to={`/bookmarks`}>
-                  <IcoN size={16} name={'bookmarkMessageWhite16'}/>
-                  Bookmarked Posts
-                </Link>
-              </li>
-              {/* Shared messages scene link */}
-              <li>
-                <Link to={`/shared`}>
-                  <IcoN size={16} name={'sentMessageWhite16'}/>
-                  Shared by me
-                </Link>
-              </li>
-            </ul>
-            <ul className={style.places}>
-              {placeDoms}
-            </ul>
-            <hr className={style.hrDark}/>
-            <hr className={style.hrLight}/>
-            <ul className={style.sidebarActions}>
-              {/*<li>
-                <IcoN size={16} name={'gearWhite16'}/>
-                Profile and Settings
-              </li>*/}
-              {/* Help center external link */}
-              <li>
-                <a href={`http://help.nested.me`} target="_blank">
-                  <IcoN size={16} name={'ask16White'}/>
-                  Help Center
-                </a>
-              </li>
-              {/* Logging out button */}
-              <li>
-                <Link to={`/signout`}>
-                  <IcoN size={16} name={'exit16White'}/>
-                  Sign out
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </InfiniteScroll>
+        <div>
+          <InfiniteScroll
+              pullDownToRefresh={true}
+              refreshFunction={this.refresh}
+              route={'sidebar-post'}
+              hasMore={false}
+              ref={this.scrollRefHandler}
+              loader={<Loading active={this.state.loading} position="absolute" color="white"/>}>
+            <div className={style.itemContainer}>
+              <ul className={style.sidebarActions}>
+                {/* Feed scene link */}
+                <li>
+                  <Link to={`/feed`}>
+                    <IcoN size={16} name={'bookmarkMessageBWhite16'}/>
+                    Feed
+                  </Link>
+                </li>
+                {/* bookmarks scene link */}
+                <li>
+                  <Link to={`/bookmarks`}>
+                    <IcoN size={16} name={'bookmarkMessageWhite16'}/>
+                    Bookmarked Posts
+                  </Link>
+                </li>
+                {/* Shared messages scene link */}
+                <li>
+                  <Link to={`/shared`}>
+                    <IcoN size={16} name={'sentMessageWhite16'}/>
+                    Shared by me
+                  </Link>
+                </li>
+              </ul>
+              <ul className={style.places}>
+                {placeDoms}
+              </ul>
+              <hr className={style.hrDark}/>
+              <hr className={style.hrLight}/>
+              <ul className={style.sidebarActions}>
+                {/*<li>
+                  <IcoN size={16} name={'gearWhite16'}/>
+                  Profile and Settings
+                </li>*/}
+                {/* Help center external link */}
+                <li>
+                  <a href={`http://help.nested.me`} target="_blank">
+                    <IcoN size={16} name={'ask16White'}/>
+                    Help Center
+                  </a>
+                </li>
+                {/* Logging out button */}
+                <li>
+                  <Link to={`/signout`}>
+                    <IcoN size={16} name={'exit16White'}/>
+                    Sign out
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </InfiniteScroll>
+        </div>
       </div>
     );
   }

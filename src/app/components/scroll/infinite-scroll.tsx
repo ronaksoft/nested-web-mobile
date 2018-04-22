@@ -66,6 +66,7 @@ interface IProps {
 class InfiniteScroll extends React.Component<IProps, IState> {
   public startY: number;
   public currentY: number;
+  public retry: number;
   public dragging: boolean;
   public maxPullDownDistance: number;
   public el: HTMLElement;
@@ -98,6 +99,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     };
     // variables to keep track of pull down behaviour
     this.startY = 0;
+    this.retry = 0;
     this.currentY = 0;
     this.dragging = false;
     // will be populated in componentDidMount
@@ -111,14 +113,22 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     this.onEnd = this.onEnd.bind(this);
   }
 
-  public retviveScroll() {
-    setTimeout(() => {
-      if (this.state.route && this.props.scrollPositions[this.state.route]) {
-        this.el.scrollTo(0, this.props.scrollPositions[this.state.route]);
-      } else if (this.el.scrollHeight > this.props.initialScrollY) {
-        this.el.scrollTo(0, this.props.initialScrollY);
+  public retviveScroll = () => {
+    if (this.retry === 5) {
+      return this.retry = 0;
+    } else {
+      const scrollToVal = (this.state.route && this.props.scrollPositions[this.state.route]) ||
+        this.props.initialScrollY;
+      if (scrollToVal) {
+        if (this.el.scrollHeight - this.el.clientHeight < scrollToVal) {
+          this.el.scrollTo(0, this.el.scrollHeight - this.el.clientHeight);
+          this.retry++;
+          return setTimeout(this.retviveScroll, 100 * this.retry);
+        } else {
+          this.el.scrollTo(0, scrollToVal);
+        }
       }
-    }, 10);
+    }
   }
 
   public componentDidMount() {
