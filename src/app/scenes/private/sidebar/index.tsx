@@ -92,7 +92,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   private places: IPlace[] = null;
   private scrollRef: any;
   private scrollRefHandler = (value) => {
-    console.log('scrollRefHandler');
     this.scrollRef = value;
   }
 
@@ -279,7 +278,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   private getMyPlaces() {
-    console.log(this, this.props);
     // console.log(this.props.sidebarPlaces, !this.props.openPlace.placeId);
     /**
      * Detemines if recieved data is exists assigns to 'places'
@@ -297,7 +295,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         if (openPlace) {
           this.toggleChildren(this.props.openPlace.placeId, openPlace.split('.').length - 1, true);
         }
-        console.log(this.scrollRef);
         setTimeout(this.scrollRef.retviveScroll, 100);
       });
     } else {
@@ -325,6 +322,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   private arrangePlaces() {
+    console.time('111');
     let index = 0;
     /**
      * Sort Places Array by Place Ids
@@ -368,11 +366,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     const placesConjuctions: ISidebarPlace[] = [];
     places.forEach((element, i) => {
-
-      /**
-       * Add place to redux store Places
-       */
-      this.props.placeAdd(element);
 
       /**
        * @const idSplit
@@ -478,12 +471,16 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
       places: placesConjuctions,
       loading: false,
     }, () => {
-      const filteredItem = placesConjuctions.filter( (item) => {
-        return  this.props.openPlace.placeId === item.id;
-      });
-      if ( filteredItem.length > 0 ) {
+      const filteredItem = placesConjuctions.filter((item) => this.props.openPlace.placeId === item.id);
+
+      if (filteredItem.length > 0) {
         this.toggleChildren(this.props.openPlace.placeId, filteredItem[0].depth, true);
       }
+
+      /**
+       * Add place to redux store Places
+       */
+      this.places.forEach((place) => this.props.placeAdd(place));
     });
   }
 
@@ -494,13 +491,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof Sidebar
    */
   public componentDidMount() {
-    // this.sidebarElement.addEventListener('touchmove', (e: any) => {
-    //   e = e || window.event;
-    //   document.body.scrollTop = 0;
-    //   e.stopImmediatePropagation();
-    //   e.cancelBubble = true;
-    //   e.stopPropagation();
-    // }, false);
 
     /** Assign PlaceApi */
     this.PlaceApi = new PlaceApi();
