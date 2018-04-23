@@ -613,7 +613,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
-        <div>
+        <div className={style.scrollContainer}>
           <InfiniteScroll
               pullDownToRefresh={true}
               refreshFunction={this.refresh}
