@@ -10,8 +10,10 @@
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  LabelChips, Scrollable} from 'components';
+import {
+  IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
+  LabelChips, Scrollable,
+} from 'components';
 import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
@@ -23,6 +25,7 @@ import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
 import {difference} from 'lodash';
+
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
@@ -149,6 +152,11 @@ class Post extends React.Component<IProps, IState> {
   private bodyRtl: boolean;
 
   /**
+   * Object of iframe
+   */
+  private iframeObj: any;
+
+  /**
    * @prop htmlBodyRef
    * @desc Reference of html email body element
    * @private
@@ -218,16 +226,16 @@ class Post extends React.Component<IProps, IState> {
 
   private removeLabel(id: string) {
     const params: IRemoveLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
+      post_id: this.state.post._id,
+      label_id: id,
     };
     this.PostApi.removeLabel(params);
   }
 
   private addLabel(id: string) {
     const params: IAddLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
+      post_id: this.state.post._id,
+      label_id: id,
     };
     this.PostApi.addLabel(params);
   }
@@ -318,7 +326,7 @@ class Post extends React.Component<IProps, IState> {
    */
   private loadBodyEv(el: HTMLDivElement) {
     if (!el) {
-      return setTimeout( () => {
+      return setTimeout(() => {
         this.loadBodyEv(this.htmlBodyRef);
       }, 100);
     }
@@ -329,12 +337,12 @@ class Post extends React.Component<IProps, IState> {
     // console.log(ParentDOMHeight, delta);
     const WinWidth = window.screen.width;
     const ratio = WinWidth / DOMWidth;
-    if (ratio >= 1 ) {
+    if (ratio >= 1) {
       return;
     }
     el.style.transform = 'scale(' + ratio + ',' + ratio + ')';
     el.style.webkitTransform = 'scale(' + ratio + ',' + ratio + ')';
-    setTimeout( () => {
+    setTimeout(() => {
       const newH = el.getBoundingClientRect().height;
       // console.log(delta, newH);
       el.parentElement.style.height = delta + newH + 'px';
@@ -343,7 +351,7 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private resizeFont(el, ratio: number) {
-    if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
+    if (el.innerHTML === el.innerText && el.innerText.length > 0) {
       const fontSize = parseInt(el.style.fontSize, 10);
       const newFontSize = (fontSize > 1 ? fontSize : 14) * (1 / ratio);
       el.style.fontSize = newFontSize < 100 ? newFontSize : 90 + 'px';
@@ -490,16 +498,55 @@ class Post extends React.Component<IProps, IState> {
     this.scrollRef.scrollDown();
   }
 
-  public resizeIframe = (obj) => {
-      try {
-        if (obj.contentWindow) {
-          obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
-        } else {
-          this.resizeIframe(obj);
-        }
-      } catch (error) {
-        console.log(error);
+  public iframeObjHandler = (obj) => {
+    setTimeout(() => {
+      if (obj.contentWindow) {
+        this.iframeObj = obj;
+        window.addEventListener('message', this.onIframeMessageHandler);
       }
+    }, 100);
+  }
+
+  private onIframeMessageHandler = (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.url === this.state.post.iframe_url) {
+        switch (data.cmd) {
+          case 'getInfo':
+            const userData = this.getUserData();
+            this.iframeObj.contentWindow.postMessage(this.sendIframeMessage('setInfo', userData), '*');
+            break;
+          case 'setSize':
+            this.iframeObj.style.cssText = 'height: ' + data.data.height + 'px !important';
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (e) {
+      console.log('cannot parse message', e);
+    }
+  }
+
+  private getUserData(): any {
+    const userId = this.props.user._id;
+    const msgId = this.state.post._id;
+    const app = CONFIG().DOMAIN;
+    return {
+      userId,
+      msgId,
+      app,
+      locale: 'en-US',
+      dark: false,
+    };
+  }
+
+  private sendIframeMessage(cmd, data) {
+    const msg: any = {
+      cmd,
+      data,
+    };
+    return JSON.stringify(msg);
   }
 
   /**
@@ -520,7 +567,7 @@ class Post extends React.Component<IProps, IState> {
 
     const getIframeUrl = (url: any) => {
       const userId = this.props.user._id;
-      const msgId = this.props.post._id;
+      const msgId = this.state.post ? this.state.post._id : '';
       const app = CONFIG().DOMAIN;
       let urlPostFix = '';
       if (url.indexOf('#') > -1) {
@@ -586,7 +633,7 @@ class Post extends React.Component<IProps, IState> {
           </div>
         )}
         {this.state.showMoreOptions &&
-          <div onClick={this.toggleMoreOpts} className={style.overlay}/>
+        <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
         <Scrollable active={postView} ref={this.scrollRefHandler}>
           <div className={style.postScrollContainer}>
@@ -606,7 +653,7 @@ class Post extends React.Component<IProps, IState> {
                 </p>
                 {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
                 <div className={post.pinned ? style.postPinned : style.postPin}
-                    onClick={bookmarkClick}>
+                     onClick={bookmarkClick}>
                   {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
                   {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
                 </div>
@@ -615,10 +662,11 @@ class Post extends React.Component<IProps, IState> {
               <div className={style.postBody}>
                 <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
                 {post.iframe_url && (
-                  <iframe width="100%" src={getIframeUrl(post.iframe_url)} scrolling="auto" onLoad={this.resizeIframe}/>
+                  <iframe width="100%" src={getIframeUrl(post.iframe_url)} scrolling="auto"
+                          ref={this.iframeObjHandler}/>
                 )}
                 <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
-                ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
+                     ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
                 {post.post_attachments.length > 0 && !this.props.post && (
                   <PostAttachment attachments={post.post_attachments}
                                   postId={post._id}
@@ -626,32 +674,33 @@ class Post extends React.Component<IProps, IState> {
                 )}
                 {this.props.post && (
                   <div className={style.postDetails}>
-                  {post.post_attachments.length > 0 && (
-                    <div>
-                      <IcoN size={16} name={'attach16'}/>
-                      {post.post_attachments.length}
-                      {post.post_attachments.length === 1 && <span> Attachment</span>}
-                      {post.post_attachments.length > 1 && <span> Attachments</span>}
-                    </div>
-                  )}
-                  {post.post_labels.length > 0 && (
-                    <div>
-                      <IcoN size={16} name={'tag16'}/>
-                      {post.post_labels.length}
-                      {post.post_labels.length === 1 && <span> Label</span>}
-                      {post.post_labels.length > 1 && <span> Labels</span>}
-                    </div>
-                  )}
+                    {post.post_attachments.length > 0 && (
+                      <div>
+                        <IcoN size={16} name={'attach16'}/>
+                        {post.post_attachments.length}
+                        {post.post_attachments.length === 1 && <span> Attachment</span>}
+                        {post.post_attachments.length > 1 && <span> Attachments</span>}
+                      </div>
+                    )}
+                    {post.post_labels.length > 0 && (
+                      <div>
+                        <IcoN size={16} name={'tag16'}/>
+                        {post.post_labels.length}
+                        {post.post_labels.length === 1 && <span> Label</span>}
+                        {post.post_labels.length > 1 && <span> Labels</span>}
+                      </div>
+                    )}
                   </div>
                 )}
                 {!this.props.post && (
                   <ul className={style.postLabels}>
                     {post.post_labels.map((label: ILabel, index: number) => {
                       return (
-                      <li key={label._id + index}>
-                        <LabelChips label={label}/>
-                      </li>
-                      ); })}
+                        <li key={label._id + index}>
+                          <LabelChips label={label}/>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
                 <div className={style.postPlaces}>
@@ -687,10 +736,10 @@ class Post extends React.Component<IProps, IState> {
               {/* renders the comments and comment input in post view */}
               {!this.props.post && (
                 <CommentsBoard no_comment={this.state.post.no_comment}
-                post_id={this.state.post._id} post={this.state.post}
-                user={this.props.user} newComment={this.newCommentReceived}/>
+                               post_id={this.state.post._id} post={this.state.post}
+                               user={this.props.user} newComment={this.newCommentReceived}/>
               )}
-            {postView && <div className={privateStyle.bottomSpace}/>}
+              {postView && <div className={privateStyle.bottomSpace}/>}
             </div>
           </div>
         </Scrollable>
