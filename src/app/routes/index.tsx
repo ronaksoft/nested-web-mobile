@@ -6,7 +6,7 @@ import {
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
-import {Public, Signin, Signup, NotFound} from 'scenes/public';
+import {Public, Signin, Signup, NotFound, Workspace} from 'scenes/public';
 import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
 import {Provider} from 'react-redux';
 import {Router, Route, hashHistory, IndexRoute, Redirect} from 'react-router';
@@ -68,6 +68,7 @@ export default (
       </Route>
       <Route component={Public}>
         <Route path="/404" component={NotFound}/>
+        <Route path="/workspace" component={Workspace}/>
         <Route path="/signin" component={Signin}/>
         <Route path="/signup" component={Signup}>
           <IndexRoute component={SubmitPhone}/>
