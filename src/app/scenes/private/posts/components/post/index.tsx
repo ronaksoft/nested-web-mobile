@@ -247,7 +247,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberOf Post
    */
   public componentWillUnmount() {
-    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
+    window.removeEventListener('message', this.onIframeMessageHandler);
   }
 
   /**
