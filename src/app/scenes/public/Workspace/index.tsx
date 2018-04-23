@@ -129,6 +129,7 @@ class Workspace extends React.Component<IProps, IState> {
    * @memberof Signin
    */
   public render() {
+    const windowObj: Window = window;
     return (
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
@@ -142,7 +143,7 @@ class Workspace extends React.Component<IProps, IState> {
             validateStatus={this.state.workspace.status}
           >
             <Input
-              placeholder="eg: nested.me"
+              placeholder={`e.g., ${windowObj.__NESTED_CONFIG__.DOMAIN}`}
               value={this.state.workspace.value}
               onChange={this.handleWorkspaceChange}
             />
