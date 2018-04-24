@@ -509,6 +509,9 @@ class Post extends React.Component<IProps, IState> {
 
   private onIframeMessageHandler = (e) => {
     try {
+      if (this.state.post.iframe_url.indexOf(e.origin) === -1) {
+        return;
+      }
       const data = JSON.parse(e.data);
       if (data.url === this.state.post.iframe_url) {
         switch (data.cmd) {
