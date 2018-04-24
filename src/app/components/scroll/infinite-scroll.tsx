@@ -65,12 +65,15 @@ interface IProps {
 
 class InfiniteScroll extends React.Component<IProps, IState> {
   public startY: number;
+  public lastScrollPosition: number;
+  public lastChangedScrollPosition: number;
   public currentY: number;
   public retry: number;
   public dragging: boolean;
   public maxPullDownDistance: number;
   public el: HTMLElement;
   public throttledOnScrollListener: () => void;
+  public throttledSetLastScroll: () => void;
   public infScroll: any;
   public pullDown: any;
   constructor(props) {
@@ -108,24 +111,28 @@ class InfiniteScroll extends React.Component<IProps, IState> {
 
     this.onScrollListener = this.onScrollListener.bind(this);
     this.throttledOnScrollListener = throttle(this.onScrollListener, 150).bind(this);
+    this.throttledSetLastScroll = throttle(() => {
+      this.lastScrollPosition = this.lastChangedScrollPosition;
+    }, 150);
     this.onStart = this.onStart.bind(this);
     this.onMove = this.onMove.bind(this);
     this.onEnd = this.onEnd.bind(this);
   }
 
   public retviveScroll = () => {
-    if (this.retry === 5) {
+    if (this.retry === 7) {
       return this.retry = 0;
     } else {
-      const scrollToVal = (this.state.route && this.props.scrollPositions[this.state.route]) ||
+      this.lastChangedScrollPosition = (this.state.route && this.props.scrollPositions[this.state.route]) ||
         this.props.initialScrollY;
-      if (scrollToVal) {
-        if (this.el.scrollHeight - this.el.clientHeight < scrollToVal) {
+        this.throttledSetLastScroll();
+      if (this.lastScrollPosition) {
+        if (this.el.scrollHeight - this.el.clientHeight < this.lastScrollPosition) {
           this.el.scrollTo(0, this.el.scrollHeight - this.el.clientHeight);
           this.retry++;
-          return setTimeout(this.retviveScroll, 100 * this.retry);
+          return setTimeout(this.retviveScroll, 10 * this.retry * this.retry);
         } else {
-          this.el.scrollTo(0, scrollToVal);
+          this.el.scrollTo(0, this.lastScrollPosition);
         }
       }
     }
