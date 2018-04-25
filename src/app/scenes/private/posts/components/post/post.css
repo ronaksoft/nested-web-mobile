@@ -41,6 +41,8 @@
   box-shadow: none;
   outline: none;
   border: none;
+  margin: 0 8px;
+  width: calc(100% - 16px);
 }
 .postCard hr{
   border-top: none;

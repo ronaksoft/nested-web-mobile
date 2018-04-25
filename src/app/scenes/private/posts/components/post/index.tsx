@@ -25,6 +25,7 @@ import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
 import {difference} from 'lodash';
+import * as md5 from 'md5';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -507,12 +508,17 @@ class Post extends React.Component<IProps, IState> {
     }, 100);
   }
 
+  // TODO: hash checksum
+
   private onIframeMessageHandler = (e) => {
     try {
       if (this.state.post.iframe_url.indexOf(e.origin) === -1) {
         return;
       }
       const data = JSON.parse(e.data);
+      if (!this.isHashValid(data)) {
+        return;
+      }
       if (data.url === this.state.post.iframe_url) {
         switch (data.cmd) {
           case 'getInfo':
@@ -549,7 +555,16 @@ class Post extends React.Component<IProps, IState> {
       cmd,
       data,
     };
+    const hash = md5(JSON.stringify(msg));
+    msg.hash = hash;
     return JSON.stringify(msg);
+  }
+
+  private isHashValid(data) {
+    const packetHash = data.hash;
+    delete data.hash;
+    const hash = md5(JSON.stringify(data));
+    return (hash === packetHash);
   }
 
   /**
@@ -665,7 +680,7 @@ class Post extends React.Component<IProps, IState> {
               <div className={style.postBody}>
                 <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
                 {post.iframe_url && (
-                  <iframe width="100%" src={getIframeUrl(post.iframe_url)} scrolling="auto"
+                  <iframe src={getIframeUrl(post.iframe_url)} scrolling="auto"
                           ref={this.iframeObjHandler}/>
                 )}
                 <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
