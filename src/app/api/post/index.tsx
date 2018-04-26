@@ -13,6 +13,7 @@ import IPostsListRequest from './interfaces/IPostsListRequest';
 import IPostsListResponse from './interfaces/IPostsListResponse';
 import IGetPostRequest from './interfaces/IGetRequest';
 import ISendRequest from './interfaces/ISendRequest';
+import IEditRequest from './interfaces/IEditRequest';
 import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
 import IAddLabelRequest from './interfaces/IAddLabelRequest';
@@ -199,6 +200,20 @@ export default class PostApi {
     data.content_type = data.content_type || 'text/plain';
     return this.api.request({
       cmd: 'post/add',
+      data,
+    });
+  }
+
+  /**
+   * @func edit
+   * @desc Edit the post
+   * @param {IEditRequest} data
+   * @returns {Promise<any>}
+   * @memberof PostApi
+   */
+  public edit(data: IEditRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/edit',
       data,
     });
   }

@@ -18,7 +18,8 @@ import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
-import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
+import {setCurrentPost} from '../../../../../redux/app/actions/index';
+import {postAdd, postUpdate} from '../../../../../redux/posts/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
@@ -84,7 +85,8 @@ interface IProps {
    * @desc Updates posts in store
    * @memberof IProps
    */
-  setPosts: (posts: IPost[]) => {};
+  postAdd: (post: IPost) => {};
+  postUpdate: (post: IPost) => {};
   /**
    * @prop setCurrentPost
    * @desc Updates the last post in store
@@ -192,36 +194,44 @@ class Post extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.PostApi = new PostApi();
     if (this.props.post) {
-      let body = this.props.post.body || this.props.post.preview;
-      body = body.replace(/<div>/g, '');
-      this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
-      this.bodyRtl = RTLDetector.getInstance().direction(body);
       this.setState({
         post: this.props.post ? this.props.post : null,
       });
+      this.applySubjectDirection(this.props.post.subject);
+      this.applyBodyDirection(this.props.post.body || this.props.post.preview);
     } else {
+      const storedPost = this.props.posts[this.props.routeParams.postId];
+      if (storedPost) {
+        this.setState({
+          post: storedPost,
+        });
+        this.applySubjectDirection(storedPost.subject);
+        this.applyBodyDirection(storedPost.body || storedPost.preview);
+      }
       this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
-          post.post_read = true;
-          this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
-          this.bodyRtl = RTLDetector.getInstance().direction(post.body.replace(/<div>/g, ''));
           this.setState({
             post,
           });
-          this.updatePostsInStore('post_read', true);
-          // setTimeout( () => {
-          //   this.loadBodyEv(this.htmlBodyRef);
-          // }, 300);
+          this.applySubjectDirection(post.subject);
+          this.applyBodyDirection(post.body);
+          if (!post.post_read) {
+            post.post_read = true;
+            this.updatePostsInStore('post_read', true);
+          }
         });
 
-      // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
 
-    // setTimeout(() => {
-    //   this.loadBodyEv(this.htmlBodyRef);
-    // }, 300);
+  }
 
+  private applySubjectDirection = (subject: string = '') => {
+    this.subjectRtl = RTLDetector.getInstance().direction(subject);
+  }
+
+  private applyBodyDirection = (body: string = '') => {
+    this.subjectRtl = RTLDetector.getInstance().direction(body.replace(/<div>/g, ''));
   }
 
   private removeLabel(id: string) {
@@ -276,18 +286,11 @@ class Post extends React.Component<IProps, IState> {
   private updatePostsInStore(key: string, value: any) {
 
     const posts = JSON.parse(JSON.stringify(this.props.posts));
-    let newPosts;
-    if (!Array.isArray(posts)) {
-      return;
+    const post = posts[this.state.post._id];
+    if (post) {
+      post[key] = value;
+      this.props.postUpdate(post);
     }
-    newPosts = posts.map((post: IPost) => {
-      if (post._id === this.state.post._id) {
-        post[key] = value;
-      }
-      return post;
-    });
-
-    this.props.setPosts(newPosts);
 
     if (this.props.currentPost) {
       this.props.setCurrentPost(this.props.currentPost);
@@ -468,7 +471,9 @@ class Post extends React.Component<IProps, IState> {
       const images = this.htmlBodyRef.querySelectorAll('img');
       let imagesLoaded = 0;
       let imagesNotLoaded = 0;
-      this.htmlBodyRef.querySelectorAll('img').forEach((image, index) => {
+      // console.log('htmlBodyRef', this.htmlBodyRef.querySelectorAll('img'), this.state.post);
+      images.forEach((image, index) => {
+        // console.log('htmlBodyRef', image , index, imagesLoaded, imagesNotLoaded);
         if (image.complete) {
           imagesLoaded++;
         } else {
@@ -500,7 +505,7 @@ class Post extends React.Component<IProps, IState> {
 
   public iframeObjHandler = (obj) => {
     setTimeout(() => {
-      if (obj.contentWindow) {
+      if (obj && obj.contentWindow) {
         this.iframeObj = obj;
         window.addEventListener('message', this.onIframeMessageHandler);
       }
@@ -566,6 +571,7 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
+    console.log(post);
     const bookmarkClick = this.toggleBookmark.bind(this);
 
     const getIframeUrl = (url: any) => {
@@ -617,6 +623,12 @@ class Post extends React.Component<IProps, IState> {
                 <a onClick={this.toggleAddLAbel}>Labels</a>
                 <p>{this.state.post.post_labels.length}</p>
               </li>
+              {post.wipe_access && (
+                <li>
+                  <IcoN size={16} name={'pencil16'}/>
+                  <Link to={`/compose/edit/${post._id}`}>Edit</Link>
+                </li>
+              )}
               <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'reply16'}/>
@@ -763,7 +775,7 @@ class Post extends React.Component<IProps, IState> {
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   post: ownProps.post,
   currentPost: store.app.currentPost,
-  posts: store.app.posts,
+  posts: store.posts,
   user: store.app.user,
   routeParams: ownProps.routeParams,
 });
@@ -774,7 +786,8 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
  * @param {any} dispatch
  */
 const mapDispatchToProps = (dispatch) => ({
-  setPosts: (posts: IPost[]) => (dispatch(setPosts(posts))),
+  postAdd: (post: IPost) => (dispatch(postAdd(post))),
+  postUpdate: (post: IPost) => (dispatch(postUpdate(post))),
   setCurrentPost: (post: IPost) => (dispatch(setCurrentPost(post))),
 });
 

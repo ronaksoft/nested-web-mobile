@@ -16,6 +16,7 @@ import placeApi from '../../../api/place/index';
 import IPost from '../../../api/post/interfaces/IPost';
 import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../redux/app/actions/index';
+import {postAdd} from '../../../redux/posts/actions/index';
 import ArrayUntiles from '../../../services/utils/array';
 import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
@@ -57,6 +58,7 @@ interface IProps {
    * @memberof IProps
    */
   posts: IPost[] | any;
+  postsDirectory: any;
   /**
    * @property currentPost
    * @desc object of current post
@@ -71,6 +73,7 @@ interface IProps {
    * @memberof IProps
    */
   setPosts: (posts: IPost[] | any) => {};
+  postAdd: (post: IPost | IPost[]) => {};
   /**
    * @property setPostsRoute
    * @desc setPostsRoute action which store route of stored posts in redux store
@@ -173,6 +176,10 @@ class Posts extends React.Component<IProps, IState> {
 
     super(props);
     const initiateRoute = this.findRouteFromPath(props);
+    let reduxPosts = this.props.posts[initiateRoute] || [];
+    if (reduxPosts.length > 0) {
+      reduxPosts = reduxPosts.map((postId) => this.props.postsDirectory[postId]);
+    }
     /**
      * read the data from props and set to the state and
      * setting initial state
@@ -180,7 +187,7 @@ class Posts extends React.Component<IProps, IState> {
      */
     this.state = {
       // if postsRoute is equal to current path, stored posts in redux set as component state posts
-      posts: this.props.posts[initiateRoute] || [],
+      posts: reduxPosts,
       loadingAfter: false,
       loadingBefore: false,
       reachedTheEnd: false,
@@ -199,8 +206,9 @@ class Posts extends React.Component<IProps, IState> {
    */
   public componentWillReceiveProps(newProps: IProps) {
     const route = this.findRouteFromPath(newProps);
+    const thisRoutePosts = newProps.posts[route];
     const state: any = {
-      posts: newProps.posts[route] || [],
+      posts: thisRoutePosts ? thisRoutePosts.map((postId) => this.props.postsDirectory[postId]) : [],
       location: newProps.location.pathname,
       route,
     };
@@ -232,7 +240,7 @@ class Posts extends React.Component<IProps, IState> {
       return post;
     });
 
-    this.props.setPosts(newPosts);
+    this.props.setPosts(newPosts.map((post) => post._id));
 
   }
   public findRouteFromPath(newProps) {
@@ -441,14 +449,12 @@ class Posts extends React.Component<IProps, IState> {
           // .sort((a: IPost, b: IPost) => {
           //   return b.timestamp - a.timestamp;
           // });
-
-        // if (fromNow === true) {
           const postsObj = {};
-          postsObj[this.state.route] = posts;
-          // console.log('setPosts', postsObj);
+          console.time('111');
+          postsObj[this.state.route] = posts.map((post) => post._id);
+          this.props.postAdd(response.posts);
           this.props.setPosts(postsObj);
           this.props.setPostsRoute(this.props.location.pathname);
-        // }
       })
       .catch((error: IErrorResponseData) => {
         message.success('An error has occurred.', 10);
@@ -495,7 +501,8 @@ class Posts extends React.Component<IProps, IState> {
             });
 
             const postsObj = {};
-            postsObj[this.state.route] = posts;
+            postsObj[this.state.route] = posts.map((post) => post._id);
+            this.props.postAdd(posts);
             this.props.setPosts(postsObj);
             this.props.setPostsRoute(this.props.location.pathname);
           });
@@ -555,7 +562,11 @@ class Posts extends React.Component<IProps, IState> {
     const doms = this.state.posts.map((post: IPost, index: number) => (
       <div key={post._id + index} id={post._id} onClick={this.gotoPost.bind(this, post)}>
         <Post post={post}/>
-      </div>));
+      </div>
+    ));
+    if (this.state.posts.length > 0) {
+      console.timeEnd('111');
+    }
     return (
       <div className={style.container}>
         {/* rendering NewBadge component in receiving new post case */}
@@ -627,6 +638,7 @@ class Posts extends React.Component<IProps, IState> {
 const mapStateToProps = (store) => ({
   postsRoute: store.app.postsRoute,
   posts: store.app.posts,
+  postsDirectory: store.posts,
   currentPost: store.app.currentPost,
   user: store.app.user,
 });
@@ -638,7 +650,10 @@ const mapStateToProps = (store) => ({
  */
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPosts: (posts: IPost[]) => {
+    postAdd: (post: IPost | IPost[]) => {
+      dispatch(postAdd(post));
+    },
+    setPosts: (posts: string[]) => {
       dispatch(setPosts(posts));
     },
     setCurrentPost: (post: IPost) => {

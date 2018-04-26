@@ -47,6 +47,7 @@ export default (
 
         <Route path="/message/:postId" component={Post}/>
         <Route path="/compose" component={Compose}/>
+        <Route path="/compose/edit/:editPostId" component={Compose}/>
         <Route path="/reply/:replyId" component={Compose}/>
         <Route path="/reply/:replyId/sender" component={Compose}/>
         <Route path="/forward/:forwardId" component={Compose}/>

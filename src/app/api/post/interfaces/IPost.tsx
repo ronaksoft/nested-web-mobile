@@ -24,6 +24,7 @@ interface IPost {
   timestamp: number;
   type: number;
   watched: boolean;
+  wipe_access: boolean;
   reply_to: string;
   forward_from: string;
   post_labels: ILabel[];

@@ -14,6 +14,7 @@ interface IComposeState {
   attachModal?: boolean;
   unselectSelectedRecipient?: number;
   composeOption: boolean;
+  editPost: boolean;
 }
 
 export default IComposeState;

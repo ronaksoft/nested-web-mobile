@@ -4,32 +4,39 @@ import * as ActionTypes from '../actions/types';
 import IPost from '../../../api/post/interfaces/IPost';
 
 /** Initial Posts State */
-const initialState = Immutable.from <IPostStore>({
-  posts: [],
-});
 
-export default function postReducer(state = initialState, action?: IPostAction) {
+export default function postReducer(state = {}, action?: IPostAction) {
 
   switch (action.type) {
     case ActionTypes.POST_ADD:
 
-      const posts = Immutable.getIn(state, ['posts']);
-      const indexOfPost: number = posts.findIndex((a: IPost) => {
-        return a._id === action.payload._id;
-      });
-
-      if (indexOfPost === -1) {
-        const newState = [action.payload].concat(Immutable(state.posts));
-        return Immutable({posts: newState});
+      if (Array.isArray(action.payload)) {
+        const data = {};
+        action.payload.forEach((postItem: IPost) => {
+          const post: number = state[postItem._id];
+          if (!post) {
+            data[postItem._id] = postItem;
+          }
+        });
+        return Immutable.merge(state, data);
       } else {
-        return state;
+        const post: number = state[action.payload._id];
+
+        if (!post) {
+          const data = {};
+          data[action.payload._id] = action.payload;
+          return Immutable.merge(state, data);
+        } else {
+          return state;
+        }
       }
 
     case ActionTypes.POST_UPDATE:
-      let currentPostList;
-      currentPostList = Object.assign({}, state, {});
-      currentPostList.posts[indexOfPost] = action.payload;
-      return currentPostList;
+      if (!Array.isArray(action.payload)) {
+        const data = {};
+        data[action.payload._id] = action.payload;
+        return Immutable.merge(state, data);
+      }
 
     default :
       return state;
