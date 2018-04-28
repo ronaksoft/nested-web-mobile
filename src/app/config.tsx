@@ -26,6 +26,9 @@ function generateConfig(): any {
       UPLOAD_SIZE_LIMIT: 209715200,
     };
   }
+  if (windowObj.__NESTED_CONFIG__.DOMAIN === '_DOMAIN_') {
+    windowObj.__NESTED_CONFIG__.DOMAIN = 'ronaksoftware.com';
+  }
   if (windowObj.__NESTED_CONFIG__.WEBSOCKET.URL.indexOf('://') === -1) {
     windowObj.__NESTED_CONFIG__.WEBSOCKET.URL = 'wss://webapp.ronaksoftware.com:81/api';
   }

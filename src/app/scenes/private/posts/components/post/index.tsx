@@ -26,11 +26,14 @@ import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
 import {difference} from 'lodash';
+import {message} from 'antd';
+import * as md5 from 'md5';
 
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
 import CONFIG from '../../../../../config';
+import AppApi from '../../../../../api/app';
 
 /**
  * @interface IOwnProps
@@ -130,6 +133,7 @@ interface IState {
  */
 class Post extends React.Component<IProps, IState> {
   private PostApi: PostApi;
+  private AppApi: AppApi;
   /**
    * define inProgress flag
    * @property {boolean} inProgress
@@ -193,6 +197,7 @@ class Post extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     this.PostApi = new PostApi();
+    this.AppApi = new AppApi();
     if (this.props.post) {
       this.setState({
         post: this.props.post ? this.props.post : null,
@@ -508,20 +513,45 @@ class Post extends React.Component<IProps, IState> {
     }, 100);
   }
 
+  // TODO: hash checksum
+
   private onIframeMessageHandler = (e) => {
     try {
       if (this.state.post.iframe_url.indexOf(e.origin) === -1) {
         return;
       }
       const data = JSON.parse(e.data);
+      if (!this.isHashValid(data)) {
+        return;
+      }
       if (data.url === this.state.post.iframe_url) {
+        const userData = this.getUserData();
         switch (data.cmd) {
           case 'getInfo':
-            const userData = this.getUserData();
             this.iframeObj.contentWindow.postMessage(this.sendIframeMessage('setInfo', userData), '*');
             break;
           case 'setSize':
             this.iframeObj.style.cssText = 'height: ' + data.data.height + 'px !important';
+            break;
+          case 'setNotif':
+            if (['success', 'info', 'warning', 'error'].indexOf(data.data.type) > -1) {
+              message[data.data.type](data.data.message);
+            }
+            break;
+          case 'createToken':
+            this.AppApi.createToken(data.data.clientId).then((res) => {
+              this.sendIframeMessage('setLoginInfo', {
+                token: data.data.token,
+                appToken: res.token,
+                appDomain: userData.app,
+                username: userData.userId,
+                fname: userData.fname,
+                lname: userData.lname,
+                email: userData.email,
+              });
+            }).catch(() => {
+              message.warning(`Can not create token for app: ${data.data.clientId}`);
+            });
             break;
           default:
             break;
@@ -533,11 +563,14 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private getUserData(): any {
-    const userId = this.props.user._id;
+    const user = this.props.user;
     const msgId = this.state.post._id;
     const app = CONFIG().DOMAIN;
     return {
-      userId,
+      userId: user._id,
+      email: user.email,
+      fname: user.fname,
+      lname: user.lname,
       msgId,
       app,
       locale: 'en-US',
@@ -545,12 +578,27 @@ class Post extends React.Component<IProps, IState> {
     };
   }
 
+  private createHash(data) {
+    let str = JSON.stringify(data);
+    str = encodeURIComponent(str).split('%').join('');
+    return md5(str);
+  }
+
   private sendIframeMessage(cmd, data) {
     const msg: any = {
       cmd,
       data,
     };
+    const hash = this.createHash(msg);
+    msg.hash = hash;
     return JSON.stringify(msg);
+  }
+
+  private isHashValid(data) {
+    const packetHash = data.hash;
+    delete data.hash;
+    const hash = this.createHash(data);
+    return (hash === packetHash);
   }
 
   /**
@@ -672,7 +720,7 @@ class Post extends React.Component<IProps, IState> {
               <div className={style.postBody}>
                 <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
                 {post.iframe_url && (
-                  <iframe width="100%" src={getIframeUrl(post.iframe_url)} scrolling="auto"
+                  <iframe src={getIframeUrl(post.iframe_url)} scrolling="auto"
                           ref={this.iframeObjHandler}/>
                 )}
                 <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
