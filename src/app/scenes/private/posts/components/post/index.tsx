@@ -328,6 +328,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private loadBodyEv(el: HTMLDivElement) {
+    console.log('loadBodyEv');
     if (!el) {
       return setTimeout(() => {
         this.loadBodyEv(this.htmlBodyRef);
@@ -464,29 +465,24 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate() {
-    // setTimeout(() => {
-    // }, 1000);
-    if (this.htmlBodyRef && !this.resizedPostBody) {
+    if (this.htmlBodyRef && this.htmlBodyRef.querySelectorAll('img').length > 0 && !this.resizedPostBody) {
       this.resizedPostBody = true;
       const images = this.htmlBodyRef.querySelectorAll('img');
       let imagesLoaded = 0;
       let imagesNotLoaded = 0;
-      // console.log('htmlBodyRef', this.htmlBodyRef.querySelectorAll('img'), this.state.post);
+      console.log(images);
       images.forEach((image, index) => {
-        // console.log('htmlBodyRef', image , index, imagesLoaded, imagesNotLoaded);
         if (image.complete) {
           imagesLoaded++;
         } else {
           image.onload = () => {
             imagesLoaded++;
-            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
             if (imagesLoaded + imagesNotLoaded === images.length - 1) {
               this.loadBodyEv(this.htmlBodyRef);
             }
           };
           image.onerror = () => {
             imagesNotLoaded++;
-            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
             if (imagesLoaded + imagesNotLoaded === images.length - 1) {
               this.loadBodyEv(this.htmlBodyRef);
             }
@@ -571,7 +567,6 @@ class Post extends React.Component<IProps, IState> {
     }
 
     const {post} = this.state;
-    console.log(post);
     const bookmarkClick = this.toggleBookmark.bind(this);
 
     const getIframeUrl = (url: any) => {

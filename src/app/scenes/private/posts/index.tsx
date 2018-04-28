@@ -321,8 +321,10 @@ class Posts extends React.Component<IProps, IState> {
    * @private
    */
   private addNewPostActivity(activity: IActivity) {
-    if (this.favoritePlacesId.filter((placeId) => (placeId === activity.place_id)).length === 0 &&
-      this.newPostsIds.filter((postId) => (postId === activity.post_id)).length === 0) {
+    if (
+      this.favoritePlacesId.filter((placeId) => placeId === activity.place_id).length > 0 &&
+      this.newPostsIds.filter((postId) => postId === activity.post_id).length === 0
+    ) {
       this.newPostsIds.push(activity.post_id);
       this.setState({
         newPostCount: this.newPostsIds.length,
@@ -445,12 +447,16 @@ class Posts extends React.Component<IProps, IState> {
          * and sorting the post items by date
          * @type {IPost[]}
          */
-        const posts = ArrayUntiles.uniqueObjects([...this.state.posts, ...response.posts], '_id');
+        let posts;
+        if (fromNow) {
+          posts = ArrayUntiles.uniqueObjects([...response.posts, ...this.state.posts], '_id');
+        } else {
+          posts = ArrayUntiles.uniqueObjects([...this.state.posts, ...response.posts], '_id');
+        }
           // .sort((a: IPost, b: IPost) => {
           //   return b.timestamp - a.timestamp;
           // });
           const postsObj = {};
-          console.time('111');
           postsObj[this.state.route] = posts.map((post) => post._id);
           this.props.postAdd(response.posts);
           this.props.setPosts(postsObj);
@@ -559,14 +565,11 @@ class Posts extends React.Component<IProps, IState> {
     const loadMore = this.getPosts.bind(this);
     const {route, getPinnedPosts} = this.state;
 
-    const doms = this.state.posts.map((post: IPost, index: number) => (
-      <div key={post._id + index} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+    const doms = this.state.posts.map((post: IPost) => (
+      <div key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
         <Post post={post}/>
       </div>
     ));
-    if (this.state.posts.length > 0) {
-      console.timeEnd('111');
-    }
     return (
       <div className={style.container}>
         {/* rendering NewBadge component in receiving new post case */}

@@ -16,6 +16,8 @@ export default function postReducer(state = {}, action?: IPostAction) {
           const post: number = state[postItem._id];
           if (!post) {
             data[postItem._id] = postItem;
+          } else {
+            data[postItem._id] = Immutable.merge(post, postItem);
           }
         });
         return Immutable.merge(state, data);
