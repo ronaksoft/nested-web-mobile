@@ -12,7 +12,7 @@
 import * as log from 'loglevel';
 
 // TODO: Do not import whole lodash. Just import the required functions
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 import {
   ISocketConfig,

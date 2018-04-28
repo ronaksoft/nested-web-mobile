@@ -30,6 +30,7 @@ import AccountApi from 'api/account';
 import {IUser} from 'api/interfaces';
 import {IRecallResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
+import Api from 'api';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import FCM from '../../services/fcm/index';
@@ -115,6 +116,8 @@ class Private extends React.Component<IProps, IState> {
    */
   private unListenChangeRoute: any;
 
+  private internalRecall: any;
+
   public constructor(props: IProps) {
     super(props);
 
@@ -195,6 +198,8 @@ class Private extends React.Component<IProps, IState> {
         hashHistory.push('/signin');
       });
     };
+
+    this.internalRecall = recall;
 
     /** clear credentials in some unexpected situations */
     if (!credential.sk || !credential.ss) {
@@ -284,6 +289,14 @@ class Private extends React.Component<IProps, IState> {
 
     /** get unread notifications */
     this.getNotificationCounts();
+
+    setTimeout(() => {
+      Api.getInstance().getServer().onConnectionStateChange((data: any) => {
+        if (data === 1) {
+          this.internalRecall();
+        }
+      });
+    }, 1000);
 
     /**
      * calls on every route change
@@ -423,7 +436,7 @@ const mapStateToProps = (store) => ({
 
 /**
  * reducer actions functions mapper
- * @param {any} dispatch reducer dispacther
+ * @param {any} dispatch reducer dispatcher
  * @returns reducer actions object
  */
 const mapDispatchToProps = (dispatch) => {
