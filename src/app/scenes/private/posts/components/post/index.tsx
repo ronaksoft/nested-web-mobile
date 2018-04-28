@@ -333,7 +333,6 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private loadBodyEv(el: HTMLDivElement) {
-    console.log('loadBodyEv');
     if (!el) {
       return setTimeout(() => {
         this.loadBodyEv(this.htmlBodyRef);
@@ -475,7 +474,6 @@ class Post extends React.Component<IProps, IState> {
       const images = this.htmlBodyRef.querySelectorAll('img');
       let imagesLoaded = 0;
       let imagesNotLoaded = 0;
-      console.log(images);
       images.forEach((image, index) => {
         if (image.complete) {
           imagesLoaded++;
