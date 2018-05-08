@@ -10,19 +10,25 @@
   top: 0;
   touch-action: auto;
 }
-.sidebar > div {
-  height: 100%;
+.scrollContainer {
+  height: calc(100% - 56px);
+}
+.sidebar .itemContainer {
+  /* height: 100%; */
   width: 100%;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-  padding-bottom: 120px;
+  /* overflow: auto; */
+  /* -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain; */
+  margin-bottom: 120px;
 }
 .sidebarHead {
   height: 56px;
   padding: 0 16px;
   display: flex;
   align-items: center;
+}
+.sidebar h3 {
+  color: rgba(255, 255, 255, .4);
 }
 .sidebarActions {
   list-style: none;

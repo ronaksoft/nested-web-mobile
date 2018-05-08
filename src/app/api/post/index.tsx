@@ -13,6 +13,7 @@ import IPostsListRequest from './interfaces/IPostsListRequest';
 import IPostsListResponse from './interfaces/IPostsListResponse';
 import IGetPostRequest from './interfaces/IGetRequest';
 import ISendRequest from './interfaces/ISendRequest';
+import IEditRequest from './interfaces/IEditRequest';
 import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
 import IAddLabelRequest from './interfaces/IAddLabelRequest';
@@ -101,43 +102,14 @@ export default class PostApi {
   }
 
   /**
-   * @func getFavoritePostsSortedByActivity
-   * @desc Retrieves the posts of places that where added to feed sorted by recent activity
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getFavoritePostsSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    // TODO: Remove this function. It's exactly equal to `getFavoritePosts`
-    return this.api.request({
-      cmd: 'account/get_favorite_posts',
-      data: params,
-    });
-  }
-
-  /**
    * @func getPlacePostsAllSortedByActivity
    * @desc Retrieves a list of the given place's posts sorted by latest activity
    * @param {IPostsListRequest} [params={limit: 10}]
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
-  public getPlacePostsAllSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
+  public getPlacePosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     params.by_update = true;
-    return this.api.request({
-      cmd: 'place/get_posts',
-      data: params,
-    });
-  }
-
-  /**
-   * @func getPlacePostsAllSortedByRecent
-   * @desc Retrieves a list of the given place's posts sorted by date
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getPlacePostsAllSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     return this.api.request({
       cmd: 'place/get_posts',
       data: params,
@@ -151,22 +123,7 @@ export default class PostApi {
    * @returns {Promise<IPostsListResponse>}
    * @memberof PostApi
    */
-  public getPlacePostsUnreadSortedByRecent(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    return this.api.request({
-      cmd: 'place/get_unread_posts',
-      data: params,
-    });
-  }
-
-  /**
-   * @func getPlacePostsUnreadSortedByActivity
-   * @desc Retrieves unread posts of the given place, sorted by latest activity
-   * @param {IPostsListRequest} [params={limit: 10}]
-   * @returns {Promise<IPostsListResponse>}
-   * @memberof PostApi
-   */
-  public getPlacePostsUnreadSortedByActivity(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
-    params.by_update = true;
+  public getPlaceUnreadPosts(params: IPostsListRequest = {limit: 10}): Promise<IPostsListResponse> {
     return this.api.request({
       cmd: 'place/get_unread_posts',
       data: params,
@@ -216,6 +173,22 @@ export default class PostApi {
     });
   }
 
+  public markAsRead(postId: string): Promise<any> {
+    return this.api.request({
+      cmd: 'post/mark_as_read',
+      data: {
+        post_id: postId,
+      },
+    });
+  }
+
+  public getMany(data: IGetPostRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/get_many',
+      data,
+    });
+  }
+
   /**
    * @func send
    * @desc Shares a post with the specified targets
@@ -227,6 +200,20 @@ export default class PostApi {
     data.content_type = data.content_type || 'text/plain';
     return this.api.request({
       cmd: 'post/add',
+      data,
+    });
+  }
+
+  /**
+   * @func edit
+   * @desc Edit the post
+   * @param {IEditRequest} data
+   * @returns {Promise<any>}
+   * @memberof PostApi
+   */
+  public edit(data: IEditRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/edit',
       data,
     });
   }

@@ -10,7 +10,7 @@
  * Date of review:         -
  */
 
-import {IAttachment} from 'api/attachment/interfaces';
+import {IAttachment} from 'api/interfaces';
 import Mode from './mode';
 import IProgress from '../IProgress';
 

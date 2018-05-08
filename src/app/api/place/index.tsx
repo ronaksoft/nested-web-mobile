@@ -12,8 +12,15 @@ import Api from './../index';
 import IAccountPlacesRequest from './interfaces/IAccountPlacesRequest';
 import IGetUnreadsRequest from './interfaces/IGetUnreadsRequest';
 import IGetUnreadsResponse from './interfaces/IGetUnreadsResponse';
-import IGetRequest from './interfaces/IGetRequest';
-import IPlace from './interfaces/IPlace';
+// import IGetRequest from './interfaces/IGetRequest';
+import {IPlace, IUser} from 'api/interfaces';
+import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
+import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
+import IGetFilesRequest from './interfaces/IGetFilesRequest';
+import IFile from '../../components/FileItem/IFile';
+import IGetActivitiesRequest from './interfaces/IGetActivitiesRequest';
+import IGetActivitiesResponse from './interfaces/IGetActivitiesResponse';
+import {IActivity} from 'api/interfaces/';
 
 export default class PlaceApi {
   /**
@@ -49,6 +56,14 @@ export default class PlaceApi {
     });
   }
 
+  public getActivities(data: IGetActivitiesRequest): Promise<IActivity[]> {
+    return this.api.request({
+      cmd: 'place/get_activities',
+      data,
+    }).then((res: IGetActivitiesResponse) => {
+      return res.activities;
+    });
+  }
   /**
    * @func getUnreads
    * @desc Retrieves the place unread posts count. If you want to get the number of
@@ -74,9 +89,110 @@ export default class PlaceApi {
    * @returns {Promise<any>}
    * @memberof PlaceApi
    */
-  public get(data: IGetRequest): Promise<any> {
+  // public get(data: IGetRequest): Promise<any> {
+  //   return this.api.request({
+  //     cmd: 'place/get',
+  //     data,
+  //   });
+  // }
+  public get(placeId: string): Promise<any> {
     return this.api.request({
       cmd: 'place/get',
+      data: {
+        place_id: placeId,
+      },
+    });
+  }
+
+  /**
+   * @func getMangers
+   * @desc Get Mangers of a place
+   * @param {IGetWithSkipRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getMangers(data: IGetWithSkipRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_creators',
+      data,
+    }).then( (res) => {
+      const users = res.creators as IUser[];
+      return users;
+    });
+  }
+
+  /**
+   * @func getMembers
+   * @desc Get Members of a place
+   * @param {IGetWithSkipRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getMembers(data: IGetWithSkipRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_key_holders',
+      data,
+    }).then( (res) => {
+      const users = res.key_holders as IUser[];
+      return users;
+    });
+  }
+
+  /**
+   * @func getFiles
+   * @desc Get Files of a place
+   * @param {IGetFilesRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public getFiles(data: IGetFilesRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/get_files',
+      data,
+    }).then( (res) => {
+      const files = res.files as IFile[];
+      return files;
+    });
+  }
+
+  /**
+   * @func promoteMember
+   * @desc Promote Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public promoteMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/promote_member',
+      data,
+    });
+  }
+
+  /**
+   * @func demoteMember
+   * @desc Demote Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public demoteMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/demote_member',
+      data,
+    });
+  }
+
+  /**
+   * @func removeMember
+   * @desc Remove Members of a place
+   * @param {IPlaceMemberRequest} data
+   * @returns {Promise<any>}
+   * @memberof PlaceApi
+   */
+  public removeMember(data: IPlaceMemberRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'place/remove_member',
       data,
     });
   }

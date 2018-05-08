@@ -1,4 +1,4 @@
-import IUser from '../../account/interfaces/IUser';
+import {IUser, ILabel} from '../../interfaces/';
 
 interface ITask {
     _id:  string;
@@ -14,6 +14,7 @@ interface ITask {
     status: number;
     todos: any[];
     candidates: any[];
+    labels?: ILabel[];
     progress?: number;
 }
 export default ITask;

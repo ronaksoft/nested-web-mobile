@@ -66,6 +66,10 @@ export const APP_SCROLL_POSITION_UNSET: string = 'APP/SCROLL_UNSET';
 export const APP_TASKS_SET: string = 'APP/TASKS_SET';
 export const APP_TASKS_UNSET: string = 'APP/TASKS_UNSET';
 
+/** ACTIVITIES ACTION */
+export const APP_ACTIVITIES_SET: string = 'APP/ACTIVITIES_SET';
+export const APP_ACTIVITIES_UNSET: string = 'APP/ACTIVITIES_UNSET';
+
 /** TASKS ACTION */
 export const APP_TASKS_ROUTE_SET: string = 'APP/TASKS_ROUTE_SET';
 export const APP_TASKS_ROUTE_UNSET: string = 'APP/TASKS_ROUTE_UNSET';

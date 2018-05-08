@@ -10,24 +10,30 @@
 
 import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
-import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  LabelChips} from 'components';
-import IPlace from '../../../../../api/place/interfaces/IPlace';
+import {
+  IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
+  LabelChips, Scrollable,
+} from 'components';
+import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
 import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
-import {setCurrentPost, setPosts} from '../../../../../redux/app/actions/index';
+import {setCurrentPost} from '../../../../../redux/app/actions/index';
+import {postAdd, postUpdate} from '../../../../../redux/posts/actions/index';
 import CommentsBoard from '../comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
-import IUser from '../../../../../api/account/interfaces/IUser';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
-import ILabel from '../../../../../api/label/interfaces/ILabel';
 import {difference} from 'lodash';
+import {message} from 'antd';
+import * as md5 from 'md5';
+
 const style = require('./post.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
+import CONFIG from '../../../../../config';
+import AppApi from '../../../../../api/app';
 
 /**
  * @interface IOwnProps
@@ -82,7 +88,8 @@ interface IProps {
    * @desc Updates posts in store
    * @memberof IProps
    */
-  setPosts: (posts: IPost[]) => {};
+  postAdd: (post: IPost) => {};
+  postUpdate: (post: IPost) => {};
   /**
    * @prop setCurrentPost
    * @desc Updates the last post in store
@@ -126,6 +133,7 @@ interface IState {
  */
 class Post extends React.Component<IProps, IState> {
   private PostApi: PostApi;
+  private AppApi: AppApi;
   /**
    * define inProgress flag
    * @property {boolean} inProgress
@@ -150,6 +158,11 @@ class Post extends React.Component<IProps, IState> {
   private bodyRtl: boolean;
 
   /**
+   * Object of iframe
+   */
+  private iframeObj: any;
+
+  /**
    * @prop htmlBodyRef
    * @desc Reference of html email body element
    * @private
@@ -157,6 +170,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private htmlBodyRef: HTMLDivElement;
+  private scrollRef: any;
 
   /**
    * Creates an instance of Post.
@@ -175,19 +189,6 @@ class Post extends React.Component<IProps, IState> {
   }
 
   /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Feed
-   */
-  private scrollWrapper: HTMLDivElement;
-
-  private refScrollHandler = (value) => {
-    this.scrollWrapper = value;
-  }
-
-  /**
    * @function componentDidMount
    * @desc Uses the provided post in props or asks server to get the post by
    * the given `postId` parameter in route also Marks the post as read.
@@ -196,50 +197,60 @@ class Post extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     this.PostApi = new PostApi();
+    this.AppApi = new AppApi();
     if (this.props.post) {
-
-      this.subjectRtl = RTLDetector.getInstance().direction(this.props.post.subject);
-      this.bodyRtl = RTLDetector.getInstance().direction(this.props.post.body);
       this.setState({
         post: this.props.post ? this.props.post : null,
       });
+      this.applySubjectDirection(this.props.post.subject);
+      this.applyBodyDirection(this.props.post.body || this.props.post.preview);
     } else {
+      const storedPost = this.props.posts[this.props.routeParams.postId];
+      if (storedPost) {
+        this.setState({
+          post: storedPost,
+        });
+        this.applySubjectDirection(storedPost.subject);
+        this.applyBodyDirection(storedPost.body || storedPost.preview);
+      }
       this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
         .then((post: IPost) => {
-          post.post_read = true;
-          this.subjectRtl = RTLDetector.getInstance().direction(post.subject);
-          this.bodyRtl = RTLDetector.getInstance().direction(post.body);
           this.setState({
             post,
           });
-          this.updatePostsInStore('post_read', true);
-          // setTimeout( () => {
-          //   this.loadBodyEv(this.htmlBodyRef);
-          // }, 300);
+          this.applySubjectDirection(post.subject);
+          this.applyBodyDirection(post.body);
+          if (!post.post_read) {
+            post.post_read = true;
+            this.updatePostsInStore('post_read', true);
+          }
         });
 
-      // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
 
-    // setTimeout(() => {
-    //   this.loadBodyEv(this.htmlBodyRef);
-    // }, 300);
+  }
 
+  private applySubjectDirection = (subject: string = '') => {
+    this.subjectRtl = RTLDetector.getInstance().direction(subject);
+  }
+
+  private applyBodyDirection = (body: string = '') => {
+    this.subjectRtl = RTLDetector.getInstance().direction(body.replace(/<div>/g, ''));
   }
 
   private removeLabel(id: string) {
     const params: IRemoveLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
+      post_id: this.state.post._id,
+      label_id: id,
     };
     this.PostApi.removeLabel(params);
   }
 
   private addLabel(id: string) {
     const params: IAddLabelRequest = {
-        post_id : this.state.post._id,
-        label_id : id,
+      post_id: this.state.post._id,
+      label_id: id,
     };
     this.PostApi.addLabel(params);
   }
@@ -251,7 +262,7 @@ class Post extends React.Component<IProps, IState> {
    * @memberOf Post
    */
   public componentWillUnmount() {
-    // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
+    window.removeEventListener('message', this.onIframeMessageHandler);
   }
 
   /**
@@ -280,15 +291,11 @@ class Post extends React.Component<IProps, IState> {
   private updatePostsInStore(key: string, value: any) {
 
     const posts = JSON.parse(JSON.stringify(this.props.posts));
-    let newPosts;
-    newPosts = posts.map((post: IPost) => {
-      if (post._id === this.state.post._id) {
-        post[key] = value;
-      }
-      return post;
-    });
-
-    this.props.setPosts(newPosts);
+    const post = posts[this.state.post._id];
+    if (post) {
+      post[key] = value;
+      this.props.postUpdate(post);
+    }
 
     if (this.props.currentPost) {
       this.props.setCurrentPost(this.props.currentPost);
@@ -327,7 +334,7 @@ class Post extends React.Component<IProps, IState> {
    */
   private loadBodyEv(el: HTMLDivElement) {
     if (!el) {
-      return setTimeout( () => {
+      return setTimeout(() => {
         this.loadBodyEv(this.htmlBodyRef);
       }, 100);
     }
@@ -338,12 +345,12 @@ class Post extends React.Component<IProps, IState> {
     // console.log(ParentDOMHeight, delta);
     const WinWidth = window.screen.width;
     const ratio = WinWidth / DOMWidth;
-    if (ratio >= 1 ) {
+    if (ratio >= 1) {
       return;
     }
     el.style.transform = 'scale(' + ratio + ',' + ratio + ')';
     el.style.webkitTransform = 'scale(' + ratio + ',' + ratio + ')';
-    setTimeout( () => {
+    setTimeout(() => {
       const newH = el.getBoundingClientRect().height;
       // console.log(delta, newH);
       el.parentElement.style.height = delta + newH + 'px';
@@ -352,13 +359,10 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private resizeFont(el, ratio: number) {
-    if ( el.innerHTML === el.innerText && el.innerText.length > 0 ) {
+    if (el.innerHTML === el.innerText && el.innerText.length > 0) {
       const fontSize = parseInt(el.style.fontSize, 10);
-      if ( fontSize > 1 ) {
-        el.style.fontSize = fontSize * (1 / ratio) + 'px';
-      } else {
-        el.style.fontSize = 14 * (1 / ratio) + 'px';
-      }
+      const newFontSize = (fontSize > 1 ? fontSize : 14) * (1 / ratio);
+      el.style.fontSize = newFontSize < 100 ? newFontSize : 90 + 'px';
     }
     for (const value of el.children) {
       this.resizeFont(value, ratio);
@@ -404,6 +408,9 @@ class Post extends React.Component<IProps, IState> {
    */
   private refHandler = (value) => {
     this.htmlBodyRef = value;
+  }
+  private scrollRefHandler = (value) => {
+    this.scrollRef = value;
   }
 
   /**
@@ -462,27 +469,23 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate() {
-    // setTimeout(() => {
-    // }, 1000);
-    if (this.htmlBodyRef && !this.resizedPostBody) {
+    if (this.htmlBodyRef && this.htmlBodyRef.querySelectorAll('img').length > 0 && !this.resizedPostBody) {
       this.resizedPostBody = true;
       const images = this.htmlBodyRef.querySelectorAll('img');
       let imagesLoaded = 0;
       let imagesNotLoaded = 0;
-      this.htmlBodyRef.querySelectorAll('img').forEach((image, index) => {
+      images.forEach((image, index) => {
         if (image.complete) {
           imagesLoaded++;
         } else {
           image.onload = () => {
             imagesLoaded++;
-            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
             if (imagesLoaded + imagesNotLoaded === images.length - 1) {
               this.loadBodyEv(this.htmlBodyRef);
             }
           };
           image.onerror = () => {
             imagesNotLoaded++;
-            // console.log(image, imagesLoaded, imagesLoaded === images.length - 1);
             if (imagesLoaded + imagesNotLoaded === images.length - 1) {
               this.loadBodyEv(this.htmlBodyRef);
             }
@@ -496,7 +499,104 @@ class Post extends React.Component<IProps, IState> {
   }
 
   public newCommentReceived = () => {
-    this.scrollWrapper.scrollTop = this.scrollWrapper.scrollHeight - this.scrollWrapper.clientHeight;
+    this.scrollRef.scrollDown();
+  }
+
+  public iframeObjHandler = (obj) => {
+    setTimeout(() => {
+      if (obj && obj.contentWindow) {
+        this.iframeObj = obj;
+        window.addEventListener('message', this.onIframeMessageHandler);
+      }
+    }, 100);
+  }
+
+  // TODO: hash checksum
+
+  private onIframeMessageHandler = (e) => {
+    try {
+      if (this.state.post.iframe_url.indexOf(e.origin) === -1) {
+        return;
+      }
+      const data = JSON.parse(e.data);
+      if (!this.isHashValid(data)) {
+        return;
+      }
+      if (data.url === this.state.post.iframe_url) {
+        const userData = this.getUserData();
+        switch (data.cmd) {
+          case 'getInfo':
+            this.iframeObj.contentWindow.postMessage(this.sendIframeMessage('setInfo', userData), '*');
+            break;
+          case 'setSize':
+            this.iframeObj.style.cssText = 'height: ' + data.data.height + 'px !important';
+            break;
+          case 'setNotif':
+            if (['success', 'info', 'warning', 'error'].indexOf(data.data.type) > -1) {
+              message[data.data.type](data.data.message);
+            }
+            break;
+          case 'createToken':
+            this.AppApi.createToken(data.data.clientId).then((res) => {
+              this.sendIframeMessage('setLoginInfo', {
+                token: data.data.token,
+                appToken: res.token,
+                appDomain: userData.app,
+                username: userData.userId,
+                fname: userData.fname,
+                lname: userData.lname,
+                email: userData.email,
+              });
+            }).catch(() => {
+              message.warning(`Can not create token for app: ${data.data.clientId}`);
+            });
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (e) {
+      console.log('cannot parse message', e);
+    }
+  }
+
+  private getUserData(): any {
+    const user = this.props.user;
+    const msgId = this.state.post._id;
+    const app = CONFIG().DOMAIN;
+    return {
+      userId: user._id,
+      email: user.email,
+      fname: user.fname,
+      lname: user.lname,
+      msgId,
+      app,
+      locale: 'en-US',
+      dark: false,
+    };
+  }
+
+  private createHash(data) {
+    let str = JSON.stringify(data);
+    str = encodeURIComponent(str).split('%').join('');
+    return md5(str);
+  }
+
+  private sendIframeMessage(cmd, data) {
+    const msg: any = {
+      cmd,
+      data,
+    };
+    const hash = this.createHash(msg);
+    msg.hash = hash;
+    return JSON.stringify(msg);
+  }
+
+  private isHashValid(data) {
+    const packetHash = data.hash;
+    delete data.hash;
+    const hash = this.createHash(data);
+    return (hash === packetHash);
   }
 
   /**
@@ -507,42 +607,6 @@ class Post extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    if ( this.scrollWrapper && !this.props.post) {
-      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, false);
-    }
     const postView = !this.props.post;
     if (!this.state.post) {
       return <Loading active={true} position="absolute"/>;
@@ -550,6 +614,25 @@ class Post extends React.Component<IProps, IState> {
 
     const {post} = this.state;
     const bookmarkClick = this.toggleBookmark.bind(this);
+
+    const getIframeUrl = (url: any) => {
+      const userId = this.props.user._id;
+      const msgId = this.state.post ? this.state.post._id : '';
+      const app = CONFIG().DOMAIN;
+      let urlPostFix = '';
+      if (url.indexOf('#') > -1) {
+        url = url.split('#');
+        urlPostFix = '#' + url[1];
+        url = url[0];
+      }
+      if (url.indexOf('?') > -1) {
+        url += '&';
+      } else {
+        url += '?';
+      }
+      url += 'nst_user=' + userId + '&nst_mid=' + msgId + '&nst_app=' + app + '&nst_locale=en-US';
+      return url + urlPostFix;
+    };
 
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
@@ -581,6 +664,12 @@ class Post extends React.Component<IProps, IState> {
                 <a onClick={this.toggleAddLAbel}>Labels</a>
                 <p>{this.state.post.post_labels.length}</p>
               </li>
+              {post.wipe_access && (
+                <li>
+                  <IcoN size={16} name={'pencil16'}/>
+                  <Link to={`/compose/edit/${post._id}`}>Edit</Link>
+                </li>
+              )}
               <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'reply16'}/>
@@ -589,7 +678,7 @@ class Post extends React.Component<IProps, IState> {
               <li>
                 <IcoN size={16} name={'reply16'}/>
                 <Link to={`/reply/${post._id}/sender`}>
-                  Reply to "{this.state.post.sender.fname + this.state.post.sender.lname}"
+                  Reply to "{post.sender ? (post.sender.fname + post.sender.lname) : post.email_sender._id}"
                 </Link>
               </li>
               <li>
@@ -600,109 +689,116 @@ class Post extends React.Component<IProps, IState> {
           </div>
         )}
         {this.state.showMoreOptions &&
-          <div onClick={this.toggleMoreOpts} className={style.overlay}/>
+        <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <div className={style.postScrollContainer} ref={this.refScrollHandler}>
-          <div className={style.postScrollContent}>
-            <div className={style.postHead}>
-              <UserAvatar user_id={sender} size={32} borderRadius={'16px'}/>
-              {post.reply_to && <IcoN size={16} name={'repliedGreen16'}/>}
-              {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
-              {post.sender && <FullName user_id={post.sender}/>}
-              {post.email_sender && (
-                <span>
-                  {`${post.email_sender._id}`}
-                </span>
-              )}
-              <p>
-                {TimeUntiles.dynamic(post.timestamp)}
-              </p>
-              {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
-              <div className={post.pinned ? style.postPinned : style.postPin}
-                  onClick={bookmarkClick}>
-                {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
-                {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
-              </div>
-            </div>
-            {!this.props.post && <hr/>}
-            <div className={style.postBody}>
-              <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
-              <div dangerouslySetInnerHTML={{__html: post.body}}
-              ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
-              {post.post_attachments.length > 0 && !this.props.post && (
-                <PostAttachment attachments={post.post_attachments}
-                                postId={post._id}
-                />
-              )}
-              {this.props.post && (
-                <div className={style.postDetails}>
-                {post.post_attachments.length > 0 && (
-                  <div>
-                    <IcoN size={16} name={'attach16'}/>
-                    {post.post_attachments.length}
-                    {post.post_attachments.length === 1 && <span> Attachment</span>}
-                    {post.post_attachments.length > 1 && <span> Attachments</span>}
-                  </div>
+        <Scrollable active={postView} ref={this.scrollRefHandler}>
+          <div className={style.postScrollContainer}>
+            <div className={style.postScrollContent}>
+              <div className={style.postHead}>
+                <UserAvatar user_id={sender} size={32} borderRadius={'16px'}/>
+                {post.reply_to && <IcoN size={16} name={'repliedGreen16'}/>}
+                {post.forward_from && <IcoN size={16} name={'forward16Blue'}/>}
+                {post.sender && <FullName user_id={post.sender}/>}
+                {post.email_sender && (
+                  <span>
+                    {`${post.email_sender._id}`}
+                  </span>
                 )}
-                {post.post_labels.length > 0 && (
-                  <div>
-                    <IcoN size={16} name={'tag16'}/>
-                    {post.post_labels.length}
-                    {post.post_labels.length === 1 && <span> Label</span>}
-                    {post.post_labels.length > 1 && <span> Labels</span>}
-                  </div>
-                )}
+                <p>
+                  {TimeUntiles.dynamic(post.timestamp)}
+                </p>
+                {!post.post_read && <IcoN size={16} name={'circle8blue'}/>}
+                <div className={post.pinned ? style.postPinned : style.postPin}
+                     onClick={bookmarkClick}>
+                  {post.pinned && <IcoN size={24} name={'bookmark24Force'}/>}
+                  {!post.pinned && <IcoN size={24} name={'bookmarkWire24'}/>}
                 </div>
-              )}
-              {!this.props.post && (
-                <ul className={style.postLabels}>
-                  {post.post_labels.map((label: ILabel, index: number) => {
+              </div>
+              {!this.props.post && <hr/>}
+              <div className={style.postBody}>
+                <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
+                {post.iframe_url && (
+                  <iframe src={getIframeUrl(post.iframe_url)} scrolling="auto"
+                          ref={this.iframeObjHandler}/>
+                )}
+                <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}
+                     ref={this.refHandler} className={[style.mailWrapper, this.bodyRtl ? style.Rtl : null].join(' ')}/>
+                {post.post_attachments.length > 0 && !this.props.post && (
+                  <PostAttachment attachments={post.post_attachments}
+                                  postId={post._id}
+                  />
+                )}
+                {this.props.post && (
+                  <div className={style.postDetails}>
+                    {post.post_attachments.length > 0 && (
+                      <div>
+                        <IcoN size={16} name={'attach16'}/>
+                        {post.post_attachments.length}
+                        {post.post_attachments.length === 1 && <span> Attachment</span>}
+                        {post.post_attachments.length > 1 && <span> Attachments</span>}
+                      </div>
+                    )}
+                    {post.post_labels.length > 0 && (
+                      <div>
+                        <IcoN size={16} name={'tag16'}/>
+                        {post.post_labels.length}
+                        {post.post_labels.length === 1 && <span> Label</span>}
+                        {post.post_labels.length > 1 && <span> Labels</span>}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!this.props.post && (
+                  <ul className={style.postLabels}>
+                    {post.post_labels.map((label: ILabel, index: number) => {
+                      return (
+                        <li key={label._id + index}>
+                          <LabelChips label={label}/>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                <div className={style.postPlaces}>
+                  {postView && <a>Shared with:</a>}
+                  {post.post_places.map((place: IPlace, index: number) => {
+                    if (index < 2) {
+                      return (
+                        <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
+                          {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      );
+                    }
+                  })}
+                  {post.post_recipients &&
+                  post.post_recipients.map((email: string, index: number) => {
                     return (
-                    <li key={label._id + index}>
-                      <LabelChips label={label}/>
-                    </li>
-                    ); })}
-                </ul>
-              )}
-              <div className={style.postPlaces}>
-                {postView && <a>Shared with:</a>}
-                {post.post_places.map((place: IPlace, index: number) => {
-                  if (index < 2) {
-                    return (
-                      <span key={place._id + 'pl' + index} onClick={this.postPlaceClick.bind(this, place._id)}>
-                        {place._id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span key={email + 'em' + index}>
+                        {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       </span>
                     );
-                  }
-                })}
-                {post.post_recipients &&
-                post.post_recipients.map((email: string, index: number) => {
-                  return (
-                    <span key={email + 'em' + index}>
-                      {email}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  );
-                })}
-                {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
-              </div>
-
-              {!postView && post.counters.comments > 1 && (
-                <div className={style.postFooter}>
-                  <IcoN size={16} name={'comments16'}/>
-                  {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
-                  {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+                  })}
+                  {post.post_places.length > 2 && <span>+{post.post_places.length - 2}</span>}
                 </div>
+
+                {!postView && post.counters.comments > 1 && (
+                  <div className={style.postFooter}>
+                    <IcoN size={16} name={'comments16'}/>
+                    {post.counters.comments <= 1 && <p>{post.counters.comments} comment</p>}
+                    {post.counters.comments > 1 && <p>{post.counters.comments} comments</p>}
+                  </div>
+                )}
+              </div>
+              {/* renders the comments and comment input in post view */}
+              {!this.props.post && (
+                <CommentsBoard no_comment={this.state.post.no_comment}
+                               post_id={this.state.post._id} post={this.state.post}
+                               user={this.props.user} newComment={this.newCommentReceived}/>
               )}
+              {postView && <div className={privateStyle.bottomSpace}/>}
             </div>
-            {/* renders the comments and comment input in post view */}
-            {!this.props.post && (
-              <CommentsBoard no_comment={this.state.post.no_comment}
-              post_id={this.state.post._id} post={this.state.post}
-              user={this.props.user} newComment={this.newCommentReceived}/>
-            )}
-           {postView && <div className={privateStyle.bottomSpace}/>}
           </div>
-        </div>
+        </Scrollable>
         {this.state.showAddLabel && (
           <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}
@@ -720,7 +816,7 @@ class Post extends React.Component<IProps, IState> {
 const mapStateToProps = (store, ownProps: IOwnProps) => ({
   post: ownProps.post,
   currentPost: store.app.currentPost,
-  posts: store.app.posts,
+  posts: store.posts,
   user: store.app.user,
   routeParams: ownProps.routeParams,
 });
@@ -731,7 +827,8 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
  * @param {any} dispatch
  */
 const mapDispatchToProps = (dispatch) => ({
-  setPosts: (posts: IPost[]) => (dispatch(setPosts(posts))),
+  postAdd: (post: IPost) => (dispatch(postAdd(post))),
+  postUpdate: (post: IPost) => (dispatch(postUpdate(post))),
   setCurrentPost: (post: IPost) => (dispatch(setCurrentPost(post))),
 });
 

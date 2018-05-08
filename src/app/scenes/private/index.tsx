@@ -12,27 +12,25 @@ import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
 import {login, logout, setNotificationCount} from 'redux/app/actions';
 
-import Feed from './posts/feed';
-import {Files} from './files';
+import Files from './place/files';
 import Compose from './compose';
 import Sidebar from './sidebar/';
 import TaskSidebar from './sidebar/task';
 import {Navbar} from 'components';
-import {Activities} from './activities';
+import Activities from './place/activities';
 import Signout from './Signout';
-import FeedByActivity from './posts/feedByActivity';
-import Bookmarked from './posts/bookmarked';
-import Shared from './posts/shared';
+import Posts from './posts';
+import PostsContainer from './PostsContainer';
 import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
-import PlacePostsAllSortedByActivity from './posts/placePostsAllSortedByActivity';
-import PlacePostsAllSortedByRecent from './posts/placePostsAllSortedByRecent';
-import PlacePostsUnreadSortedByRecent from './posts/placePostsUnreadSortedByRecent';
 import Notifications from './notifications';
+import AttachmentView from '../../components/AttachmentView/index';
 
 import AccountApi from 'api/account';
-import {IUser, IRecallResponse} from 'api/account/interfaces';
+import {IUser} from 'api/interfaces';
+import {IRecallResponse} from 'api/account/interfaces';
 import AAA from 'services/aaa';
+import Api from 'api';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import FCM from '../../services/fcm/index';
@@ -118,6 +116,8 @@ class Private extends React.Component<IProps, IState> {
    */
   private unListenChangeRoute: any;
 
+  private internalRecall: any;
+
   public constructor(props: IProps) {
     super(props);
 
@@ -198,6 +198,8 @@ class Private extends React.Component<IProps, IState> {
         hashHistory.push('/signin');
       });
     };
+
+    this.internalRecall = recall;
 
     /** clear credentials in some unexpected situations */
     if (!credential.sk || !credential.ss) {
@@ -287,6 +289,14 @@ class Private extends React.Component<IProps, IState> {
 
     /** get unread notifications */
     this.getNotificationCounts();
+
+    setTimeout(() => {
+      Api.getInstance().getServer().onConnectionStateChange((data: any) => {
+        if (data === 1) {
+          this.internalRecall();
+        }
+      });
+    }, 1000);
 
     /**
      * calls on every route change
@@ -393,11 +403,18 @@ class Private extends React.Component<IProps, IState> {
               </div>
               {/* Sidebar elemnt with visibility state check */}
               {(this.state.sidebarOpen && this.state.isPostsApp) &&
-              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
+                <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
               }
               {(this.state.sidebarOpen && !this.state.isPostsApp) &&
-              <TaskSidebar closeSidebar={this.closeSidebar}/>
+                <TaskSidebar closeSidebar={this.closeSidebar}/>
               }
+              {/* Attachments modal view component */}
+              <AttachmentView/>
+              {/* <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
+                              selectedAttachment={this.state.selectedAttachment}
+                              attachments={this.props.attachments}
+                              postId={this.props.postId}
+              /> */}
             </div>
           )
         }
@@ -419,7 +436,7 @@ const mapStateToProps = (store) => ({
 
 /**
  * reducer actions functions mapper
- * @param {any} dispatch reducer dispacther
+ * @param {any} dispatch reducer dispatcher
  * @returns reducer actions object
  */
 const mapDispatchToProps = (dispatch) => {
@@ -439,7 +456,6 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
-  Feed, FeedByActivity, Bookmarked, Shared, PlacePostsAllSortedByActivity,
-  PlacePostsAllSortedByRecent, PlacePostsUnreadSortedByRecent, Activities, Files, Notifications, Compose,
-  Signout, Tasks, TaskEdit,
+  Posts, Activities, Files, Notifications, Compose,
+  Signout, Tasks, TaskEdit, PostsContainer,
 };

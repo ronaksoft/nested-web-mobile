@@ -21,7 +21,6 @@ interface IProps {
 
 interface IState {
   text: string;
-  onClick: () => void;
   visibility: boolean;
   count: number;
 }
@@ -51,7 +50,6 @@ class NewBadge extends React.Component<IProps, IState> {
      */
     this.state = {
       text: this.props.text,
-      onClick: this.props.onClick,
       visibility: this.props.visibility,
       count: this.props.count,
     };
@@ -66,7 +64,6 @@ class NewBadge extends React.Component<IProps, IState> {
 
     this.setState({
       text: newProps.text,
-      onClick: newProps.onClick,
       visibility: newProps.visibility,
       count: newProps.count,
     });
@@ -81,7 +78,7 @@ class NewBadge extends React.Component<IProps, IState> {
     return (
       <div>
         { this.state.visibility && (
-          <div className={style.badge} onClick={this.state.onClick}>
+          <div className={style.badge} onClick={this.props.onClick}>
             <span>{this.state.text}</span>
             <div className={style.count}>{this.state.count}</div>
           </div>

@@ -12,7 +12,7 @@ import * as React from 'react';
 import {NotificationItem} from './NotificationItem';
 import NotificationApi from '../../../api/notification/index';
 import {INotificationData} from '../../../api/notification/interfaces/INotificationResponse';
-import INotification from 'api/notification/interfaces/INotification';
+import {INotification} from 'api/interfaces/';
 import ArrayUntiles from 'services/utils/array';
 import {connect} from 'react-redux';
 import {setNotification, setNotificationCount} from '../../../redux/app/actions/index';

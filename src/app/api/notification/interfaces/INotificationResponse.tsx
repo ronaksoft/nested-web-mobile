@@ -1,4 +1,4 @@
-import INotification from './INotification';
+import {INotification} from 'api/interfaces/';
 
 interface INotificationResponse {
   data: INotificationData;

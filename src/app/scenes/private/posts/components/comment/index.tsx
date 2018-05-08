@@ -10,7 +10,7 @@
  */
 import * as React from 'react';
 import PostApi from 'api/post/index';
-import IComment from 'api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 import {UserAvatar, FullName} from 'components';
 import CommentApi from 'api/comment/index';
 import ArrayUntiles from 'services/utils/array';
@@ -19,7 +19,7 @@ import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncActivity from 'services/syncActivity/index';
 import SyncActions from 'services/syncActivity/syncActions';
-import IUser from '../../../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import RTLDetector from '../../../../../components/RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
 import {message} from 'antd';

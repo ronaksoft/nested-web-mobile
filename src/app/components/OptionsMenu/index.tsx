@@ -105,7 +105,7 @@ class OptionsMenu extends React.Component<IOptionsMenuProps, IOptionsMenuState> 
           onClick={menuItem.onClick}>
         {/* {menuItem.icon && ( */}
           <div>
-            <IcoN size={16} name={menuItem.icon}/>
+            <IcoN size={16} name={menuItem.icon.name}/>
           </div>
         {/* )} */}
         <div>

@@ -1,4 +1,4 @@
-import IPlace from 'api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 
 interface ISearchForComposeResponse {
   places: IPlace[];

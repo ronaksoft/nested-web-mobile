@@ -14,7 +14,11 @@ import {Img} from './Img';
 import {Aud} from './Aud';
 import {Vid} from './Vid';
 import {Oth} from './Oth';
+import {Arc} from './Arc';
 import IFile from './IFile';
+import {Checkbox} from 'antd';
+import {findKey, includes} from 'lodash';
+const style = require('./FileItem.css');
 
 interface IProps {
   /**
@@ -24,6 +28,8 @@ interface IProps {
    * @memberof IProps
    */
   file: IFile;
+  index: number;
+  onSelect: (id: string, index: number) => void;
 }
 
 /**
@@ -32,6 +38,81 @@ interface IProps {
  * @extends {React.Component<IProps, any>}
  */
 class FileItem extends React.Component<IProps, any> {
+  public fileGroups: any;
+  public type: string;
+  public constructor() {
+    super();
+    this.fileGroups = {
+      archive: [
+        'application/zip',
+        'application/x-rar-compressed',
+      ],
+      document: [
+        'text/plain',
+        'application/msword',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroEnabled.12',
+        'application/vnd.ms-excel.template.macroEnabled.12',
+        'application/vnd.ms-excel.addin.macroEnabled.12',
+        'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+      ],
+      image: [
+        'image/bmp',
+        'image/jpeg',
+        'image/ief',
+        'image/png',
+        'image/vnd.dwg',
+        'image/svg+xml',
+      ],
+      gif: [
+        'image/gif',
+      ],
+      audio: [
+        'audio/mpeg',
+        'audio/aac',
+        'audio/mp3',
+        'audio/wma',
+        'audio/wav',
+        'audio/webm',
+        'audio/ogg',
+      ],
+      video: [
+        'video/x-matroska',
+        'video/mp4',
+        'video/3gp',
+        'video/ogg',
+        'video/quicktime',
+        'video/webm',
+      ],
+      pdf: [
+        'application/pdf',
+      ],
+    };
+  }
+
+  public componentDidMount() {
+    this.type = this.getType(this.props.file.mimetype);
+  }
+  public toggleSelect = (event) => {
+    event.cancelBubble = true;
+    event.preventDefault();
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+    this.props.onSelect(this.props.file._id, this.props.index);
+  }
+
+  private getType = (mimetype: string): string => {
+    if (!mimetype) {
+      return '';
+    }
+
+    return findKey(this.fileGroups, (mimetypeList) => includes(mimetypeList, mimetype)) || 'other';
+  }
   /**
    * @function render
    * @description Renders the component
@@ -40,44 +121,20 @@ class FileItem extends React.Component<IProps, any> {
    * @generator
    */
   public render() {
-    if (this.props.file.type === 'Pdf') {
-      return (
-        <div>
-          <Pdf file={this.props.file}/>
+    return (
+      <div className={style.fileContainer}>
+        <div onClick={this.toggleSelect} className={style.checkbox}>
+          <Checkbox checked={this.props.file.tmpEditing}/>
         </div>
-      );
-    } else if (this.props.file.type === 'Audio') {
-      return (
-        <div>
-          <Aud file={this.props.file}/>
-        </div>
-      );
-    } else if (this.props.file.type === 'Image') {
-      return (
-        <div>
-          <Img file={this.props.file}/>
-        </div>
-      );
-    } else if (this.props.file.type === 'Video') {
-      return (
-        <div>
-          <Vid file={this.props.file}/>
-        </div>
-      );
-    } else if (this.props.file.type === 'Document') {
-      return (
-        <div>
-          <Doc file={this.props.file}/>
-        </div>
-      );
-    } else if (this.props.file.type === 'Other') {
-      return (
-        <div>
-          <Oth file={this.props.file}/>
-        </div>
-      );
-    }
-
+        {this.type === 'pdf' && <Pdf file={this.props.file}/>}
+        {this.type === 'audio' && <Aud file={this.props.file}/>}
+        {(this.type === 'image' || this.type === 'gif') && <Img file={this.props.file}/>}
+        {this.type === 'video' && <Vid file={this.props.file}/>}
+        {this.type === 'document' && <Doc file={this.props.file}/>}
+        {this.type === 'archive' && <Arc file={this.props.file}/>}
+        {this.type === 'other' && <Oth file={this.props.file}/>}
+      </div>
+    );
   }
 }
 

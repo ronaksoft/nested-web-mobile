@@ -8,16 +8,19 @@
  *              Date of review:         -
  */
 import * as React from 'react';
+import {connect} from 'react-redux';
 import * as Hammer from 'react-hammerjs';
 import IPostAttachment from '../../api/post/interfaces/IPostAttachment';
 import AttachmentType from '../../api/attachment/constants/AttachmentType';
 import ImageThumbnail from './components/imageThumbnail';
 import OtherThumbnail from './components/otherThumbnail/index';
 import VideoThumbnail from './components/videoThumbnail/index';
+import AudioThumbnail from './components/AudioThumbnail/index';
 import {IcoN} from 'components';
 import AttachmentApi from 'api/attachment';
-import FileUtil from 'services/utils/file';
 import {message} from 'antd';
+import {setCurrentAttachment, unsetCurrentAttachment} from '../../redux/attachment/actions/index';
+import FileUtiles from '../../services/utils/file';
 
 const style = require('./attachmentview.css');
 
@@ -33,9 +36,12 @@ const style = require('./attachmentview.css');
  */
 interface IProps {
   attachments: IPostAttachment[];
-  selectedAttachment?: IPostAttachment | null;
-  postId: string;
-  onClose: () => void;
+  currentAttachment: IPostAttachment;
+  currentAttachmentList: IPostAttachment[];
+  setCurrentAttachment: (attach: IPostAttachment) => void;
+  currentPlace: string;
+  currentPost: string;
+  unsetCurrentAttachment: () => void;
 }
 
 /**
@@ -44,12 +50,13 @@ interface IProps {
  * @type {object}
  * @property {Array<IPostAttachment>} attachments - list of attachments
  * @property {IPostAttachment} selectedAttachment - selected attachment
- * @property {string} downloadUrl -  download url of selected attachment
  */
 interface IState {
   attachments: IPostAttachment[];
-  selectedAttachment: IPostAttachment;
-  downloadUrl: string;
+  currentAttachment: IPostAttachment;
+  visible: boolean;
+  currentPlace: string;
+  currentPost: string;
 }
 
 /**
@@ -59,7 +66,7 @@ interface IState {
  * @extends {React.Component<IProps, IState>}
  * @requires [<IcoN>]
  */
-export default class AttachmentView extends React.Component<IProps, IState> {
+class AttachmentView extends React.Component<IProps, IState> {
 
   /**
    * determine the selected attachment is last attachment or not
@@ -120,16 +127,17 @@ export default class AttachmentView extends React.Component<IProps, IState> {
      * @type {IState}
      */
     this.state = {
-      selectedAttachment: this.props.selectedAttachment,
-      attachments: this.props.attachments,
-      downloadUrl: '',
+      currentAttachment: this.props.currentAttachment,
+      attachments: this.props.attachments || [],
+      currentPlace: '',
+      currentPost: '',
+      visible: false,
     };
 
     // Binds `this` (the component context) as these functions context
     this.onPan = this.onPan.bind(this);
     this.onPanStart = this.onPanStart.bind(this);
     this.onPanEnd = this.onPanEnd.bind(this);
-    this.setDownloadUrl = this.setDownloadUrl.bind(this);
 
     /**
      * call 'inIt' for set initial state of component
@@ -138,34 +146,37 @@ export default class AttachmentView extends React.Component<IProps, IState> {
   }
 
   /**
-   * After mounting component, it calls `AttachmentView.setDownloadUrl`
-   * @override
-   * @function componentDidMount
-   * @memberof AttachmentView
-   */
-  public componentDidMount() {
-    this.setDownloadUrl(this.state.selectedAttachment._id, this.props.postId);
-  }
-
-  /**
    * generates download url of attachment and update component state `downloadUrl` property
    * @function setDownloadUrl
    * @param {string} id
    * @memberof AttachmentView
    */
-  public setDownloadUrl(id: string, postId: string): void {
-      AttachmentApi.getDownloadToken({
-        universal_id: id,
-        post_id: postId,
-      }).then((token: string) => {
-        this.setState({
-          downloadUrl: FileUtil.getDownloadUrl(id, token),
-        });
-      }, () => {
-        this.setState({
-          downloadUrl: null,
-        });
-      });
+  // public setDownloadUrl(id: string = this.state.currentAttachment._id): void {
+  //   const obj: any = {
+  //     universal_id: id,
+  //     post_id: this.state.currentPost || this.state.currentAttachment.post_id,
+  //   };
+  //   AttachmentApi.getDownloadToken(obj).then((token: string) => {
+  //     this.setState({
+  //       downloadUrl: FileUtiles.getDownloadUrl(id, token),
+  //     });
+  //   }, () => {
+  //     this.setState({
+  //       downloadUrl: null,
+  //     });
+  //   });
+  // }
+
+  private getViewUrl = (id: string = this.state.currentAttachment._id) => {
+    const obj: any = {
+      universal_id: id,
+      post_id: this.state.currentPost ? this.state.currentPost : this.state.currentAttachment.post_id,
+    };
+    return new Promise((res, rej) => {
+      AttachmentApi.getDownloadToken(obj).then((token: string) => {
+        res(FileUtiles.getDownloadUrl(id, token));
+      }).catch(rej);
+    });
   }
 
   /**
@@ -174,9 +185,12 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @memberof AttachmentView
    */
   public inIt() {
+    if (this.state.attachments.length === 0) {
+      return;
+    }
     this.indexOfAttachment = this.getIndexOfAttachment();
-    this.haveNext = this.indexOfAttachment < this.props.attachments.length - 1;
-    this.havePrev = this.indexOfAttachment <= this.props.attachments.length - 1 && this.indexOfAttachment > 0;
+    this.haveNext = this.indexOfAttachment < this.state.attachments.length - 1;
+    this.havePrev = this.indexOfAttachment <= this.state.attachments.length - 1 && this.indexOfAttachment > 0;
 
     // reset the style attribiutes on each initialize
     if ( document.getElementById('current') ) {
@@ -197,9 +211,17 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @memberof AttachmentView
    */
   public componentWillReceiveProps(newProps: IProps) {
-    this.setState({
-      attachments: newProps.attachments,
-    });
+    if (this.state.currentAttachment._id !== newProps.currentAttachment._id) {
+      this.setState({
+        attachments: newProps.currentAttachmentList,
+        currentAttachment: newProps.currentAttachment,
+        visible:
+          newProps.currentAttachment &&
+          newProps.currentAttachment._id && newProps.currentAttachment._id.length > 0,
+        currentPlace: newProps.currentPlace,
+        currentPost: newProps.currentPost,
+      });
+    }
     this.inIt();
   }
 
@@ -211,7 +233,7 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    */
   private getIndexOfAttachment() {
     const indexOfAttachment = this.state.attachments.findIndex((attachment: IPostAttachment) => {
-      return attachment._id === this.state.selectedAttachment._id;
+      return attachment._id === this.state.currentAttachment._id;
     });
     return indexOfAttachment;
   }
@@ -230,13 +252,13 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     // if its last attachment, select first item of attachments as selected
     if (this.state.attachments.length - 1 === indexOfAttachment) {
       next =  this.state.attachments[0];
-    } else if (this.props.attachments.length - 1 > indexOfAttachment) {
+    } else if (this.state.attachments.length - 1 > indexOfAttachment) {
       next = this.state.attachments[indexOfAttachment + 1];
     }
-    this.setState({selectedAttachment: next}, () => {
+    this.props.setCurrentAttachment(next);
+    this.setState({currentAttachment: next}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(next._id, this.props.postId);
   }
 
   /**
@@ -256,10 +278,10 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     } else {
       prev = this.state.attachments[this.state.attachments.length - 1];
     }
-    this.setState({selectedAttachment: prev}, () => {
+    this.props.setCurrentAttachment(prev);
+    this.setState({currentAttachment: prev}, () => {
       this.inIt();
     });
-    this.setDownloadUrl(prev._id, this.props.postId);
   }
 
   // private onSwipe(event: any, props: any) {
@@ -293,14 +315,14 @@ export default class AttachmentView extends React.Component<IProps, IState> {
      * @const
      * @type {bolean}
      */
-    const haveNext = indexOfAttachment < this.props.attachments.length - 1;
+    this.haveNext = indexOfAttachment < this.state.attachments.length - 1;
 
     /**
      * @name havePrev
      * @const
      * @type {bolean}
      */
-    const havePrev = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
+    this.havePrev = indexOfAttachment <= this.state.attachments.length - 1 && indexOfAttachment > 0;
 
     /**
      * @name trailed
@@ -314,13 +336,13 @@ export default class AttachmentView extends React.Component<IProps, IState> {
     /**
      * translate the DOMS accordingly to the trailed distance
      */
-    if ( haveNext && this.panDistance < 0 ) {
+    if ( this.haveNext && this.panDistance < 0 ) {
       trailed = 1 + trailed;
       trailed = trailed * 100;
       document.getElementById('next').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
     }
-    if ( havePrev && this.panDistance > 0 ) {
+    if ( this.havePrev && this.panDistance > 0 ) {
       trailed = (1 - trailed) * -100;
       document.getElementById('prv').style.transform = 'translateX(' + trailed + '%)';
       document.getElementById('current').style.transform = 'translateX(' + this.panDistance * 100 + '%)';
@@ -380,10 +402,27 @@ export default class AttachmentView extends React.Component<IProps, IState> {
    * @memberof AttachmentView
    */
   private download = (e: any) => {
-    if (!this.state.downloadUrl) {
+    e.preventDefault();
+    const obj: any = {
+      universal_id: this.state.currentAttachment._id,
+      post_id: this.state.currentPost || this.state.currentAttachment.post_id,
+    };
+    AttachmentApi.getDownloadToken(obj).then((token: string) => {
+      const link = document.createElement('a');
+      link.href = FileUtiles.getDownloadUrl(obj.universal_id, token);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, () => {
       message.error('We are not able to serve the file, try again later.');
-      e.preventDefault();
-    }
+    });
+  }
+
+  public onClose = () => {
+    this.props.unsetCurrentAttachment();
+    this.setState({
+      visible: false,
+    });
   }
 
   /**
@@ -407,14 +446,14 @@ export default class AttachmentView extends React.Component<IProps, IState> {
      * @const
      * @type {boolean}
      */
-    const next = indexOfAttachment < this.props.attachments.length - 1;
+    const next = indexOfAttachment < this.state.attachments.length - 1;
 
     /**
      * @name prv
      * @const
      * @type {boolean}
      */
-    const prv = indexOfAttachment <= this.props.attachments.length - 1 && indexOfAttachment > 0;
+    const prv = indexOfAttachment <= this.state.attachments.length - 1 && indexOfAttachment > 0;
 
     /** Define variables for previous and next elements */
     let prvElement;
@@ -428,13 +467,21 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           }
           {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.VIDEO && (
           <div>
-            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}
-                            postId={this.props.postId}
+            <VideoThumbnail attachmentId={this.state.attachments[indexOfAttachment - 1]._id}
+                            getDownloadUrl={this.getViewUrl}
+            />
+          </div>
+          )}
+          {this.state.attachments[indexOfAttachment - 1].type === AttachmentType.AUDIO && (
+          <div>
+            <AudioThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}
+                            getDownloadUrl={this.getViewUrl}
             />
           </div>
           )}
           {this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.IMAGE &&
+          this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.AUDIO &&
           this.state.attachments[indexOfAttachment - 1].type !== AttachmentType.VIDEO && (
             <div>
               <OtherThumbnail attachment={this.state.attachments[indexOfAttachment - 1]}/>
@@ -453,13 +500,18 @@ export default class AttachmentView extends React.Component<IProps, IState> {
           </div>
           )}
           {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.VIDEO && (
-            <VideoThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}
-                          postId={this.props.postId}/>
+            <VideoThumbnail attachmentId={this.state.attachments[indexOfAttachment + 1]._id}
+              getDownloadUrl={this.getViewUrl}/>
           )
           }
+          {this.state.attachments[indexOfAttachment + 1].type === AttachmentType.AUDIO && (
+            <AudioThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}
+              getDownloadUrl={this.getViewUrl}/>
+          )}
           {this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.GIF &&
           this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.IMAGE &&
-          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO && (
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.VIDEO &&
+          this.state.attachments[indexOfAttachment + 1].type !== AttachmentType.AUDIO && (
           <div>
             <OtherThumbnail attachment={this.state.attachments[indexOfAttachment + 1]}/>
           </div>
@@ -467,63 +519,101 @@ export default class AttachmentView extends React.Component<IProps, IState> {
         </main>
       );
     }
-    return (
-      <div
-        id={'attachment-view'}
-        className={style.attachmentView}
-      >
-        {/* Attachment view navbar */}
-        <div className={style.navigation}>
-          {/* Attachment view close button */}
-          <a onClick={this.props.onClose}>
-            <IcoN size={24} name={'xcrossWhite24'}/>
-          </a>
-          <span>
-            {indexOfAttachment + 1} of {this.state.attachments.length}
-          </span>
-        </div>
-        <Hammer id="current" onPan={this.onPan} onPanEnd={this.onPanEnd}
-        onPanStart={this.onPanStart} direction="DIRECTION_ALL">
-          <div className={style.currentItem}>
-            {(this.state.selectedAttachment.type === AttachmentType.GIF ||
-              this.state.selectedAttachment.type === AttachmentType.IMAGE) &&
-            <ImageThumbnail attachment={this.state.selectedAttachment}/>
-            }
-            {this.state.selectedAttachment.type === AttachmentType.VIDEO &&
-            (
-              <VideoThumbnail attachment={this.state.selectedAttachment}
-                            postId={this.props.postId}/>
-            )
-            }
-            {this.state.selectedAttachment.type !== AttachmentType.GIF &&
-            this.state.selectedAttachment.type !== AttachmentType.IMAGE &&
-            this.state.selectedAttachment.type !== AttachmentType.VIDEO &&
-            <OtherThumbnail attachment={this.state.selectedAttachment}/>
-            }
+    if (this.state.visible) {
+      return (
+          <div
+          id="attachment-view"
+          className={style.attachmentView}
+        >
+          {/* Attachment view navbar */}
+          <div className={style.navigation}>
+            {/* Attachment view close button */}
+            <a onClick={this.onClose}>
+              <IcoN size={24} name={'xcrossWhite24'}/>
+            </a>
+            <span>
+              {indexOfAttachment + 1} of {this.state.attachments.length}
+            </span>
           </div>
-        </Hammer>
-        <div className={style.footer}>
-          <div>
-            <p>{this.state.selectedAttachment.filename}</p>
-            {(this.state.selectedAttachment.type === AttachmentType.GIF ||
-              this.state.selectedAttachment.type === AttachmentType.IMAGE) ? (
-              <span>Original Image:
-                {/*{this.state.selectedAttachment.size} kb,*/}
-                {this.state.selectedAttachment.height} × {this.state.selectedAttachment.width}</span>
-            ) : (
-              <span>
-                {/*{this.state.selectedAttachment.size} kb*/}
-              </span>
-            )}
+          <Hammer id="current" onPan={this.onPan} onPanEnd={this.onPanEnd}
+            onPanStart={this.onPanStart} direction="DIRECTION_ALL">
+            <div className={style.currentItem}>
+              {(this.state.currentAttachment.type === AttachmentType.GIF ||
+                this.state.currentAttachment.type === AttachmentType.IMAGE) &&
+              <ImageThumbnail attachment={this.state.currentAttachment}/>
+              }
+              {this.state.currentAttachment.type === AttachmentType.VIDEO &&
+              (
+                <VideoThumbnail attachmentId={this.state.currentAttachment._id}
+                  getDownloadUrl={this.getViewUrl}/>
+              )}
+              {this.state.currentAttachment.type === AttachmentType.AUDIO && (
+                <AudioThumbnail attachment={this.state.currentAttachment}
+                  getDownloadUrl={this.getViewUrl}/>
+              )}
+              {this.state.currentAttachment.type !== AttachmentType.GIF &&
+              this.state.currentAttachment.type !== AttachmentType.IMAGE &&
+              this.state.currentAttachment.type !== AttachmentType.VIDEO &&
+              this.state.currentAttachment.type !== AttachmentType.AUDIO &&
+                <OtherThumbnail attachment={this.state.currentAttachment}/>
+              }
+            </div>
+          </Hammer>
+          <div className={style.footer}>
+            <div>
+              <p>{this.state.currentAttachment.filename}</p>
+              {(this.state.currentAttachment.type === AttachmentType.GIF ||
+                this.state.currentAttachment.type === AttachmentType.IMAGE) ? (
+                <span>Original Image:&nbsp;
+                {FileUtiles.parseSize(this.state.currentAttachment.size)},&nbsp;
+                  {this.state.currentAttachment.height} × {this.state.currentAttachment.width}</span>
+              ) : (
+                <span>
+                  {FileUtiles.parseSize(this.state.currentAttachment.size)}
+                </span>
+              )}
+            </div>
+            {/* Attachment view download button */}
+            <a onClick={this.download}>
+              <IcoN size={24} name={'downloadsWhite24'}/>
+            </a>
           </div>
-          {/* Attachment view download button */}
-          <a onClick={this.download} href={this.state.downloadUrl}>
-            <IcoN size={24} name={'downloadsWhite24'}/>
-          </a>
+          {prv && prvElement}
+          {next && nextElement}
         </div>
-        {prv && prvElement}
-        {next && nextElement}
-      </div>
-    );
+      );
+    } else {
+      return <div/>;
+    }
   }
 }
+
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store) => ({
+  attachments: store.attachments.attachments,
+  currentAttachment: store.attachments.currentAttachment,
+  currentAttachmentList: store.attachments.currentAttachmentList,
+  currentPlace: store.attachments.currentPlace,
+  currentPost: store.attachments.currentPost,
+});
+
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentAttachment: (attach: IPostAttachment) => {
+      dispatch(setCurrentAttachment(attach));
+    },
+    unsetCurrentAttachment: () => {
+      dispatch(unsetCurrentAttachment());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AttachmentView);

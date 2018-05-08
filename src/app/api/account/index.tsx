@@ -24,7 +24,7 @@ import {
   ICallPhoneRequest,
   IUsernameAvailable,
 } from './interfaces';
-import IPlace from '../place/interfaces/IPlace';
+import {IPlace} from '../interfaces/';
 
 /**
  * @class AccountApi

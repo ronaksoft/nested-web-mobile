@@ -11,7 +11,7 @@ import * as React from 'react';
 import IPostAttachment from '../../../../api/post/interfaces/IPostAttachment';
 import AAA from '../../../../services/aaa/index';
 import CONFIG from '../../../../config';
-import IAttachment from '../../../../api/attachment/interfaces/IAttachment';
+import {IAttachment} from 'api/interfaces';
 
 /**
  * @name IProps

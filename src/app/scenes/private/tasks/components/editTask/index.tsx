@@ -15,7 +15,7 @@ import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
-import IUser from '../../../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 // import {difference} from 'lodash';
 const style = require('../../task.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');

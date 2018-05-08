@@ -16,7 +16,7 @@ import C_TASK_CUSTOM_FILTER from '../../../api/consts/CTaskCustomFilter';
 import C_TASK_STATUS from '../../../api/consts/CTaskStatus';
 import {setCurrentTask, setTasks, setTasksRoute, setTasksFilter} from '  ../../../redux/app/actions/index';
 import ArrayUntiles from '  ../../../services/utils/array';
-import {Button, message} from 'antd';
+import {message} from 'antd';
 import {hashHistory} from 'react-router';
 import {Loading} from '  ../../../components/Loading/index';
 // import TaskCandidateView from './components/list/candidateItem/index';
@@ -47,7 +47,6 @@ interface IState {
   loadingBefore: boolean;
   reachedTheEnd: boolean;
   initialLoading: boolean;
-  newPostCount: number;
   location: any;
   route: string;
 }
@@ -81,7 +80,6 @@ class Tasks extends React.Component<IProps, IState> {
       customFilters: this.props.customFilters || [],
       reachedTheEnd: false,
       initialLoading: true,
-      newPostCount: 0,
       route: initiateRoute || 'glance',
     };
   }
@@ -256,9 +254,7 @@ class Tasks extends React.Component<IProps, IState> {
     this.taskApi.getByFilter(params)
       .then((response: IGetTasksResponse) => {
         const overDueTasks = ArrayUntiles.uniqueObjects(response.tasks.concat(this.state.overDueTasks), '_id')
-          .sort((a: ITask, b: ITask) => {
-            return b.timestamp - a.timestamp;
-          });
+          .sort((a: ITask, b: ITask) => b.timestamp - a.timestamp);
 
         this.props.setTasks({overDueTasks});
         this.setState({
@@ -662,8 +658,8 @@ class Tasks extends React.Component<IProps, IState> {
             refreshFunction={this.refresh}
             next={loadMore}
             route={this.props.location.pathname}
-            hasMore={true}
-            loader={<Loading active={true} position="fixed"/>}>
+            hasMore={!this.state.reachedTheEnd}
+            loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
               {showOverDue && <h3 className={style.force}>Overdue Tasks</h3>}
               {showOverDue && this.state.overDueTasks.map((task: ITask) => (
                 <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
@@ -692,9 +688,9 @@ class Tasks extends React.Component<IProps, IState> {
                 (
                   <div className={privateStyle.emptyMessage}>
                     You have no Tasks until next year...
-                    <div className={style.loadMore}>
+                    {/* <div className={style.loadMore}>
                       <Button onClick={loadMore}>Try again</Button>
-                    </div>
+                    </div> */}
                   </div>
                 )
               }

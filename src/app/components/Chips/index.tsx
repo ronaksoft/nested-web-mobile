@@ -9,7 +9,7 @@
  */
 import * as React from 'react';
 import FileUtil from 'services/utils/file';
-import IPicture from 'api/interfaces/IPicture';
+import {IPicture} from 'api/interfaces';
 
 const style = require('./chips.css');
 const unknownPicture = require('assets/icons/absents_place.svg');

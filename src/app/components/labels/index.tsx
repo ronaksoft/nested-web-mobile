@@ -4,7 +4,7 @@ import {Input, Modal} from 'antd';
 import {IcoN} from 'components';
 import LabelApi from '../../api/label/';
 import ISearchLabelRequest from '../../api/label/interfaces/ISearchLabelRequest';
-import ILabel from '../../api/label/interfaces/ILabel';
+import {ILabel} from 'api/interfaces';
 import CLabelFilterTypes from '../../api/label/consts/CLabelFilterTypes';
 import {debounce, differenceWith, find, findIndex} from 'lodash';
 

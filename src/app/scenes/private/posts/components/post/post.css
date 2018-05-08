@@ -8,12 +8,12 @@
   overflow: hidden;
 }
 .postScrollContainer {
-  height: calc(100% - 56px);
+  /* height: calc(100% - 56px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 22;
-  will-change: scroll;
-  touch-action: auto;
+  will-change: scroll; */
+  /* touch-action: auto; */
   display: flex;
   flex-direction: column;
 }
@@ -35,6 +35,14 @@
 }
 .postView .postBody {
   border-bottom: none;
+}
+.postBody iframe {
+  /* height: 100vh */
+  box-shadow: none;
+  outline: none;
+  border: none;
+  margin: 0 8px;
+  width: calc(100% - 16px);
 }
 .postCard hr{
   border-top: none;
@@ -74,6 +82,9 @@
 }
 .postHead span{
   width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
   overflow: hidden;
 }
 .postPin,
@@ -162,8 +173,11 @@
 }
 .mailWrapper {
   display: inline-block;
-  /* min-width: 100%; */
+  min-width: 100%;
   transform-origin: top left;
+}
+.mailWrapper > div[contenteditable]:before {
+  display: none;
 }
 .commentboxIllu {
   height: 64px;

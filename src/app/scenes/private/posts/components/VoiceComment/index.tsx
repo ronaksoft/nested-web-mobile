@@ -9,7 +9,7 @@
  * Date of review:         2017-07-31
  */
 import * as React from 'react';
-import IComment from 'api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 import {IcoN} from '../../../../../components/Icons';
 import SeekBar from '../SeekBar';
 import MiniPlayer from '../../../../../../app/services/miniplayer';
@@ -129,7 +129,9 @@ class VoiceComment extends React.Component<IProps, IState> {
   }
 
   private onBarClick = (ratio) => {
-    this.miniPlayer.seekTo(ratio);
+    if (this.currentPlayingId === this.props.comment._id) {
+      this.miniPlayer.seekTo(ratio);
+    }
   }
 
   /**

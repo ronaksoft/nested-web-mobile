@@ -1,11 +1,10 @@
 import IPostCounters from './IPostCounters';
-import IUser from '../../account/interfaces/IUser';
-import IPlace from '../../place/interfaces/IPlace';
-import ILabel from '../../label/interfaces/ILabel';
+import {IPlace, IUser, ILabel, IComment} from 'api/interfaces';
 import IPostAttachment from './IPostAttachment';
 
 interface IPost {
   body: string;
+  preview: string;
   content_type: string;
   counters: IPostCounters;
   ellipsis: boolean;
@@ -14,21 +13,24 @@ interface IPost {
   last_update: number;
   no_comment: boolean;
   pinned: boolean;
-  post_attachments: IPostAttachment[]; // fixme:: attachment interfaces
+  post_attachments: IPostAttachment[];
   post_places: IPlace[];
   post_read: boolean;
   post_recipients: any[];
-  recent_comments: any[]; // fixme:: comment interface
+  recent_comments: IComment[];
   sender: IUser;
   email_sender: IUser;
   subject: string;
   timestamp: number;
   type: number;
   watched: boolean;
+  wipe_access: boolean;
   reply_to: string;
   forward_from: string;
   post_labels: ILabel[];
+  iframe_url: string;
   _id: string;
+  pinnedInPlace?: boolean;
 }
 
 export default IPost;

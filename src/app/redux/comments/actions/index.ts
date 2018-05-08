@@ -1,4 +1,4 @@
-import IComment from 'api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 import {ICommentAction} from '../ICommentStore';
 import * as ActionTypes from './types';
 

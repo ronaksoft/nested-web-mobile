@@ -311,12 +311,15 @@ class PhoneInput extends React.Component<IProps, IState> {
         <label>Phone Number</label>
         <InputGroup className={style.phoneNumber} compact={true} style={this.props.style || {}}>
           <Input
+                type="tel"
+                name="country-code"
                 prefix="+"
                 style={{ width: 64, borderLeft: 0 }}
                 onChange={this.handleCodeChange}
                 value={this.state.code}
           />
           <Input
+                type="tel" name="phone"
                 style={{ width: '100%' }}
                 onChange={this.handlePhoneChange}
                 value={this.state.phone}

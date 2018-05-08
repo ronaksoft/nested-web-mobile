@@ -1,7 +1,7 @@
 import {IAccountAction} from '../IAccountStore';
 import * as Immutable from 'seamless-immutable';
 import * as ActionTypes from '../actions/types';
-import IUser from '../../../api/account/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 
 /** Initial Places State */
 const initialState = Immutable.from<IAccountStore>({

@@ -12,6 +12,7 @@ interface IState {
     pullToRefreshThresholdBreached: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
+    route: string;
     scrollPositions: any;
     pullDownToRefreshThreshold: number;
     disableBrowserPullToRefresh: boolean;
@@ -63,87 +64,110 @@ interface IProps {
 };
 
 class InfiniteScroll extends React.Component<IProps, IState> {
-    public startY: number;
-    public currentY: number;
-    public dragging: boolean;
-    public maxPullDownDistance: number;
-    public el: HTMLElement;
-    public throttledOnScrollListener: () => void;
-    public infScroll: any;
-    public pullDown: any;
-    constructor(props) {
-        super();
-        this.state = {
-            showLoader: false,
-            scrollPositions: {},
-            lastScrollTop: 0,
-            actionTriggered: false,
-            pullToRefreshThresholdBreached: false,
-            pullDownToRefreshContent: props.pullDownToRefreshContent || (
-              <h3 className={style.pull}>
-                <IcoN size={16} name={'arrow16'}/>
-                <span>Pull down to refresh</span>
-              </h3>
-            ),
-            releaseToRefreshContent: props.releaseToRefreshContent || (
-              <h3 className={style.release}>
-                <IcoN size={16} name={'arrow16'}/>
-                <span>Release to refresh</span>
-              </h3>
-            ),
-            pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
-            disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
-        };
-        // variables to keep track of pull down behaviour
-        this.startY = 0;
-        this.currentY = 0;
-        this.dragging = false;
-        // will be populated in componentDidMount
-        // based on the height of the pull down element
-        this.maxPullDownDistance = 0;
+  public startY: number;
+  public lastScrollPosition: number;
+  public lastChangedScrollPosition: number;
+  public currentY: number;
+  public retry: number;
+  public dragging: boolean;
+  public maxPullDownDistance: number;
+  public el: HTMLElement;
+  public throttledOnScrollListener: () => void;
+  public throttledSetLastScroll: () => void;
+  public infScroll: any;
+  public pullDown: any;
+  constructor(props) {
+    super();
+    this.state = {
+        showLoader: false,
+        scrollPositions: {},
+        lastScrollTop: 0,
+        actionTriggered: false,
+        pullToRefreshThresholdBreached: false,
+        route: props.route,
+        pullDownToRefreshContent: props.pullDownToRefreshContent || (
+          <h3 className={style.pull}>
+            <IcoN size={16} name={'arrow16'}/>
+            <span>Pull down to refresh</span>
+          </h3>
+        ),
+        releaseToRefreshContent: props.releaseToRefreshContent || (
+          <h3 className={style.release}>
+            <IcoN size={16} name={'arrow16'}/>
+            <span>Release to refresh</span>
+          </h3>
+        ),
+        pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
+        disableBrowserPullToRefresh: props.disableBrowserPullToRefresh || true,
+    };
+    // variables to keep track of pull down behaviour
+    this.startY = 0;
+    this.retry = 0;
+    this.currentY = 0;
+    this.dragging = false;
+    // will be populated in componentDidMount
+    // based on the height of the pull down element
+    this.maxPullDownDistance = 0;
 
-        this.onScrollListener = this.onScrollListener.bind(this);
-        this.throttledOnScrollListener = throttle(this.onScrollListener, 150).bind(this);
-        this.onStart = this.onStart.bind(this);
-        this.onMove = this.onMove.bind(this);
-        this.onEnd = this.onEnd.bind(this);
-    }
+    this.onScrollListener = this.onScrollListener.bind(this);
+    this.throttledOnScrollListener = throttle(this.onScrollListener, 150).bind(this);
+    this.throttledSetLastScroll = throttle(() => {
+      this.lastScrollPosition = this.lastChangedScrollPosition;
+    }, 150);
+    this.onStart = this.onStart.bind(this);
+    this.onMove = this.onMove.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+  }
 
-    public componentDidMount() {
-    this.el = this.infScroll || window;
-    this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
-
-    if (this.props.route && this.props.scrollPositions[this.props.route]) {
-      this.el.scrollTo(0, this.props.scrollPositions[this.props.route]);
-    } else if (this.el.scrollHeight > this.props.initialScrollY) {
-      this.el.scrollTo(0, this.props.initialScrollY);
-    }
-    if (this.props.pullDownToRefresh) {
-        // if ('PointerEvent' in window) {
-        //   this.el.addEventListener('pointerdown', this.onStart, false);
-        //   this.el.addEventListener('pointermove', this.onMove, false);
-        //   this.el.addEventListener('pointerup', this.onEnd, false);
-        //   this.el.addEventListener('pointercancel', this.onEnd, false);
-        // } else {
-          this.el.addEventListener('touchstart', this.onStart, false);
-          this.el.addEventListener('touchmove', this.onMove, false);
-          this.el.addEventListener('touchend', this.onEnd, false);
-          this.el.addEventListener('mousedown', this.onStart, false);
-          this.el.addEventListener('mousemove', this.onMove, false);
-          this.el.addEventListener('mouseup', this.onEnd, false);
-        // }
-        // get BCR of pullDown element to position it above
-        this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
-        this.forceUpdate();
-
-        if (typeof this.props.refreshFunction !== 'function') {
-          throw new Error(
-            `Mandatory prop "refreshFunction" missing.
-            Pull Down To Refresh functionality will not work
-            as expected. Check README.md for usage'`,
-          );
+  public retviveScroll = () => {
+    if (this.retry === 7) {
+      return this.retry = 0;
+    } else {
+      this.lastChangedScrollPosition = (this.state.route && this.props.scrollPositions[this.state.route]) ||
+        this.props.initialScrollY;
+        this.throttledSetLastScroll();
+      if (this.lastScrollPosition) {
+        if (this.el.scrollHeight - this.el.clientHeight < this.lastScrollPosition) {
+          this.el.scrollTo(0, this.el.scrollHeight - this.el.clientHeight);
+          this.retry++;
+          return setTimeout(this.retviveScroll, 10 * this.retry * this.retry);
+        } else {
+          this.el.scrollTo(0, this.lastScrollPosition);
         }
+      }
     }
+  }
+
+  public componentDidMount() {
+      this.el = this.infScroll || window;
+      this.el.addEventListener('scroll', this.throttledOnScrollListener, true);
+      this.retviveScroll();
+      if (this.props.pullDownToRefresh) {
+          // if ('PointerEvent' in window) {
+          //   this.el.addEventListener('pointerdown', this.onStart, false);
+          //   this.el.addEventListener('pointermove', this.onMove, false);
+          //   this.el.addEventListener('pointerup', this.onEnd, false);
+          //   this.el.addEventListener('pointercancel', this.onEnd, false);
+          // } else {
+            this.el.addEventListener('touchstart', this.onStart, false);
+            this.el.addEventListener('touchmove', this.onMove, false);
+            this.el.addEventListener('touchend', this.onEnd, false);
+            this.el.addEventListener('mousedown', this.onStart, false);
+            this.el.addEventListener('mousemove', this.onMove, false);
+            this.el.addEventListener('mouseup', this.onEnd, false);
+          // }
+          // get BCR of pullDown element to position it above
+          this.maxPullDownDistance = this.pullDown.firstChild.getBoundingClientRect().height;
+          this.forceUpdate();
+
+          if (typeof this.props.refreshFunction !== 'function') {
+            throw new Error(
+              `Mandatory prop "refreshFunction" missing.
+              Pull Down To Refresh functionality will not work
+              as expected. Check README.md for usage'`,
+            );
+          }
+      }
   }
 
   public isiOS() {
@@ -178,6 +202,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       actionTriggered: false,
       pullToRefreshThresholdBreached: false,
       scrollPositions: props.scrollPositions,
+      route: props.route,
     });
   }
 
@@ -252,6 +277,9 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     }
 
     requestAnimationFrame(() => {
+      if (!this.infScroll) {
+        return;
+      }
       this.infScroll.style.overflow = 'auto';
       this.infScroll.style.transform = 'none';
       this.infScroll.style.willChange = 'none';
@@ -294,7 +322,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
     // save scroll in redux
     if (typeof this.props.setScroll === 'function') {
         const payload = {};
-        payload[this.props.route] = target.scrollTop;
+        payload[this.state.route] = target.scrollTop;
         this.props.setScroll(payload);
     }
     // if user scrolls up, remove action trigger lock

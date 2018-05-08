@@ -16,8 +16,8 @@
 
 import Api from '../../api/index';
 import SyncActions from './syncActions';
-import ActivityApi from '../../api/activity/index';
-import IActivity from '../../api/activity/interfaces/IActivitiy';
+import ActivityApi from '../../api/place/index';
+import {IActivity} from 'api/interfaces/';
 
 /**
  * @interface IChanel

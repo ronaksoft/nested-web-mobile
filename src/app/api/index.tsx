@@ -178,7 +178,7 @@ class Api {
     }
   }
 
-  private getServer() {
+  public getServer() {
     if (!this.server) {
       this.server = new Server();
     }

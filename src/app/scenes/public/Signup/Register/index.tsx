@@ -17,12 +17,13 @@ import * as React from 'react';
 import {hashHistory} from 'react-router';
 import {Input, Button, Form, message} from 'antd';
 import AccountApi from 'api/account';
+import {IUser} from 'api/interfaces';
 import * as md5 from 'md5';
 import IValidatableField from '../../IValidatableField';
 import IValidationResult from '../../IValidationResult';
 import { connect } from 'react-redux';
 import { login } from 'redux/app/actions';
-import { IUser, ILoginResponse } from 'api/account/interfaces';
+import {ILoginResponse } from 'api/account/interfaces';
 import AAA from 'services/aaa';
 import Client from 'services/utils/client';
 
@@ -543,35 +544,37 @@ class Register extends React.Component<IProps, IState> {
             validateStatus={this.state.username.status}
           >
             <label>Choose your username</label>
-            <Input value={this.state.username.value} onChange={this.handleUsernameChange}/>
+            <Input value={this.state.username.value} onChange={this.handleUsernameChange} name="username"/>
           </Form.Item>
           <Form.Item
             help={this.state.password.message}
             validateStatus={this.state.password.status}
           >
             <label>Set a password</label>
-            <Input type="password" value={this.state.password.value} onChange={this.handlePasswordChange}/>
+            <Input type="password" value={this.state.password.value} onChange={this.handlePasswordChange}
+              name="password"/>
           </Form.Item>
           <Form.Item
             help={this.state.firstName.message}
             validateStatus={this.state.firstName.status}
           >
             <label>First Name</label>
-            <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange}/>
+            <Input value={this.state.firstName.value} onChange={this.handleFirstNameChange} name="fname"/>
           </Form.Item>
           <Form.Item
             help={this.state.lastName.message}
             validateStatus={this.state.lastName.status}
           >
             <label>Sure Name</label>
-            <Input value={this.state.lastName.value} onChange={this.handleLastNameChange}/>
+            <Input value={this.state.lastName.value} onChange={this.handleLastNameChange} name="lname"/>
           </Form.Item>
           <Form.Item
             help={this.state.email.message}
             validateStatus={this.state.email.status}
           >
             <label>Email</label>
-            <Input value={this.state.email.value} onChange={this.handleEmailChange}/>
+            <Input value={this.state.email.value} onChange={this.handleEmailChange}
+              type="email" name="email"/>
           </Form.Item>
           <p>
             By proceeding to create a Nested account, you are agreeing to our&nbsp;

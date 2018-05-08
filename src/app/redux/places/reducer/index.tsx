@@ -1,7 +1,7 @@
 import * as Immutable from 'seamless-immutable';
 import {IPlaceAction} from '../IPlaceStore';
 import * as ActionTypes from '../actions/types';
-import IPlace from '../../../api/place/interfaces/IPlace';
+import {IPlace} from '../../../api/interfaces/';
 
 /** Initial Places State */
 const initialState = Immutable.from <IPlaceStore>({

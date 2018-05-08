@@ -9,7 +9,7 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import IPlace from '../../api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
@@ -81,7 +81,7 @@ class PlaceItem extends React.Component<IProps, IState> {
       // Define the place Api
       const placeApi = new PlaceApi();
       // call place Api for get place obj of the passed place Id
-      placeApi.get({place_id: this.props.place_id})
+      placeApi.get(this.props.place_id)
         .then((p: IPlace) => {
           this.setState({
             place: p,

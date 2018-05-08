@@ -17,7 +17,8 @@ import {login, logout} from 'redux/app/actions';
 import * as md5 from 'md5';
 import Api from 'api';
 import AccountApi from 'api/account';
-import {IUser, ILoginResponse} from 'api/account/interfaces';
+import {ILoginResponse} from 'api/account/interfaces';
+import {IUser} from 'api/interfaces';
 import AAA from 'services/aaa';
 import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
@@ -144,7 +145,7 @@ class Signin extends React.Component<IProps, IState> {
       _dt: dt,
     })
       .then((response: ILoginResponse) => {
-        console.log(response);
+        // console.log(response);
           // Replaces the previous credentials that have been stored inside `AAA` service
           AAA.getInstance().setCredentials(response);
 
@@ -250,6 +251,7 @@ class Signin extends React.Component<IProps, IState> {
             <b>Sign in</b>
           </Button>
           <p className={publicStyle.detail}>Don't have an account? <Link to="/signup">Create a new account</Link></p>
+          <p className={publicStyle.detail}><Link to="/workspace">Change Workspace</Link></p>
           {
             this.state.message &&
             (

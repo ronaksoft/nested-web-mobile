@@ -1,4 +1,4 @@
-import IAttachment from './IAttachment';
+import {IAttachment} from 'api/interfaces';
 interface IUploadMission {
   abort: () => void;
   onFinish: (attachment: IAttachment) => void;

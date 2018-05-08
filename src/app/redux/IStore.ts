@@ -1,8 +1,7 @@
-import IUser from '../api/account/interfaces/IUser';
+import {IUser, IComment, IPlace} from 'api/interfaces';
 import ITask from '../api/task/interfaces/ITask';
-import IPlace from '../api/place/interfaces/IPlace';
 import {IAppStore} from './app/IAppStore';
-import IComment from '../api/comment/interfaces/IComment';
+import {IAttachmentStore} from './attachment/IAttachmentStore';
 
 export interface IStore {
   places: IPlace[];
@@ -10,5 +9,6 @@ export interface IStore {
   tasks: ITask[];
   comments: IComment[];
   app: IAppStore;
+  attachments: IAttachmentStore;
   reduxAsyncConnect: any;
 }

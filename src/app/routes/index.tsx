@@ -1,18 +1,17 @@
 import * as React from 'react';
 import {
-  Feed, FeedByActivity, Bookmarked, Shared,
-  PlacePostsAllSortedByActivity, PlacePostsAllSortedByRecent,
-  PlacePostsUnreadSortedByRecent,
+  Posts, PostsContainer,
   Notifications, Activities, Files, Compose, Signout,
   Tasks, TaskEdit,
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
-import {Public, Signin, Signup, NotFound} from 'scenes/public';
+import {Public, Signin, Signup, NotFound, Workspace} from 'scenes/public';
 import {SubmitPhone, Verify, Register} from 'scenes/public/Signup';
 import {Provider} from 'react-redux';
 import {Router, Route, hashHistory, IndexRoute, Redirect} from 'react-router';
 import {configureStore} from 'redux/store';
+import Members from '../scenes/private/place/members';
 
 const store = configureStore(hashHistory);
 
@@ -20,27 +19,40 @@ export default (
   <Provider store={store}>
     <Router history={hashHistory}>
       <Route component={Private}>
-        <IndexRoute component={Feed}/>
+        <IndexRoute component={Posts}/>
         <Redirect from="/" to="/feed" />
         {/*<Route path="/" component={Feed} />*/}
-        <Route path="/feed" component={Feed}/>
-        <Route path="/feed/latest-activity" component={FeedByActivity}/>
-        <Route path="/shared" component={Shared}/>
-        <Route path="/bookmarks" component={Bookmarked}/>
 
-        {/* All post sorted by activity*/}
-        <Route path="/places/:placeId/messages" component={PlacePostsAllSortedByRecent}/>
+        <Route component={PostsContainer}>
+          <Route path="/feed" component={Posts}/>
+          <Route path="/feed/latest-activity" component={Posts}/>
+          <Route path="/shared" component={Posts}/>
+          <Route path="/bookmarks" component={Posts}/>
 
-        {/* All recent post */}
-        <Route path="/places/:placeId/messages/latest-activity" component={PlacePostsAllSortedByActivity}/>
+          {/* All post sorted by activity*/}
+          <Route path="/places/:placeId/messages" component={Posts}/>
 
-        {/* Unread post sorted by activity*/}
-        <Route path="/places/:placeId/unread" component={PlacePostsUnreadSortedByRecent}/>
+          {/* All recent post */}
+          <Route path="/places/:placeId/messages/latest-activity" component={Posts}/>
 
-        <Route path="/places/:placeId/activities" component={Activities}/>
-        <Route path="/places/:placeId/files" component={Files}/>
-        <Route path="/messages/latest-activity" component={Activities}/>
+          {/* Unread post sorted by activity*/}
+          <Route path="/places/:placeId/unread" component={Posts}/>
+
+          <Route path="/places/:placeId/activity" component={Activities}/>
+          <Route path="/places/:placeId/files/:filter/:search" component={Files}/>
+          <Route path="/places/:placeId/files/:filter" component={Files}/>
+          <Route path="/places/:placeId/files/" component={Files}/>
+          <Route path="/places/:placeId/members" component={Members}/>
+        </Route>
+
         <Route path="/message/:postId" component={Post}/>
+        <Route path="/compose" component={Compose}/>
+        <Route path="/compose/edit/:editPostId" component={Compose}/>
+        <Route path="/reply/:replyId" component={Compose}/>
+        <Route path="/reply/:replyId/sender" component={Compose}/>
+        <Route path="/forward/:forwardId" component={Compose}/>
+        <Route path="/compose/:attachments" component={Compose}/>
+
         <Route path="/task/glance" component={Tasks}/>
         <Route path="/task/assigned_to_me/normal" component={Tasks}/>
         <Route path="/task/assigned_to_me/completed" component={Tasks}/>
@@ -51,14 +63,13 @@ export default (
         <Route path="/task/edit/:taskId" component={TaskEdit}/>
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
-        <Route path="/compose" component={Compose}/>
-        <Route path="/reply/:replyId" component={Compose}/>
-        <Route path="/reply/:replyId/sender" component={Compose}/>
-        <Route path="/forward/:forwardId" component={Compose}/>
+        <Route path="/notifications/:app" component={Notifications}/>
+
         <Route path="/signout" component={Signout}/>
       </Route>
       <Route component={Public}>
         <Route path="/404" component={NotFound}/>
+        <Route path="/workspace" component={Workspace}/>
         <Route path="/signin" component={Signin}/>
         <Route path="/signup" component={Signup}>
           <IndexRoute component={SubmitPhone}/>

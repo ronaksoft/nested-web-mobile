@@ -8,6 +8,7 @@
   left: 50%;
   transform: translateX(-50%);
   bottom: 68px;
+  z-index: 66;
 }
 .badge span{
   color: #3296FF;

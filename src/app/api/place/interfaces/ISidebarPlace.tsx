@@ -5,6 +5,7 @@ interface ISidebarPlace {
     depth: number;
     hasChildren: boolean;
     isChildren: boolean;
+    isSelected: boolean;
 }
 
 export default ISidebarPlace;

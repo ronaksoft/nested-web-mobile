@@ -27,7 +27,7 @@ import {Accepted, AddCandidate, Updated, Hold,
         CommentTask, Completed, DuetimeUpdated,
         InProgress, MentionTask, Overdue, Rejected} from './task';
 import 'antd/dist/antd.css';
-import INotification from '../../../../api/notification/interfaces/INotification';
+import {INotification} from 'api/interfaces/';
 import INotificationTypes from '../../../../api/notification/interfaces/INotificationTypes';
 
 interface IProps {

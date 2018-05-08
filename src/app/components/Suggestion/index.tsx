@@ -13,7 +13,7 @@ import {debounce} from 'lodash';
 import {Input, Button, message} from 'antd';
 import {PlaceChips} from 'components';
 import {IChipsItem} from 'components/Chips';
-import IPlace from 'api/place/interfaces/IPlace';
+import {IPlace} from 'api/interfaces';
 import SystemApi from 'api/system/';
 import SearchApi from 'api/search';
 import FileUtil from 'services/utils/file';

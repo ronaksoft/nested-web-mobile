@@ -1,4 +1,4 @@
-import IUser from './IUser';
+import {IUser} from 'api/interfaces';
 interface ILoginResponse {
   account: IUser;
   server_timestamp: number;

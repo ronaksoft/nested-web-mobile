@@ -1,4 +1,4 @@
-import IComment from '../../api/comment/interfaces/IComment';
+import {IComment} from 'api/interfaces';
 
 export interface ICommentStore {
   comments: IComment[];

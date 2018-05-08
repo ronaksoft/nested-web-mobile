@@ -11,16 +11,19 @@
  */
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
-import {Suggestion, IcoN} from 'components';
+import {Suggestion, IcoN, Scrollable} from 'components';
 import AttachmentList from './AttachmentList';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
+import IEditRequest from 'api/post/interfaces/IEditRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
 import PostApi from 'api/post';
+import AttachmentApi from 'api/attachment';
+import clientApi from 'api/client';
 import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
 import {connect} from 'react-redux';
-import {IAttachment} from 'api/attachment/interfaces';
+import {IAttachment} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import IPost from 'api/post/interfaces/IPost';
 import IPostAttachment from 'api/post/interfaces//IPostAttachment';
@@ -55,6 +58,8 @@ interface IParams {
    * @memberof IParams
    */
   placeId?: string;
+  editPostId?: string;
+  attachments?: string;
 }
 
 /**
@@ -110,7 +115,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @type {boolean}
    * @memberof Compose
    */
-  private isHtml: boolean = false;
+  private isHtml: boolean = true;
 
   /**
    * @prop htmlBodyRef
@@ -148,6 +153,8 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    */
   private postApi: PostApi;
+  private attachmentApi: AttachmentApi;
+  private clientApi: clientApi;
 
   /**
    * @prop file
@@ -181,13 +188,16 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const defaultState: IComposeState = {
       attachments: [],
       targets: [],
-      contentType: 'text/plain',
+      contentType: 'text/html',
+      userSignature: {},
       allowComment: true,
+      addSignature: true,
       sending: false,
       body: '',
       subject: '',
       composeOption: false,
       attachModal: false,
+      editPost: false,
     };
 
     // A post draft is a copy of the component state in redux.
@@ -202,6 +212,27 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    */
   public componentDidMount() {
     this.postApi = new PostApi();
+    this.attachmentApi = new AttachmentApi();
+    if (this.props.params.attachments) {
+      const attachArr = this.props.params.attachments.split(',');
+      attachArr.map((id) => {
+        this.attachmentApi.get(id).then((attachment: IPostAttachment) => {
+          const attach: IAttachment = {
+            universal_id: attachment._id,
+            name: attachment.filename,
+            expiration_timestamp: 0,
+            size: attachment.size,
+            thumbs: attachment.thumbs,
+            type: attachment.type,
+          };
+          this.setState({
+            attachments: [...this.state.attachments, attach],
+          });
+          this.attachments.loadSync(attach);
+          console.log(attachment);
+        });
+      });
+    }
     if (this.props.params.replyId || this.props.params.forwardId) {
       this.postApi.get({
         post_id: this.props.params.replyId || this.props.params.forwardId,
@@ -274,6 +305,68 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         message.error('An error has occured in loading the post!');
       });
     }
+    if (this.props.params.editPostId) {
+      this.setState({editPost: true});
+      this.postApi.get({
+        post_id: this.props.params.editPostId,
+      }).then((post: IPost) => {
+        // Setting to reply the message by loading the recipients and subject of the target post.
+          let targets = [];
+          targets = post.post_places.map((i) => {
+            const chipsItem: IChipsItem = {
+              _id: i._id,
+              name: i.name,
+              picture: i.picture,
+            };
+
+            return chipsItem;
+          });
+          if (post.post_recipients) {
+            targets = targets.concat(post.post_recipients.map((i) => {
+              const chipsItem: IChipsItem = {
+                _id: i._id,
+                name: i.name,
+                picture: i.picture,
+              };
+
+              return chipsItem;
+            }));
+          }
+
+          this.targets.load(targets);
+          // Setting to forward the message by loading the post subject, body and attachments
+          const attachments = post.post_attachments.map((i: IPostAttachment) => {
+            const attachment: IAttachment = {
+              universal_id: i._id,
+              name: i.filename,
+              expiration_timestamp: 0,
+              size: i.size,
+              thumbs: i.thumbs,
+              type: i.type,
+            };
+            return attachment;
+          });
+
+          this.setState({
+            targets,
+            subject: post.subject,
+            body: post.body,
+            attachments,
+          });
+
+          this.attachments.load(attachments);
+      }, () => {
+        message.error('An error has occured in loading the post!');
+      });
+    }
+    this.clientApi = new clientApi();
+    this.clientApi.read('general.setting.signature').then((v: string) => {
+      if (v && v.length > 0) {
+        this.setState({
+          userSignature: JSON.parse(v),
+        });
+      }
+    });
   }
 
   /**
@@ -404,6 +497,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       allowComment: !this.state.allowComment,
     });
   }
+  /**
+   * @func allowComment
+   * @desc Toggles allow comment on/off in the component state
+   * @private
+   * @memberof Compose
+   */
+  private addSignature = () => {
+    this.setState({
+      addSignature: !this.state.addSignature,
+    });
+  }
 
   /**
    * @func send
@@ -421,6 +525,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
     if (!(this.state.subject ||
         this.state.body ||
+        this.htmlBodyRef.innerHTML ||
         this.state.attachments.length > 0)) {
       message.error('You can not send an empty message');
 
@@ -442,14 +547,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     const params: ISendRequest = {
       forward_from: this.props.params.forwardId,
       reply_to: this.props.params.replyId,
-      body: this.isHtml ? this.htmlBodyRef.innerHTML : this.state.body,
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6) +
+        (this.state.addSignature
+        ? (this.state.userSignature.active
+          ? this.state.userSignature.data
+          : '')
+        : ''),
       no_comment: !this.state.allowComment,
       content_type: this.isHtml ? 'text/html' : 'text/plain',
       subject: this.state.subject,
       attaches: this.state.attachments.map((i) => i.universal_id).join(','),
       targets: this.state.targets.map((i) => i._id).join(','),
     };
-
     this.postApi.send(params).then((response: ISendResponse) => {
       if (response.no_permit_places.length === 0) {
         message.success(`Your post has been shared.`);
@@ -470,13 +579,73 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   }
 
   /**
+   * @func edit
+   * @desc Validates and edits the post
+   * @private
+   * @memberof Compose
+   */
+  private edit = () => {
+
+    if (!(this.state.subject ||
+        this.state.body ||
+        this.htmlBodyRef.innerHTML ||
+        this.state.attachments.length > 0)) {
+      message.error('You can not send an empty message');
+
+      return;
+    }
+
+    if (this.attachments.isUploading()) {
+      message.error('Upload is in progress');
+
+      return;
+    }
+
+    // Sending the post
+
+    this.setState({
+      sending: true,
+    });
+
+    const params: IEditRequest = {
+      post_id: this.props.params.editPostId,
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6),
+      subject: this.state.subject,
+    };
+    this.postApi.edit(params).then(() => {
+      message.success(`Your post has been edited.`);
+
+      this.setState({
+        sending: false,
+      });
+
+      hashHistory.goBack();
+    }).catch(() => {
+      message.error('An error has been occured in sharing the post!');
+    });
+  }
+
+  /**
    * @func draft
    * @desc Save the current state of the component
    * @private
    * @memberof Compose
    */
   private draft = () => {
-    this.props.setDraft(this.state);
+    this.props.setDraft({
+      attachments: this.state.attachments,
+      targets: this.state.targets,
+      contentType: 'text/html',
+      userSignature: this.state.userSignature,
+      allowComment: this.state.allowComment,
+      addSignature: this.state.addSignature,
+      sending: false,
+      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6),
+      subject: this.state.subject,
+      composeOption: false,
+      attachModal: false,
+      editPost: false,
+    });
     hashHistory.goBack();
   }
 
@@ -600,6 +769,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
   private textAreaRefHandler = (value) => {
     this.textArea = value;
   }
+  private contentEditableChange = () => {
+    this.forceUpdate();
+  }
 
   /**
    * @func render
@@ -616,42 +788,6 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         }
       }
     }, 10);
-    if ( this.htmlBodyRef) {
-      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
-        this.htmlBodyRef.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.htmlBodyRef.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-      }
-      this.htmlBodyRef.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, false);
-    }
     return (
       <div className={style.compose}>
         {/* specefic compose navbar */}
@@ -660,10 +796,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             <IcoN size={24} name="xcross24"/>
           </a>
           <div className={styleNavbar.filler}/>
-          <a onClick={this.composeOption.bind(this, '')}>
-            <IcoN size={16} name="gear16"/>
-          </a>
-          <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
+          {!this.state.editPost && (
+            <a onClick={this.composeOption.bind(this, '')}>
+              <IcoN size={16} name="gear16"/>
+            </a>
+          )}
+          {!this.state.editPost &&
+            <Button type="primary" onClick={this.send} disabled={this.state.sending}>Share</Button>
+          }
+          {this.state.editPost &&
+            <Button type="primary" onClick={this.edit} disabled={this.state.sending}>Save</Button>
+          }
         </div>
         {/* compose options popover */}
         {this.state.composeOption && (
@@ -675,6 +818,14 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
                 </label>
                 <Switch defaultChecked={this.state.allowComment} onChange={this.allowComment}/>
               </li>
+              {this.isHtml && (
+                <li>
+                  <label htmlFor="">
+                    Add signature to end of the post
+                  </label>
+                  <Switch defaultChecked={this.state.addSignature} onChange={this.addSignature}/>
+                </li>
+              )}
             </ul>
           </div>
         )}
@@ -696,31 +847,36 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             value={this.state.subject}
           />
           {/* attachment popover toggler */}
-          <div onClick={this.attachTypeSelect}
-               className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
-            <div onClick={this.attachTypeSelect}>
-              <IcoN size={24} name={'attach24'}/>
-            </div>
-            {/* attachment popover overlay */}
-            {this.state.attachModal &&
-            <div onClick={this.overlayClick} className={style.overlay}/>
-            }
-            {/* attachment buttons */}
-            <div className={style.attachActions} onClick={this.overlayClick}>
-              <div onClick={this.selectFile(true)}>
-                <IcoN size={24} name={'camera24'}/>
+            {!this.state.editPost && (
+              <div onClick={this.attachTypeSelect}
+                  className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
+                <div onClick={this.attachTypeSelect}>
+                  <IcoN size={24} name={'attach24'}/>
+                </div>
+                {/* attachment popover overlay */}
+                {this.state.attachModal &&
+                <div onClick={this.overlayClick} className={style.overlay}/>
+                }
+                {/* attachment buttons */}
+                  <div className={style.attachActions} onClick={this.overlayClick}>
+                    <div onClick={this.selectFile(true)}>
+                      <IcoN size={24} name={'camera24'}/>
+                    </div>
+                    <div onClick={this.selectFile(false)}>
+                      <IcoN size={24} name={'attach24'}/>
+                    </div>
+                    <div onClick={this.attachTypeSelect}>
+                      <IcoN size={24} name={'xcross24'}/>
+                    </div>
+                  </div>
               </div>
-              <div onClick={this.selectFile(false)}>
-                <IcoN size={24} name={'attach24'}/>
-              </div>
-              <div onClick={this.attachTypeSelect}>
-                <IcoN size={24} name={'xcross24'}/>
-              </div>
-            </div>
-          </div>
+            )}
         </div>
         {/* compose body */}
-        <div ref={this.refHandler} className={style.scrollWrapper}>
+        <Scrollable active={true}>
+        <div ref={this.refHandler} className={[style.scrollWrapper,
+          this.state.body.length > 0 || (this.htmlBodyRef && this.htmlBodyRef.innerHTML.length > 34)
+            ? style.filled : ''].join(' ')}>
           {!this.isHtml && (
             <textarea
               onFocus={this.bodyFocus}
@@ -731,9 +887,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
             />
           )}
           {this.isHtml && (
-            <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}/>
+            <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.body}}
+              onInput={this.contentEditableChange}/>
           )}
         </div>
+        </Scrollable>
         {/* attachments uploading/uploaded list */}
         <AttachmentList
           onItemsChanged={this.handleAttachmentsChange}

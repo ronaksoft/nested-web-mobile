@@ -2,7 +2,7 @@ import IPost from 'api/post/interfaces/IPost';
 import {IPostAction} from '../IPostStore';
 import * as ActionTypes from './types';
 
-export function postAdd(post: IPost): IPostAction {
+export function postAdd(post: IPost | IPost[]): IPostAction {
   return {
     type: ActionTypes.POST_ADD,
     payload: post,

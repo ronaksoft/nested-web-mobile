@@ -13,11 +13,12 @@ import * as React from 'react';
 import Item from './Item';
 import {Progress} from 'antd';
 import {IcoN} from 'components';
-import {IAttachment, IUploadMission} from 'api/attachment/interfaces';
+import {IUploadMission} from 'api/attachment/interfaces';
 import IAttachmentItem from './Item/IAttachmentItem';
 // import IComposeAttachment from '../../../../api/post/interfaces/IComposeAttachment';
 import AttachmentApi from 'api/attachment';
 import Unique from 'services/utils/unique';
+import {IAttachment} from 'api/interfaces';
 import Mode from './Item/mode';
 const EMPTY_PICTURE = require('./default.gif');
 import {UploadType} from 'api/attachment';
@@ -174,6 +175,27 @@ class AttachmentList extends React.Component<IProps, IState> {
       }),
     });
   }
+
+  /**
+   * @func load
+   * @desc Creates a list of `IAttachmentItem` from a list of `IAttachment`.
+   * The method has been used to pass a list of attachments to the component from the outside
+   * @param {IAttachment[]} attachments
+   * @memberof AttachmentList
+   */
+  public loadSync(attachment: IAttachment) {
+    this.setState({
+      items: [...this.state.items, {
+        id: Unique.get(),
+        mode: Mode.VIEW,
+        model: attachment,
+        progress: {
+          loaded: 0,
+          total: 1,
+        },
+      }],
+    });
+  };
 
   /**
    * @func createItem
@@ -501,7 +523,10 @@ class AttachmentList extends React.Component<IProps, IState> {
             <IcoN size={24} name="arrow16" />
           </div>
         </div>
-        <div>
+        <div style={{
+          maxHeight: '225px',
+          overflow: 'auto',
+        }}>
           {this.state.isExpanded && items}
         </div>
       </div>

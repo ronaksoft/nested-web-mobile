@@ -10,6 +10,7 @@
 import * as React from 'react';
 import Signin from './Signin';
 import Signup from './Signup';
+import Workspace from './Workspace';
 import NotFound from './notfound';
 import AAA from 'services/aaa';
 import {hashHistory} from 'react-router';
@@ -56,4 +57,4 @@ class Public extends React.Component<any, any> {
   }
 }
 
-export {Public, Signin, Signup, NotFound};
+export {Public, Signin, Signup, NotFound, Workspace};
