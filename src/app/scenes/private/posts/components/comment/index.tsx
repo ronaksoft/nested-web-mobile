@@ -10,6 +10,7 @@
  */
 import * as React from 'react';
 import PostApi from 'api/post/index';
+import TaskApi from 'api/task/index';
 import {IComment} from 'api/interfaces';
 import {UserAvatar, FullName} from 'components';
 import CommentApi from 'api/comment/index';
@@ -54,6 +55,7 @@ interface IProps {
    * @memberof IProps
    */
   no_comment?: boolean;
+  task_mode?: boolean;
   /**
    * @prop user
    * @desc Logged in user for sending comment
@@ -104,7 +106,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @private
    * @memberof CommentsBoard
    */
-  private postApi;
+  private Api;
   private sendCommentCount: number = 0;
   /**
    * @prop syncActivity
@@ -160,34 +162,38 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    this.postApi = new PostApi();
-    this.postApi.getComments({
-      before: Date.now(),
-      limit: 3,
-      post_id: this.props.post_id,
-    })
-      .then((comments: IComment[]) => {
-
-        if (comments.length < 3) {
-          this.hasBeforeComments = false;
-        }
-
-        this.setState({
-          comments: orderBy(comments, 'timestamp', 'asc'),
-        });
+    if (!this.props.task_mode) {
+      this.Api = new PostApi();
+      this.Api.getComments({
+        before: Date.now(),
+        limit: 3,
+        post_id: this.props.post_id,
       })
-      .catch(console.log);
+        .then((comments: IComment[]) => {
 
-    // set sync listeners
-    if (this.props.post && this.props.post.post_places) {
-      this.syncActivityListeners.push(
-        this.syncActivity.openChannel(
-          this.props.post.post_places[0]._id,
-          SyncActions.COMMENT_ADD,
-          () => {
-              this.getAfterComments(true);
-          },
-        ));
+          if (comments.length < 3) {
+            this.hasBeforeComments = false;
+          }
+
+          this.setState({
+            comments: orderBy(comments, 'timestamp', 'asc'),
+          });
+        })
+        .catch(console.log);
+      // set sync listeners
+      if (this.props.post && this.props.post.post_places) {
+        this.syncActivityListeners.push(
+          this.syncActivity.openChannel(
+            this.props.post.post_places[0]._id,
+            SyncActions.COMMENT_ADD,
+            () => {
+                this.getAfterComments(true);
+            },
+          ));
+      }
+    } else {
+      this.Api = new TaskApi();
+      this.Api.getActivities(this.props.post_id, true, true);
     }
   }
 
@@ -222,7 +228,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
       this.state.comments, (cm) => cm._id.length > 4),
       'timestamp');
     const lastComment = lastCommeents[lastCommeents.length - 2];
-    this.postApi.getComments({
+    this.Api.getComments({
       after: this.state.comments.length > 0 && lastComment ?
         lastComment.timestamp : Date.now() - 60000,
       limit: 20,
@@ -260,7 +266,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private getBeforeComments() {
-    this.postApi.getComments({
+    this.Api.getComments({
       before: this.state.comments[0].timestamp,
       limit: 20,
       post_id: this.props.post_id,

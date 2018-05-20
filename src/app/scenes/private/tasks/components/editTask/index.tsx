@@ -228,7 +228,7 @@ class EditTask extends React.Component<IProps, IState> {
   public render() {
     const taskView = !this.props.task;
     if (!this.state.task) {
-      return <Loading active={true}/>;
+      return <Loading active={true} position="absolute"/>;
     }
 
     const {task} = this.state;
@@ -288,6 +288,7 @@ class EditTask extends React.Component<IProps, IState> {
         <div className={style.postScrollContainer}>
           <div className={style.postScrollContent}>
             {task.title}
+            {task.description}
             {/* {!this.props.post && (
               <CommentsBoard no_comment={this.state.post.no_comment}
               post_id={this.state.post._id} post={this.state.post}
