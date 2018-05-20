@@ -139,10 +139,10 @@ class EditTask extends React.Component<IProps, IState> {
         task: this.props.task ? this.props.task : null,
       });
     } else {
-      this.TaskApi.getMany(this.props.task._id)
-        .then((task: ITask) => {
+      this.TaskApi.getMany(this.props.routeParams.taskId)
+        .then((response) => {
           this.setState({
-            task,
+            task: response.tasks[0],
           });
         });
 
@@ -238,7 +238,7 @@ class EditTask extends React.Component<IProps, IState> {
     const isInProgress = !(isHold || isCompleted || isFailed);
     // Checks the sender is external mail or not
     return (
-      <div className={[style.postCard, !this.props.task ? style.postView : null].join(' ')}>
+      <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
         {taskView && (
           <div className={styleNavbar.navbar}>
@@ -270,6 +270,7 @@ class EditTask extends React.Component<IProps, IState> {
                 <IcoN size={16} name={'failed16'}/>
                 <Link to={`/forward/${task._id}`}>Failed</Link>
               </li>
+              <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'chain16'}/>
                 <Link to={`/forward/${task._id}`}>Create a related Task</Link>
@@ -286,7 +287,7 @@ class EditTask extends React.Component<IProps, IState> {
         }
         <div className={style.postScrollContainer}>
           <div className={style.postScrollContent}>
-            {/* renders the comments and comment input in post view */}
+            {task.title}
             {/* {!this.props.post && (
               <CommentsBoard no_comment={this.state.post.no_comment}
               post_id={this.state.post._id} post={this.state.post}

@@ -26,3 +26,52 @@
   touch-action: auto;
   background-color: #EEEFEF;
 }
+
+.taskView {
+  height: 100vh;
+  margin-top: -56px;
+  overflow: hidden;
+}
+
+.postOptions {
+  background-color: #F0F0F0;
+  position: fixed;
+  left: 0;
+  top: 56px;
+  z-index: 2;
+  right: 0;
+  display: none;
+}
+.postOptions.opened {
+  display: block;
+}
+.postOptions ul{
+  padding: 8px 0;
+  flex-direction: column;
+}
+.postOptions li{
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+.postOptions li.hr{
+  padding: 0;
+  height: 1px;
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  border-top: 1px solid rgba(50, 61, 71,0.08);
+}
+.postOptions a{
+  width: 100%;
+  display: flex;
+  color: rgba(50, 61, 71, 0.72);
+  font-size: 14px;
+  padding: 0 16px;
+}
+.postOptions i{
+  opacity: .72;
+}
+.postOptions p{
+  color: rgba(50, 61, 71, 0.4);
+}
