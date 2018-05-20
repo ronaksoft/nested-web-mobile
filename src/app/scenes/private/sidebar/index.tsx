@@ -88,12 +88,13 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
    */
   private PlaceApi: PlaceApi;
   private ClientApi: ClientApi;
-  private placeOrders: any[] = null;
+  private placeOrders: any = null;
   private places: IPlace[] = null;
   private scrollRef: any;
   private scrollRefHandler = (value) => {
     this.scrollRef = value;
   }
+  private startPropgress = false;
 
   /**
    * @constructor
@@ -119,7 +120,8 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   private checkDataIsReach = () => {
-    if (this.placeOrders && this.places) {
+    if (this.placeOrders && this.places && !this.startPropgress) {
+      this.startPropgress = true;
       this.arrangePlaces();
     }
   }
@@ -322,7 +324,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
   }
 
   private arrangePlaces() {
-    console.time('111');
     let index = 0;
     /**
      * Sort Places Array by Place Ids
@@ -330,34 +331,36 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      * @type {Array<IPlace>}
      */
     let places = sortBy(this.places, [(o) => o._id]);
-    places = sortBy(places, [(o) => {
-      const id = o._id;
-      let order;
-      let parentOrder;
-      const placeSplitArray = (id + '').split('.');
-      if (placeSplitArray.length === 1) {
-        order = this.placeOrders[id] ? this.placeOrders[id].o : id;
-        order = order * Math.pow(10, 10 - (2 * placeSplitArray.length));
-        parentOrder = order;
-      } else {
-        try {
-          order = this.getOrderFromId(this.placeOrders, [...placeSplitArray], id, '');
-          if (placeSplitArray.length > places[index - 1]._id.split('.').length) {
-            parentOrder = places[index - 1].order;
-          } else {
-            parentOrder = places[index - 1].parentOrder;
+    if (Object.keys(this.placeOrders).length > 0) {
+      places = sortBy(places, [(o) => {
+        const id = o._id;
+        let order;
+        let parentOrder;
+        const placeSplitArray = (id + '').split('.');
+        if (placeSplitArray.length === 1) {
+          order = this.placeOrders[id] ? this.placeOrders[id].o : id;
+          order = order * Math.pow(10, 10 - (2 * placeSplitArray.length));
+          parentOrder = order;
+        } else {
+          try {
+            order = this.getOrderFromId(this.placeOrders, [...placeSplitArray], id, '');
+            if (placeSplitArray.length > places[index - 1]._id.split('.').length) {
+              parentOrder = places[index - 1].order;
+            } else {
+              parentOrder = places[index - 1].parentOrder;
+            }
+            order = parentOrder + (order * Math.pow(10, 10 - (2 * placeSplitArray.length)));
+          } catch (e) {
+            console.log(e);
           }
-          order = parentOrder + (order * Math.pow(10, 10 - (2 * placeSplitArray.length)));
-        } catch (e) {
-          console.log(e);
         }
-      }
-      o.order = order;
-      o.parentOrder = parentOrder;
-      index++;
-      return order;
-    }]);
+        o.order = order;
+        o.parentOrder = parentOrder;
+        index++;
+        return order;
+      }]);
 
+    }
     /**
      * Defaine Sidebar Places array
      * @const placesConjuctions
@@ -456,7 +459,6 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           placesConjuctions[i - 1].hasChildren = true;
         }
       }
-
       /**
        * push The created object to `placesConjuctions`
        */
@@ -508,8 +510,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         // console.log(orders);
         this.placeOrders = orders;
         this.checkDataIsReach();
+      } else {
+        this.placeOrders = {};
+        this.checkDataIsReach();
       }
-    }).catch(this.getMyPlaces);
+    }).catch(() => {
+      this.placeOrders = {};
+      this.checkDataIsReach();
+    });
   }
 
   /**
