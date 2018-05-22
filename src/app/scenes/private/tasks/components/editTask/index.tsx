@@ -15,7 +15,9 @@ import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
-import {IUser} from 'api/interfaces';
+import IUser from 'api/interfaces/IUser';
+import C_TASK_STATUS from 'api/consts/CTaskStatus';
+
 // import {difference} from 'lodash';
 const style = require('../../task.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -109,15 +111,6 @@ class EditTask extends React.Component<IProps, IState> {
   private inProgress: boolean;
 
   /**
-   * @prop htmlBodyRef
-   * @desc Reference of html email body element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Compose
-   */
-  private htmlBodyRef: HTMLDivElement;
-
-  /**
    * Creates an instance of Post.
    * @param {IProps} props
    * @memberof Post
@@ -129,19 +122,6 @@ class EditTask extends React.Component<IProps, IState> {
       task: this.props.task,
       showMoreOptions: false,
     };
-  }
-
-  /**
-   * @prop scrollWrapper
-   * @desc Reference of  scroll element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof Feed
-   */
-  private scrollWrapper: HTMLDivElement;
-
-  private refScrollHandler = (value) => {
-    this.scrollWrapper = value;
   }
 
   /**
@@ -159,20 +139,16 @@ class EditTask extends React.Component<IProps, IState> {
         task: this.props.task ? this.props.task : null,
       });
     } else {
-      this.TaskApi.getMany(this.props.task._id)
-        .then((task: ITask) => {
+      this.TaskApi.getMany(this.props.routeParams.taskId)
+        .then((response) => {
           this.setState({
-            task,
+            task: response.tasks[0],
           });
         });
 
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
-
-    setTimeout( () => {
-      this.loadBodyEv(this.htmlBodyRef);
-    }, 300);
 
   }
   /**
@@ -236,40 +212,6 @@ class EditTask extends React.Component<IProps, IState> {
     hashHistory.goBack();
   }
 
-  /**
-   * @func loadBodyEv
-   * @desc Triggers after loading the post body
-   *       this function resize the mail body fit into screen
-   * @private
-   * @event
-   * @param {any} e - event
-   * @memberof Post
-   */
-  private loadBodyEv(el: HTMLDivElement) {
-    if (!el) {
-      return setTimeout( () => {
-        this.loadBodyEv(this.htmlBodyRef);
-      }, 100);
-    }
-    const DOMHeight = el.offsetHeight;
-    const DOMWidth = el.offsetWidth;
-    const ParentDOMHeight = el.parentElement.offsetHeight;
-    const delta = ParentDOMHeight - DOMHeight;
-    // console.log(ParentDOMHeight, delta);
-    const WinWidth = window.screen.width;
-    const ratio = WinWidth / DOMWidth;
-    if (ratio >= 1 ) {
-      return;
-    }
-    el.style.transform = 'scale(' + ratio + ',' + ratio + ')';
-    el.style.webkitTransform = 'scale(' + ratio + ',' + ratio + ')';
-    setTimeout( () => {
-      const newH = el.getBoundingClientRect().height;
-      // console.log(delta, newH);
-      el.parentElement.style.height = delta + newH + 'px';
-    }, 500);
-  }
-
   private toggleMoreOpts = () => {
     this.setState({
       showMoreOptions: !this.state.showMoreOptions,
@@ -284,52 +226,19 @@ class EditTask extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    if ( this.scrollWrapper && !this.props.task) {
-      const isSafari = navigator.userAgent.toLowerCase().match(/(ipad|iphone)/);
-      if (isSafari || (isSafari !== null && isSafari.toString().includes('iphone'))) {
-        this.scrollWrapper.addEventListener('touchmove', (e: any) => {
-          e = e || window.event;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-        this.scrollWrapper.addEventListener('touchstart', (e: any) => {
-          e = e || window.event;
-          e.currentTarget.scrollTop += 1;
-          e.stopImmediatePropagation();
-          e.cancelBubble = true;
-          e.stopPropagation();
-          e.returnValue = true;
-          return true;
-        }, false);
-      }
-      this.scrollWrapper.addEventListener('scroll', (e: any) => {
-        e = e || window.event;
-        const el = e.currentTarget;
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        e.stopPropagation();
-        if (el.scrollTop === 0) {
-            el.scrollTop = 1;
-        } else if (el.scrollHeight === el.clientHeight + el.scrollTop) {
-          el.scrollTop -= 1;
-        }
-        e.returnValue = true;
-        return true;
-      }, false);
-    }
     const taskView = !this.props.task;
     if (!this.state.task) {
-      return <Loading active={true}/>;
+      return <Loading active={true} position="absolute"/>;
     }
 
     const {task} = this.state;
-
+    const isHold = this.state.task.status === C_TASK_STATUS.HOLD;
+    const isCompleted = this.state.task.status === C_TASK_STATUS.COMPLETED;
+    const isFailed = this.state.task.status === C_TASK_STATUS.FAILED;
+    const isInProgress = !(isHold || isCompleted || isFailed);
     // Checks the sender is external mail or not
     return (
-      <div className={[style.postCard, !this.props.task ? style.postView : null].join(' ')}>
+      <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
         {taskView && (
           <div className={styleNavbar.navbar}>
@@ -345,9 +254,30 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions && (
           <div className={[style.postOptions, style.opened].join(' ')}>
             <ul>
+              <li className={isInProgress ? 'active' : ''}>
+                <IcoN size={16} name={'taskInProgress16'}/>
+                <Link to={`/forward/${task._id}`}>In Progress</Link>
+              </li>
+              <li className={isHold ? 'active' : ''}>
+                <IcoN size={16} name={'taskHold16'}/>
+                <Link to={`/forward/${task._id}`}>Hold</Link>
+              </li>
+              <li className={isCompleted ? 'active' : ''}>
+                <IcoN size={16} name={'taskCompleted16'}/>
+                <Link to={`/forward/${task._id}`}>Completed</Link>
+              </li>
+              <li className={isFailed ? 'active' : ''}>
+                <IcoN size={16} name={'failed16'}/>
+                <Link to={`/forward/${task._id}`}>Failed</Link>
+              </li>
+              <li className={style.hr}/>
               <li>
-                <IcoN size={16} name={'forward16'}/>
-                <Link to={`/forward/${task._id}`}>Forward</Link>
+                <IcoN size={16} name={'chain16'}/>
+                <Link to={`/forward/${task._id}`}>Create a related Task</Link>
+              </li>
+              <li>
+                <IcoN size={16} name={'bin16'}/>
+                <Link to={`/forward/${task._id}`}>Delete</Link>
               </li>
             </ul>
           </div>
@@ -355,9 +285,10 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <div className={style.postScrollContainer} ref={this.refScrollHandler}>
+        <div className={style.postScrollContainer}>
           <div className={style.postScrollContent}>
-            {/* renders the comments and comment input in post view */}
+            {task.title}
+            {task.description}
             {/* {!this.props.post && (
               <CommentsBoard no_comment={this.state.post.no_comment}
               post_id={this.state.post._id} post={this.state.post}
