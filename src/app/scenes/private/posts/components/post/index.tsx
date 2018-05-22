@@ -526,7 +526,7 @@ class Post extends React.Component<IProps, IState> {
         const userData = this.getUserData();
         switch (data.cmd) {
           case 'getInfo':
-            this.iframeObj.contentWindow.postMessage(this.sendIframeMessage('setInfo', userData), '*');
+            this.sendIframeMessage('setInfo', userData);
             break;
           case 'setSize':
             this.iframeObj.style.cssText = 'height: ' + data.data.height + 'px !important';
@@ -589,7 +589,7 @@ class Post extends React.Component<IProps, IState> {
     };
     const hash = this.createHash(msg);
     msg.hash = hash;
-    return JSON.stringify(msg);
+    this.iframeObj.contentWindow.postMessage(JSON.stringify(msg), '*');
   }
 
   private isHashValid(data) {
