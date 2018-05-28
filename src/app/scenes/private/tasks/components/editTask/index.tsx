@@ -10,15 +10,17 @@
 
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
-import {IcoN, Loading} from 'components';
+import {IcoN, Loading, Scrollable, AddLabel, RTLDetector, TaskIcon,
+  UserAvatar, FullName} from 'components';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
 import IUser from 'api/interfaces/IUser';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
+import statuses from 'api/consts/CTaskProgressTask';
+import {difference} from 'lodash';
 
-// import {difference} from 'lodash';
 const style = require('../../task.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
@@ -94,6 +96,11 @@ interface IState {
    * @memberof IState
    */
   showMoreOptions: boolean;
+  /**
+   * @prop showAddLabel
+   * @memberof IState
+   */
+  showAddLabel: boolean;
 }
 
 /**
@@ -109,6 +116,9 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Post
    */
   private inProgress: boolean;
+  private scrollRef: any;
+  private subjectRtl: boolean;
+  private descriptionRtl: boolean;
 
   /**
    * Creates an instance of Post.
@@ -121,7 +131,25 @@ class EditTask extends React.Component<IProps, IState> {
     this.state = {
       task: this.props.task,
       showMoreOptions: false,
+      showAddLabel: false,
     };
+  }
+
+  private doneAddLabel = (labels) => {
+    const removeItems = difference(this.state.task.labels, labels);
+    const addItems = difference(labels, this.state.task.labels);
+    this.toggleAddLAbel();
+    removeItems.forEach((element) => {
+      this.removeLabel(element._id);
+    });
+    addItems.forEach((element) => {
+      this.addLabel(element._id);
+    });
+    const task: ITask = this.state.task;
+    task.labels = labels;
+    this.setState({
+        task,
+    });
   }
 
   /**
@@ -135,6 +163,9 @@ class EditTask extends React.Component<IProps, IState> {
     this.TaskApi = new TaskApi();
     if (this.props.task) {
 
+      this.subjectRtl = RTLDetector.getInstance().direction(this.props.task.title);
+      this.descriptionRtl = RTLDetector.getInstance().direction(this.props.task.description);
+
       this.setState({
         task: this.props.task ? this.props.task : null,
       });
@@ -145,12 +176,26 @@ class EditTask extends React.Component<IProps, IState> {
             task: response.tasks[0],
           });
         });
-
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
     }
-
   }
+
+  private removeLabel(id: string) {
+    this.TaskApi.removeLabel(this.state.task._id, id);
+  }
+
+  private addLabel(id: string) {
+    this.TaskApi.addLabel(this.state.task._id, id);
+  }
+
+  private toggleAddLAbel = () => {
+    this.setState({
+      showMoreOptions: false,
+      showAddLabel: !this.state.showAddLabel,
+    });
+  }
+
   /**
    * @function componentWillUnmount
    * remove event listeners on this situation
@@ -159,6 +204,10 @@ class EditTask extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     // this.htmlBodyRef.removeEventListener('DOMSubtreeModified');
+  }
+
+  public newCommentReceived = () => {
+    this.scrollRef.scrollDown();
   }
 
   /**
@@ -216,6 +265,10 @@ class EditTask extends React.Component<IProps, IState> {
     this.setState({
       showMoreOptions: !this.state.showMoreOptions,
     });
+  }
+
+  private scrollRefHandler = (value) => {
+    this.scrollRef = value;
   }
 
   /**
@@ -285,18 +338,52 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <div className={style.postScrollContainer}>
-          <div className={style.postScrollContent}>
-            {task.title}
-            {task.description}
-            {/* {!this.props.post && (
-              <CommentsBoard no_comment={this.state.post.no_comment}
-              post_id={this.state.post._id} post={this.state.post}
-              user={this.props.user}/>
-            )} */}
-           {taskView && <div className={privateStyle.bottomSpace}/>}
+        <Scrollable active={true} ref={this.scrollRefHandler}>
+          <div className={style.postScrollContainer}>
+            <div className={style.postScrollContent}>
+              <div className={style.taskRow}>
+                <div className="task-row-icon">
+                  <TaskIcon status={statuses.ASSIGNED_CHECKLIST} progress={this.state.task.progress}/>
+                </div>
+                <div className="task-row-item">
+                  {task.title}
+                </div>
+              </div>
+              <div className={style.taskRow}>
+                <div className="task-row-icon">
+                  {task.assignee && <UserAvatar user_id={task.assignee._id} borderRadius="24px" size={24}/>}
+                  {!task.assignee && <IcoN name="askWire24" size={24}/>}
+                  {task.candidates && <IcoN name="candidate32" size={32}/>}
+                </div>
+                <div className="task-row-item">
+                  Assigned to <b> <FullName user_id={task.assignee._id} /></b>
+                  Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
+                </div>
+              </div>
+              <div className={style.taskRow}>
+                <div className="task-row-icon">
+                  <IcoN name="bulletList16" size={16}/>
+                </div>
+                <div className="task-row-item">
+                  <h4>To-Do List</h4>
+                  <ul>
+                    <li>first</li>
+                  </ul>
+                </div>
+              </div>
+              {task.description}
+              {/* {!this.props.post && (
+                <CommentsBoard no_comment={this.state.post.no_comment}
+                post_id={this.state.post._id} post={this.state.post}
+                user={this.props.user}/>
+              )} */}
+            {taskView && <div className={privateStyle.bottomSpace}/>}
+            </div>
           </div>
-        </div>
+        </Scrollable>
+        {this.state.showAddLabel && (
+          <AddLabel labels={task.labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
+        )}
       </div>
     );
   }

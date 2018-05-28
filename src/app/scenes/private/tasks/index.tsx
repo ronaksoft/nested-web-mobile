@@ -502,8 +502,8 @@ class Tasks extends React.Component<IProps, IState> {
 
   private gotoTask(task: ITask) {
     console.log(task);
-    // this.props.setCurrentTask(task);
-    // hashHistory.push(`/task/edit/${task._id}`);
+    this.props.setCurrentTask(task);
+    hashHistory.push(`/task/edit/${task._id}`);
   }
 
   private getLeftItemMenu() {

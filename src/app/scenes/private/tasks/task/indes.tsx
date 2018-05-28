@@ -1,20 +1,18 @@
 // import * as React from 'react';
-// import ITask from '../../../../api/task/interfaces/ITask';
+// import ITask from 'api/task/interfaces/ITask';
 // import {IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
 //   LabelChips, Scrollable} from 'components';
-// import TimeUntiles from '../../../../services/utils/time';
-// import TaskApi from '../../../../api/task/index';
+// // import TimeUntiles from 'services/utils/time';
+// import TaskApi from 'api/task/index';
 // import {connect} from 'react-redux';
 // import {setCurrentTask, setTasks} from '../../../../redux/app/actions/index';
 // // import CommentsBoard from '../comment/index';
-// import PostAttachment from 'components';
 // import {hashHistory, Link} from 'react-router';
 // import {IUser} from 'api/interfaces';
 // import {difference} from 'lodash';
 // const style = require('./task.css');
-// const styleNavbar = require('../../../../components/navbar/navbar.css');
-// const privateStyle = require('../../../private.css');
-// import CONFIG from '../../../../config';
+// const styleNavbar = require('components/navbar/navbar.css');
+// // const privateStyle = require('scenes/private/private.css');
 
 // /**
 //  * @interface IOwnProps
@@ -219,7 +217,7 @@
 //    * @param {*} value
 //    * @memberof Post
 //    */
-//   private updatePostsInStore(key: string, value: any) {
+//   public updateTasksInStore(key: string, value: any) {
 
 //     const tasks = JSON.parse(JSON.stringify(this.props.tasks));
 //     let newTasks;
@@ -248,17 +246,6 @@
 //    */
 //   private leave() {
 //     hashHistory.goBack();
-//   }
-
-//   /**
-//    * @func postPlaceClick
-//    * @desc redirects to the clicked place posts
-//    * @private
-//    * @param {string} pid - place ID
-//    * @memberof Post
-//    */
-//   private postPlaceClick(pid) {
-//     hashHistory.push(`/places/${pid}/messages`);
 //   }
 
 //   private toggleMoreOpts = () => {
@@ -339,12 +326,6 @@
 //               <IcoN size={24} name="xcross24"/>
 //             </a>
 //             <div className={styleNavbar.filler}/>
-//             <Link to={`/forward/${task._id}`}>
-//               <IcoN size={24} name="forward24"/>
-//             </Link>
-//             <Link to={`/reply/${task._id}`}>
-//               <IcoN size={24} name="reply24"/>
-//             </Link>
 //             <a onClick={this.toggleMoreOpts}>
 //               <IcoN size={24} name="more24"/>
 //             </a>
@@ -369,7 +350,7 @@
 //         {this.state.showMoreOptions &&
 //           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
 //         }
-//         <Scrollable active={postView} ref={this.scrollRefHandler}>
+//         <Scrollable active={true} ref={this.scrollRefHandler}>
 //         </Scrollable>
 //         {this.state.showAddLabel && (
 //           <AddLabel labels={task.labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
