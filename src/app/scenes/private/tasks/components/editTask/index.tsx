@@ -11,15 +11,18 @@
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
 import {IcoN, Loading, Scrollable, AddLabel, RTLDetector, TaskIcon,
-  UserAvatar, FullName} from 'components';
+  UserAvatar, FullName, Suggestion, TaskAttachment} from 'components';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
 import IUser from 'api/interfaces/IUser';
+import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
+import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
 import {difference} from 'lodash';
+import TimeUntiles from 'services/utils/time';
 
 const style = require('../../task.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
@@ -119,6 +122,18 @@ class EditTask extends React.Component<IProps, IState> {
   private scrollRef: any;
   private subjectRtl: boolean;
   private descriptionRtl: boolean;
+  private createMode: boolean = true;
+  private editMode: boolean = false;
+  private viewMode: boolean = false;
+
+  /**
+   * @prop targets
+   * @desc Reference of `Suggestion` component
+   * @private
+   * @type {Suggestion}
+   * @memberof Compose
+   */
+  private assigneSuggestionComponent: Suggestion;
 
   /**
    * Creates an instance of Post.
@@ -166,18 +181,28 @@ class EditTask extends React.Component<IProps, IState> {
       this.subjectRtl = RTLDetector.getInstance().direction(this.props.task.title);
       this.descriptionRtl = RTLDetector.getInstance().direction(this.props.task.description);
 
+      this.initTask(this.props.task);
       this.setState({
         task: this.props.task ? this.props.task : null,
       });
     } else {
       this.TaskApi.getMany(this.props.routeParams.taskId)
         .then((response) => {
+          this.initTask(response.tasks[0]);
           this.setState({
             task: response.tasks[0],
           });
         });
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
+    }
+  }
+
+  private initTask = (task: ITask) => {
+    if (task.access.indexOf(C_TASK_ACCESS.UPDATE_TASK) > -1) {
+      this.editMode = true;
+      this.createMode = false;
+      this.viewMode = false;
     }
   }
 
@@ -250,6 +275,17 @@ class EditTask extends React.Component<IProps, IState> {
   //     this.props.setCurrentTask(this.props.currentTask);
   //   }
   // }
+  /**
+   *
+   * @func handleTargetsChanged
+   * @desc Updates the component state with a new list of targets
+   * @private
+   * @memberof Compose
+   * @param {IChipsItem[]} items
+   */
+  private handleTargetsChanged = (items: IChipsItem[]) => {
+    console.log(items);
+  }
 
   /**
    * @func leave
@@ -272,6 +308,16 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   /**
+   * @func referenceTargets
+   * @desc Keeps reference of Suggestion component
+   * @private
+   * @memberof Compose
+   * @param {Suggestion} value
+   */
+  private referenceTargets = (value: Suggestion) => {
+    this.assigneSuggestionComponent = value;
+  }
+  /**
    * @func render
    * @desc Renders the component
    * @returns
@@ -279,17 +325,35 @@ class EditTask extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
+    const {task} = this.state;
+    console.log(task);
     const taskView = !this.props.task;
-    if (!this.state.task) {
+    if (!task) {
       return <Loading active={true} position="absolute"/>;
     }
 
-    const {task} = this.state;
-    const isHold = this.state.task.status === C_TASK_STATUS.HOLD;
-    const isCompleted = this.state.task.status === C_TASK_STATUS.COMPLETED;
-    const isFailed = this.state.task.status === C_TASK_STATUS.FAILED;
+    let selectedItemsForAssigne = [];
+    if (task.assignee) {
+      selectedItemsForAssigne = [{
+        _id: task.assignee._id,
+        fullName: task.assignee.fname + task.assignee.lname,
+        picture: task.assignee.picture,
+      }];
+    } else if (task.candidates) {
+      selectedItemsForAssigne = task.candidates.map((i) => {
+        const chipsItem: IChipsItem = {
+          _id: i._id,
+          name: i.name,
+          picture: i.picture,
+        };
+        return chipsItem;
+      });
+    }
+
+    const isHold = task.status === C_TASK_STATUS.HOLD;
+    const isCompleted = task.status === C_TASK_STATUS.COMPLETED;
+    const isFailed = task.status === C_TASK_STATUS.FAILED;
     const isInProgress = !(isHold || isCompleted || isFailed);
-    // Checks the sender is external mail or not
     return (
       <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
@@ -338,40 +402,169 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <Scrollable active={true} ref={this.scrollRefHandler}>
+        <Scrollable active={true} ref={this.scrollRefHandler} shrinkHeight={56}>
           <div className={style.postScrollContainer}>
             <div className={style.postScrollContent}>
               <div className={style.taskRow}>
-                <div className="task-row-icon">
-                  <TaskIcon status={statuses.ASSIGNED_CHECKLIST} progress={this.state.task.progress}/>
+                <div className={style.taskRowIcon}>
+                  <TaskIcon status={statuses.ASSIGNED_CHECKLIST} progress={task.progress}/>
                 </div>
-                <div className="task-row-item">
-                  {task.title}
-                </div>
+                {this.editMode && (
+                  <div className={style.taskRowItem}>
+                    <input type="text" placeholder="Task title" value={task.title}/>
+                  </div>
+                )}
+                {this.viewMode && (
+                  <div className={style.taskRowItem}>
+                    {task.title}
+                  </div>
+                )}
+                {this.createMode && (
+                  <div className={style.taskRowItem}>
+                    <input type="text" placeholder="Task title"/>
+                  </div>
+                )}
               </div>
-              <div className={style.taskRow}>
-                <div className="task-row-icon">
+              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                <div className={style.taskRowIcon}>
                   {task.assignee && <UserAvatar user_id={task.assignee._id} borderRadius="24px" size={24}/>}
-                  {!task.assignee && <IcoN name="askWire24" size={24}/>}
+                  {!task.assignee && !task.candidates && <IcoN name="askWire24" size={24}/>}
                   {task.candidates && <IcoN name="candidate32" size={32}/>}
                 </div>
-                <div className="task-row-item">
-                  Assigned to <b> <FullName user_id={task.assignee._id} /></b>
-                  Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
-                </div>
+                {this.viewMode && (
+                  <div className={style.taskRowItem}>
+                    Assigned to <b> <FullName user_id={task.assignee._id} /></b>
+                    Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
+                  </div>
+                )}
+                {this.createMode || this.editMode && (
+                  <div className={style.taskRowItem}>
+                    <Suggestion ref={this.referenceTargets}
+                                mode="user"
+                                placeholder="Assignees"
+                                selectedItems={selectedItemsForAssigne}
+                                onSelectedItemsChanged={this.handleTargetsChanged}
+                    />
+                  </div>
+                )}
               </div>
               <div className={style.taskRow}>
-                <div className="task-row-icon">
-                  <IcoN name="bulletList16" size={16}/>
+                <div className={style.taskRowIcon}>
+                  <IcoN name="finishFlag16" size={16}/>
                 </div>
-                <div className="task-row-item">
-                  <h4>To-Do List</h4>
-                  <ul>
-                    <li>first</li>
+                <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                  <h4>
+                    <span>Set due time...</span>
+                    <IcoN name="cross16" size={16}/>
+                    <IcoN name="binRed16" size={16}/>
+                  </h4>
+                  <ul className={style.setDateTime}>
+                    <li>
+                      <input type="date" placeholder="Set date..."
+                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
+                    </li>
+                    <li>
+                      <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}"
+                        min="00:00" max="23:59" value={TimeUntiles.Time(task.due_date)}/>
+                    </li>
                   </ul>
                 </div>
               </div>
-              {task.description}
+              <div className={style.taskRow}>
+                <div className={style.taskRowIcon}>
+                  <IcoN name="petition16" size={16}/>
+                </div>
+                <div className={style.taskRowItem}>
+                  <textarea placeholder="Description" className={style.descriptionElement}/>
+                </div>
+              </div>
+              <div className={style.taskRow}>
+                <div className={style.taskRowIcon}>
+                  <IcoN name="bulletList16" size={16}/>
+                </div>
+                <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                  <h4><span>To-Do List</span></h4>
+                  <ul className={style.todoList}>
+                    <li>
+                      <input type="checkbox" id="todo1"/>
+                      <label htmlFor="todo1">todo1</label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className={style.taskRow}>
+                <div className={style.taskRowIcon}>
+                  <IcoN name="attach16" size={16}/>
+                </div>
+                <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                  <h4>
+                    <span>Attachments</span>
+                    <IcoN name="cross16" size={16}/>
+                    <IcoN name="binRed16" size={16}/>
+                  </h4>
+                  {task.attachments && <TaskAttachment attachments={task.attachments}/>}
+                </div>
+              </div>
+              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                <div className={style.taskRowIcon}>
+                <IcoN name="person16" size={16}/>
+                </div>
+                {this.viewMode && (
+                  <div className={style.taskRowItem}>
+                    watchers
+                  </div>
+                )}
+                {this.createMode || this.editMode && (
+                  <div className={style.taskRowItem}>
+                    <Suggestion ref={this.referenceTargets}
+                                mode="user"
+                                placeholder="Add peoples who wants to follow task..."
+                                selectedItems={task.watchers}
+                                onSelectedItemsChanged={this.handleTargetsChanged}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                <div className={style.taskRowIcon}>
+                <IcoN name="pencil16" size={16}/>
+                </div>
+                {this.viewMode && (
+                  <div className={style.taskRowItem}>
+                    editors
+                  </div>
+                )}
+                {this.createMode || this.editMode && (
+                  <div className={style.taskRowItem}>
+                    <Suggestion ref={this.referenceTargets}
+                                mode="user"
+                                placeholder="Add peoples who wants to edit task..."
+                                selectedItems={task.editors}
+                                onSelectedItemsChanged={this.handleTargetsChanged}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                <div className={style.taskRowIcon}>
+                <IcoN name="tag16" size={16}/>
+                </div>
+                {this.viewMode && (
+                  <div className={style.taskRowItem}>
+                    labels
+                  </div>
+                )}
+                {this.createMode || this.editMode && (
+                  <div className={style.taskRowItem}>
+                    <Suggestion ref={this.referenceTargets}
+                                mode="label"
+                                placeholder="Add labels..."
+                                selectedItems={task.labels}
+                                onSelectedItemsChanged={this.handleTargetsChanged}
+                    />
+                  </div>
+                )}
+              </div>
               {/* {!this.props.post && (
                 <CommentsBoard no_comment={this.state.post.no_comment}
                 post_id={this.state.post._id} post={this.state.post}
@@ -381,6 +574,23 @@ class EditTask extends React.Component<IProps, IState> {
             </div>
           </div>
         </Scrollable>
+        <div className={style.taskBinder}>
+          <div className={style.taskBinderButton}>
+            <IcoN name="petition24" size={24}/>
+          </div>
+          <div className={style.taskBinderButton}>
+            <IcoN name="tag24" size={24}/>
+          </div>
+          <div className={style.taskBinderButton}>
+            <IcoN name="person24" size={24}/>
+          </div>
+          <div className={style.taskBinderButton}>
+            <IcoN name="attach24" size={24}/>
+          </div>
+          <div className={style.taskBinderButton}>
+            <IcoN name="bulletList24" size={24}/>
+          </div>
+        </div>
         {this.state.showAddLabel && (
           <AddLabel labels={task.labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
         )}

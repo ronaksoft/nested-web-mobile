@@ -23,6 +23,7 @@ import ICancelRequestLabelRequest from './interfaces/ICancelRequestLabelRequest'
 import IGetMembersLabelRequest from './interfaces/IGetMembersLabelRequest';
 import IAddMemberLabelRequest from './interfaces/IAddMemberLabelRequest';
 import IGetLabelRequest from './interfaces/IGetLabelRequest';
+import ILabel from 'api/interfaces/ILabel';
 
 /**
  * @class CommentApi
@@ -103,11 +104,18 @@ export default class LabelApi {
    * @returns {Promise<any>}
    * @memberof LabelApi
    */
-  public search(params: ISearchLabelRequest = {details: true, filter: CLabelFilterTypes.ALL}): Promise<any> {
-    console.log(params);
-    return this.api.request({
-      cmd: 'search/labels',
-      data: params,
+  public search(params: ISearchLabelRequest = {details: true, filter: CLabelFilterTypes.ALL}): Promise<ILabel[]> {
+    return new Promise((res, rej) => {
+      this.api.request({
+        cmd: 'search/labels',
+        data: params,
+      }).then((data) => {
+        if (data) {
+          res(data.labels);
+        } else {
+          res(data);
+        }
+      }).catch(rej);
     });
   }
   /**

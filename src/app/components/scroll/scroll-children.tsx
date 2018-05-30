@@ -2,12 +2,13 @@
 import * as React from 'react';
 const style = require('./scrollable.css');
 interface IState {
-    lastScrollTop: number;
-    actionTriggered: boolean;
+  lastScrollTop: number;
+  actionTriggered: boolean;
 };
 
 interface IProps {
-    active: boolean;
+  active: boolean;
+  shrinkHeight?: number;
 };
 export default class Scrollable extends React.Component<IProps, IState> {
 
@@ -161,10 +162,16 @@ export default class Scrollable extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
+    let styleContainer = {};
+    if (this.props.shrinkHeight) {
+      styleContainer = {
+        maxHeight: `calc(100vh - ${56 + this.props.shrinkHeight}px)`,
+      };
+    }
     return (
-        <div ref={this.refHandler} className={this.props.active ? style.container : ''}>
-            {this.props.children}
-        </div>
+      <div ref={this.refHandler} className={this.props.active ? style.container : ''} style={styleContainer}>
+          {this.props.children}
+      </div>
     );
   }
 }

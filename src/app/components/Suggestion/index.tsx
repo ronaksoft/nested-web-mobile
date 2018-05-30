@@ -11,11 +11,13 @@ import * as React from 'react';
 import {debounce} from 'lodash';
 // import {findIndex} from 'lodash/array';
 import {Input, Button, message} from 'antd';
-import {PlaceChips} from 'components';
+import {PlaceChips, UserChips} from 'components';
+import {LabelChips} from 'components/Chips/label';
 import {IChipsItem} from 'components/Chips';
 import {IPlace} from 'api/interfaces';
 import SystemApi from 'api/system/';
 import SearchApi from 'api/search';
+import LabelApi from 'api/label';
 import FileUtil from 'services/utils/file';
 import CONFIG from '../../config';
 
@@ -23,13 +25,15 @@ const style = require('./suggestion.css');
 const unknownPicture = require('assets/icons/absents_place.svg');
 
 interface ISuggestProps {
-  selectedItems?: IChipsItem[];
-  onSelectedItemsChanged: (items: IChipsItem[]) => void;
+  selectedItems?: any[];
+  onSelectedItemsChanged: (items: any[]) => void;
+  mode?: string;
+  placeholder?: string;
 }
 
 interface ISuggestState {
-  suggests?: IChipsItem[];
-  selectedItems?: IChipsItem[];
+  suggests?: any[];
+  selectedItems?: any[];
   activeItem?: IChipsItem;
   input: string;
 }
@@ -49,6 +53,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @memberof Suggestion
    */
   private systemConstApi;
+  private mode: string = 'place';
 
   private targetLimit: number;
 
@@ -57,12 +62,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @private
    */
   private searchApi: SearchApi;
+  private LabelApi: LabelApi;
 
   /**
    * Define the `debouncedFillSuggests` to get suggestions appropriated to the query
    * @private
    */
-  private debouncedFillSuggests: (val: string) => void;
+  private debouncedFillSuggestsCompose: (val: string) => void;
+  private debouncedFillSuggestsUsers: (val: string) => void;
 
   /**
    * @constructor
@@ -89,10 +96,16 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       input: null,
     };
 
+    if (props.mode) {
+      this.mode = props.mode;
+    }
     // assign debouncedFillSuggests
-    this.debouncedFillSuggests = debounce(this.fillSuggests, 372); // Prevents the call stack and wasting resources
+    // Prevents the call stack and wasting resources
+    this.debouncedFillSuggestsCompose = debounce(this.fillComposeSuggests, 372);
+    this.debouncedFillSuggestsUsers = debounce(this.fillUserSuggests, 372);
 
     // assign searchApi
+    this.LabelApi = new LabelApi();
     this.searchApi = new SearchApi();
     this.systemConstApi = new SystemApi();
   }
@@ -104,10 +117,17 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 
   public componentWillMount() {
+    if (this.mode === 'place') {
+      this.initPlace();
+    }
+  }
+
+  private initPlace = () => {
     this.systemConstApi.get().then((result) => {
       this.targetLimit = result.post_max_targets || 10;
     });
   }
+
   /**
    * clears the suggested items array
    * @function clearSuggests
@@ -131,7 +151,11 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     this.setState({
       input: event.currentTarget.value,
     });
-    this.debouncedFillSuggests(event.currentTarget.value);
+    if (this.mode === 'place') {
+      this.debouncedFillSuggestsCompose(event.currentTarget.value);
+    } else {
+      this.debouncedFillSuggestsUsers(event.currentTarget.value);
+    }
   }
 
   /**
@@ -202,9 +226,9 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @returns {Promise<any>}
    * @memberof Suggestion
    */
-  private fillSuggests(query: string): Promise<any> {
+  private fillComposeSuggests(query: string): Promise<any> {
     query = query || '';
-    return this.getSuggests(query).then((items: IChipsItem[]) => {
+    return this.getComposeSuggests(query).then((items: IChipsItem[]) => {
       if (query.length > 0) {
         // const index = findIndex(items, {_id: query});
         const index = items.findIndex((s) => s._id === query);
@@ -226,6 +250,14 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       });
     });
   }
+  private fillUserSuggests(query: string): Promise<any> {
+    query = query || '';
+    return this.getUserSuggests(query).then((items: IChipsItem[]) => {
+      this.setState({
+        suggests: items,
+      });
+    });
+  }
 
   /**
    * get suggests items from api call
@@ -235,7 +267,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
    * @returns {Promise<any>}
    * @memberof Suggestion
    */
-  private getSuggests(query: string): Promise<any> {
+  private getComposeSuggests(query: string): Promise<any> {
     return new Promise((resolve) => {
       this.searchApi.searchForCompose({
         keyword: query,
@@ -282,6 +314,35 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       }, () => {
         message.error('Could not suggest any recipients right now');
       });
+    });
+  }
+  private getUserSuggests(query: string): Promise<any> {
+    return new Promise((resolve) => {
+      const apiResponse = (result) => {
+        const users = result.filter((i) => {
+          return this.state.selectedItems.findIndex((s) => s._id === i._id) === -1;
+        });
+        const items = users.slice(0, 3);
+        resolve(items);
+      };
+
+      const apiError = () => {
+        message.error('Could not suggest any user right now');
+      };
+      if (this.mode === 'user') {
+        this.searchApi.searchForUsers({
+          keyword: query,
+          limit: 3,
+        }).then(apiResponse, apiError);
+      } else {
+        this.LabelApi.search({
+          skip: 0,
+          limit: 3,
+          filter: 'all',
+          keyword: query,
+          details: true,
+        }).then(apiResponse, apiError);
+      }
     });
   }
 
@@ -349,7 +410,13 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     this.setState({
       activeItem: null,
     });
-    this.fillSuggests(this.state.input);
+    if (this.mode === 'place') {
+      this.fillComposeSuggests(this.state.input);
+    } else if (this.mode === 'label') {
+      this.fillUserSuggests(this.state.input);
+    } else {
+      this.fillUserSuggests(this.state.input);
+    }
   }
 
   /**
@@ -419,42 +486,60 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
      * @type Tsx element
      */
     const listItems = this.state.suggests.map((item) => {
+      const name = item.name || item.title || item.fullName || item._id;
       return (
         <li key={item._id}
             onClick={this.insertChip.bind(this, item)}>
           <img src={this.getPicture(item)} alt=""/>
           <div>
-            {
-              item.name && (
-                <p dangerouslySetInnerHTML={{__html: this.mark(item.name, this.state.input)}}/>
-              )
-            }
-            {
-              item._id && (
-                <span dangerouslySetInnerHTML={{__html: this.mark(item._id, this.state.input)}}/>
-              )
-            }
+            <p dangerouslySetInnerHTML={{__html: this.mark(name, this.state.input)}}/>
           </div>
         </li>
       );
     });
+    let recipients;
 
     /**
      * @const recipients - render Jsx elements of selected items
      * @type Tsx element
      */
-    const recipients = this.state.selectedItems.map((item) => {
-      return (
-        <PlaceChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
-                    onChipsClick={this.handleChipsClick} item={item}/>
-      );
-    });
+    switch (this.mode) {
+      default:
+      case 'place':
+        recipients = this.state.selectedItems.map((item) => {
+          return (
+            <PlaceChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
+                        onChipsClick={this.handleChipsClick} item={item}/>
+          );
+        });
+      break;
+
+      case 'user':
+        recipients = this.state.selectedItems.map((item) => {
+          return (
+            <UserChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
+                        onChipsClick={this.handleChipsClick} user={item} editable={true}/>
+          );
+        });
+      break;
+
+      case 'label':
+        recipients = this.state.selectedItems.map((item) => {
+          return (
+            <LabelChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
+                        onChipsClick={this.handleChipsClick} label={item} editable={true}/>
+          );
+        });
+      break;
+    }
     return (
       <div className={style.suggestionWrpper}>
         <div className={style.input}>
-          <span>
-            With:
-          </span>
+          {this.mode === 'place' && (
+            <span>
+              With:
+            </span>
+          )}
           {/* selected Items */}
           {recipients}
           <Input
@@ -462,6 +547,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
             onKeyDown={tempFunctionKeydown}
             onFocus={this.handleInputFocus}
             value={this.state.input}
+            placeholder={this.props.placeholder}
           />
         </div>
         {/* suggestion Items */}

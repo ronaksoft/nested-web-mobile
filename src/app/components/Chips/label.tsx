@@ -6,7 +6,8 @@ const style = require('./chips.css');
 interface IChipsProps {
     label: any;
     editable?: boolean;
-    access?: boolean;
+    onChipsClick?: any;
+    active?: boolean;
 }
 
 interface IChipsState {
@@ -20,15 +21,27 @@ class LabelChips extends React.Component<IChipsProps, IChipsState> {
         };
     }
 
+    public componentWillReceiveProps(nextProps: IChipsProps) {
+        this.setState(
+        {
+            isSelected : nextProps.active,
+        },
+        );
+    }
+
     private toggleSelect = () => {
         if (this.props.editable) {
             this.setState({
                 isSelected: !this.state.isSelected,
             });
+            if (this.props.onChipsClick) {
+                this.props.onChipsClick(this.props.label);
+            }
         }
     }
     public render() {
-        const {label, editable, access} = this.props;
+        const {label, editable} = this.props;
+        const access = label.public || label.is_member;
         return (
             <div className={[style.labelChipsWrapper, style['color-lbl-shadow-' + label.code]
                 , this.state.isSelected ? style.isSelected : '', editable ? style.access : ''].join(' ')}

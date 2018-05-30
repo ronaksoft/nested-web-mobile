@@ -135,9 +135,9 @@ class AddLabel extends React.Component<IProps, IState> {
         skip: 0,
         limit: 8,
     };
-    this.LabelApi.search(data).then( (res: any) => {
+    this.LabelApi.search(data).then( (labels: ILabel[]) => {
         this.setState({
-            searchResult: differenceWith(res.labels, this.state.labels, (a, b) => {
+            searchResult: differenceWith(labels, this.state.labels, (a, b) => {
               return a._id === b._id;
             }),
         });

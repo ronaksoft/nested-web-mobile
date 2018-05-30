@@ -75,3 +75,124 @@
 .postOptions p{
   color: rgba(50, 61, 71, 0.4);
 }
+.taskRow {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+}
+.taskRowIcon {
+  width: 56px;
+  justify-content: center;
+  display: flex;
+  align-self: flex-start;
+  margin-top: 12px;
+  flex: none;
+}
+.rowWithSuggest .taskRowItem {
+  margin-left: -56px;
+}
+.rowWithSuggest .taskRowItem > div > div:first-child{
+  margin-left: 56px;
+  min-height: 56px;
+  padding: 12px 0 6px;
+}
+.rowWithSuggest .taskRowItem > div > div:first-child input{
+  height: 28px;
+}
+.taskRowItem {
+  display: flex;
+  flex: 1;
+  min-height: 56px;
+  align-items: center;
+}
+.taskRowItem.vertical {
+  flex-direction: column;
+  padding-top: 12px;
+  align-items: flex-start;
+}
+.taskRowItem h4 {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding-right: 8px;
+  margin-bottom: 12px;
+}
+.taskRowItem h4 i{
+  margin: 0 8px;
+}
+.taskRowItem h4 span {
+  display: flex;
+  flex: 1;
+  font-size: 12px;
+  opacity: 0.64;
+  color: #323D47;
+  font-weight: bold;
+  line-height: 15px;
+}
+.taskRowItem input ,
+.taskRowItem textarea {
+  height: 40px;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  line-height: 24px;
+  font-size: 20px;
+  width: 100%;
+  color: #323D47;
+}
+.taskBinder {
+  display: flex;
+  height: 56px;
+  padding: 0 12px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.16);
+  justify-content: space-between
+}
+.taskBinder .taskBinderButton {
+  margin: 0 4px;
+  max-width: 51px;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.todoList {
+  margin-left: -56px;
+  margin-bottom: 24px;
+}
+.todoList li{
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+.todoList li input{
+  width: 12px;
+  height: 12px;
+  margin: 0 22px;
+}
+.setDateTime {
+  background: #F5F5F5;
+  list-style: none;
+  width: calc(100% + 56px);
+  margin-left: -56px;
+  padding-left: 56px;
+}
+.setDateTime li{
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  padding-top: 14px;
+  margin-right: 32px;
+  border-bottom: 1px solid rgba(50, 61, 71, .32);
+}
+.setDateTime li input{
+  height: 16px;
+  font-size: 14px;
+  background: none;
+}
+.taskRowItem textarea.descriptionElement {
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 88px;
+  padding-top: 12px;
+}

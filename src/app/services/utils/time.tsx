@@ -27,6 +27,14 @@ class TimeUntiles {
     return moment(timestamp).format('dddd, MMMM DD YYYY, HH:mm');
   }
 
+  public Date(timestamp: number) {
+    return moment(timestamp).format('YYYY-MM-DD');
+  }
+
+  public Time(timestamp: number) {
+    return moment(timestamp).format('HH:mm');
+  }
+
   /**
    * @func dynamic
    * @desc Formates the given timestamp dynamically.

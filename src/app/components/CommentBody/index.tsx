@@ -158,6 +158,7 @@ class CommentBody extends React.Component<IProps, IState> {
     );
   }
 }
+
 /**
  * redux store mapper
  * @param store
@@ -167,6 +168,7 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   comments: store.comments.comments,
   comment_id: ownProps.comment_id,
 });
+
 /**
  * reducer actions functions mapper
  * @param dispatch

@@ -227,3 +227,91 @@
 .color-lbl-shadow-G {
   box-shadow: 0 0 8px rgba(108,217,217,1);
 }
+.userChipsWrapper {
+  max-width: 180px;
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding-right: 5px;
+  height: 28px;
+  border-radius: 4px;
+  overflow: hidden;
+  border-width: 1px ;
+  border-style: solid ;
+  border-color: #DDDFE0;
+  transition: all .2s;
+  box-shadow: 0 2px 4px rgba(50, 61, 71, 0.16);
+}
+.userChipsWrapper img {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border-radius: 1010px;
+  display: flex;
+  flex: none;
+  justify-content: center;
+}
+.userChipsWrapper .userAvatar16 {
+  margin: 0 6px;
+}
+.userChipsWrapper .userAvatar16 svg {
+  display: none;
+}
+.userChipsWrapper span {
+  max-width: 148px;
+  line-height: 26px;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  white-space: nowrap;
+  color: #323D47;
+}
+.userChipsWrapper.isSelected {
+  background-color: #323D47;
+  border-color: #323D47;
+}
+.userChipsWrapper.isSelected span {
+  color: #fff;
+  transition: all 0.2s;
+}
+.userChipsWrapper.isSelected .userAvatar16 {
+  margin: 0 6px;
+}
+.userChipsWrapper.isSelected .userAvatar16 svg {
+  fill: #fff;
+}
+.userChipsWrapper.isSelected:hover {
+  border-color: #323D47;
+}
+.userChipsWrapper.isSelected:hover .userAvatar16 svg {
+  fill: #fff;
+}
+.userChipsWrapper.isSelected.isCandidate {
+  background-color: #0079F2;
+}
+.userChipsWrapper.isSelected.isCandidate:hover {
+  border-color: #0079F2;
+}
+.userChipsWrapper.isCandidate {
+  border-color: #0079F2;
+}
+.userChipsWrapper.isCandidate:hover {
+  border-color: #004DA6;
+}
+.userChipsWrapper:hover {
+  border-color: #ACB0B4;
+}
+.userChipsWrapper:hover.removable .userAvatar16::after {
+  display: none;
+}
+.userChipsWrapper:hover.removable .userAvatar16 img {
+  display: none;
+}
+.userChipsWrapper:hover.removable .userAvatar16 svg {
+  display: block;
+  fill: #ff3344;
+}
