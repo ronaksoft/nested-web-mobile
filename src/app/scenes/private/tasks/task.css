@@ -152,6 +152,7 @@
   max-width: 51px;
   height: 100%;
   display: flex;
+  opacity: .64;
   flex: 1;
   justify-content: center;
   align-items: center;

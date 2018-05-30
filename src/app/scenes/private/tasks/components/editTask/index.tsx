@@ -486,7 +486,8 @@ class EditTask extends React.Component<IProps, IState> {
                     <IcoN name="petition16" size={16}/>
                   </div>
                   <div className={style.taskRowItem}>
-                    <textarea placeholder="Description" className={style.descriptionElement}/>
+                    <textarea placeholder="Description" className={style.descriptionElement}
+                      value={task.description}/>
                   </div>
                 </div>
               )}
@@ -498,10 +499,12 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={[style.taskRowItem, style.vertical].join(' ')}>
                     <h4><span>To-Do List</span></h4>
                     <ul className={style.todoList}>
-                      <li>
-                        <input type="checkbox" id="todo1"/>
-                        <label htmlFor="todo1">todo1</label>
-                      </li>
+                      {task.todos.map((todo) => (
+                        <li key={todo._id}>
+                          <input type="checkbox" id="todo1" checked={todo.done}/>
+                          <label htmlFor="todo1">{todo.txt}</label>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -597,24 +600,36 @@ class EditTask extends React.Component<IProps, IState> {
           </div>
         </Scrollable>
         <div className={style.taskBinder}>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'description')}>
-            <IcoN name="petition24" size={24}/>
-          </div>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'labels')}>
-            <IcoN name="tag24" size={24}/>
-          </div>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'watchers')}>
-            <IcoN name="person24" size={24}/>
-          </div>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'editors')}>
-            <IcoN name="person24" size={24}/>
-          </div>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'attachments')}>
-            <IcoN name="attach24" size={24}/>
-          </div>
-          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'todos')}>
-            <IcoN name="bulletList24" size={24}/>
-          </div>
+          {!this.activeRows.description && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'description')}>
+              <IcoN name="petition24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.labels && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'labels')}>
+              <IcoN name="tag24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.watchers && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'watchers')}>
+              <IcoN name="person24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.editors && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'editors')}>
+              <IcoN name="pencil24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.attachments && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'attachments')}>
+              <IcoN name="attach24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.todos && (
+            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'todos')}>
+              <IcoN name="bulletList24" size={24}/>
+            </div>
+          )}
         </div>
         {this.state.showAddLabel && (
           <AddLabel labels={task.labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
