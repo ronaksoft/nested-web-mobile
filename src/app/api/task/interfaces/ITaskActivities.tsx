@@ -1,4 +1,4 @@
-import {IActivity} from '../../interfaces';
+import {ITaskActivity} from '../../interfaces';
 
 interface IGetActivitiesRequest {
   limit?: number;
@@ -11,7 +11,7 @@ interface IGetActivitiesRequest {
 }
 
 interface IGetActivitiesResponse {
-  activities: IActivity[];
+  activities: ITaskActivity[];
   limit: number;
   skip: number;
 }

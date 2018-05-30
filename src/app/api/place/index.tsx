@@ -20,7 +20,7 @@ import IGetFilesRequest from './interfaces/IGetFilesRequest';
 import IFile from '../../components/FileItem/IFile';
 import IGetPlaceActivitiesRequest from './interfaces/IGetActivitiesRequest';
 import IGetPLaceActivitiesResponse from './interfaces/IGetActivitiesResponse';
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 
 export default class PlaceApi {
   /**
@@ -56,7 +56,7 @@ export default class PlaceApi {
     });
   }
 
-  public getActivities(data: IGetPlaceActivitiesRequest): Promise<IActivity[]> {
+  public getActivities(data: IGetPlaceActivitiesRequest): Promise<IPlaceActivity[]> {
     return this.api.request({
       cmd: 'place/get_activities',
       data,

@@ -6,7 +6,7 @@ import ITask from '../../api/task/interfaces/ITask';
 import ICustomFilter from '../../api/task/interfaces/ICustomFilter';
 import ISidebarPlace from '../../api/place/interfaces/ISidebarPlace';
 import IUnreadPlace from '../../api/place/interfaces/IUnreadPlace';
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 import IComposeState from 'api/post/interfaces/IComposeState';
 
 export interface IAppStore {
@@ -18,7 +18,7 @@ export interface IAppStore {
   notificationsCount: INotificationCountResponse;
   posts: IPost[];
   tasks: any | ITask[];
-  activities: any | IActivity[];
+  activities: any | IPlaceActivity[];
   postsRoute: string;
   tasksRoute: string;
   sidebarPlaces: ISidebarPlace[];
@@ -32,7 +32,7 @@ export interface IAppStore {
 
 export interface IAppAction {
   type: string;
-  payload?: number | boolean | string | IPost | IPost[] | ITask | ITask[] | IActivity | IActivity[]
+  payload?: number | boolean | string | IPost | IPost[] | ITask | ITask[] | IPlaceActivity | IPlaceActivity[]
     | IUser | INotificationCountResponse | INotificationResponse[]
     | IComposeState | ICustomFilter[] | any;
 }

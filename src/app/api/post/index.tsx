@@ -19,7 +19,7 @@ import ICommentListRequest from './interfaces/ICommentListRequest';
 import IAddLabelRequest from './interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from './interfaces/IRemoveLabelRequest';
 import {IGetActivitiesRequest, IGetActivitiesResponse} from './interfaces/IPostActivities';
-import {IActivity} from '../interfaces';
+import {IPlaceActivity} from '../interfaces';
 
 export default class PostApi {
   /**
@@ -265,7 +265,7 @@ export default class PostApi {
     });
   }
 
-  public getActivities(data: IGetActivitiesRequest): Promise<IActivity[]> {
+  public getActivities(data: IGetActivitiesRequest): Promise<IPlaceActivity[]> {
     return this.api.request({
       cmd: 'post/get_activities',
       data,

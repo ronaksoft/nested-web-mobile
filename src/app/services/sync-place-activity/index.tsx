@@ -17,7 +17,8 @@
 import Api from '../../api/index';
 import SyncActions from './actions';
 import ActivityApi from '../../api/place/index';
-import {IActivity} from 'api/interfaces/';
+import * as _ from 'lodash';
+import {IPlaceActivity} from 'api/interfaces/';
 
 /**
  * @interface IChanel
@@ -32,7 +33,7 @@ interface IChanel {
    */
   placeId: string;
   action: SyncActions;
-  cb: (activity: IActivity) => void;
+  cb: (activity: IPlaceActivity) => void;
 }
 
 /**
@@ -79,11 +80,11 @@ export default class SyncActivity {
    * @param {string} placeId
    * @returns {function} canceller function
    */
-  public openChannel(placeId: string, action: SyncActions, callback: (activity?: IActivity) => void): any {
+  public openChannel(placeId: string, action: SyncActions, callback: (activity?: IPlaceActivity) => void): any {
     if (this.listenerCanceler === null) {
       this.listenerCanceler = this.API.addPlaceSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
-    const uid = placeId + '_' + this.guid();
+    const uid = placeId + '_' + _.uniqueId('sync-a');
     this.openChannelsStack[uid] = {
       placeId,
       action,
@@ -112,7 +113,7 @@ export default class SyncActivity {
    * @returns {string} chanel ID
    * @memberOf SyncActivity
    */
-  public openAllChannel(cb: (activity: IActivity) => void) {
+  public openAllChannel(cb: (activity: IPlaceActivity) => void) {
     return this.openChannel(this.OPEN_ALL_CHANNEL, SyncActions.ALL_ACTIONS, cb);
   };
 
@@ -143,13 +144,13 @@ export default class SyncActivity {
       after: this.latestActivityTimestamp - 10000,
       place_id: syncObj.place_id,
       details: true,
-    }).then((activities: IActivity[]) => {
-      this.latestActivityTimestamp = Date.now();
+    }).then((activities: IPlaceActivity[]) => {
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];
 
-      activities.forEach((activity: IActivity) => {
+      activities.forEach((activity: IPlaceActivity) => {
 
         filteredChannelsWithPlaceId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
@@ -161,24 +162,4 @@ export default class SyncActivity {
       });
     });
   }
-
-  /**
-   * @function guid
-   * generate GUID
-   * ( needs docs )
-   * @returns {string}
-   * @private
-   * @memberOf SyncActivity
-   */
-  private guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
-  }
-
 }

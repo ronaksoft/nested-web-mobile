@@ -17,7 +17,8 @@
 import Api from '../../api/index';
 import SyncActions from './actions';
 import ActivityApi from '../../api/task/index';
-import {IActivity} from 'api/interfaces/';
+import {ITaskActivity} from 'api/interfaces/';
+import * as _ from 'lodash';
 
 /**
  * @interface IChanel
@@ -32,7 +33,7 @@ interface IChanel {
    */
   taskId: string;
   action: SyncActions;
-  cb: (activity: IActivity) => void;
+  cb: (activity: ITaskActivity) => void;
 }
 
 /**
@@ -79,11 +80,11 @@ export default class SyncActivity {
    * @param {string} taskId
    * @returns {function} canceller function
    */
-  public openChannel(taskId: string, action: SyncActions, callback: (activity?: IActivity) => void): any {
+  public openChannel(taskId: string, action: SyncActions, callback: (activity?: ITaskActivity) => void): any {
     if (this.listenerCanceler === null) {
       this.listenerCanceler = this.API.addTaskSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
-    const uid = taskId + '_' + this.guid();
+    const uid = taskId + '_' + _.uniqueId('sync-t');
     this.openChannelsStack[uid] = {
       taskId,
       action,
@@ -112,7 +113,7 @@ export default class SyncActivity {
    * @returns {string} chanel ID
    * @memberOf SyncActivity
    */
-  public openAllChannel(cb: (activity: IActivity) => void) {
+  public openAllChannel(cb: (activity: ITaskActivity) => void) {
     return this.openChannel(this.OPEN_ALL_CHANNEL, SyncActions.ALL_ACTIONS, cb);
   };
 
@@ -143,13 +144,13 @@ export default class SyncActivity {
       after: this.latestActivityTimestamp - 10000,
       task_id: syncObj.task_id,
       details: true,
-    }).then((activities: IActivity[]) => {
-      this.latestActivityTimestamp = Date.now();
+    }).then((activities: ITaskActivity[]) => {
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];
 
-      activities.forEach((activity: IActivity) => {
+      activities.forEach((activity: ITaskActivity) => {
 
         filteredChannelsWithTaskId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
@@ -161,24 +162,4 @@ export default class SyncActivity {
       });
     });
   }
-
-  /**
-   * @function guid
-   * generate GUID
-   * ( needs docs )
-   * @returns {string}
-   * @private
-   * @memberOf SyncActivity
-   */
-  private guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
-  }
-
 }

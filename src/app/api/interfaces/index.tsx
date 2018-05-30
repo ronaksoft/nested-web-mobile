@@ -3,8 +3,23 @@ import IPlace from './IPlace';
 import ILabel from './ILabel';
 import IComment from './IComment';
 import IPicture from './IPicture';
-import IActivity from './IActivity';
+import IPlaceActivity from './IPlaceActivity';
+import IPostActivity from './IPostActivity';
+import ITaskActivity from './ITaskActivity';
 import IAttachment from './IAttachment';
 import INotification from './INotification';
+import IPost from '../post/interfaces/IPost';
 
-export {IPicture, IUser, IPlace, ILabel, IComment, IAttachment, IActivity, INotification};
+export {
+  IPicture,
+  IUser,
+  IPlace,
+  ILabel,
+  IComment,
+  IAttachment,
+  IPlaceActivity,
+  IPostActivity,
+  ITaskActivity,
+  INotification,
+  IPost
+};

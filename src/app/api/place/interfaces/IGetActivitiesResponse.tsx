@@ -1,7 +1,7 @@
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 
 interface IGetActivitiesResponse {
-  activities: IActivity[];
+  activities: IPlaceActivity[];
   limit: number;
   skip: number;
 }

@@ -17,7 +17,8 @@
 import Api from '../../api/index';
 import SyncActions from './actions';
 import ActivityApi from '../../api/post/index';
-import {IActivity} from 'api/interfaces/';
+import {IPostActivity} from 'api/interfaces/';
+import * as _ from 'lodash';
 
 /**
  * @interface IChanel
@@ -32,7 +33,7 @@ interface IChanel {
    */
   postId: string;
   action: SyncActions;
-  cb: (activity: IActivity) => void;
+  cb: (activity: IPostActivity) => void;
 }
 
 /**
@@ -79,11 +80,11 @@ export default class SyncActivity {
    * @param {string} postId
    * @returns {function} canceller function
    */
-  public openChannel(postId: string, action: SyncActions, callback: (activity?: IActivity) => void): any {
+  public openChannel(postId: string, action: SyncActions, callback: (activity?: IPostActivity) => void): any {
     if (this.listenerCanceler === null) {
-      this.listenerCanceler = this.API.addPlaceSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
+      this.listenerCanceler = this.API.addPostSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
-    const uid = postId + '_' + this.guid();
+    const uid = postId + '_' + _.uniqueId('sync-p');
     this.openChannelsStack[uid] = {
       postId,
       action,
@@ -112,7 +113,7 @@ export default class SyncActivity {
    * @returns {string} chanel ID
    * @memberOf SyncActivity
    */
-  public openAllChannel(cb: (activity: IActivity) => void) {
+  public openAllChannel(cb: (activity: IPostActivity) => void) {
     return this.openChannel(this.OPEN_ALL_CHANNEL, SyncActions.ALL_ACTIONS, cb);
   };
 
@@ -143,13 +144,13 @@ export default class SyncActivity {
       after: this.latestActivityTimestamp - 10000,
       post_id: syncObj.postId,
       details: true,
-    }).then((activities: IActivity[]) => {
-      this.latestActivityTimestamp = Date.now();
+    }).then((activities: IPostActivity[]) => {
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];
 
-      activities.forEach((activity: IActivity) => {
+      activities.forEach((activity: IPostActivity) => {
 
         filteredChannelsWithPostId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
@@ -161,24 +162,4 @@ export default class SyncActivity {
       });
     });
   }
-
-  /**
-   * @function guid
-   * generate GUID
-   * ( needs docs )
-   * @returns {string}
-   * @private
-   * @memberOf SyncActivity
-   */
-  private guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
-  }
-
 }
