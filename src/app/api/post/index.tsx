@@ -18,6 +18,8 @@ import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
 import IAddLabelRequest from './interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from './interfaces/IRemoveLabelRequest';
+import {IGetActivitiesRequest, IGetActivitiesResponse} from './interfaces/IPostActivities';
+import {IActivity} from '../interfaces';
 
 export default class PostApi {
   /**
@@ -260,6 +262,15 @@ export default class PostApi {
     return this.api.request({
       cmd: 'post/remove_label',
       data: params,
+    });
+  }
+
+  public getActivities(data: IGetActivitiesRequest): Promise<IActivity[]> {
+    return this.api.request({
+      cmd: 'post/get_activities',
+      data,
+    }).then((res: IGetActivitiesResponse) => {
+      return res.activities;
     });
   }
 }

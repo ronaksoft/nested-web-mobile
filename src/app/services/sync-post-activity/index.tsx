@@ -3,7 +3,7 @@
  * @author Soroush Torkzadeh <sorousht@nested.com>
  * @desc Cyrus broadcasts messages of `sync-a` type to the clients. These activities
  * are just sent to the authenticated users based on their teammates' actions. This
- * service listens to these messages and filters by `place_id` and activity type for
+ * service listens to these messages and filters by `post_id` and activity type for
  * the registered channels. But wait a moment! What's a channel? A channel is how the
  * app components talk to this service. They tell the service what kind of activities
  * they look for and the service feeds them on receiving new activities.
@@ -15,8 +15,8 @@
  */
 
 import Api from '../../api/index';
-import SyncActions from './syncActions';
-import ActivityApi from '../../api/place/index';
+import SyncActions from './actions';
+import ActivityApi from '../../api/post/index';
 import {IActivity} from 'api/interfaces/';
 
 /**
@@ -25,12 +25,12 @@ import {IActivity} from 'api/interfaces/';
  */
 interface IChanel {
   /**
-   * @property placeId
-   * @desc A placeId for filtering activities
+   * @property postId
+   * @desc A postId for filtering activities
    * @type {string}
    * @memberof IChanel
    */
-  placeId: string;
+  postId: string;
   action: SyncActions;
   cb: (activity: IActivity) => void;
 }
@@ -71,21 +71,21 @@ export default class SyncActivity {
   }
 
   /**
-   * Open a channel with place Id
+   * Open a channel with post Id
    *
-   * Service filter activity by place Ids that it's has open
+   * Service filter activity by post Ids that it's has open
    * chanel
    *
-   * @param {string} placeId
+   * @param {string} postId
    * @returns {function} canceller function
    */
-  public openChannel(placeId: string, action: SyncActions, callback: (activity?: IActivity) => void): any {
+  public openChannel(postId: string, action: SyncActions, callback: (activity?: IActivity) => void): any {
     if (this.listenerCanceler === null) {
-      this.listenerCanceler = this.API.addSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
+      this.listenerCanceler = this.API.addPlaceSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
-    const uid = placeId + '_' + this.guid();
+    const uid = postId + '_' + this.guid();
     this.openChannelsStack[uid] = {
-      placeId,
+      postId,
       action,
       cb: callback,
     };
@@ -108,7 +108,7 @@ export default class SyncActivity {
 
   /**
    * @function openAllChannel
-   * Service doesn't filter activity by place Ids
+   * Service doesn't filter activity by post Ids
    * @returns {string} chanel ID
    * @memberOf SyncActivity
    */
@@ -120,7 +120,7 @@ export default class SyncActivity {
    * @function dispatchActivityPushEvents
    * Dispatch sync event after received new sync-a
    *
-   * 1. Check this sync-a push's placeId exist in open channel places
+   * 1. Check this sync-a push's postId exist in open channel posts
    * 2. Fetch activities after this.latestActivityTimestamp recursively
    * 3. Dispatch Sync Activity event with action_Id
    *
@@ -129,19 +129,20 @@ export default class SyncActivity {
    * @memberOf SyncActivity
    */
   public dispatchActivityPushEvents(syncObj: any): void {
-    const filteredChannelsWithPlaceId = Object.keys(this.openChannelsStack).filter((channelUid: string): boolean => {
-      return this.openChannelsStack[channelUid].placeId === syncObj.place_id ||
+    const filteredChannelsWithPostId = Object.keys(this.openChannelsStack).filter((channelUid: string): boolean => {
+      return this.openChannelsStack[channelUid].postId === syncObj.postId ||
         this.openChannelsStack[channelUid].action === SyncActions.ALL_ACTIONS;
     });
 
-    if (filteredChannelsWithPlaceId.length === 0) {
+    if (filteredChannelsWithPostId.length === 0) {
       return;
     }
 
     this.activityApi.getActivities({
       // fixme:: fix time
       after: this.latestActivityTimestamp - 10000,
-      place_id: syncObj.place_id,
+      post_id: syncObj.postId,
+      details: true,
     }).then((activities: IActivity[]) => {
       this.latestActivityTimestamp = Date.now();
 
@@ -150,7 +151,7 @@ export default class SyncActivity {
 
       activities.forEach((activity: IActivity) => {
 
-        filteredChannelsWithPlaceId.forEach((channelUid: string) => {
+        filteredChannelsWithPostId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
           if ((channel.action === activity.action || channel.action === SyncActions.ALL_ACTIONS)) {
             calledChannelCallbacks.push(channelUid);
