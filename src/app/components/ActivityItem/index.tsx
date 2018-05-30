@@ -1,7 +1,7 @@
 import * as React from 'react';
 import C_ACTIVITY_ACTION from '../../api/place/interfaces/C_ACTIVITY_ACTION';
 import {UserAvatar, IcoN} from 'components';
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 import TimeUntiles from '../../services/utils/time';
 import {hashHistory} from 'react-router';
 const style = require('./activityItem.css');
@@ -13,7 +13,7 @@ interface IProps {
    * @type {object} ( not defined properly )
    * @memberof IProps
    */
-  act: IActivity;
+  act: IPlaceActivity;
   placeId?: string;
 }
 
@@ -37,10 +37,10 @@ class ActivityItem extends React.Component<IProps, any> {
   public findItemType(): JSX.Element {
     const {act} = this.props;
     switch (act.action) {
-      case C_ACTIVITY_ACTION.COMMENT_ADD:
-        this.icon = 'commentCrown16';
-        this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
-        return <p><b>{act.actor.fname} {act.actor.lname}: </b>{act.comment_text}</p>;
+      // case C_ACTIVITY_ACTION.COMMENT_ADD:
+      //   this.icon = 'commentCrown16';
+      //   this.onclick = () => hashHistory.push(`/message/${act.post_id || act.post._id}/`);
+      //   return <p><b>{act.actor.fname} {act.actor.lname}: </b>{act.comment_text}</p>;
       case C_ACTIVITY_ACTION.COMMENT_REMOVE:
         this.icon = 'commentForce16';
         return <p><b>{act.actor.fname} {act.actor.lname}: </b>removed a comment</p>;

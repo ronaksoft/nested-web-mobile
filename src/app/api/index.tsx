@@ -23,12 +23,16 @@ class Api {
   private server;
   private messageCanceller = null;
   private hasCredential: boolean = false;
-  private syncActivityListeners: object = {};
+  private syncPlaceActivityListeners: object = {};
+  private syncPostActivityListeners: object = {};
+  private syncTaskActivityListeners: object = {};
   private requestKeyList: IRequestKeyList[] = [];
 
   private constructor() {
     // start api service
-    this.syncActivityListeners = {};
+    this.syncPlaceActivityListeners = {};
+    this.syncPostActivityListeners = {};
+    this.syncTaskActivityListeners = {};
   }
 
   /**
@@ -159,21 +163,47 @@ class Api {
     delete this.requestKeyList[requestKey];
   }
 
-  // TODO: Ask sina to explain these functions
-  public addSyncActivityListener(callback: (syncObj: any) => void): any {
+  public addPlaceSyncActivityListener(callback: (syncObj: any) => void): any {
     const listenerId = 'listener_' + Unique.get();
-    console.log(this.syncActivityListeners, listenerId);
-    this.syncActivityListeners[listenerId] = callback;
+    this.syncPlaceActivityListeners[listenerId] = callback;
     const canceler = () => {
-      delete this.syncActivityListeners[listenerId];
+      delete this.syncPlaceActivityListeners[listenerId];
+    };
+    return canceler;
+  }
+
+  public addPostSyncActivityListener(callback: (syncObj: any) => void): any {
+    const listenerId = 'listener_' + Unique.get();
+    this.syncPostActivityListeners[listenerId] = callback;
+    const canceler = () => {
+      delete this.syncPostActivityListeners[listenerId];
+    };
+    return canceler;
+  }
+
+  public addTaskSyncActivityListener(callback: (syncObj: any) => void): any {
+    const listenerId = 'listener_' + Unique.get();
+    this.syncTaskActivityListeners[listenerId] = callback;
+    const canceler = () => {
+      delete this.syncTaskActivityListeners[listenerId];
     };
     return canceler;
   }
 
   private callServerMessageListener(message: any) {
     if (message.cmd === 'sync-a') {
-      Object.keys(this.syncActivityListeners).forEach((key: string) => {
-        this.syncActivityListeners[key](message.data);
+      Object.keys(this.syncPlaceActivityListeners).forEach((key: string) => {
+        this.syncPlaceActivityListeners[key](message.data);
+      });
+    }
+    if (message.cmd === 'sync-p') {
+      Object.keys(this.syncPostActivityListeners).forEach((key: string) => {
+        this.syncPostActivityListeners[key](message.data);
+      });
+    }
+    if (message.cmd === 'sync-t') {
+      Object.keys(this.syncTaskActivityListeners).forEach((key: string) => {
+        this.syncTaskActivityListeners[key](message.data);
       });
     }
   }

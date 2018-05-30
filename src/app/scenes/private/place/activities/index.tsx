@@ -4,7 +4,7 @@ import PlaceApi from '../../../../api/place';
 import IGetActivitiesRequest from '../../../../api/place/interfaces/IGetActivitiesRequest';
 import {InfiniteScroll, Loading} from 'components';
 // import * as _ from 'lodash';
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 import ActivityItem from '../../../../components/ActivityItem/';
 import {setActivities} from '../../../../redux/app/actions/index';
 // import {Modal, message} from 'antd';
@@ -63,7 +63,7 @@ interface IState {
    */
   reachedTheEnd: boolean;
   placeId: string;
-  activities: IActivity[];
+  activities: IPlaceActivity[];
   skip: number;
   limit: number;
   initialLoad: boolean;
@@ -149,7 +149,7 @@ class Activities extends React.Component<IProps, IState> {
 
   }
 
-  private addToActivities(activities: IActivity[]) {
+  private addToActivities(activities: IPlaceActivity[]) {
     const state = {};
     state[this.props.params.placeId] = [...this.state.activities, ...activities];
     this.props.setActivities(state);

@@ -1,9 +1,9 @@
 import {IUser, ILabel} from '../../interfaces/';
 
 interface ITask {
-    _id:  string;
-    timestamp:  number;
-    access: number[];    
+    _id: string;
+    timestamp: number;
+    access: number[];
     assignee: IUser;
     assignor: IUser;
     counters: any;

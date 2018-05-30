@@ -21,9 +21,9 @@ import ArrayUntiles from '../../../services/utils/array';
 import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
 import {hashHistory} from 'react-router';
-import SyncActivity from '../../../services/syncActivity/index';
-import {IActivity, IUser} from 'api/interfaces/';
-import SyncActions from '../../../services/syncActivity/syncActions';
+import SyncActivity from '../../../services/sync-place-activity/index';
+import {IPlaceActivity, IUser} from 'api/interfaces/';
+import SyncActions from '../../../services/sync-place-activity/actions';
 import AccountApi from '../../../api/account/index';
 import {NewBadge} from 'components/NewBadge';
 import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
@@ -289,7 +289,7 @@ class Posts extends React.Component<IProps, IState> {
     // Needs documentation
     this.syncActivityListeners.push(
       this.syncActivity.openAllChannel(
-        (activity: IActivity) => {
+        (activity: IPlaceActivity) => {
           switch (activity.action) {
             case SyncActions.COMMENT_ADD:
             case SyncActions.COMMENT_REMOVE:
@@ -320,7 +320,7 @@ class Posts extends React.Component<IProps, IState> {
    * @param {IActivity} activity
    * @private
    */
-  private addNewPostActivity(activity: IActivity) {
+  private addNewPostActivity(activity: IPlaceActivity) {
     if (
       this.favoritePlacesId.filter((placeId) => placeId === activity.place_id).length > 0 &&
       this.newPostsIds.filter((postId) => postId === activity.post_id).length === 0
@@ -338,7 +338,7 @@ class Posts extends React.Component<IProps, IState> {
    * @param {IActivity} activity
    * @private
    */
-  private addCommentToPostActivity(activity: IActivity) {
+  private addCommentToPostActivity(activity: IPlaceActivity) {
 
     const indexOfPost = this.state.posts.findIndex((post: IPost) => (post._id === activity.post_id));
 

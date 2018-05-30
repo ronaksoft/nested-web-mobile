@@ -18,9 +18,9 @@ import IGetWithSkipRequest from './interfaces/IGetWithSkipRequest';
 import IPlaceMemberRequest from './interfaces/IPlaceMemberRequest';
 import IGetFilesRequest from './interfaces/IGetFilesRequest';
 import IFile from '../../components/FileItem/IFile';
-import IGetActivitiesRequest from './interfaces/IGetActivitiesRequest';
-import IGetActivitiesResponse from './interfaces/IGetActivitiesResponse';
-import {IActivity} from 'api/interfaces/';
+import IGetPlaceActivitiesRequest from './interfaces/IGetActivitiesRequest';
+import IGetPLaceActivitiesResponse from './interfaces/IGetActivitiesResponse';
+import {IPlaceActivity} from 'api/interfaces/';
 
 export default class PlaceApi {
   /**
@@ -56,11 +56,11 @@ export default class PlaceApi {
     });
   }
 
-  public getActivities(data: IGetActivitiesRequest): Promise<IActivity[]> {
+  public getActivities(data: IGetPlaceActivitiesRequest): Promise<IPlaceActivity[]> {
     return this.api.request({
       cmd: 'place/get_activities',
       data,
-    }).then((res: IGetActivitiesResponse) => {
+    }).then((res: IGetPLaceActivitiesResponse) => {
       return res.activities;
     });
   }

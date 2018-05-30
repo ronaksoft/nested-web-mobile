@@ -18,8 +18,8 @@ import ArrayUntiles from 'services/utils/array';
 import TimeUntiles from 'services/utils/time';
 import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
-import SyncActivity from 'services/syncActivity/index';
-import SyncActions from 'services/syncActivity/syncActions';
+import SyncActivity from 'services/sync-place-activity';
+import SyncActions from 'services/sync-place-activity/actions';
 import {IUser} from 'api/interfaces';
 import RTLDetector from '../../../../../components/RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
@@ -193,7 +193,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
       }
     } else {
       this.Api = new TaskApi();
-      this.Api.getActivities(this.props.post_id, true, true);
+      this.Api.getActivities({
+        task_id: this.props.post_id,
+        only_comments: true,
+        details: true,
+      });
     }
   }
 

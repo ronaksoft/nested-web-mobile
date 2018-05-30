@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 import INotificationTypes from './../../api/notification/interfaces/INotificationTypes';
-import SyncActions from '../syncActivity/syncActions';
+import SyncActions from '../sync-place-activity/actions';
 import {hashHistory} from 'react-router';
 
 export default class FCM {

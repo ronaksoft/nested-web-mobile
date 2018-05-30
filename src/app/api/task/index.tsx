@@ -6,6 +6,7 @@ import ITaskGetByFilterRequest from './interfaces/ITaskGetByFilterRequest';
 import C_TASK_RESPONSE from './consts/taskResponseConst';
 import C_TASK_STATUS from './consts/taskStatusConst';
 import C_TASK_STATE from './consts/taskStateConst';
+import {IGetActivitiesRequest} from './interfaces/ITaskActivities';
 
 export default class TaskApi {
   /**
@@ -246,14 +247,10 @@ export default class TaskApi {
     });
   }
 
-  public getActivities(taskId: string, onlyComments?: boolean, details?: boolean) {
+  public getActivities(data: IGetActivitiesRequest) {
     return this.api.request({
       cmd: 'task/get_activities',
-      data: {
-        task_id: taskId,
-        only_comments: onlyComments,
-        details,
-      },
+      data,
     });
   }
 

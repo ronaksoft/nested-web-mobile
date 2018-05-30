@@ -8,7 +8,7 @@ import ITask from '../../../api/task/interfaces/ITask';
 import ICustomFilter from '../../../api/task/interfaces/ICustomFilter';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
 import IComposeState from 'api/post/interfaces/IComposeState';
-import {IActivity} from 'api/interfaces/';
+import {IPlaceActivity} from 'api/interfaces/';
 
 export function userSet(user: IUser): IAppAction {
   return {
@@ -129,7 +129,7 @@ export function unsetTasks(): IAppAction {
   };
 }
 
-export function setActivities(payload: any | IActivity[]): IAppAction {
+export function setActivities(payload: any | IPlaceActivity[]): IAppAction {
   return {
     type: ActionTypes.APP_ACTIVITIES_SET,
     payload,
