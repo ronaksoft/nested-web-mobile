@@ -125,6 +125,15 @@ class EditTask extends React.Component<IProps, IState> {
   private createMode: boolean = true;
   private editMode: boolean = false;
   private viewMode: boolean = false;
+  private activeRows: any = {
+    date: false,
+    description: false,
+    todos: false,
+    attachments: false,
+    watchers: false,
+    editors: false,
+    labels: false,
+  };
 
   /**
    * @prop targets
@@ -204,6 +213,27 @@ class EditTask extends React.Component<IProps, IState> {
       this.createMode = false;
       this.viewMode = false;
     }
+    if (task.attachments && task.attachments.length > 0) {
+      this.activeRows.attachments = true;
+    }
+    if (task.watchers && task.watchers.length > 0) {
+      this.activeRows.watchers = true;
+    }
+    if (task.todos && task.todos.length > 0) {
+      this.activeRows.todos = true;
+    }
+    if (task.due_date) {
+      this.activeRows.date = true;
+    }
+    if (task.labels && task.labels.length > 0) {
+      this.activeRows.labels = true;
+    }
+    if (task.editors && task.editors.length > 0) {
+      this.activeRows.editors = true;
+    }
+    if (task.description) {
+      this.activeRows.description = true;
+    }
   }
 
   private removeLabel(id: string) {
@@ -219,6 +249,10 @@ class EditTask extends React.Component<IProps, IState> {
       showMoreOptions: false,
       showAddLabel: !this.state.showAddLabel,
     });
+  }
+
+  public activeRow(row: string) {
+    this.activeRows[row] = true;
   }
 
   /**
@@ -249,32 +283,6 @@ class EditTask extends React.Component<IProps, IState> {
       });
     }
   }
-
-  // /**
-  //  * @func updatePostsInStore
-  //  * @desc Updates a post property and replaces the post in store's posts
-  //  * @private
-  //  * @param {string} key
-  //  * @param {*} value
-  //  * @memberof Post
-  //  */
-  // private updateTasksInStore(key: string, value: any) {
-
-  //   const tasks = JSON.parse(JSON.stringify(this.props.tasks));
-  //   let newTasks;
-  //   newTasks = tasks.map((task: ITask) => {
-  //     if (task._id === this.state.task._id) {
-  //       task[key] = value;
-  //     }
-  //     return task;
-  //   });
-
-  //   this.props.setTasks(newTasks);
-
-  //   if (this.props.currentTask) {
-  //     this.props.setCurrentTask(this.props.currentTask);
-  //   }
-  // }
   /**
    *
    * @func handleTargetsChanged
@@ -448,123 +456,137 @@ class EditTask extends React.Component<IProps, IState> {
                   </div>
                 )}
               </div>
-              <div className={style.taskRow}>
-                <div className={style.taskRowIcon}>
-                  <IcoN name="finishFlag16" size={16}/>
-                </div>
-                <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                  <h4>
-                    <span>Set due time...</span>
-                    <IcoN name="cross16" size={16}/>
-                    <IcoN name="binRed16" size={16}/>
-                  </h4>
-                  <ul className={style.setDateTime}>
-                    <li>
-                      <input type="date" placeholder="Set date..."
-                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
-                    </li>
-                    <li>
-                      <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}"
-                        min="00:00" max="23:59" value={TimeUntiles.Time(task.due_date)}/>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className={style.taskRow}>
-                <div className={style.taskRowIcon}>
-                  <IcoN name="petition16" size={16}/>
-                </div>
-                <div className={style.taskRowItem}>
-                  <textarea placeholder="Description" className={style.descriptionElement}/>
-                </div>
-              </div>
-              <div className={style.taskRow}>
-                <div className={style.taskRowIcon}>
-                  <IcoN name="bulletList16" size={16}/>
-                </div>
-                <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                  <h4><span>To-Do List</span></h4>
-                  <ul className={style.todoList}>
-                    <li>
-                      <input type="checkbox" id="todo1"/>
-                      <label htmlFor="todo1">todo1</label>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className={style.taskRow}>
-                <div className={style.taskRowIcon}>
-                  <IcoN name="attach16" size={16}/>
-                </div>
-                <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                  <h4>
-                    <span>Attachments</span>
-                    <IcoN name="cross16" size={16}/>
-                    <IcoN name="binRed16" size={16}/>
-                  </h4>
-                  {task.attachments && <TaskAttachment attachments={task.attachments}/>}
-                </div>
-              </div>
-              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
-                <div className={style.taskRowIcon}>
-                <IcoN name="person16" size={16}/>
-                </div>
-                {this.viewMode && (
-                  <div className={style.taskRowItem}>
-                    watchers
+              {this.activeRows.date && (
+                <div className={style.taskRow}>
+                  <div className={style.taskRowIcon}>
+                    <IcoN name="finishFlag16" size={16}/>
                   </div>
-                )}
-                {this.createMode || this.editMode && (
-                  <div className={style.taskRowItem}>
-                    <Suggestion ref={this.referenceTargets}
-                                mode="user"
-                                placeholder="Add peoples who wants to follow task..."
-                                selectedItems={task.watchers}
-                                onSelectedItemsChanged={this.handleTargetsChanged}
-                    />
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>Set due time...</span>
+                      <IcoN name="cross16" size={16}/>
+                      <IcoN name="binRed16" size={16}/>
+                    </h4>
+                    <ul className={style.setDateTime}>
+                      <li>
+                        <input type="date" placeholder="Set date..."
+                          pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
+                      </li>
+                      <li>
+                        <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}"
+                          min="00:00" max="23:59" value={TimeUntiles.Time(task.due_date)}/>
+                      </li>
+                    </ul>
                   </div>
-                )}
-              </div>
-              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
-                <div className={style.taskRowIcon}>
-                <IcoN name="pencil16" size={16}/>
                 </div>
-                {this.viewMode && (
-                  <div className={style.taskRowItem}>
-                    editors
+              )}
+              {this.activeRows.description && (
+                <div className={style.taskRow}>
+                  <div className={style.taskRowIcon}>
+                    <IcoN name="petition16" size={16}/>
                   </div>
-                )}
-                {this.createMode || this.editMode && (
                   <div className={style.taskRowItem}>
-                    <Suggestion ref={this.referenceTargets}
-                                mode="user"
-                                placeholder="Add peoples who wants to edit task..."
-                                selectedItems={task.editors}
-                                onSelectedItemsChanged={this.handleTargetsChanged}
-                    />
+                    <textarea placeholder="Description" className={style.descriptionElement}/>
                   </div>
-                )}
-              </div>
-              <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
-                <div className={style.taskRowIcon}>
-                <IcoN name="tag16" size={16}/>
                 </div>
-                {this.viewMode && (
-                  <div className={style.taskRowItem}>
-                    labels
+              )}
+              {this.activeRows.todos && (
+                <div className={style.taskRow}>
+                  <div className={style.taskRowIcon}>
+                    <IcoN name="bulletList16" size={16}/>
                   </div>
-                )}
-                {this.createMode || this.editMode && (
-                  <div className={style.taskRowItem}>
-                    <Suggestion ref={this.referenceTargets}
-                                mode="label"
-                                placeholder="Add labels..."
-                                selectedItems={task.labels}
-                                onSelectedItemsChanged={this.handleTargetsChanged}
-                    />
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4><span>To-Do List</span></h4>
+                    <ul className={style.todoList}>
+                      <li>
+                        <input type="checkbox" id="todo1"/>
+                        <label htmlFor="todo1">todo1</label>
+                      </li>
+                    </ul>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+              {this.activeRows.attachments && (
+                <div className={style.taskRow}>
+                  <div className={style.taskRowIcon}>
+                    <IcoN name="attach16" size={16}/>
+                  </div>
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>Attachments</span>
+                      <IcoN name="cross16" size={16}/>
+                      <IcoN name="binRed16" size={16}/>
+                    </h4>
+                    {task.attachments && <TaskAttachment attachments={task.attachments}/>}
+                  </div>
+                </div>
+              )}
+              {this.activeRows.watchers && (
+                <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                  <div className={style.taskRowIcon}>
+                  <IcoN name="person16" size={16}/>
+                  </div>
+                  {this.viewMode && (
+                    <div className={style.taskRowItem}>
+                      watchers
+                    </div>
+                  )}
+                  {this.createMode || this.editMode && (
+                    <div className={style.taskRowItem}>
+                      <Suggestion ref={this.referenceTargets}
+                                  mode="user"
+                                  placeholder="Add peoples who wants to follow task..."
+                                  selectedItems={task.watchers}
+                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {this.activeRows.editors && (
+                <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                  <div className={style.taskRowIcon}>
+                  <IcoN name="pencil16" size={16}/>
+                  </div>
+                  {this.viewMode && (
+                    <div className={style.taskRowItem}>
+                      editors
+                    </div>
+                  )}
+                  {this.createMode || this.editMode && (
+                    <div className={style.taskRowItem}>
+                      <Suggestion ref={this.referenceTargets}
+                                  mode="user"
+                                  placeholder="Add peoples who wants to edit task..."
+                                  selectedItems={task.editors}
+                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {this.activeRows.labels && (
+                <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
+                  <div className={style.taskRowIcon}>
+                  <IcoN name="tag16" size={16}/>
+                  </div>
+                  {this.viewMode && (
+                    <div className={style.taskRowItem}>
+                      labels
+                    </div>
+                  )}
+                  {this.createMode || this.editMode && (
+                    <div className={style.taskRowItem}>
+                      <Suggestion ref={this.referenceTargets}
+                                  mode="label"
+                                  placeholder="Add labels..."
+                                  selectedItems={task.labels}
+                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
               {/* {!this.props.post && (
                 <CommentsBoard no_comment={this.state.post.no_comment}
                 post_id={this.state.post._id} post={this.state.post}
@@ -575,19 +597,22 @@ class EditTask extends React.Component<IProps, IState> {
           </div>
         </Scrollable>
         <div className={style.taskBinder}>
-          <div className={style.taskBinderButton}>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'description')}>
             <IcoN name="petition24" size={24}/>
           </div>
-          <div className={style.taskBinderButton}>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'labels')}>
             <IcoN name="tag24" size={24}/>
           </div>
-          <div className={style.taskBinderButton}>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'watchers')}>
             <IcoN name="person24" size={24}/>
           </div>
-          <div className={style.taskBinderButton}>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'editors')}>
+            <IcoN name="person24" size={24}/>
+          </div>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'attachments')}>
             <IcoN name="attach24" size={24}/>
           </div>
-          <div className={style.taskBinderButton}>
+          <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'todos')}>
             <IcoN name="bulletList24" size={24}/>
           </div>
         </div>
