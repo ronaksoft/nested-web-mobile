@@ -18,8 +18,8 @@ import ArrayUntiles from 'services/utils/array';
 import TimeUntiles from 'services/utils/time';
 import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
-import SyncActivity from 'services/sync-place-activity';
-import SyncActions from 'services/sync-place-activity/actions';
+import SyncPostActivity from 'services/sync-post-activity';
+import SyncPostActions from 'services/sync-post-activity/actions';
 import {IUser} from 'api/interfaces';
 import RTLDetector from '../../../../../components/RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
@@ -109,12 +109,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
   private Api;
   private sendCommentCount: number = 0;
   /**
-   * @prop syncActivity
-   * @desc An instance SyncActivity
+   * @prop syncPostActivity
+   * @desc An instance SyncPlaceActivity
    * @private
    * @memberof CommentsBoard
    */
-  private syncActivity = SyncActivity.getInstance();
+  private syncPostActivity = SyncPostActivity.getInstance();
   /**
    * @prop syncActivityListeners
    * @desc The channels of activity which the component is listening to
@@ -183,11 +183,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
       // set sync listeners
       if (this.props.post && this.props.post.post_places) {
         this.syncActivityListeners.push(
-          this.syncActivity.openChannel(
-            this.props.post.post_places[0]._id,
-            SyncActions.COMMENT_ADD,
+          this.syncPostActivity.openChannel(
+            this.props.post._id,
+            SyncPostActions.COMMENT_ADD,
             () => {
-                this.getAfterComments(true);
+              this.getAfterComments(true);
             },
           ));
       }
@@ -224,11 +224,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private getAfterComments(scrollToBottom?: boolean) {
-      // const lastCommeent = last(orderBy(filter(
-      //   this.state.comments, (cm) => cm._id.length > 4),
-      //   'timestamp'));
+    // const lastCommeent = last(orderBy(filter(
+    //   this.state.comments, (cm) => cm._id.length > 4),
+    //   'timestamp'));
     // The sync do not work well so we get comments after before last comment temporary
-      const lastCommeents = orderBy(filter(
+    const lastCommeents = orderBy(filter(
       this.state.comments, (cm) => cm._id.length > 4),
       'timestamp');
     const lastComment = lastCommeents[lastCommeents.length - 2];
@@ -360,7 +360,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
     if (some(comments, {
         _id: comment._id,
       })) {
-        comments.splice(index, 1);
+      comments.splice(index, 1);
     } else {
       comments[index] = comment;
     }
@@ -387,6 +387,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
       this.addCommentFailedCallback(commentModel);
     });
   }
+
   /**
    * @func render
    * @desc Renders the component
@@ -418,10 +419,10 @@ class CommentsBoard extends React.Component<IProps, IState> {
               </div>
               {comment.isFailed && <a onClick={this.retrySendComment.bind(this, comment)}>Failed ! Retry</a>}
               {comment.attachment_id === '' &&
-                <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
+              <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
               }
               {comment.attachment_id !== '' &&
-                <VoiceComment comment={comment} post={this.props.post}/>
+              <VoiceComment comment={comment} post={this.props.post}/>
               }
             </div>
           </div>
@@ -430,7 +431,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
           <div className={style.commentInput}>
             <UserAvatar user_id={this.props.user} size={24} borderRadius={'16px'}/>
             <input type="text" placeholder={'write your comment...'} defaultValue={this.state.newCommentTxt}
-              onKeyDown={this.handleChangeComment}/>
+                   onKeyDown={this.handleChangeComment}/>
           </div>
         )}
       </div>

@@ -10,21 +10,23 @@
 import * as React from 'react';
 import {InfiniteScroll, Loading} from 'components';
 import {connect} from 'react-redux';
-import IPostsListRequest from '../../../api/post/interfaces/IPostsListRequest';
-import PostApi from '../../../api/post/index';
-import placeApi from '../../../api/place/index';
-import IPost from '../../../api/post/interfaces/IPost';
-import IPostsListResponse from '../../../api/post/interfaces/IPostsListResponse';
+import IPostsListRequest from 'api/post/interfaces/IPostsListRequest';
+import PostApi from 'api/post/index';
+import placeApi from 'api/place/index';
+import IPost from 'api/post/interfaces/IPost';
+import IPostsListResponse from 'api/post/interfaces/IPostsListResponse';
 import {setCurrentPost, setPosts, setPostsRoute} from '../../../redux/app/actions/index';
 import {postAdd} from '../../../redux/posts/actions/index';
-import ArrayUntiles from '../../../services/utils/array';
+import ArrayUntiles from 'services/utils/array';
 import {Button, message, Modal} from 'antd';
 import Post from './components/post/index';
 import {hashHistory} from 'react-router';
-import SyncActivity from '../../../services/sync-place-activity/index';
+import SyncPlaceActivity from 'services/sync-place-activity/index';
+import SyncPlaceActions from 'services/sync-place-activity/actions';
+import SyncPostActivity from 'services/sync-post-activity/index';
+import SyncPostActions from 'services/sync-post-activity/actions';
 import {IPlaceActivity, IUser} from 'api/interfaces/';
-import SyncActions from '../../../services/sync-place-activity/actions';
-import AccountApi from '../../../api/account/index';
+import AccountApi from 'api/account/index';
 import {NewBadge} from 'components/NewBadge';
 import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
 import Failure from 'services/server/failure';
@@ -161,7 +163,8 @@ class Posts extends React.Component<IProps, IState> {
   // (needs documentation)
   private postApi: PostApi;
   private placeApi: placeApi;
-  private syncActivity = SyncActivity.getInstance();
+  private syncPlaceActivity = SyncPlaceActivity.getInstance();
+  private syncPostActivity = SyncPostActivity.getInstance();
   private syncActivityListeners = [];
   private favoritePlacesId = [];
   private newPostsIds = [];
@@ -243,6 +246,7 @@ class Posts extends React.Component<IProps, IState> {
     this.props.setPosts(newPosts.map((post) => post._id));
 
   }
+
   public findRouteFromPath(newProps) {
     switch (newProps.location.pathname) {
       case '/feed':
@@ -261,7 +265,7 @@ class Posts extends React.Component<IProps, IState> {
         this.currentPlaceId = placeId;
         if (routeSplit[4] && routeSplit[4] === 'latest-activity') {
           return 'place_latest_activity_' + placeId;
-        } else if ( routeSplit[3] === 'unread') {
+        } else if (routeSplit[3] === 'unread') {
           return 'place_unread_' + placeId;
         } else {
           return 'place_' + placeId;
@@ -288,14 +292,25 @@ class Posts extends React.Component<IProps, IState> {
 
     // Needs documentation
     this.syncActivityListeners.push(
-      this.syncActivity.openAllChannel(
+      this.syncPlaceActivity.openAllChannel(
         (activity: IPlaceActivity) => {
           switch (activity.action) {
-            case SyncActions.COMMENT_ADD:
-            case SyncActions.COMMENT_REMOVE:
-              return this.addCommentToPostActivity(activity);
-            case SyncActions.POST_ADD:
+            case SyncPlaceActions.POST_ADD:
               return this.addNewPostActivity(activity);
+            default :
+              return;
+          }
+        },
+      ));
+
+    // Needs documentation
+    this.syncActivityListeners.push(
+      this.syncPostActivity.openAllChannel(
+        (activity: IPlaceActivity) => {
+          switch (activity.action) {
+            case SyncPostActions.COMMENT_ADD:
+            case SyncPostActions.COMMENT_REMOVE:
+              return this.addCommentToPostActivity(activity);
             default :
               return;
           }
@@ -453,14 +468,14 @@ class Posts extends React.Component<IProps, IState> {
         } else {
           posts = ArrayUntiles.uniqueObjects([...this.state.posts, ...response.posts], '_id');
         }
-          // .sort((a: IPost, b: IPost) => {
-          //   return b.timestamp - a.timestamp;
-          // });
-          const postsObj = {};
-          postsObj[this.state.route] = posts.map((post) => post._id);
-          this.props.postAdd(response.posts);
-          this.props.setPosts(postsObj);
-          this.props.setPostsRoute(this.props.location.pathname);
+        // .sort((a: IPost, b: IPost) => {
+        //   return b.timestamp - a.timestamp;
+        // });
+        const postsObj = {};
+        postsObj[this.state.route] = posts.map((post) => post._id);
+        this.props.postAdd(response.posts);
+        this.props.setPosts(postsObj);
+        this.props.setPostsRoute(this.props.location.pathname);
       })
       .catch((error: IErrorResponseData) => {
         message.success('An error has occurred.', 10);
@@ -524,6 +539,7 @@ class Posts extends React.Component<IProps, IState> {
       });
     }
   }
+
   /**
    * @function showNewPosts
    * @desc display new posts
@@ -586,7 +602,7 @@ class Posts extends React.Component<IProps, IState> {
             <div className={privateStyle.emptyMessage}>
               {route.indexOf('feed') > -1 && <span>You have no message in your feed</span>}
               {(route.indexOf('place') > -1 && route.indexOf('unread') === -1) &&
-                <span>This Place don't have any messages</span>
+              <span>This Place don't have any messages</span>
               }
               {route.indexOf('unread') > -1 && <span>You don't have any unread messages.</span>}
               {route === 'shared' && <span>You did not shared anything yet.</span>}
@@ -611,21 +627,21 @@ class Posts extends React.Component<IProps, IState> {
               route={route}
               hasMore={!this.state.reachedTheEnd}
               loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
-                {doms}
-                {this.state.reachedTheEnd &&
-                  <div className={privateStyle.emptyMessage}>No more messages here!</div>
-                }
-                {
-                  !this.state.reachedTheEnd &&
-                  !this.state.loadingBefore &&
-                  !this.state.loadingAfter && (
-                    <div className={privateStyle.loadMore}>
-                      {/* Load More button */}
-                      <Button onClick={loadMore}>Load More</Button>
-                    </div>
-                  )
-                }
-                <div className={privateStyle.bottomSpace}/>
+              {doms}
+              {this.state.reachedTheEnd &&
+              <div className={privateStyle.emptyMessage}>No more messages here!</div>
+              }
+              {
+                !this.state.reachedTheEnd &&
+                !this.state.loadingBefore &&
+                !this.state.loadingAfter && (
+                  <div className={privateStyle.loadMore}>
+                    {/* Load More button */}
+                    <Button onClick={loadMore}>Load More</Button>
+                  </div>
+                )
+              }
+              <div className={privateStyle.bottomSpace}/>
             </InfiniteScroll>
           )}
         </div>
