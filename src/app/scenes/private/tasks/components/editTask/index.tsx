@@ -21,7 +21,7 @@ import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
 import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
-import {difference} from 'lodash';
+import {difference, some} from 'lodash';
 import TimeUntiles from 'services/utils/time';
 
 const style = require('../../task.css');
@@ -362,6 +362,7 @@ class EditTask extends React.Component<IProps, IState> {
     const isCompleted = task.status === C_TASK_STATUS.COMPLETED;
     const isFailed = task.status === C_TASK_STATUS.FAILED;
     const isInProgress = !(isHold || isCompleted || isFailed);
+    const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
     return (
       <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
@@ -410,7 +411,7 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions &&
           <div onClick={this.toggleMoreOpts} className={style.overlay}/>
         }
-        <Scrollable active={true} ref={this.scrollRefHandler} shrinkHeight={56}>
+        <Scrollable active={true} ref={this.scrollRefHandler} shrinkHeight={someRowNotBinded ? 56 : 0}>
           <div className={style.postScrollContainer}>
             <div className={style.postScrollContent}>
               <div className={style.taskRow}>
@@ -473,8 +474,8 @@ class EditTask extends React.Component<IProps, IState> {
                           pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
                       </li>
                       <li>
-                        <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}"
-                          min="00:00" max="23:59" value={TimeUntiles.Time(task.due_date)}/>
+                        <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00" max="23:59"
+                          value={task.due_data_has_clock ? TimeUntiles.Time(task.due_date) : ''}/>
                       </li>
                     </ul>
                   </div>

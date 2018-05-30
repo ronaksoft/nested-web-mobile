@@ -4,6 +4,7 @@ const style = require('./scrollable.css');
 interface IState {
   lastScrollTop: number;
   actionTriggered: boolean;
+  shrinkHeight?: number;
 };
 
 interface IProps {
@@ -29,6 +30,7 @@ export default class Scrollable extends React.Component<IProps, IState> {
     this.state = {
         lastScrollTop: 0,
         actionTriggered: false,
+        shrinkHeight: props.shrinkHeight,
     };
     this.onStart = this.onStart.bind(this);
     this.onMove = this.onMove.bind(this);
@@ -63,7 +65,12 @@ export default class Scrollable extends React.Component<IProps, IState> {
     this.scrollWrapper.addEventListener('mousemove', this.onMove, false);
     this.scrollWrapper.addEventListener('mouseup', this.onEnd, false);
     this.forceUpdate();
+  }
 
+  public componentWillReceiveProps(nProps: IProps) {
+    this.setState({
+      shrinkHeight: nProps.shrinkHeight,
+    });
   }
 
   public componentWillUnmount() {
@@ -163,9 +170,9 @@ export default class Scrollable extends React.Component<IProps, IState> {
    */
   public render() {
     let styleContainer = {};
-    if (this.props.shrinkHeight) {
+    if (this.state.shrinkHeight) {
       styleContainer = {
-        maxHeight: `calc(100vh - ${56 + this.props.shrinkHeight}px)`,
+        maxHeight: `calc(100vh - ${56 + this.state.shrinkHeight}px)`,
       };
     }
     return (
