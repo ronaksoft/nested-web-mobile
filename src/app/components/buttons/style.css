@@ -1,0 +1,186 @@
+.butn {
+  border-width: 1px;
+  border-style: solid;
+  font-size: 14px;
+  color: rgba(50, 61, 71, 0.8);
+  white-space: nowrap;
+  font-weight: bold;
+  height: 32px;
+  border-radius: 3px;
+  flex: none;
+  line-height: 30px;
+  text-align: center;
+  transition: all .2s;
+  justify-content: center;
+  align-items: center;
+  min-width: 80px;
+  padding: 0 16px;
+  outline: none;
+  margin: 0 4px 8px;
+  background-color: #fff;
+  border-color: transparent;
+  background-image: none;
+  user-select: none;
+}
+.butn::-moz-focus-inner {
+  border: 0;
+}
+.butn.full-width {
+  min-width: 100%;
+}
+.butn:hover {
+  color: #323d47;
+  box-shadow: 0px 4px 8px rgba(35, 38, 41, 0.16);
+}
+.butn:focus {
+  color: #323d47;
+  box-shadow: 0px 1px 2px rgba(35, 38, 41, 0.16);
+}
+.butn:hover:disabled,
+.butn:focus:disabled,
+.butn:disabled {
+  cursor: not-allowed;
+  border-color: #DDDFE0;
+  text-decoration: none;
+  box-shadow: none;
+  background-color: #DDDFE0;
+  color: #ACB0B4;
+}
+.butn-lg {
+  height: 40px;
+  line-height: 38px;
+}
+.butnPrimary {
+  background-color: #14D769;
+  border-color: #00B45A;
+  color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 180, 90, 0.32);
+}
+.butnPrimary:hover {
+  background-color: #14D769;
+  border-color: #14D769;
+  color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 180, 90, 0.32);
+}
+.butnPrimary:focus {
+  background-color: #00B45A;
+  color: #fff;
+  border-color: #00B45A;
+  box-shadow: 0px 1px 2px rgba(0, 180, 90, 0.32);
+}
+.butnPrimary.secondary {
+  background-color: #fff!important;
+  color: #00B45A;
+}
+.butn-blue {
+  background-color: #0079F2;
+  border-color: #004DA6;
+  color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 77, 166, 0.32);
+}
+.butn-blue:hover {
+  border-color: #0079F2;
+  box-shadow: 0px 4px 8px rgba(0, 77, 166, 0.32);
+  color: #fff;
+}
+.butn-blue:focus {
+  box-shadow: 0px 1px 2px rgba(0, 77, 166, 0.32);
+  background-color: #004DA6;
+  border-color: #004DA6;
+  color: #fff;
+}
+.butn-blue.secondary {
+  background-color: #fff!important;
+  color: #004DA6;
+  box-shadow: 0px 2px 4px rgba(0, 121, 242, 0.08);
+}
+.butn-blue.secondary:hover {
+  box-shadow: 0px 3px 8px rgba(0, 121, 242, 0.32);
+}
+.butn-blue.secondary:focus {
+  box-shadow: 0px 1px 2px rgba(0, 121, 242, 0.32);
+}
+.butn-red {
+  background-color: #FF3344;
+  border-color: #E60026;
+  box-shadow: 0px 2px 4px rgba(230, 0, 38, 0.32);
+  color: #fff;
+}
+.butn-red:hover {
+  box-shadow: 0px 4px 8px rgba(230, 0, 38, 0.32);
+  border-color: #FF3344;
+  color: #fff;
+}
+.butn-red:focus {
+  color: #fff;
+  box-shadow: 0px 1px 2px rgba(230, 0, 38, 0.32);
+  background-color: #E60026;
+  border-color: #E60026;
+}
+.butn-red.secondary {
+  background-color: #fff!important;
+  color: #E60026;
+  box-shadow: 0px 2px 4px rgba(255, 51, 68, 0.08);
+}
+.butn-red.secondary:hover {
+  box-shadow: 0px 3px 8px rgba(255, 51, 68, 0.32);
+}
+.butn-red.secondary:focus {
+  box-shadow: 0px 1px 2px rgba(255, 51, 68, 0.32);
+}
+.butnSolid {
+  background-color: #323D47;
+  border-color: #232629;
+  box-shadow: 0px 2px 4px rgba(35, 38, 41, 0.32);
+  color: #fff;
+}
+.butnSolid:hover {
+  box-shadow: 0px 4px 8px rgba(35, 38, 41, 0.32);
+  border-color: #323D47;
+  color: #fff;
+}
+.butnSolid:focus {
+  color: #fff;
+  box-shadow: 0px 1px 2px rgba(35, 38, 41, 0.32);
+  background-color: #232629;
+  border-color: #232629;
+}
+.butnSolid.secondary {
+  background-color: #fff!important;
+  color: #323D47;
+  box-shadow: 0px 2px 4px rgba(35, 38, 41, 0.08);
+}
+.butnSolid.secondary:hover {
+  box-shadow: 0px 3px 8px rgba(35, 38, 41, 0.32);
+}
+.butnSolid.secondary:focus {
+  box-shadow: 0px 1px 2px rgba(35, 38, 41, 0.32);
+}
+.butn-shine {
+  background-color: #FFCC33;
+  border-color: #E6AC00;
+  box-shadow: 0px 2px 4px rgba(230, 172, 0, 0.32);
+  color: #fff;
+}
+.butn-shine:hover {
+  box-shadow: 0px 4px 8px rgba(230, 172, 0, 0.32);
+  border-color: #FFCC33;
+  color: #fff;
+}
+.butn-shine:focus {
+  color: #fff;
+  box-shadow: 0px 1px 2px rgba(230, 172, 0, 0.32);
+  background-color: #E6AC00;
+  border-color: #E6AC00;
+}
+.butn-shine.secondary {
+  background-color: #fff!important;
+  color: #E6AC00;
+  box-shadow: 0px 2px 4px rgba(255, 204, 51, 0.08);
+}
+.butn-shine.secondary:hover {
+  box-shadow: 0px 3px 8px rgba(255, 204, 51, 0.32);
+}
+.butn-shine.secondary:focus {
+  box-shadow: 0px 1px 2px rgba(255, 204, 51, 0.32);
+}

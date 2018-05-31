@@ -155,12 +155,12 @@ export default class TaskApi {
     });
   }
 
-  public addTodo(taskId: string, labelId: string, weight?: string) {
+  public addTodo(taskId: string, txt: string, weight?: number) {
     return this.api.request({
       cmd: 'task/add_todo',
       data: {
         task_id: taskId,
-        label_id: labelId,
+        txt,
         weight,
       },
     });

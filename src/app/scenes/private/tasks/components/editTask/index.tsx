@@ -10,21 +10,22 @@
 
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
-import {IcoN, Loading, Scrollable, AddLabel, RTLDetector, TaskIcon,
+import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon,
   UserAvatar, FullName, Suggestion, TaskAttachment} from 'components';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
 import {hashHistory, Link} from 'react-router';
-import IUser from 'api/interfaces/IUser';
+import {IUser} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
 import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
-import {difference, some} from 'lodash';
+import {difference, some, differenceBy} from 'lodash';
 import TimeUntiles from 'services/utils/time';
 
 const style = require('../../task.css');
+const buttonsStyle = require('../../../../../components/buttons/style.css');
 const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
 
@@ -99,11 +100,7 @@ interface IState {
    * @memberof IState
    */
   showMoreOptions: boolean;
-  /**
-   * @prop showAddLabel
-   * @memberof IState
-   */
-  showAddLabel: boolean;
+  Loading: boolean;
 }
 
 /**
@@ -113,6 +110,7 @@ interface IState {
  */
 class EditTask extends React.Component<IProps, IState> {
   private TaskApi: TaskApi;
+  private originalTask: ITask;
   /**
    * define inProgress flag
    * @property {boolean} inProgress
@@ -122,8 +120,10 @@ class EditTask extends React.Component<IProps, IState> {
   private scrollRef: any;
   private subjectRtl: boolean;
   private descriptionRtl: boolean;
-  private createMode: boolean = true;
+  private pristineForm: boolean = true;
+  private startedEditing: boolean = false;
   private editMode: boolean = false;
+  private createMode: boolean = true;
   private viewMode: boolean = false;
   private activeRows: any = {
     date: false,
@@ -155,14 +155,13 @@ class EditTask extends React.Component<IProps, IState> {
     this.state = {
       task: this.props.task,
       showMoreOptions: false,
-      showAddLabel: false,
+      Loading: false,
     };
   }
 
-  private doneAddLabel = (labels) => {
+  private updateLabels = (labels) => {
     const removeItems = difference(this.state.task.labels, labels);
     const addItems = difference(labels, this.state.task.labels);
-    this.toggleAddLAbel();
     removeItems.forEach((element) => {
       this.removeLabel(element._id);
     });
@@ -213,6 +212,7 @@ class EditTask extends React.Component<IProps, IState> {
       this.createMode = false;
       this.viewMode = false;
     }
+    this.originalTask = task;
     if (task.attachments && task.attachments.length > 0) {
       this.activeRows.attachments = true;
     }
@@ -244,17 +244,106 @@ class EditTask extends React.Component<IProps, IState> {
     this.TaskApi.addLabel(this.state.task._id, id);
   }
 
-  private toggleAddLAbel = () => {
+  public enableRow(row: string) {
+    this.activeRows[row] = true;
+    this.forceUpdate();
+  }
+
+  public disableRow(row: string) {
+    this.startedEditing = true;
+    this.pristineForm = false;
+    this.activeRows[row] = false;
+    const task = this.state.task;
+    switch (row) {
+      case 'todos':
+        task.todos = [];
+        break;
+      case 'date':
+        task.due_date = null;
+        break;
+      case 'description':
+        task.description = '';
+        break;
+      case 'attachments':
+        task.attachments = [];
+        break;
+      case 'watchers':
+        task.watchers = [];
+        break;
+      case 'editors':
+        task.editors = [];
+        break;
+      case 'labels':
+        task.labels = [];
+        break;
+      default:
+        break;
+    }
     this.setState({
-      showMoreOptions: false,
-      showAddLabel: !this.state.showAddLabel,
+      task,
     });
   }
 
-  public activeRow(row: string) {
-    this.activeRows[row] = true;
+  private saveTask = () => {
+    this.startedEditing = true;
+    this.setState({
+      Loading: true,
+    });
+    this.updateTodos(this.state.task.todos);
+    this.updateLabels(this.state.task.labels);
   }
 
+  private startEdit = () => {
+    this.startedEditing = true;
+    this.forceUpdate();
+  }
+
+  private updateTodos = (todos) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(todos, oldData, 'id');
+    const removedItems = differenceBy(oldData, todos, 'id');
+
+    if (newItems.length > 0) {
+      newItems.forEach((item) => {
+        console.log(item);
+        this.TaskApi.addTodo(this.state.task._id, item.txt, 1).then((res) => {
+          console.log(res);
+          // vm.model.todos[index].id = data.todo_id;
+          // todo update originaltask
+        }).catch((err) => {
+          console.log(err);
+        });
+      });
+    }
+
+    if (removedItems.length > 0) {
+      console.log(removedItems);
+      // todo : update
+      removedItems.forEach((item) => {
+        console.log(item);
+        this.TaskApi.removeTodo(this.state.task._id, item._id).then((res) => {
+          console.log(res);
+          // vm.model.todos[index].id = data.todo_id;
+          // todo update originaltask
+        }).catch((err) => {
+          console.log(err);
+        });
+      });
+    }
+  }
+
+  private checkTodo = (index, event) => {
+    const task = this.state.task;
+    const isChecked: boolean = event.target.value;
+    task.todos[index] = isChecked;
+    this.TaskApi.updateTodo({
+      done: isChecked,
+      task_id: this.state.task._id,
+      todo_id: this.state.task.todos[index]._id,
+    });
+    // todo : update progress
+    // todo : if all done so finish task
+  }
   /**
    * @function componentWillUnmount
    * remove event listeners on this situation
@@ -372,6 +461,20 @@ class EditTask extends React.Component<IProps, IState> {
               <IcoN size={24} name="xcross24"/>
             </a>
             <div className={styleNavbar.filler}/>
+            {this.editMode && this.startedEditing && !this.pristineForm && (
+              <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+                styleNavbar.butnPrimary].join(' ')}
+                onClick={this.startEdit}>Discard</div>
+            )}
+            {this.editMode && this.startedEditing && (
+              <button className={[buttonsStyle.butn, buttonsStyle.butnPrimary, styleNavbar.butnPrimary].join(' ')}
+                onClick={this.saveTask} disabled={this.pristineForm}>Save</button>
+            )}
+            {this.editMode && !this.startedEditing && (
+              <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+                styleNavbar.butnPrimary].join(' ')}
+                onClick={this.startEdit}>Edit</div>
+            )}
             <a onClick={this.toggleMoreOpts}>
               <IcoN size={24} name="more24"/>
             </a>
@@ -465,8 +568,7 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={[style.taskRowItem, style.vertical].join(' ')}>
                     <h4>
                       <span>Set due time...</span>
-                      <IcoN name="cross16" size={16}/>
-                      <IcoN name="binRed16" size={16}/>
+                      <div onClick={this.disableRow.bind(this, 'date')}><IcoN name="binRed16" size={16}/></div>
                     </h4>
                     <ul className={style.setDateTime}>
                       <li>
@@ -486,7 +588,13 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                     <IcoN name="petition16" size={16}/>
                   </div>
-                  <div className={style.taskRowItem}>
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>Description</span>
+                      <div onClick={this.disableRow.bind(this, 'description')}>
+                        <IcoN name="binRed16" size={16}/>
+                      </div>
+                    </h4>
                     <textarea placeholder="Description" className={style.descriptionElement}
                       value={task.description}/>
                   </div>
@@ -498,11 +606,17 @@ class EditTask extends React.Component<IProps, IState> {
                     <IcoN name="bulletList16" size={16}/>
                   </div>
                   <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                    <h4><span>To-Do List</span></h4>
+                    <h4>
+                      <span>To-Do List</span>
+                      <div onClick={this.disableRow.bind(this, 'todos')}>
+                        <IcoN name="binRed16" size={16}/>
+                      </div>
+                    </h4>
                     <ul className={style.todoList}>
-                      {task.todos.map((todo) => (
+                      {task.todos.map((todo, index) => (
                         <li key={todo._id}>
-                          <input type="checkbox" id="todo1" checked={todo.done}/>
+                          <input type="checkbox" id="todo1" checked={todo.done}
+                            onChange={this.checkTodo.bind(this, index)}/>
                           <label htmlFor="todo1">{todo.txt}</label>
                         </li>
                       ))}
@@ -519,7 +633,9 @@ class EditTask extends React.Component<IProps, IState> {
                     <h4>
                       <span>Attachments</span>
                       <IcoN name="cross16" size={16}/>
-                      <IcoN name="binRed16" size={16}/>
+                      <div onClick={this.disableRow.bind(this, 'attachments')}>
+                        <IcoN name="binRed16" size={16}/>
+                      </div>
                     </h4>
                     {task.attachments && <TaskAttachment attachments={task.attachments}/>}
                   </div>
@@ -536,7 +652,13 @@ class EditTask extends React.Component<IProps, IState> {
                     </div>
                   )}
                   {this.createMode || this.editMode && (
-                    <div className={style.taskRowItem}>
+                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                      <h4>
+                        <span>Watchers</span>
+                        <div onClick={this.disableRow.bind(this, 'watchers')}>
+                          <IcoN name="binRed16" size={16}/>
+                        </div>
+                      </h4>
                       <Suggestion ref={this.referenceTargets}
                                   mode="user"
                                   placeholder="Add peoples who wants to follow task..."
@@ -558,7 +680,11 @@ class EditTask extends React.Component<IProps, IState> {
                     </div>
                   )}
                   {this.createMode || this.editMode && (
-                    <div className={style.taskRowItem}>
+                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                      <h4>
+                        <span>Editors</span>
+                        <div onClick={this.disableRow.bind(this, 'editors')}><IcoN name="binRed16" size={16}/></div>
+                      </h4>
                       <Suggestion ref={this.referenceTargets}
                                   mode="user"
                                   placeholder="Add peoples who wants to edit task..."
@@ -580,7 +706,13 @@ class EditTask extends React.Component<IProps, IState> {
                     </div>
                   )}
                   {this.createMode || this.editMode && (
-                    <div className={style.taskRowItem}>
+                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                      <h4>
+                        <span>labels</span>
+                        <div onClick={this.disableRow.bind(this, 'labels')}>
+                          <IcoN name="binRed16" size={16}/>
+                        </div>
+                      </h4>
                       <Suggestion ref={this.referenceTargets}
                                   mode="label"
                                   placeholder="Add labels..."
@@ -601,40 +733,42 @@ class EditTask extends React.Component<IProps, IState> {
           </div>
         </Scrollable>
         <div className={style.taskBinder}>
+          {!this.activeRows.date && (
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'date')}>
+              <IcoN name="finishFlag24" size={24}/>
+            </div>
+          )}
           {!this.activeRows.description && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'description')}>
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'description')}>
               <IcoN name="petition24" size={24}/>
             </div>
           )}
-          {!this.activeRows.labels && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'labels')}>
-              <IcoN name="tag24" size={24}/>
+          {!this.activeRows.todos && (
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'todos')}>
+              <IcoN name="bulletList24" size={24}/>
+            </div>
+          )}
+          {!this.activeRows.attachments && (
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'attachments')}>
+              <IcoN name="attach24" size={24}/>
             </div>
           )}
           {!this.activeRows.watchers && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'watchers')}>
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'watchers')}>
               <IcoN name="person24" size={24}/>
             </div>
           )}
           {!this.activeRows.editors && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'editors')}>
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'editors')}>
               <IcoN name="pencil24" size={24}/>
             </div>
           )}
-          {!this.activeRows.attachments && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'attachments')}>
-              <IcoN name="attach24" size={24}/>
-            </div>
-          )}
-          {!this.activeRows.todos && (
-            <div className={style.taskBinderButton} onClick={this.activeRow.bind(this, 'todos')}>
-              <IcoN name="bulletList24" size={24}/>
+          {!this.activeRows.labels && (
+            <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'labels')}>
+              <IcoN name="tag24" size={24}/>
             </div>
           )}
         </div>
-        {this.state.showAddLabel && (
-          <AddLabel labels={task.labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
-        )}
       </div>
     );
   }

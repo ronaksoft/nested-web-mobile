@@ -91,6 +91,9 @@
 .rowWithSuggest .taskRowItem {
   margin-left: -56px;
 }
+.rowWithSuggest .taskRowItem h4 {
+  padding-left: 56px;
+}
 .rowWithSuggest .taskRowItem > div > div:first-child{
   margin-left: 56px;
   min-height: 56px;
@@ -144,7 +147,7 @@
   display: flex;
   padding: 0 12px;
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.16);
-  justify-content: space-between
+  justify-content: center
 }
 .taskBinder .taskBinderButton {
   margin: 0 4px;
@@ -193,6 +196,5 @@
   width: 100%;
   font-size: 14px;
   line-height: 1.4;
-  min-height: 88px;
-  padding-top: 12px;
+  min-height: 96px;
 }

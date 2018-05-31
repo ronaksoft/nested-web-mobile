@@ -1,7 +1,7 @@
 interface ITaskUpdateTodoRequest {
     task_id: string;
     todo_id: string;
-    txt: string;
+    txt?: string;
     weight?: string;
     done?: boolean;
 }

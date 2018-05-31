@@ -14,6 +14,9 @@
   z-index: 3;
   transform: translateZ(0);
 }
+.navbar .butnPrimary{
+  margin: 0 0 0 16px;
+}
 .navbar > a {
   width: 40px;
   display: flex;
