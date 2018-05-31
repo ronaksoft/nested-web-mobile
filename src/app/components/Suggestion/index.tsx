@@ -29,6 +29,7 @@ interface ISuggestProps {
   onSelectedItemsChanged: (items: any[]) => void;
   mode?: string;
   placeholder?: string;
+  editable?: boolean;
 }
 
 interface ISuggestState {
@@ -36,6 +37,8 @@ interface ISuggestState {
   selectedItems?: any[];
   activeItem?: IChipsItem;
   input: string;
+  placeholder?: string;
+  editable?: boolean;
 }
 
 /**
@@ -92,8 +95,10 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
     this.state = {
       suggests: [],
       selectedItems: props.selectedItems || [],
+      placeholder: props.placeholder,
       activeItem: null,
       input: null,
+      editable: props.editable === false ? false : true,
     };
 
     if (props.mode) {
@@ -113,6 +118,13 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   public load(items: IChipsItem[]) {
     this.setState({
       selectedItems: items,
+    });
+  }
+
+  public componentWillReceiveProps(nProps) {
+    this.setState({
+      editable: nProps.editable,
+      placeholder: nProps.placeholder,
     });
   }
 
@@ -518,7 +530,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         recipients = this.state.selectedItems.map((item) => {
           return (
             <UserChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
-                        onChipsClick={this.handleChipsClick} user={item} editable={true}/>
+                        onChipsClick={this.handleChipsClick} user={item} editable={this.state.editable}/>
           );
         });
       break;
@@ -527,7 +539,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         recipients = this.state.selectedItems.map((item) => {
           return (
             <LabelChips key={item._id} active={this.state.activeItem && item._id === this.state.activeItem._id}
-                        onChipsClick={this.handleChipsClick} label={item} editable={true}/>
+                        onChipsClick={this.handleChipsClick} label={item} editable={this.state.editable}/>
           );
         });
       break;
@@ -542,13 +554,15 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
           )}
           {/* selected Items */}
           {recipients}
-          <Input
-            onChange={tempFunctionChange}
-            onKeyDown={tempFunctionKeydown}
-            onFocus={this.handleInputFocus}
-            value={this.state.input}
-            placeholder={this.props.placeholder}
-          />
+          {this.state.editable && (
+            <Input
+              onChange={tempFunctionChange}
+              onKeyDown={tempFunctionKeydown}
+              onFocus={this.handleInputFocus}
+              value={this.state.input}
+              placeholder={this.props.placeholder}
+            />
+          )}
         </div>
         {/* suggestion Items */}
         {

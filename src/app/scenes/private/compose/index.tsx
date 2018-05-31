@@ -30,6 +30,7 @@ import IPostAttachment from 'api/post/interfaces//IPostAttachment';
 
 const confirm = Modal.confirm;
 const style = require('./compose.css');
+const AttachmentHandlerStyle = require('../../../components/AttachmentHandler/style.css');
 const styleNavbar = require('../../../components/navbar/navbar.css');
 
 /**
@@ -849,16 +850,17 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
           {/* attachment popover toggler */}
             {!this.state.editPost && (
               <div onClick={this.attachTypeSelect}
-                  className={[style.attachmentBtn, this.state.attachModal ? style.attachActive : null].join(' ')}>
+                  className={[AttachmentHandlerStyle.attachmentBtn,
+                  this.state.attachModal ? AttachmentHandlerStyle.attachActive : null].join(' ')}>
                 <div onClick={this.attachTypeSelect}>
                   <IcoN size={24} name={'attach24'}/>
                 </div>
                 {/* attachment popover overlay */}
                 {this.state.attachModal &&
-                <div onClick={this.overlayClick} className={style.overlay}/>
+                <div onClick={this.overlayClick} className={AttachmentHandlerStyle.overlay}/>
                 }
                 {/* attachment buttons */}
-                  <div className={style.attachActions} onClick={this.overlayClick}>
+                  <div className={AttachmentHandlerStyle.attachActions} onClick={this.overlayClick}>
                     <div onClick={this.selectFile(true)}>
                       <IcoN size={24} name={'camera24'}/>
                     </div>

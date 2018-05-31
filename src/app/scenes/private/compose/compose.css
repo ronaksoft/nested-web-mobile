@@ -92,60 +92,6 @@ main > div {
   outline: none;
 }
 
-.attachmentBtn {
-  width: 40px;
-  height: 100%;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  display: flex
-}
-.attachmentBtn > i {
-  position: absolute;
-}
-
-.attachActive {
-  color: black;
-}
-
-.overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-  background-color: rgba(50,61,71,.40)
-}
-
-.attachActive .overlay{
-  display: block;
-}
-.attachActions {
-  z-index: 12;
-  display: none;
-  height: 56px;
-  justify-content: space-between;
-  align-items: center;
-  width: 200px;
-  background-color: white;
-  box-shadow: 0 8px 32px rgba(0,0,0,.64);
-  transform: translateX(-85px);
-  border-radius: 8px;
-  flex: none;
-  padding: 0 8px;
-}
-.attachActions i{
-  z-index: 12;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.attachActive .attachActions {
-  display: flex;
-}
 textarea::-webkit-input-placeholder  {
   text-overflow: ellipsis!important;
   white-space: nowrap;
