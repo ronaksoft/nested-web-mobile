@@ -692,12 +692,25 @@ class EditTask extends React.Component<IProps, IState> {
                     </h4>
                     <ul className={style.setDateTime}>
                       <li>
-                        <input type="date" placeholder="Set date..."
-                          pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
+                        {this.startedEditing && (
+                          <input type="date" placeholder="Set date..."
+                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
+                        )}
+                        {!this.startedEditing && (
+                          <time dateTime={TimeUntiles.Date(task.due_date)}>{TimeUntiles.DateParse(task.due_date)}</time>
+                        )}
                       </li>
                       <li>
-                        <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00" max="23:59"
-                          value={task.due_data_has_clock ? TimeUntiles.Time(task.due_date) : ''}/>
+                        {this.startedEditing && (
+                          <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00"
+                            value={task.due_data_has_clock ? TimeUntiles.Time(task.due_date) : ''} max="23:59"/>
+                        )}
+                        {!this.startedEditing && task.due_data_has_clock && (
+                          <time dateTime={TimeUntiles.Time(task.due_date)}>{TimeUntiles.TimeParse(task.due_date)}</time>
+                        )}
+                        {!this.startedEditing && !task.due_data_has_clock && (
+                          <time>-- : --</time>
+                        )}
                       </li>
                     </ul>
                   </div>

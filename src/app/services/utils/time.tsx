@@ -31,8 +31,16 @@ class TimeUntiles {
     return moment(timestamp).format('YYYY-MM-DD');
   }
 
+  public DateParse(timestamp: number) {
+    return moment(timestamp).format('MM/DD/YYYY');
+  }
+
   public Time(timestamp: number) {
     return moment(timestamp).format('HH:mm');
+  }
+
+  public TimeParse(timestamp: number) {
+    return moment(timestamp).format('hh:mm a');
   }
 
   /**
