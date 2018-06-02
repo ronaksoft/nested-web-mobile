@@ -116,6 +116,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
   }
 
   public load(items: IChipsItem[]) {
+    console.log(items);
     this.setState({
       selectedItems: items,
     });

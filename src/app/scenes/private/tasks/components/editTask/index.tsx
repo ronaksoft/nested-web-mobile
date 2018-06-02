@@ -167,6 +167,9 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private assigneSuggestionComponent: Suggestion;
+  private watchersSuggestionComponent: Suggestion;
+  private editorsSuggestionComponent: Suggestion;
+  private labelsSuggestionComponent: Suggestion;
 
   /**
    * Creates an instance of Post.
@@ -307,10 +310,12 @@ class EditTask extends React.Component<IProps, IState> {
   private discardTask = () => {
     this.startedEditing = false;
     this.activeRows = cloneDeep(this.activeRowsClone);
+    this.closeSuggestions();
     if (this.pristineForm) {
       return this.forceUpdate();
     }
     this.pristineForm = true;
+    this.loadSuggestions(this.originalTask);
     this.setState({
       task: cloneDeep(this.originalTask),
     });
@@ -324,6 +329,7 @@ class EditTask extends React.Component<IProps, IState> {
     if (this.state.newTodo.length > 0) {
       this.newTodo();
     }
+    this.closeSuggestions();
     this.updateTaskMain();
     this.updateCandidates(this.state.task.candidates || []);
     this.updateTodos(this.state.task.todos);
@@ -335,6 +341,31 @@ class EditTask extends React.Component<IProps, IState> {
       console.log(values);
     });
     this.activeRowsClone = cloneDeep(this.activeRows);
+  }
+
+  private loadSuggestions = (task: ITask) => {
+    this.assigneSuggestionComponent.load([task.assignee]);
+    if (this.watchersSuggestionComponent) {
+      this.watchersSuggestionComponent.load(task.watchers);
+    }
+    if (this.editorsSuggestionComponent) {
+      this.editorsSuggestionComponent.load(task.editors);
+    }
+    if (this.labelsSuggestionComponent) {
+      this.labelsSuggestionComponent.load(task.labels);
+    }
+
+  }
+
+  private closeSuggestions = () => {
+    try {
+      this.assigneSuggestionComponent.clearSuggests();
+      this.watchersSuggestionComponent.clearSuggests();
+      this.editorsSuggestionComponent.clearSuggests();
+      this.labelsSuggestionComponent.clearSuggests();
+    } catch (e) {
+      this.assigneSuggestionComponent.clearSuggests();
+    }
   }
 
   private startEdit = () => {
@@ -736,8 +767,16 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    * @param {Suggestion} value
    */
-  private referenceTargets = (value: Suggestion) => {
-    this.assigneSuggestionComponent = value;
+  private referenceTargets = (input: string, value: Suggestion) => {
+    if (input === 'assignes') {
+      this.assigneSuggestionComponent = value;
+    } else if (input === 'watchers') {
+      this.watchersSuggestionComponent = value;
+    } else if (input === 'editors') {
+      this.editorsSuggestionComponent = value;
+    } else if (input === 'labels') {
+      this.labelsSuggestionComponent = value;
+    }
   }
   private deleteTask = () => {
     this.TaskApi.remove(this.state.task._id).then(() => {
@@ -915,7 +954,7 @@ class EditTask extends React.Component<IProps, IState> {
                 )}
                 {this.createMode || this.editMode && (
                   <div className={style.taskRowItem}>
-                    <Suggestion ref={this.referenceTargets}
+                    <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
                                 mode="user"
                                 editable={this.startedEditing || this.createMode}
                                 placeholder="Assignees"
@@ -1096,7 +1135,7 @@ class EditTask extends React.Component<IProps, IState> {
                           </div>
                         )}
                       </h4>
-                      <Suggestion ref={this.referenceTargets}
+                      <Suggestion ref={this.referenceTargets.bind(this, 'watchers')}
                                   mode="user"
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add peoples who wants to follow task..."
@@ -1125,7 +1164,7 @@ class EditTask extends React.Component<IProps, IState> {
                         <div onClick={this.disableRow.bind(this, 'editors')}><IcoN name="binRed16" size={16}/></div>
                         )}
                       </h4>
-                      <Suggestion ref={this.referenceTargets}
+                      <Suggestion ref={this.referenceTargets.bind(this, 'editors')}
                                   mode="user"
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add peoples who wants to edit task..."
@@ -1156,7 +1195,7 @@ class EditTask extends React.Component<IProps, IState> {
                         </div>
                         )}
                       </h4>
-                      <Suggestion ref={this.referenceTargets}
+                      <Suggestion ref={this.referenceTargets.bind(this, 'labels')}
                                   mode="label"
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add labels..."
