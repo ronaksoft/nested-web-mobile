@@ -339,6 +339,7 @@ class EditTask extends React.Component<IProps, IState> {
     Promise.all(this.updatePromises).then((values) => {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
+      this.updatePromises = [];
     });
     this.activeRowsClone = cloneDeep(this.activeRows);
   }
