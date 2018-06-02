@@ -148,6 +148,7 @@ class EditTask extends React.Component<IProps, IState> {
     editors: false,
     labels: false,
   };
+  private activeRowsClone = {};
   private updatePromises = [];
   /**
    * @prop file
@@ -259,6 +260,7 @@ class EditTask extends React.Component<IProps, IState> {
     if (task.description) {
       this.activeRows.description = true;
     }
+    this.activeRowsClone = cloneDeep(this.activeRows);
   }
 
   public enableRow(row: string) {
@@ -304,12 +306,13 @@ class EditTask extends React.Component<IProps, IState> {
 
   private discardTask = () => {
     this.startedEditing = false;
+    this.activeRows = cloneDeep(this.activeRowsClone);
     if (this.pristineForm) {
       return this.forceUpdate();
     }
     this.pristineForm = true;
     this.setState({
-      task: this.originalTask,
+      task: cloneDeep(this.originalTask),
     });
   }
 
@@ -327,7 +330,11 @@ class EditTask extends React.Component<IProps, IState> {
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
-    Promise.all(this.updatePromises).then((values) => console.log(values));
+    Promise.all(this.updatePromises).then((values) => {
+      this.originalTask = cloneDeep(this.state.task);
+      console.log(values);
+    });
+    this.activeRowsClone = cloneDeep(this.activeRows);
   }
 
   private startEdit = () => {
