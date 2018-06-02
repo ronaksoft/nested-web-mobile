@@ -15,7 +15,9 @@ import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon,
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
-import {hashHistory, Link} from 'react-router';
+import {hashHistory} from 'react-router';
+// import {hashHistory, Link} from 'react-router';
+import C_TASK_STATE from 'api/task/consts/taskStateConst';
 import {IUser} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
@@ -259,14 +261,6 @@ class EditTask extends React.Component<IProps, IState> {
     }
   }
 
-  // private removeTodo(id: string) {
-  //   this.TaskApi.removeLabel(this.state.task._id, id);
-  // }
-
-  private addTodo(txt: string) {
-    return this.TaskApi.addTodo(this.state.task._id, txt);
-  }
-
   public enableRow(row: string) {
     this.activeRows[row] = true;
     this.startedEditing = true;
@@ -309,7 +303,6 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private discardTask = () => {
-    console.log(this.originalTask, this.state.task);
     this.startedEditing = false;
     if (this.pristineForm) {
       return this.forceUpdate();
@@ -329,7 +322,7 @@ class EditTask extends React.Component<IProps, IState> {
       this.newTodo();
     }
     this.updateTaskMain();
-    this.updateCandidates(this.state.task.candidates);
+    this.updateCandidates(this.state.task.candidates || []);
     this.updateTodos(this.state.task.todos);
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
@@ -375,6 +368,9 @@ class EditTask extends React.Component<IProps, IState> {
     const updateObj: any = {
       task_id: task._id,
     };
+    if (task.title !== this.originalTask.title) {
+      updateObj.title = task.title;
+    }
     if (task.description !== this.originalTask.description) {
       updateObj.desc = task.description;
     }
@@ -396,7 +392,7 @@ class EditTask extends React.Component<IProps, IState> {
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
-        this.updatePromises.push(this.addTodo(item.txt));
+        this.updatePromises.push(this.TaskApi.addTodo(this.state.task._id, item.txt));
       });
     }
 
@@ -411,7 +407,6 @@ class EditTask extends React.Component<IProps, IState> {
     const oldData = this.originalTask;
     const newItems = differenceBy(watchers, oldData.watchers, '_id');
     const removedItems = differenceBy(oldData.watchers, watchers, '_id');
-    console.log(newItems, removedItems);
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
@@ -430,7 +425,6 @@ class EditTask extends React.Component<IProps, IState> {
     const oldData = this.originalTask;
     const newItems = differenceBy(editors, oldData.editors, '_id');
     const removedItems = differenceBy(oldData.editors, editors, '_id');
-    console.log(newItems, removedItems);
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
@@ -449,7 +443,6 @@ class EditTask extends React.Component<IProps, IState> {
     const oldData = this.originalTask;
     const newItems = differenceBy(labels, oldData.labels, '_id');
     const removedItems = differenceBy(oldData.labels, labels, '_id');
-    console.log(newItems, removedItems, labels, this.originalTask);
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
@@ -465,30 +458,35 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private updateCandidates = (candidates) => {
-    const oldData = this.originalTask;
-    const newItems = differenceBy(candidates, oldData.candidates, '_id');
-    const removedItems = differenceBy(oldData.candidates, candidates, '_id');
-    console.log(newItems, removedItems, candidates, oldData.candidates);
-    if (candidates.length === 1 && oldData.assignee._id !== candidates[0]._id) {
-      this.updatePromises.push(this.TaskApi.updateAssignee(this.state.task._id, candidates[0]._id));
-    } else if (candidates.length > 1) {
-      if (newItems.length > 0) {
-        newItems.forEach((item) => {
-          console.log(item);
-          this.updatePromises.push(this.TaskApi.addCandidate(this.state.task._id, item._id));
-          // .then((res) => {
-          //   if (res.accepted_candidates && res.accepted_candidates[0] == item._id) {
-          //     // message.success
-          //   }
-          // });
-        });
-      }
-      if (removedItems.length > 0) {
-        removedItems.forEach((item) => {
-          this.updatePromises.push(this.TaskApi.removeCandidate(this.state.task._id, item._id));
-        });
-      }
-    }
+    this.updatePromises.push(
+      this.TaskApi.updateAssignee(
+        this.state.task._id,
+        candidates.map((user) => user._id).join(','),
+      ),
+    );
+    // const oldData = this.originalTask;
+    // const newItems = differenceBy(candidates, oldData.candidates, '_id');
+    // const removedItems = differenceBy(oldData.candidates, candidates, '_id');
+    // if (candidates.length === 1 && oldData.assignee._id !== candidates[0]._id) {
+    //   this.updatePromises.push(this.TaskApi.updateAssignee(this.state.task._id, candidates[0]._id));
+    // } else if (candidates.length > 1) {
+    //   if (newItems.length > 0) {
+    //     newItems.forEach((item) => {
+    //       console.log(item);
+    //       this.updatePromises.push(this.TaskApi.addCandidate(this.state.task._id, item._id));
+    //       // .then((res) => {
+    //       //   if (res.accepted_candidates && res.accepted_candidates[0] == item._id) {
+    //       //     // message.success
+    //       //   }
+    //       // });
+    //     });
+    //   }
+    //   if (removedItems.length > 0) {
+    //     removedItems.forEach((item) => {
+    //       this.updatePromises.push(this.TaskApi.removeCandidate(this.state.task._id, item._id));
+    //     });
+    //   }
+    // }
 
   }
 
@@ -501,7 +499,7 @@ class EditTask extends React.Component<IProps, IState> {
       task_id: this.state.task._id,
       todo_id: this.state.task.todos[index]._id,
     });
-    // update original task todo too
+    this.originalTask.todos[index].done = isChecked;
     // todo : update progress
     // todo : if all done so finish task
   }
@@ -543,6 +541,7 @@ class EditTask extends React.Component<IProps, IState> {
     // }
   }
   private newTodoKeyUp = (event) => {
+    this.pristineForm = false;
     if (event.which === 13) {
       this.newTodo();
     }
@@ -733,6 +732,31 @@ class EditTask extends React.Component<IProps, IState> {
   private referenceTargets = (value: Suggestion) => {
     this.assigneSuggestionComponent = value;
   }
+  private deleteTask = () => {
+    this.TaskApi.remove(this.state.task._id).then(() => {
+      this.leave();
+    });
+  }
+  private setStatus = (state: number) => {
+    const task = this.state.task;
+    this.TaskApi.setState(this.state.task._id, C_TASK_STATE[state]).then(() => {
+      let newStatus;
+      if (state === C_TASK_STATE.complete) {
+        newStatus = C_TASK_STATUS.COMPLETED;
+      }
+      if (state === C_TASK_STATE.failed) {
+        newStatus = C_TASK_STATUS.FAILED;
+      }
+      if (state === C_TASK_STATE.hold) {
+        newStatus = C_TASK_STATUS.HOLD;
+      }
+      if (state === C_TASK_STATE.in_progress) {
+        newStatus = C_TASK_STATUS.ASSIGNED;
+      }
+      task.status = newStatus;
+      this.setState({task});
+    });
+  }
   /**
    * @func render
    * @desc Renders the component
@@ -766,7 +790,6 @@ class EditTask extends React.Component<IProps, IState> {
     const isFailed = task.status === C_TASK_STATUS.FAILED;
     const isInProgress = !(isHold || isCompleted || isFailed);
     const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
-    console.log(task.due_data_has_clock, task.due_data_has_clock ? TimeUtiles.Time(task.due_date) : '');
     return (
       <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
@@ -800,31 +823,38 @@ class EditTask extends React.Component<IProps, IState> {
         {this.state.showMoreOptions && (
           <div className={[style.postOptions, style.opened].join(' ')}>
             <ul>
-              <li className={isInProgress ? 'active' : ''}>
+              <li className={isInProgress ? 'active' : ''}
+                onClick={this.setStatus.bind(this, C_TASK_STATE.in_progress)}>
                 <IcoN size={16} name={'taskInProgress16'}/>
-                <Link to={`/forward/${task._id}`}>In Progress</Link>
+                <a>In Progress</a>
+                {isInProgress && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
-              <li className={isHold ? 'active' : ''}>
+              <li className={isHold ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.hold)}>
                 <IcoN size={16} name={'taskHold16'}/>
-                <Link to={`/forward/${task._id}`}>Hold</Link>
+                <a>Hold</a>
+                {isHold && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
-              <li className={isCompleted ? 'active' : ''}>
+              <li className={isCompleted ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.complete)}>
                 <IcoN size={16} name={'taskCompleted16'}/>
-                <Link to={`/forward/${task._id}`}>Completed</Link>
+                <a>Completed</a>
+                {isCompleted && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
-              <li className={isFailed ? 'active' : ''}>
+              <li className={isFailed ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.failed)}>
                 <IcoN size={16} name={'failed16'}/>
-                <Link to={`/forward/${task._id}`}>Failed</Link>
+                <a>Failed</a>
+                {isFailed && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
               <li className={style.hr}/>
-              <li>
+              {/* <li>
                 <IcoN size={16} name={'chain16'}/>
                 <Link to={`/forward/${task._id}`}>Create a related Task</Link>
-              </li>
-              <li>
-                <IcoN size={16} name={'bin16'}/>
-                <Link to={`/forward/${task._id}`}>Delete</Link>
-              </li>
+              </li> */}
+              {task.access.indexOf(C_TASK_ACCESS.DELETE_TASK) > -1 && (
+                <li>
+                  <IcoN size={16} name={'binRed16'}/>
+                  <a onClick={this.deleteTask}>Delete</a>
+                </li>
+              )}
             </ul>
           </div>
         )}

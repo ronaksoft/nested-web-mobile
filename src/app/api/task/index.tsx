@@ -6,7 +6,7 @@ import ITaskUpdateTodoRequest from './interfaces/ITaskUpdateTodoRequest';
 import ITaskGetByFilterRequest from './interfaces/ITaskGetByFilterRequest';
 import C_TASK_RESPONSE from './consts/taskResponseConst';
 import C_TASK_STATUS from './consts/taskStatusConst';
-import C_TASK_STATE from './consts/taskStateConst';
+// import C_TASK_STATE from './consts/taskStateConst';
 import {IGetActivitiesRequest} from './interfaces/ITaskActivities';
 
 export default class TaskApi {
@@ -79,7 +79,7 @@ export default class TaskApi {
     });
   }
 
-  public setState(taskId: string, state: C_TASK_STATE) {
+  public setState(taskId: string, state: string) {
     return this.api.request({
       cmd: 'task/set_state',
       data: {
