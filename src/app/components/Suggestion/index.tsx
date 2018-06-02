@@ -196,6 +196,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       this.setState({
         selectedItems: array,
       });
+      this.props.onSelectedItemsChanged(array);
     }
 
     /**
@@ -498,7 +499,10 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
      * @type Tsx element
      */
     const listItems = this.state.suggests.map((item) => {
-      const name = item.name || item.title || item.fullName || item._id;
+      let name = item.name || item.title || item.fullName || item._id;
+      if (item.fname) {
+        name = item.fname + ' ' + item.lname;
+      }
       return (
         <li key={item._id}
             onClick={this.insertChip.bind(this, item)}>

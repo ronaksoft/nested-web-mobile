@@ -21,8 +21,8 @@ import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
 import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
-import {difference, some, differenceBy, clone} from 'lodash';
-import TimeUntiles from 'services/utils/time';
+import {some, differenceBy, cloneDeep} from 'lodash';
+import TimeUtiles from 'services/utils/time';
 
 const style = require('../../task.css');
 const buttonsStyle = require('../../../../../components/buttons/style.css');
@@ -146,6 +146,7 @@ class EditTask extends React.Component<IProps, IState> {
     editors: false,
     labels: false,
   };
+  private updatePromises = [];
   /**
    * @prop file
    * @desc Html input of file type
@@ -181,21 +182,21 @@ class EditTask extends React.Component<IProps, IState> {
     };
   }
 
-  private updateLabels = (labels) => {
-    const removeItems = difference(this.state.task.labels, labels);
-    const addItems = difference(labels, this.state.task.labels);
-    removeItems.forEach((element) => {
-      this.removeLabel(element._id);
-    });
-    addItems.forEach((element) => {
-      this.addLabel(element._id);
-    });
-    const task: ITask = this.state.task;
-    task.labels = labels;
-    this.setState({
-        task,
-    });
-  }
+  // private updateLabels = (labels) => {
+  //   const removeItems = difference(this.state.task.labels, labels);
+  //   const addItems = difference(labels, this.state.task.labels);
+  //   removeItems.forEach((element) => {
+  //     this.removeLabel(element._id);
+  //   });
+  //   addItems.forEach((element) => {
+  //     this.addLabel(element._id);
+  //   });
+  //   const task: ITask = this.state.task;
+  //   task.labels = labels;
+  //   this.setState({
+  //       task,
+  //   });
+  // }
 
   /**
    * @function componentDidMount
@@ -234,7 +235,7 @@ class EditTask extends React.Component<IProps, IState> {
       this.createMode = false;
       this.viewMode = false;
     }
-    this.originalTask = clone(task);
+    this.originalTask = cloneDeep(task);
     if (task.attachments && task.attachments.length > 0) {
       this.activeRows.attachments = true;
     }
@@ -256,14 +257,6 @@ class EditTask extends React.Component<IProps, IState> {
     if (task.description) {
       this.activeRows.description = true;
     }
-  }
-
-  private removeLabel(id: string) {
-    this.TaskApi.removeLabel(this.state.task._id, id);
-  }
-
-  private addLabel(id: string) {
-    this.TaskApi.addLabel(this.state.task._id, id);
   }
 
   // private removeTodo(id: string) {
@@ -317,8 +310,8 @@ class EditTask extends React.Component<IProps, IState> {
 
   private discardTask = () => {
     console.log(this.originalTask, this.state.task);
+    this.startedEditing = false;
     if (this.pristineForm) {
-      this.startedEditing = false;
       return this.forceUpdate();
     }
     this.pristineForm = true;
@@ -328,15 +321,20 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private saveTask = () => {
-    this.startedEditing = true;
+    this.startedEditing = false;
     this.setState({
       Loading: true,
     });
     if (this.state.newTodo.length > 0) {
       this.newTodo();
     }
+    this.updateTaskMain();
+    this.updateCandidates(this.state.task.candidates);
     this.updateTodos(this.state.task.todos);
+    this.updateWatchers(this.state.task.watchers);
+    this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
+    Promise.all(this.updatePromises).then((values) => console.log(values));
   }
 
   private startEdit = () => {
@@ -344,38 +342,154 @@ class EditTask extends React.Component<IProps, IState> {
     this.forceUpdate();
   }
 
+  private timeOnChange = (event) => {
+    this.pristineForm = false;
+    const task = this.state.task;
+
+    if (event.target.value === '') {
+      task.due_data_has_clock = false;
+    } else {
+      const date = TimeUtiles.DateUpdateTime(task.due_date, event.target.value);
+      task.due_data_has_clock = true;
+      task.due_date = date;
+    }
+    this.setState({
+      task,
+    });
+  }
+
+  private dateOnChange = (event) => {
+    this.pristineForm = false;
+    const date = TimeUtiles.DateGet(event.target.value);
+    const task = this.state.task;
+    const time = TimeUtiles.getDateTime(task.due_date);
+    const dueDate = TimeUtiles.addDateTime(time, date);
+    task.due_date = parseInt(dueDate, 10);
+    this.setState({
+      task,
+    });
+  }
+
+  private updateTaskMain = () => {
+    const task = this.state.task;
+    const updateObj: any = {
+      task_id: task._id,
+    };
+    if (task.description !== this.originalTask.description) {
+      updateObj.desc = task.description;
+    }
+    if (task.due_date !== this.originalTask.due_date) {
+      updateObj.due_date = task.due_date;
+      // if (task.due_data_has_clock !== this.originalTask.due_data_has_clock) {
+        updateObj.due_data_has_clock = task.due_data_has_clock;
+      // }
+    }
+    if (Object.keys(updateObj).length > 1) {
+      this.TaskApi.update(updateObj);
+    }
+  }
+
   private updateTodos = (todos) => {
     const oldData = this.originalTask;
-    const newItems = differenceBy(todos, oldData, 'id');
-    const removedItems = differenceBy(oldData, todos, 'id');
+    const newItems = differenceBy(todos, oldData.todos, '_id');
+    const removedItems = differenceBy(oldData.todos, todos, '_id');
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
-        console.log(item);
-        this.addTodo(item.txt).then((res) => {
-          console.log(res);
-          // vm.model.todos[index].id = data.todo_id;
-          // todo update originaltask
-        }).catch((err) => {
-          console.log(err);
-        });
+        this.updatePromises.push(this.addTodo(item.txt));
       });
     }
 
     if (removedItems.length > 0) {
-      console.log(removedItems);
-      // todo : update
       removedItems.forEach((item) => {
-        console.log(item);
-        this.TaskApi.removeTodo(this.state.task._id, item._id).then((res) => {
-          console.log(res);
-          // vm.model.todos[index].id = data.todo_id;
-          // todo update originaltask
-        }).catch((err) => {
-          console.log(err);
-        });
+        this.updatePromises.push(this.TaskApi.removeTodo(this.state.task._id, item._id));
       });
     }
+  }
+
+  private updateWatchers = (watchers) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(watchers, oldData.watchers, '_id');
+    const removedItems = differenceBy(oldData.watchers, watchers, '_id');
+    console.log(newItems, removedItems);
+
+    if (newItems.length > 0) {
+      newItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.addWatcher(this.state.task._id, item._id));
+      });
+    }
+
+    if (removedItems.length > 0) {
+      removedItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.removeWatcher(this.state.task._id, item._id));
+      });
+    }
+  }
+
+  private updateEditors = (editors) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(editors, oldData.editors, '_id');
+    const removedItems = differenceBy(oldData.editors, editors, '_id');
+    console.log(newItems, removedItems);
+
+    if (newItems.length > 0) {
+      newItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.addEditor(this.state.task._id, item._id));
+      });
+    }
+
+    if (removedItems.length > 0) {
+      removedItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.removeEditor(this.state.task._id, item._id));
+      });
+    }
+  }
+
+  private updateLabels = (labels) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(labels, oldData.labels, '_id');
+    const removedItems = differenceBy(oldData.labels, labels, '_id');
+    console.log(newItems, removedItems, labels, this.originalTask);
+
+    if (newItems.length > 0) {
+      newItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.addLabel(this.state.task._id, item._id));
+      });
+    }
+
+    if (removedItems.length > 0) {
+      removedItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.removeLabel(this.state.task._id, item._id));
+      });
+    }
+  }
+
+  private updateCandidates = (candidates) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(candidates, oldData.candidates, '_id');
+    const removedItems = differenceBy(oldData.candidates, candidates, '_id');
+    console.log(newItems, removedItems, candidates, oldData.candidates);
+    if (candidates.length === 1 && oldData.assignee._id !== candidates[0]._id) {
+      this.updatePromises.push(this.TaskApi.updateAssignee(this.state.task._id, candidates[0]._id));
+    } else if (candidates.length > 1) {
+      if (newItems.length > 0) {
+        newItems.forEach((item) => {
+          console.log(item);
+          this.updatePromises.push(this.TaskApi.addCandidate(this.state.task._id, item._id));
+          // .then((res) => {
+          //   if (res.accepted_candidates && res.accepted_candidates[0] == item._id) {
+          //     // message.success
+          //   }
+          // });
+        });
+      }
+      if (removedItems.length > 0) {
+        removedItems.forEach((item) => {
+          this.updatePromises.push(this.TaskApi.removeCandidate(this.state.task._id, item._id));
+        });
+      }
+    }
+
   }
 
   private checkTodo = (index) => {
@@ -414,9 +528,21 @@ class EditTask extends React.Component<IProps, IState> {
         });
       });
     }
+    // else if (event.which === 13 && task.todos[index].txt.length > 0) {
+    //   const todos = this.state.task.todos;
+    //   todos.splice(index + 1, 0, {
+    //     weight: 1,
+    //     done: false,
+    //     _id: task.todos.length + 2,
+    //     txt: '',
+    //   });
+    //   this.setState({
+    //     task,
+    //   });
+    //   event.target.blur();
+    // }
   }
   private newTodoKeyUp = (event) => {
-    console.log(event.which);
     if (event.which === 13) {
       this.newTodo();
     }
@@ -427,7 +553,6 @@ class EditTask extends React.Component<IProps, IState> {
     });
   }
   private newTodo = () => {
-    console.log('newTodo');
     if (this.state.newTodo.length === 0) {
       return;
     }
@@ -494,12 +619,39 @@ class EditTask extends React.Component<IProps, IState> {
    * @func handleTargetsChanged
    * @desc Updates the component state with a new list of targets
    * @private
-   * @memberof Compose
    * @param {IChipsItem[]} items
    */
-  private handleTargetsChanged = (items: IChipsItem[]) => {
+  private handleAssigneChanged = (items: IChipsItem[]) => {
     this.pristineForm = false;
-    console.log(items);
+    const task = this.state.task;
+    task.candidates = items;
+    this.setState({
+      task,
+    });
+  }
+  private handleWatchersChanged = (items: IChipsItem[]) => {
+    this.pristineForm = false;
+    const task = this.state.task;
+    task.watchers = items;
+    this.setState({
+      task,
+    });
+  }
+  private handleEditorsChanged = (items: IChipsItem[]) => {
+    this.pristineForm = false;
+    const task = this.state.task;
+    task.editors = items;
+    this.setState({
+      task,
+    });
+  }
+  private handleLabelsChanged = (items) => {
+    this.pristineForm = false;
+    const task = this.state.task;
+    task.labels = items;
+    this.setState({
+      task,
+    });
   }
 
   /**
@@ -597,11 +749,7 @@ class EditTask extends React.Component<IProps, IState> {
 
     let selectedItemsForAssigne = [];
     if (task.assignee) {
-      selectedItemsForAssigne = [{
-        _id: task.assignee._id,
-        fullName: task.assignee.fname + task.assignee.lname,
-        picture: task.assignee.picture,
-      }];
+      selectedItemsForAssigne = [task.assignee];
     } else if (task.candidates) {
       selectedItemsForAssigne = task.candidates.map((i) => {
         const chipsItem: IChipsItem = {
@@ -618,6 +766,7 @@ class EditTask extends React.Component<IProps, IState> {
     const isFailed = task.status === C_TASK_STATUS.FAILED;
     const isInProgress = !(isHold || isCompleted || isFailed);
     const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
+    console.log(task.due_data_has_clock, task.due_data_has_clock ? TimeUtiles.Time(task.due_date) : '');
     return (
       <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
         {/* specefic navbar for post view */}
@@ -716,7 +865,8 @@ class EditTask extends React.Component<IProps, IState> {
               </div>
               <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
                 <div className={style.taskRowIcon}>
-                  {task.assignee && <UserAvatar user_id={task.assignee._id} borderRadius="24px" size={24}/>}
+                  {task.assignee && (!task.candidates || task.candidates.length === 0) &&
+                    <UserAvatar user_id={task.assignee._id} borderRadius="24px" size={24}/>}
                   {!task.assignee && !task.candidates && <IcoN name="askWire24" size={24}/>}
                   {task.candidates && <IcoN name="candidate32" size={32}/>}
                 </div>
@@ -733,7 +883,7 @@ class EditTask extends React.Component<IProps, IState> {
                                 editable={this.startedEditing || this.createMode}
                                 placeholder="Assignees"
                                 selectedItems={selectedItemsForAssigne}
-                                onSelectedItemsChanged={this.handleTargetsChanged}
+                                onSelectedItemsChanged={this.handleAssigneChanged}
                     />
                   </div>
                 )}
@@ -754,19 +904,21 @@ class EditTask extends React.Component<IProps, IState> {
                       <li>
                         {this.startedEditing && (
                           <input type="date" placeholder="Set date..."
-                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUntiles.Date(task.due_date)}/>
+                            onChange={this.dateOnChange}
+                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUtiles.Date(task.due_date)}/>
                         )}
                         {!this.startedEditing && (
-                          <time dateTime={TimeUntiles.Date(task.due_date)}>{TimeUntiles.DateParse(task.due_date)}</time>
+                          <time dateTime={TimeUtiles.Date(task.due_date)}>{TimeUtiles.DateParse(task.due_date)}</time>
                         )}
                       </li>
                       <li>
                         {this.startedEditing && (
                           <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00"
-                            value={task.due_data_has_clock ? TimeUntiles.Time(task.due_date) : ''} max="23:59"/>
+                            onChange={this.timeOnChange}
+                            value={task.due_data_has_clock ? TimeUtiles.Time(task.due_date) : ''} max="23:59"/>
                         )}
                         {!this.startedEditing && task.due_data_has_clock && (
-                          <time dateTime={TimeUntiles.Time(task.due_date)}>{TimeUntiles.TimeParse(task.due_date)}</time>
+                          <time dateTime={TimeUtiles.Time(task.due_date)}>{TimeUtiles.TimeParse(task.due_date)}</time>
                         )}
                         {!this.startedEditing && !task.due_data_has_clock && (
                           <time>-- : --</time>
@@ -912,7 +1064,7 @@ class EditTask extends React.Component<IProps, IState> {
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add peoples who wants to follow task..."
                                   selectedItems={task.watchers}
-                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                                  onSelectedItemsChanged={this.handleWatchersChanged}
                       />
                     </div>
                   )}
@@ -941,7 +1093,7 @@ class EditTask extends React.Component<IProps, IState> {
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add peoples who wants to edit task..."
                                   selectedItems={task.editors}
-                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                                  onSelectedItemsChanged={this.handleEditorsChanged}
                       />
                     </div>
                   )}
@@ -972,7 +1124,7 @@ class EditTask extends React.Component<IProps, IState> {
                                   editable={this.startedEditing || this.createMode}
                                   placeholder="Add labels..."
                                   selectedItems={task.labels}
-                                  onSelectedItemsChanged={this.handleTargetsChanged}
+                                  onSelectedItemsChanged={this.handleLabelsChanged}
                       />
                     </div>
                   )}
@@ -987,7 +1139,7 @@ class EditTask extends React.Component<IProps, IState> {
             </div>
           </div>
         </Scrollable>
-        {(this.editMode || this.createMode) && someRowNotBinded && (
+        {(this.startedEditing || this.createMode) && someRowNotBinded && (
           <div className={style.taskBinder}>
             {!this.activeRows.date && (
               <div className={style.taskBinderButton} onClick={this.enableRow.bind(this, 'date')}>

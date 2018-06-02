@@ -16,7 +16,7 @@ interface ITaskActivity {
   todo_text?: string;
   comment_text?: string;
   due_date?: number;
-  due_date_has_clock?: boolean;
+  due_data_has_clock?: boolean;
 }
 
 export default ITaskActivity;

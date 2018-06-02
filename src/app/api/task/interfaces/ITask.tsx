@@ -9,6 +9,7 @@ interface ITask {
     counters: any;
     title: string;
     description: string;
+    desc: string;
     due_data_has_clock: boolean;
     due_date: number;
     status: number;

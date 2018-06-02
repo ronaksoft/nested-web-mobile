@@ -35,6 +35,25 @@ class TimeUntiles {
     return moment(timestamp).format('MM/DD/YYYY');
   }
 
+  public DateGet(date: string): number {
+    return parseInt(moment(date, 'YYYY-MM-DD').format('x'), 10);
+  }
+
+  public DateUpdateTime(date: number, time: string): number {
+    const timeSplit = time.split(':');
+    return parseInt(moment(date).startOf('day')
+      .add(timeSplit[0], 'hours').add(timeSplit[1], 'minutes').format('x'), 10);
+  }
+
+  public getDateTime(timestamp: number) {
+    return moment(timestamp).format('HH/mm');
+  }
+
+  public addDateTime(time: string, date: any) {
+    const timeSplit = time.split('/');
+    return moment(date).add(timeSplit[0], 'hours').add(timeSplit[1], 'minutes').format('x');
+  }
+
   public Time(timestamp: number) {
     return moment(timestamp).format('HH:mm');
   }

@@ -1,5 +1,6 @@
 import Api from 'api';
 import ITaskRequest from './interfaces/ITaskRequest';
+import ITaskUpdateRequest from './interfaces/ITaskUpdateRequest';
 import IGetTaskCustomFilterRequest from './interfaces/IGetTaskCustomFilterRequest';
 import ITaskUpdateTodoRequest from './interfaces/ITaskUpdateTodoRequest';
 import ITaskGetByFilterRequest from './interfaces/ITaskGetByFilterRequest';
@@ -88,7 +89,7 @@ export default class TaskApi {
     });
   }
 
-  public update(data: ITaskRequest) {
+  public update(data: ITaskUpdateRequest) {
     return this.api.request({
       cmd: 'task/update',
       data,
@@ -199,6 +200,26 @@ export default class TaskApi {
       data: {
         task_id: taskId,
         watcher_id: watcherId,
+      },
+    });
+  }
+
+  public addEditor(taskId: string, editorId: string) {
+    return this.api.request({
+      cmd: 'task/add_editor',
+      data: {
+        task_id: taskId,
+        editor_id: editorId,
+      },
+    });
+  }
+
+  public removeEditor(taskId: string, editorId: string) {
+    return this.api.request({
+      cmd: 'task/remove_editor',
+      data: {
+        task_id: taskId,
+        editor_id: editorId,
       },
     });
   }
