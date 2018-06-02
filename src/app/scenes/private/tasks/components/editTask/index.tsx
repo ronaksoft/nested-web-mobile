@@ -634,7 +634,9 @@ class EditTask extends React.Component<IProps, IState> {
                 {this.editMode && (
                   <div className={style.taskRowItem}>
                     {this.startedEditing && (
-                      <input type="text" placeholder="Task title" value={task.title} onChange={this.editTitle}/>
+                      <h1>
+                        <input type="text" placeholder="Task title" value={task.title} onChange={this.editTitle}/>
+                      </h1>
                     )}
                     {!this.startedEditing && (
                       <h1>
