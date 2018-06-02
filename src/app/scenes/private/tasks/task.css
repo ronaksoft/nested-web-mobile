@@ -138,6 +138,12 @@
   font-size: 20px;
   line-height: 24px;
 }
+.taskRowItem p{
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  color: #323D47;
+}
 .taskRowItem input ,
 .taskRowItem textarea {
   height: 24px;
@@ -174,6 +180,10 @@
   display: flex;
   align-items: center;
 }
+.todoList li label{
+  font-size: 14px;
+  color: #323D47;
+}
 .todoList li input[type="checkbox"]{
   width: 12px;
   height: 12px;
@@ -182,6 +192,7 @@
 .todoList li input[type="text"]{
   width: 100%;
   height: 32px;
+  font-size: 14px;
 }
 .setDateTime {
   background: #F5F5F5;

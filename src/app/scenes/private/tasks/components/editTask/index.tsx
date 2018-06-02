@@ -103,6 +103,7 @@ interface IState {
   showMoreOptions: boolean;
   Loading: boolean;
   attachModal: boolean;
+  newTodo: string;
 }
 
 /**
@@ -135,6 +136,7 @@ class EditTask extends React.Component<IProps, IState> {
   private editMode: boolean = false;
   private createMode: boolean = true;
   private viewMode: boolean = false;
+  private removeTodoProcess: boolean = false;
   private activeRows: any = {
     date: false,
     description: false,
@@ -175,6 +177,7 @@ class EditTask extends React.Component<IProps, IState> {
       showMoreOptions: false,
       Loading: false,
       attachModal: false,
+      newTodo: '',
     };
   }
 
@@ -263,6 +266,14 @@ class EditTask extends React.Component<IProps, IState> {
     this.TaskApi.addLabel(this.state.task._id, id);
   }
 
+  // private removeTodo(id: string) {
+  //   this.TaskApi.removeLabel(this.state.task._id, id);
+  // }
+
+  private addTodo(txt: string) {
+    return this.TaskApi.addTodo(this.state.task._id, txt);
+  }
+
   public enableRow(row: string) {
     this.activeRows[row] = true;
     this.startedEditing = true;
@@ -321,6 +332,9 @@ class EditTask extends React.Component<IProps, IState> {
     this.setState({
       Loading: true,
     });
+    if (this.state.newTodo.length > 0) {
+      this.newTodo();
+    }
     this.updateTodos(this.state.task.todos);
     this.updateLabels(this.state.task.labels);
   }
@@ -338,7 +352,7 @@ class EditTask extends React.Component<IProps, IState> {
     if (newItems.length > 0) {
       newItems.forEach((item) => {
         console.log(item);
-        this.TaskApi.addTodo(this.state.task._id, item.txt, 1).then((res) => {
+        this.addTodo(item.txt).then((res) => {
           console.log(res);
           // vm.model.todos[index].id = data.todo_id;
           // todo update originaltask
@@ -384,6 +398,50 @@ class EditTask extends React.Component<IProps, IState> {
     const txt: string = event.target.value;
     task.todos[index].txt = txt;
     this.setState({task});
+  }
+
+  private todoKeyDown = (index, event) => {
+    const task = this.state.task;
+    if (event.which === 8 && task.todos[index].txt.length === 0 && !this.removeTodoProcess) {
+      this.removeTodoProcess = true;
+      this.TaskApi.removeTodo(task._id, task.todos[index]._id + '').then(() => {
+        const todos = this.state.task.todos;
+        todos.splice(index, 1);
+        this.setState({
+          task,
+        }, () => {
+          this.removeTodoProcess = false;
+        });
+      });
+    }
+  }
+  private newTodoKeyUp = (event) => {
+    console.log(event.which);
+    if (event.which === 13) {
+      this.newTodo();
+    }
+  }
+  private newTodoOnChange = (event) => {
+    this.setState({
+      newTodo: event.target.value,
+    });
+  }
+  private newTodo = () => {
+    console.log('newTodo');
+    if (this.state.newTodo.length === 0) {
+      return;
+    }
+    const task = this.state.task;
+    task.todos.push({
+      weight: 1,
+      done: false,
+      _id: task.todos.length + 2,
+      txt: this.state.newTodo,
+    });
+    return this.setState({
+      task,
+      newTodo: '',
+    });
   }
 
   private descriptionEdit = (event) => {
@@ -763,7 +821,8 @@ class EditTask extends React.Component<IProps, IState> {
                             onChange={this.checkTodo.bind(this, index)}/>
                           {this.startedEditing && (
                             <label htmlFor="todo1">
-                              <input type="text" value={todo.txt} onChange={this.todoTextEdit.bind(this, index)}/>
+                              <input type="text" value={todo.txt} onChange={this.todoTextEdit.bind(this, index)}
+                                onKeyDown={this.todoKeyDown.bind(this, index)}/>
                             </label>
                           )}
                           {!this.startedEditing && (
@@ -771,6 +830,15 @@ class EditTask extends React.Component<IProps, IState> {
                           )}
                         </li>
                       ))}
+                      {this.startedEditing && (
+                        <li key="newTodo">
+                          <input type="checkbox" id="todo1" defaultChecked={false}/>
+                          <label htmlFor="todo1">
+                            <input type="text" value={this.state.newTodo} onChange={this.newTodoOnChange}
+                              placeholder="+ Add a to-do" onKeyUp={this.newTodoKeyUp}/>
+                          </label>
+                        </li>
+                      )}
                     </ul>
                   </div>
                 </div>
