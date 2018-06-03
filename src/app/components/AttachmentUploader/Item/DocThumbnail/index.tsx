@@ -1,7 +1,7 @@
 /**
- * @file scenes/compose/AttachmentList/Item/otherThumbnail/index.tsx
+ * @file scenes/compose/AttachmentList/Item/DocThumbnail/index.tsx
  * @author naamesteh < naamesteh@nested.me >
- * @description specially renders any type attachments except video and images
+ * @description specially renders Documents type attachments
  * inside upload attachment in compose page
  *              Documented by:          Shayesteh Naeimabadi
  *              Date of documentation:  2017-08-01
@@ -18,17 +18,19 @@ const style = require('../composeAttachment.css');
  * @interface IProps for component initials data
  * This interface pass the required parameters to component.
  * @type {object}
- * @property {IPostAttachment} attachment
+ * @property {IAttachmentItem} attachment - list of attachments
+ * @property {boolean} fullWidth - does it need to render thumbnail in full width of screen
  */
 interface IProps {
   item: IAttachmentItem;
+  fullWidth?: boolean;
 }
 
 /**
  * @name IState
  * @interface IState for component reactive Elements
  * @type {object}
- * @property {IPostAttachment} attachment
+ * @property {IAttachmentItem} attachment
  */
 interface IState {
   item: IAttachmentItem;
@@ -36,43 +38,42 @@ interface IState {
 
 /**
  * @export
- * @class OtherThumbnail
- * @classdesc render the thumbnails of attachments
+ * @class DocThumbnail
+ * @classdesc render the thumbnails of video attachments
  * @extends {React.Component<IProps, IState>}
  */
-export default class OtherThumbnail extends React.Component<IProps, IState> {
+export default class DocThumbnail extends React.Component<IProps, IState> {
 
   /**
    * @constructor
    * Creates an instance of Sidebar.
    * @param {IProps} props
-   * @memberof OtherThumbnail
+   * @memberof DocThumbnail
    */
   constructor(props) {
     super(props);
   }
 
   /**
-   * renders the attachment element related to attachment type
+   * renders the video preview in post card
    * @function
    * @returns {ReactElement} markup
-   * @memberof OtherThumbnail
+   * @memberof DocThumbnail
    * @override
    * @generator
    */
   public render() {
-
     const {item} = this.props;
-    const name = item.model ? item.model.name : item.name;
+    const name = item.model ? item.model.filename : item.name;
     return (
       <div key={item.id}>
-            <div key={item.id} className={style.imageContainer}>
-              <div className={style.filesTypesImages}>
-                <div className={style.fileBadge}>
-                  {FileUtil.getSuffix(name).toUpperCase()}
-                </div>
-              </div>
+        <div key={item.id} className={style.imageContainer}>
+          <div className={style.filesTypesImages}>
+            <div className={style.fileBadge + ' ' + style.fileBadgeDoc}>
+              {FileUtil.getSuffix(name).toUpperCase()}
             </div>
+          </div>
+        </div>
       </div>
     );
   }

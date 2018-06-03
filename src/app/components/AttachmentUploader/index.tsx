@@ -1,8 +1,8 @@
 /**
- * @file scenes/private/compose/AttachmentList/index.tsx
+ * @file scenes/private/compose/AttachmentUploader/index.tsx
  * @author Soroush Torkzadeh <sorousht@nested.com>
  * @description A list of attachment items in bottom of compose page
- * @export AttachmentList
+ * @export AttachmentUploader
  * Documented by:          Soroush Torkzadeh
  * Date of documentation:  2017-07-25
  * Reviewed by:            robzizo
@@ -24,8 +24,8 @@ const EMPTY_PICTURE = require('./default.gif');
 import {UploadType} from 'api/attachment';
 import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
-const style = require('./attachmentList.css');
 import FileUtil from 'services/utils/file';
+const style = require('./attachmentList.css');
 
 /**
  * @interface IProps
@@ -53,6 +53,8 @@ interface IProps {
    * @memberof IProps
    */
   onItemsChanged: (items: IAttachment[]) => void;
+  mode: string;
+  editable: boolean;
 }
 
 /**
@@ -75,6 +77,7 @@ interface IState {
    * @memberof IState
    */
   isExpanded: boolean;
+  editable: boolean;
 }
 
 /**
@@ -117,27 +120,22 @@ interface IUploadItem {
 /**
  * manage the Items list and file upload
  *
- * @class AttachmentList
+ * @class AttachmentUploader
  * @extends {React.Component<IProps, IState>}
  */
-/**
- *
- * @class AttachmentList
- * @extends {React.Component<IProps, IState>}
- */
-class AttachmentList extends React.Component<IProps, IState> {
+class AttachmentUploader extends React.Component<IProps, IState> {
   /**
    * @prop uploads
    * @desc A list of uploading items
    * @private
    * @type {IUploadItem[]}
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private uploads: IUploadItem[];
   /**
-   * Creates an instance of AttachmentList.
+   * Creates an instance of AttachmentUploader.
    * @param {IProps} props
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   constructor(props: IProps) {
     super(props);
@@ -145,6 +143,7 @@ class AttachmentList extends React.Component<IProps, IState> {
     this.state = {
       items: props.items.map(this.createItem),
       isExpanded: false,
+      editable: props.editable === false ? false : true,
     };
 
     this.uploads = [];
@@ -156,7 +155,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Creates a list of `IAttachmentItem` from a list of `IAttachment`.
    * The method has been used to pass a list of attachments to the component from the outside
    * @param {IAttachment[]} attachments
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public load(attachments: IAttachment[]) {
     this.setState({
@@ -181,7 +180,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Creates a list of `IAttachmentItem` from a list of `IAttachment`.
    * The method has been used to pass a list of attachments to the component from the outside
    * @param {IAttachment[]} attachments
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public loadSync(attachment: IAttachment) {
     this.setState({
@@ -197,11 +196,26 @@ class AttachmentList extends React.Component<IProps, IState> {
     });
   };
 
+  public componentWillReceiveProps(nProps: IProps) {
+    this.setState({
+      editable: nProps.editable,
+    });
+  }
+
+  // public showAttachment(attachment) {
+  //   this.setState({
+  //     selectedAttachment: attachment,
+  //   });
+  //   this.props.setCurrentPost(this.props.taskId);
+  //   this.props.setCurrentAttachment(attachment);
+  //   this.props.setCurrentAttachmentList(this.props.attachments);
+  // }
+
   /**
    * @func createItem
    * @desc Create an AttachmentItem using the provided Attachment model
    * @private
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private createItem = (attachment: IAttachment): IAttachmentItem => {
     return {
@@ -215,7 +229,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @func upload
    * @desc Creates an IAttachmentItem and upload the file
    * @public
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public upload = (e: any, isMedia: boolean) => {
     const file: File = e.target.files[0];
@@ -251,7 +265,7 @@ class AttachmentList extends React.Component<IProps, IState> {
   /**
    * @function abortAll
    * @desc Aborts all uploads that are in progress
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public abortAll = () => {
     this.uploads.forEach((i) => i.abort);
@@ -264,7 +278,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @param {IAttachmentItem} item
    * @param {File} file
    * @param {string} type
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private send(item: IAttachmentItem, file: File, isMedia: boolean) {
     const type: string = isMedia ? FileUtil.getUploadType(file) : UploadType.FILE;
@@ -272,7 +286,7 @@ class AttachmentList extends React.Component<IProps, IState> {
     AttachmentApi.upload(file, type).then((mission: IUploadMission) => {
 
       mission.onError = () => this.onUploadError(item);
-      mission.onFinish = (attachment: IAttachment) => this.onUploadFinish(item, attachment);
+      mission.onFinish = (attachment) => this.onUploadFinish(item, attachment);
       mission.onProgress = (total: number, loaded: number) => this.onUploadProgress(item, {
         total,
         loaded,
@@ -299,7 +313,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Updates an item state on facing an error in upload
    * @param {IAttachmentItem} item
    * @private
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private onUploadError = (item: IAttachmentItem) => {
     item.uploading = false;
@@ -315,7 +329,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Updates the item status when a user aborts an upload intentially
    * @private
    * @param {IAttachmentItem} item
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private onUploadAbort = (item: IAttachmentItem) => {
     item.uploading = false;
@@ -331,13 +345,15 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @private
    * @param {IAttachmentItem} item
    * @param {attachment} attachment
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
-  private onUploadFinish = (item: IAttachmentItem, attachment: IAttachment) => {
+  private onUploadFinish = (item: IAttachmentItem, attachment) => {
     const index = this.uploads.findIndex((upload) => upload.id === item.id);
     if (index >= 0) {
       this.uploads.splice(index, 1);
     }
+    attachment._id = attachment.universal_id;
+    attachment.filename = attachment.name;
 
     item.uploading = false;
     item.finished = true;
@@ -357,7 +373,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @private
    * @param {IAttachmentItem} item
    * @param {IProgress} progress
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private onUploadProgress = (item: IAttachmentItem, progress: IProgress) => {
     item.progress = progress;
@@ -373,9 +389,9 @@ class AttachmentList extends React.Component<IProps, IState> {
    * otherwise, returns a default image
    * @private
    * @param {File} file
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
-  private getFileThumbnail = (file: File) => {
+  public getFileThumbnail = (file: File) => {
     if (!file) {
       return Promise.resolve(EMPTY_PICTURE);
     }
@@ -392,9 +408,9 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Removes the file and aborts the action if the file upload is in progress
    * @private
    * @param {IAttachmentItem} item
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
-  private handleRemove(item: IAttachmentItem) {
+  public handleRemove(item: IAttachmentItem) {
     const index = this.state.items.findIndex((i) => i.id === item.id);
     if (index > -1) {
       const uploadIndex = this.uploads.findIndex((u) => u.id === item.id);
@@ -416,7 +432,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Switches between expanded and collapsed mode
    * @func toggleView
    * @private
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   private toggleView = () => {
     this.setState({
@@ -428,7 +444,7 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @func get
    * @desc Returns th list of IAttachmentItem. The function is defined
    * to be accessible from the component outside
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public get = () => {
     return this.state.items;
@@ -438,100 +454,122 @@ class AttachmentList extends React.Component<IProps, IState> {
    * @desc Checks if has an uploading file in the list or not. The function is defined
    * to be accessible from the component outside
    * @func isUploading
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public isUploading = () => {
     return this.state.items.some((i) => i.uploading);
+  }
+  private renderItem = (item: IAttachmentItem) => {
+    const upload = this.uploads.find((u) => u.id === item.id);
+    return (
+        <Item
+              id={item.id}
+              item={item}
+              key={item.id}
+              onRemove={this.handleRemove}
+              picture={upload ? upload.thumb : null}
+        />
+    );
+  }
+  private renderTaskItem = (item: IAttachmentItem) => {
+    const upload = this.uploads.find((u) => u.id === item.id);
+    return (
+        <li key={item.id}>
+          <Item
+              id={item.id}
+              mode="task"
+              item={item}
+              onRemove={this.handleRemove}
+              picture={upload ? upload.thumb : null}
+          />
+        </li>
+    );
   }
 
   /**
    * @function render
    * @desc Renders the component
    * @returns
-   * @memberof AttachmentList
+   * @memberof AttachmentUploader
    */
   public render() {
-    const renderItem = (item: IAttachmentItem) => {
-      const upload = this.uploads.find((u) => u.id === item.id);
+    if (this.props.mode !== 'compose') {
       return (
-          <Item
-                id={item.id}
-                item={item}
-                key={item.id}
-                onRemove={this.handleRemove}
-                picture={upload ? upload.thumb : null}
-          />
+        <ul className={style.taskAttachmentList}>
+          {this.state.items.map(this.renderTaskItem)}
+      </ul>
       );
-    };
-    // calculate total progress by size
-    let totalSize: number = 1;
-    let totalSizeByte: number = 0;
-    let totalLoaded: number = 0;
-    let isUploading: boolean = false;
-    let inProgressCount: number = 0;
-    const items = [];
+    } else {
+      // calculate total progress by size
+      let totalSize: number = 1;
+      let totalSizeByte: number = 0;
+      let totalLoaded: number = 0;
+      let isUploading: boolean = false;
+      let inProgressCount: number = 0;
+      const items = [];
 
-    this.state.items.forEach((item) => {
-      if (!item) {
-        return;
+      this.state.items.forEach((item) => {
+        if (!item) {
+          return;
+        }
+        totalSizeByte += item.size;
+        // render Items if is in expanded mode
+        if (this.state.isExpanded) {
+          items.push(this.renderItem(item));
+        }
+
+        if (item.mode === Mode.UPLOAD) {
+          totalLoaded += item.progress.loaded;
+          totalSize += item.progress.total;
+          inProgressCount++;
+        }
+
+        isUploading = isUploading || item.uploading;
+      });
+      const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
+
+      // The component must be hidden if there is not any item in the list
+      if (this.state.items.length === 0) {
+        return (
+        null
+        );
       }
-      totalSizeByte += item.size;
-      // render Items if is in expanded mode
-      if (this.state.isExpanded) {
-        items.push(renderItem(item));
-      }
 
-      if (item.mode === Mode.UPLOAD) {
-        totalLoaded += item.progress.loaded;
-        totalSize += item.progress.total;
-        inProgressCount++;
-      }
-
-      isUploading = isUploading || item.uploading;
-    });
-    const totalProgress = Math.floor((totalLoaded / totalSize) * 100) || 0;
-
-    // The component must be hidden if there is not any item in the list
-    if (this.state.items.length === 0) {
       return (
-      null
+        <div className={style.AttachmentUploader}>
+          <div className={style.AttachmentListTop}>
+            <div className={style.totallProgress}>
+              <Progress percent={totalProgress} strokeWidth={3} showInfo={false} />
+            </div>
+            {
+              isUploading && (
+                <span>
+                  <b>Attachments</b> uploading{inProgressCount} files {totalProgress}%
+                </span>
+              )
+            }
+            {
+              !isUploading && (
+                <span>
+                  <b>Attachments</b> ({this.state.items.length} Files, {FileUtil.parseSize(totalSizeByte)})
+                </span>
+              )
+            }
+            <div className={[style.attachListAnchor, this.state.isExpanded ? style.expanded : null].join(' ')}
+                onClick={this.toggleView}>
+              <IcoN size={24} name="arrow16" />
+            </div>
+          </div>
+          <div style={{
+            maxHeight: '225px',
+            overflow: 'auto',
+          }}>
+            {this.state.isExpanded && items}
+          </div>
+        </div>
       );
     }
-
-    return (
-      <div className={style.AttachmentList}>
-        <div className={style.AttachmentListTop}>
-          <div className={style.totallProgress}>
-            <Progress percent={totalProgress} strokeWidth={3} showInfo={false} />
-          </div>
-          {
-            isUploading && (
-              <span>
-                <b>Attachments</b> uploading{inProgressCount} files {totalProgress}%
-              </span>
-            )
-          }
-          {
-            !isUploading && (
-              <span>
-                <b>Attachments</b> ({this.state.items.length} Files, {FileUtil.parseSize(totalSizeByte)})
-              </span>
-            )
-          }
-          <div className={[style.attachListAnchor, this.state.isExpanded ? style.expanded : null].join(' ')}
-               onClick={this.toggleView}>
-            <IcoN size={24} name="arrow16" />
-          </div>
-        </div>
-        <div style={{
-          maxHeight: '225px',
-          overflow: 'auto',
-        }}>
-          {this.state.isExpanded && items}
-        </div>
-      </div>
-    );
   }
 }
 
-export default AttachmentList;
+export default AttachmentUploader;

@@ -98,6 +98,8 @@ interface IAttachmentItem {
    * @memberof IAttachmentItem
    */
   aborted?: boolean;
+  thumb?: string;
+  thumb2x?: string;
 }
 
 export default IAttachmentItem;

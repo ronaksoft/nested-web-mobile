@@ -104,7 +104,7 @@
   overflow: hidden;
 }
 .uploadprogress div {
-  background: url('../../../../../assets/icons/progress-bg.svg') repeat;
+  background: url('assets/icons/progress-bg.svg') repeat;
   position: absolute;
   right: 0;
   top: 0;
@@ -126,10 +126,89 @@
   overflow: hidden;
 }
 .failedprogress div {
-  background: url('../../../../../assets/icons/progress-bg-red.svg') repeat;
+  background: url('assets/icons/progress-bg-red.svg') repeat;
   position: absolute;
   right: 0;
   top: 0;
   width: 100%;
   height: 100%;
+}
+
+
+/* task */
+
+.item.task {
+  display: flex;
+  flex: none;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  margin-right: 16px;
+  overflow: visible;
+  position: relative;
+  height: 40px;
+}
+.item.task .cancelUp ,
+.item.task .removeForce {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: none;
+}
+.item.task .cancelUp svg path{
+  fill: #FF3344!important;
+}
+.item.task .uploadprogress {
+  opacity: .16;
+}
+.item.task:hover .uploadprogress {
+  opacity: .32;
+}
+.item.task:hover .cancelUp ,
+.item.task:hover .removeForce {
+  display: flex;
+}
+.item.task:hover {
+  background: #323D47;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+}
+.item.task:hover .thumb img{
+  display: none;
+}
+.item.task:hover .atachmentDetail .name {
+  color: #fff;
+}
+.item.task .thumb {
+  z-index: 2;
+  border-radius: 2px;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  box-sizing: content-box;
+  border: 1px solid rgba(50, 61, 71, 0.32);
+  margin: 0 4px;
+}
+.item.task .thumb img {
+  border-radius: 2px;
+  flex: none;
+  object-fit: cover;
+  box-sizing: content-box;
+}
+.item.task .atachmentDetail {
+  border: none;
+  width: 100%;
+}
+.item.task .atachmentDetail .name {
+  z-index: 2;
+  padding-right: 8px;
+  font-size: 14px;
+  color: #323D47;
+  max-width: 192px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

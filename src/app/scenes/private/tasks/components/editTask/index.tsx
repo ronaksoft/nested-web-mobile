@@ -10,8 +10,8 @@
 
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
-import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon,
-  UserAvatar, FullName, Suggestion, TaskAttachment, CommentsBoard} from 'components';
+import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon, AttachmentUploader,
+  UserAvatar, FullName, Suggestion, CommentsBoard} from 'components';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
@@ -171,6 +171,14 @@ class EditTask extends React.Component<IProps, IState> {
   private watchersSuggestionComponent: Suggestion;
   private editorsSuggestionComponent: Suggestion;
   private labelsSuggestionComponent: Suggestion;
+  /**
+   * @prop attachments
+   * @desc Reference of `AttachmentUploader` component
+   * @private
+   * @type {AttachmentUploader}
+   * @memberof Compose
+   */
+  private attachments: AttachmentUploader;
 
   /**
    * Creates an instance of Post.
@@ -450,6 +458,24 @@ class EditTask extends React.Component<IProps, IState> {
     if (removedItems.length > 0) {
       removedItems.forEach((item) => {
         this.updatePromises.push(this.TaskApi.removeTodo(this.state.task._id, item._id));
+      });
+    }
+  }
+
+  private updateAttachments = (attachments) => {
+    const oldData = this.originalTask;
+    const newItems = differenceBy(attachments, oldData.attachments, '_id');
+    const removedItems = differenceBy(oldData.attachments, attachments, '_id');
+
+    if (newItems.length > 0) {
+      newItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.attach(this.state.task._id, item._id));
+      });
+    }
+
+    if (removedItems.length > 0) {
+      removedItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.removeAttachment(this.state.task._id, item._id));
       });
     }
   }
@@ -760,8 +786,7 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private upload = (e: any) => {
-    console.log(e, this.mediaMode);
-    // this.attachments.upload(e, this.mediaMode);
+    this.attachments.upload(e, this.mediaMode);
   }
 
   /**
@@ -773,6 +798,34 @@ class EditTask extends React.Component<IProps, IState> {
    */
   private referenceFile = (value: HTMLInputElement) => {
     this.file = value;
+  }
+
+  /**
+   * @func handleAttachmentsChange
+   * @desc Updates the component state with a new list of attachments
+   * @private
+   * @memberof Compose
+   * @param {IAttachment[]} items
+   */
+  private handleAttachmentsChange = (items) => {
+    const task = this.state.task;
+    this.updateAttachments(items);
+    task.attachments = items;
+    this.setState({
+      task,
+    });
+    this.originalTask.attachments = items;
+  }
+
+  /**
+   * @func referenceAttachments
+   * @desc Keeps reference of AttachmentUploader component
+   * @private
+   * @memberof Compose
+   * @param {AttachmentUploader} value
+   */
+  private referenceAttachments = (value: AttachmentUploader) => {
+    this.attachments = value;
   }
 
   /**
@@ -1164,8 +1217,13 @@ class EditTask extends React.Component<IProps, IState> {
                       )}
                     </h4>
                     {task.attachments && (
-                      <TaskAttachment attachments={task.attachments}
-                      taskId={task._id} editable={this.startedEditing || this.createMode}/>
+                      <AttachmentUploader
+                        mode="task"
+                        editable={true}
+                        onItemsChanged={this.handleAttachmentsChange}
+                        ref={this.referenceAttachments}
+                        items={task.attachments}
+                      />
                     )}
                   </div>
                 </div>

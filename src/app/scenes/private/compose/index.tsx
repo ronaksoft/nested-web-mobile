@@ -11,8 +11,7 @@
  */
 import * as React from 'react';
 import {Input, Button, Modal, Switch, message} from 'antd';
-import {Suggestion, IcoN, Scrollable} from 'components';
-import AttachmentList from './AttachmentList';
+import {Suggestion, IcoN, Scrollable, AttachmentUploader} from 'components';
 import ISendRequest from 'api/post/interfaces/ISendRequest';
 import IEditRequest from 'api/post/interfaces/IEditRequest';
 import ISendResponse from 'api/post/interfaces/ISendResponse';
@@ -26,7 +25,6 @@ import {connect} from 'react-redux';
 import {IAttachment} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import IPost from 'api/post/interfaces/IPost';
-import IPostAttachment from 'api/post/interfaces//IPostAttachment';
 
 const confirm = Modal.confirm;
 const style = require('./compose.css');
@@ -130,12 +128,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
   /**
    * @prop attachments
-   * @desc Reference of `AttachmentList` component
+   * @desc Reference of `AttachmentUploader` component
    * @private
-   * @type {AttachmentList}
+   * @type {AttachmentUploader}
    * @memberof Compose
    */
-  private attachments: AttachmentList;
+  private attachments: AttachmentUploader;
 
   /**
    * @prop targets
@@ -217,19 +215,11 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     if (this.props.params.attachments) {
       const attachArr = this.props.params.attachments.split(',');
       attachArr.map((id) => {
-        this.attachmentApi.get(id).then((attachment: IPostAttachment) => {
-          const attach: IAttachment = {
-            universal_id: attachment._id,
-            name: attachment.filename,
-            expiration_timestamp: 0,
-            size: attachment.size,
-            thumbs: attachment.thumbs,
-            type: attachment.type,
-          };
+        this.attachmentApi.get(id).then((attachment: IAttachment) => {
           this.setState({
-            attachments: [...this.state.attachments, attach],
+            attachments: [...this.state.attachments, attachment],
           });
-          this.attachments.loadSync(attach);
+          this.attachments.loadSync(attachment);
           console.log(attachment);
         });
       });
@@ -279,18 +269,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
         } else {
           // Setting to forward the message by loading the post subject, body and attachments
-          const attachments = post.post_attachments.map((i: IPostAttachment) => {
-            const attachment: IAttachment = {
-              universal_id: i._id,
-              name: i.filename,
-              expiration_timestamp: 0,
-              size: i.size,
-              thumbs: i.thumbs,
-              type: i.type,
-            };
-
-            return attachment;
-          });
+          const attachments = post.post_attachments;
           // Assign `isHtml` property
           this.isHtml = post.content_type === 'text/html';
           this.setState({
@@ -336,17 +315,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
           this.targets.load(targets);
           // Setting to forward the message by loading the post subject, body and attachments
-          const attachments = post.post_attachments.map((i: IPostAttachment) => {
-            const attachment: IAttachment = {
-              universal_id: i._id,
-              name: i.filename,
-              expiration_timestamp: 0,
-              size: i.size,
-              thumbs: i.thumbs,
-              type: i.type,
-            };
-            return attachment;
-          });
+          const attachments = post.post_attachments;
 
           this.setState({
             targets,
@@ -443,12 +412,12 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
   /**
    * @func referenceAttachments
-   * @desc Keeps reference of AttachmentList component
+   * @desc Keeps reference of AttachmentUploader component
    * @private
    * @memberof Compose
-   * @param {AttachmentList} value
+   * @param {AttachmentUploader} value
    */
-  private referenceAttachments = (value: AttachmentList) => {
+  private referenceAttachments = (value: AttachmentUploader) => {
     this.attachments = value;
   }
 
@@ -457,7 +426,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @desc toggle the compose option popover
    * @private
    * @memberof Compose
-   * @param {AttachmentList} value
+   * @param {AttachmentUploader} value
    */
   private composeOption = () => {
     this.setState({
@@ -557,7 +526,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
       no_comment: !this.state.allowComment,
       content_type: this.isHtml ? 'text/html' : 'text/plain',
       subject: this.state.subject,
-      attaches: this.state.attachments.map((i) => i.universal_id).join(','),
+      attaches: this.state.attachments.map((i) => i._id).join(','),
       targets: this.state.targets.map((i) => i._id).join(','),
     };
     this.postApi.send(params).then((response: ISendResponse) => {
@@ -895,7 +864,9 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         </div>
         </Scrollable>
         {/* attachments uploading/uploaded list */}
-        <AttachmentList
+        <AttachmentUploader
+          mode="compose"
+          editable={true}
           onItemsChanged={this.handleAttachmentsChange}
           ref={this.referenceAttachments}
           items={this.state.attachments}

@@ -44,3 +44,8 @@
 .expanded i{
   transform: rotateZ(0);
 }
+/* for task */
+.taskAttachmentList {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -1,12 +1,18 @@
 import {IPicture} from 'api/interfaces';
 
 interface IAttachment {
-  expiration_timestamp: number;
-  name: string;
+  expiration_timestamp?: number;
+  filename: string;
+  height: number;
+  mimetype: string;
   size: number;
   thumbs: IPicture;
   type: string;
-  universal_id: string;
+  upload_time: number;
+  upload_type: string;
+  width: number;
+  post_id: string;
+  _id: string;
 }
 
 export default IAttachment;

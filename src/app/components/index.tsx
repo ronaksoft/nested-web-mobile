@@ -11,7 +11,6 @@ export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
 export {LabelChips} from './Chips/label';
 export {NstInput} from './nst-input/index';
-export {TaskAttachment} from './TaskAttachment/index';
 
 import InfiniteScroll from './scroll/infinite-scroll';
 import Scrollable from './scroll/scroll-children';
@@ -21,6 +20,7 @@ import PlaceName from './PlaceName';
 import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
 import CommentsBoard from './comment/index';
+import AttachmentUploader from './AttachmentUploader/index';
 
-export {UserAvatar, FullName, PlaceName, Scrollable,
+export {UserAvatar, FullName, PlaceName, Scrollable, AttachmentUploader,
     PlaceItem, RTLDetector, InfiniteScroll, CommentsBoard};
