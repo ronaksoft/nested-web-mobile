@@ -9,6 +9,7 @@ import ITaskActivity from './ITaskActivity';
 import IAttachment from './IAttachment';
 import INotification from './INotification';
 import IPost from '../post/interfaces/IPost';
+import ITask from '../task/interfaces/ITask';
 
 export {
   IPicture,
@@ -21,5 +22,6 @@ export {
   IPostActivity,
   ITaskActivity,
   INotification,
-  IPost
+  IPost,
+  ITask,
 };

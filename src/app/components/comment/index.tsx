@@ -11,7 +11,6 @@
 import * as React from 'react';
 import PostApi from 'api/post/index';
 import TaskApi from 'api/task/index';
-import {IComment} from 'api/interfaces';
 import {UserAvatar, FullName} from 'components';
 import CommentApi from 'api/comment/index';
 import ArrayUntiles from 'services/utils/array';
@@ -20,12 +19,12 @@ import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncPostActivity from 'services/sync-post-activity';
 import SyncPostActions from 'services/sync-post-activity/actions';
-import {IUser} from 'api/interfaces';
-import RTLDetector from '../../../../../components/RTLDetector/';
+import {IUser, ITask, IComment, ITaskActivity} from 'api/interfaces';
+import RTLDetector from '../RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
 import {message} from 'antd';
 import VoiceComment from '../VoiceComment';
-import MiniPlayer from '../../../../../../app/services/miniplayer';
+import MiniPlayer from 'services/miniplayer';
 
 const style = require('./comment-board.css');
 
@@ -35,19 +34,13 @@ const style = require('./comment-board.css');
  */
 interface IProps {
   /**
-   * @prop post_id
-   * @desc The post Id
-   * @type {string}
-   * @memberof IProps
-   */
-  post_id: string;
-  /**
    * @prop post
    * @desc The post that the comments belogs to
    * @type {IPost}
    * @memberof IProps
    */
   post?: IPost;
+  task?: ITask;
   /**
    * @prop no_comment
    * @desc Is commenting enabled on the post or not
@@ -55,7 +48,6 @@ interface IProps {
    * @memberof IProps
    */
   no_comment?: boolean;
-  task_mode?: boolean;
   /**
    * @prop user
    * @desc Logged in user for sending comment
@@ -85,6 +77,7 @@ interface IState {
    * @memberof IState
    */
   sendingComment: boolean;
+  task_mode: boolean;
   /**
    * @prop newCommentTxt
    * @desc A new comment text
@@ -108,6 +101,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    */
   private Api;
   private sendCommentCount: number = 0;
+  private thisId: string = '';
   /**
    * @prop syncPostActivity
    * @desc An instance SyncPlaceActivity
@@ -141,9 +135,11 @@ class CommentsBoard extends React.Component<IProps, IState> {
    */
   constructor(props: IProps) {
     super(props);
+    this.thisId = this.props.post ? this.props.post._id : this.props.task._id;
     this.state = {
       comments: [],
       sendingComment: false,
+      task_mode: this.props.task && this.props.task._id.length > 0,
       newCommentTxt: '',
     };
     // binds handleChangeComment by `this`.
@@ -151,7 +147,18 @@ class CommentsBoard extends React.Component<IProps, IState> {
     if (typeof this.props.newComment === 'function') {
       this.notifyNewComment = this.props.newComment;
     }
-    MiniPlayer.getInstance().setPlaylist('voice-comment-' + this.props.post_id, true);
+    MiniPlayer.getInstance().setPlaylist('voice-comment-' + this.thisId, true);
+  }
+
+  private mapTaskActivityToComment(activities) {
+    return activities.map((act) => {
+      return {
+        _id: act._id,
+        timestamp: act.timestamp,
+        text: act.comment_text,
+        sender: act.actor,
+      };
+    });
   }
 
   /**
@@ -162,12 +169,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @override
    */
   public componentDidMount() {
-    if (!this.props.task_mode) {
+    if (!this.state.task_mode) {
       this.Api = new PostApi();
       this.Api.getComments({
         before: Date.now(),
         limit: 3,
-        post_id: this.props.post_id,
+        post_id: this.props.post._id,
       })
         .then((comments: IComment[]) => {
 
@@ -194,10 +201,20 @@ class CommentsBoard extends React.Component<IProps, IState> {
     } else {
       this.Api = new TaskApi();
       this.Api.getActivities({
-        task_id: this.props.post_id,
+        task_id: this.props.task._id,
         only_comments: true,
         details: true,
-      });
+      }).then((activities: ITaskActivity[]) => {
+        if (activities.length < 3) {
+          this.hasBeforeComments = false;
+        }
+        const comments: IComment[] = this.mapTaskActivityToComment(activities);
+
+        this.setState({
+          comments: orderBy(comments, 'timestamp', 'asc'),
+        });
+      })
+      .catch(console.log);
     }
   }
 
@@ -228,39 +245,78 @@ class CommentsBoard extends React.Component<IProps, IState> {
     //   this.state.comments, (cm) => cm._id.length > 4),
     //   'timestamp'));
     // The sync do not work well so we get comments after before last comment temporary
-    const lastCommeents = orderBy(filter(
-      this.state.comments, (cm) => cm._id.length > 4),
-      'timestamp');
-    const lastComment = lastCommeents[lastCommeents.length - 2];
-    this.Api.getComments({
-      after: this.state.comments.length > 0 && lastComment ?
-        lastComment.timestamp : Date.now() - 60000,
-      limit: 20,
-      post_id: this.props.post_id,
-    })
-      .then((comments: IComment[]) => {
 
-        const newComments = chain(comments)
-          .filter((comment) => !some(this.state.comments, {_id: comment._id}))
-          .orderBy('timestamp', 'asc').value();
+    if (this.state.task_mode) {
+      const lastCommeents = orderBy(filter(
+        this.state.comments, (cm) => cm._id.length > 4),
+        'timestamp');
+      const lastComment = lastCommeents[lastCommeents.length - 2];
+      this.Api.getActivities({
+        after: this.state.comments.length > 0 && lastComment ?
+          lastComment.timestamp : Date.now() - 60000,
+        limit: 20,
+        task_id: this.props.task._id,
+        only_comments: true,
+        details: true,
+      })
+        .then((activities: ITaskActivity[]) => {
+          const comments: IComment[] = this.mapTaskActivityToComment(activities);
+          const newComments = chain(comments)
+            .filter((comment) => !some(this.state.comments, {_id: comment._id}))
+            .orderBy('timestamp', 'asc').value();
 
-        const sentComments = filter(this.state.comments, (cm) => cm._id.length < 10);
-        const newCommentsFromOthers = filter(newComments,
-          (cm) => !some(sentComments, (sentCm) => sentCm.body === cm.body && sentCm.sender._id === cm.sender._id));
-        this.setState({
-          comments: ArrayUntiles.uniqueObjects(newCommentsFromOthers.concat(this.state.comments), '_id')
-            .sort((a: IComment, b: IComment) => {
-              return a.timestamp - b.timestamp;
-            }),
-        }, () => {
-          if (scrollToBottom) {
-            this.notifyNewComment();
-          }
-          if (comments.length === 20) {
-            this.getAfterComments(true);
-          }
+          const sentComments = filter(this.state.comments, (cm) => cm._id.length < 10);
+          const newCommentsFromOthers = filter(newComments,
+            (cm) => !some(sentComments, (sentCm) => sentCm.text === cm.text && sentCm.sender._id === cm.sender._id));
+          this.setState({
+            comments: ArrayUntiles.uniqueObjects(newCommentsFromOthers.concat(this.state.comments), '_id')
+              .sort((a: IComment, b: IComment) => {
+                return a.timestamp - b.timestamp;
+              }),
+          }, () => {
+            if (scrollToBottom) {
+              this.notifyNewComment();
+            }
+            if (comments.length === 20) {
+              this.getAfterComments(true);
+            }
+          });
         });
-      });
+    } else {
+      const lastCommeents = orderBy(filter(
+        this.state.comments, (cm) => cm._id.length > 4),
+        'timestamp');
+      const lastComment = lastCommeents[lastCommeents.length - 2];
+      this.Api.getComments({
+        after: this.state.comments.length > 0 && lastComment ?
+          lastComment.timestamp : Date.now() - 60000,
+        limit: 20,
+        post_id: this.props.post._id,
+      })
+        .then((comments: IComment[]) => {
+
+          const newComments = chain(comments)
+            .filter((comment) => !some(this.state.comments, {_id: comment._id}))
+            .orderBy('timestamp', 'asc').value();
+
+          const sentComments = filter(this.state.comments, (cm) => cm._id.length < 10);
+          const newCommentsFromOthers = filter(newComments,
+            (cm) => !some(sentComments, (sentCm) => sentCm.text === cm.text && sentCm.sender._id === cm.sender._id));
+          this.setState({
+            comments: ArrayUntiles.uniqueObjects(newCommentsFromOthers.concat(this.state.comments), '_id')
+              .sort((a: IComment, b: IComment) => {
+                return a.timestamp - b.timestamp;
+              }),
+          }, () => {
+            if (scrollToBottom) {
+              this.notifyNewComment();
+            }
+            if (comments.length === 20) {
+              this.getAfterComments(true);
+            }
+          });
+        });
+    }
   }
 
   /**
@@ -270,16 +326,18 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private getBeforeComments() {
-    this.Api.getComments({
-      before: this.state.comments[0].timestamp,
-      limit: 20,
-      post_id: this.props.post_id,
-    })
-      .then((comments: IComment[]) => {
-
-        if (comments.length < 20) {
+    if (this.state.task_mode) {
+      this.Api.getActivities({
+        task_id: this.props.task._id,
+        limit: 20,
+        before: this.state.comments[0].timestamp,
+        only_comments: true,
+        details: true,
+      }).then((activities: ITaskActivity[]) => {
+        if (activities.length < 20) {
           this.hasBeforeComments = false;
         }
+        const comments: IComment[] = this.mapTaskActivityToComment(activities);
 
         this.setState({
           comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
@@ -287,7 +345,27 @@ class CommentsBoard extends React.Component<IProps, IState> {
               return a.timestamp - b.timestamp;
             }),
         });
-      });
+      })
+      .catch(console.log);
+    } else {
+      this.Api.getComments({
+        before: this.state.comments[0].timestamp,
+        limit: 20,
+        post_id: this.props.post._id,
+      }).then((comments: IComment[]) => {
+
+          if (comments.length < 20) {
+            this.hasBeforeComments = false;
+          }
+
+          this.setState({
+            comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
+              .sort((a: IComment, b: IComment) => {
+                return a.timestamp - b.timestamp;
+              }),
+          });
+        });
+    }
   }
 
   /**
@@ -297,21 +375,33 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private addComment(txt: string) {
-    const commentApi = new CommentApi();
-    return new Promise((resolve, reject) => {
-      commentApi.addComment({
-        post_id: this.props.post_id,
-        txt,
-      }).then((res) => {
-        return commentApi.getOne({
-          comment_id: res.comment_id,
-          post_id: this.props.post_id,
-        }).then((res) => {
-          resolve(res.comments[0]);
-        });
-      }).catch(reject);
+    if (this.state.task_mode) {
+      return new Promise((resolve, reject) => {
+        this.Api.comment(this.props.task._id, txt).then((res) => {
+          return this.Api.getManyActivities(res.activity_id, true).then((res) => {
+            resolve(this.mapTaskActivityToComment(res.activities)[0]);
+          });
+        }).catch(reject);
 
-    });
+      });
+
+    } else {
+      const commentApi = new CommentApi();
+      return new Promise((resolve, reject) => {
+        commentApi.addComment({
+          post_id: this.props.post._id,
+          txt,
+        }).then((res) => {
+          return commentApi.getOne({
+            comment_id: res.comment_id,
+            post_id: this.props.post._id,
+          }).then((res) => {
+            resolve(res.comments[0]);
+          });
+        }).catch(reject);
+
+      });
+    }
   }
 
   /**
@@ -335,7 +425,6 @@ class CommentsBoard extends React.Component<IProps, IState> {
       removed_by: '',
       removed_by_id: '',
       sender: this.props.user,
-      sender_id: '',
       timestamp: Date.now(),
       isSending: true,
     };
@@ -418,10 +507,10 @@ class CommentsBoard extends React.Component<IProps, IState> {
                 <span>{TimeUntiles.dynamic(comment.timestamp)}</span>
               </div>
               {comment.isFailed && <a onClick={this.retrySendComment.bind(this, comment)}>Failed ! Retry</a>}
-              {comment.attachment_id === '' &&
+              {!comment.attachment_id &&
               <p className={RTLDetector.getInstance().direction(comment.text) ? style.Rtl : ''}>{comment.text}</p>
               }
-              {comment.attachment_id !== '' &&
+              {comment.attachment_id &&
               <VoiceComment comment={comment} post={this.props.post}/>
               }
             </div>

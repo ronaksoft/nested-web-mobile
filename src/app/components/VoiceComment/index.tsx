@@ -10,12 +10,12 @@
  */
 import * as React from 'react';
 import {IComment} from 'api/interfaces';
-import {IcoN} from '../../../../../components/Icons';
+import {IcoN} from '../Icons';
 import SeekBar from '../SeekBar';
-import MiniPlayer from '../../../../../../app/services/miniplayer';
-import AttachmentApi from '../../../../../api/attachment';
-import FileUtil from '../../../../../services/utils/file';
-import IPost from '../../../../../api/post/interfaces/IPost';
+import MiniPlayer from 'services/miniplayer';
+import AttachmentApi from 'api/attachment';
+import FileUtil from 'services/utils/file';
+import IPost from 'api/post/interfaces/IPost';
 import * as _ from 'lodash';
 
 const style = require('./voice-comment.css');

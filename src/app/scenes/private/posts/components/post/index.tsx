@@ -20,7 +20,7 @@ import PostApi from '../../../../../api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost} from '../../../../../redux/app/actions/index';
 import {postAdd, postUpdate} from '../../../../../redux/posts/actions/index';
-import CommentsBoard from '../comment/index';
+import CommentsBoard from 'components/comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
@@ -791,8 +791,7 @@ class Post extends React.Component<IProps, IState> {
               </div>
               {/* renders the comments and comment input in post view */}
               {!this.props.post && (
-                <CommentsBoard no_comment={this.state.post.no_comment}
-                               post_id={this.state.post._id} post={this.state.post}
+                <CommentsBoard no_comment={this.state.post.no_comment} post={this.state.post}
                                user={this.props.user} newComment={this.newCommentReceived}/>
               )}
               {postView && <div className={privateStyle.bottomSpace}/>}

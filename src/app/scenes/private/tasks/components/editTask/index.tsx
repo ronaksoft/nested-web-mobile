@@ -11,7 +11,7 @@
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
 import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon,
-  UserAvatar, FullName, Suggestion, TaskAttachment} from 'components';
+  UserAvatar, FullName, Suggestion, TaskAttachment, CommentsBoard} from 'components';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
@@ -138,6 +138,7 @@ class EditTask extends React.Component<IProps, IState> {
   private editMode: boolean = false;
   private createMode: boolean = true;
   private viewMode: boolean = false;
+  private commentAccess: boolean = false;
   private removeTodoProcess: boolean = false;
   private activeRows: any = {
     date: false,
@@ -240,6 +241,9 @@ class EditTask extends React.Component<IProps, IState> {
       this.editMode = true;
       this.createMode = false;
       this.viewMode = false;
+    }
+    if (task.access.indexOf(C_TASK_ACCESS.COMMENT) > -1) {
+      this.commentAccess = true;
     }
     this.originalTask = cloneDeep(task);
     if (task.attachments && task.attachments.length > 0) {
@@ -823,7 +827,6 @@ class EditTask extends React.Component<IProps, IState> {
    */
   public render() {
     const {task} = this.state;
-    const taskView = !this.props.task;
     if (!task) {
       return <Loading active={true} position="absolute"/>;
     }
@@ -842,34 +845,31 @@ class EditTask extends React.Component<IProps, IState> {
     const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
     return (
       <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
-        {/* specefic navbar for post view */}
-        {taskView && (
-          <div className={styleNavbar.navbar}>
-            <a onClick={this.leave}>
-              <IcoN size={24} name="xcross24"/>
+        <div className={styleNavbar.navbar}>
+          <a onClick={this.leave}>
+            <IcoN size={24} name="xcross24"/>
+          </a>
+          <div className={styleNavbar.filler}/>
+          {this.editMode && this.startedEditing && (
+            <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+              styleNavbar.butnPrimary].join(' ')}
+              onClick={this.discardTask}>Discard</div>
+          )}
+          {this.editMode && this.startedEditing && (
+            <button className={[buttonsStyle.butn, buttonsStyle.butnPrimary, styleNavbar.butnPrimary].join(' ')}
+              onClick={this.saveTask} disabled={this.pristineForm}>Save</button>
+          )}
+          {this.editMode && !this.startedEditing && (
+            <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+              styleNavbar.butnPrimary].join(' ')}
+              onClick={this.startEdit}>Edit</div>
+          )}
+          {!this.createMode && (
+            <a onClick={this.toggleMoreOpts}>
+              <IcoN size={24} name="more24"/>
             </a>
-            <div className={styleNavbar.filler}/>
-            {this.editMode && this.startedEditing && (
-              <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
-                styleNavbar.butnPrimary].join(' ')}
-                onClick={this.discardTask}>Discard</div>
-            )}
-            {this.editMode && this.startedEditing && (
-              <button className={[buttonsStyle.butn, buttonsStyle.butnPrimary, styleNavbar.butnPrimary].join(' ')}
-                onClick={this.saveTask} disabled={this.pristineForm}>Save</button>
-            )}
-            {this.editMode && !this.startedEditing && (
-              <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
-                styleNavbar.butnPrimary].join(' ')}
-                onClick={this.startEdit}>Edit</div>
-            )}
-            {!this.createMode && (
-              <a onClick={this.toggleMoreOpts}>
-                <IcoN size={24} name="more24"/>
-              </a>
-            )}
-          </div>
-        )}
+          )}
+        </div>
         {this.state.showMoreOptions && (
           <div className={[style.postOptions, style.opened].join(' ')}>
             <ul>
@@ -1212,12 +1212,12 @@ class EditTask extends React.Component<IProps, IState> {
                   )}
                 </div>
               )}
-              {/* {!this.props.post && (
-                <CommentsBoard no_comment={this.state.post.no_comment}
-                post_id={this.state.post._id} post={this.state.post}
-                user={this.props.user}/>
-              )} */}
-            {taskView && <div className={privateStyle.bottomSpace}/>}
+              {this.commentAccess && !this.startedEditing && (
+                <CommentsBoard no_comment={false}
+                  task={this.state.task}
+                  user={this.props.user}/>
+                )}
+              <div className={privateStyle.bottomSpace}/>
             </div>
           </div>
         </Scrollable>

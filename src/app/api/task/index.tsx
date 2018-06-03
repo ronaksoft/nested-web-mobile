@@ -269,9 +269,13 @@ export default class TaskApi {
   }
 
   public getActivities(data: IGetActivitiesRequest) {
-    return this.api.request({
-      cmd: 'task/get_activities',
-      data,
+    return new Promise((resolve, reject) => {
+      this.api.request({
+        cmd: 'task/get_activities',
+        data,
+      }).then((res) => {
+        resolve(res.activities);
+      }).catch(reject);
     });
   }
 

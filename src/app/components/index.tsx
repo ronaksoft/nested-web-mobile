@@ -20,6 +20,7 @@ import FullName from './user/FullName';
 import PlaceName from './PlaceName';
 import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
+import CommentsBoard from './comment/index';
 
 export {UserAvatar, FullName, PlaceName, Scrollable,
-    PlaceItem, RTLDetector, InfiniteScroll};
+    PlaceItem, RTLDetector, InfiniteScroll, CommentsBoard};
