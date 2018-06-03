@@ -359,7 +359,7 @@ class EditTask extends React.Component<IProps, IState> {
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
-    this.handleAttachmentsChange(this.attachments.get().map((i) => i.model), true);
+    this.updateAttachments(this.attachments.get().map((i) => i.model));
     Promise.all(this.updatePromises).then((values) => {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
@@ -470,7 +470,6 @@ class EditTask extends React.Component<IProps, IState> {
     const oldData = this.originalTask;
     const newItems = differenceBy(attachments, oldData.attachments, '_id');
     const removedItems = differenceBy(oldData.attachments, attachments, '_id');
-
     if (newItems.length > 0) {
       newItems.forEach((item) => {
         this.updatePromises.push(this.TaskApi.attach(this.state.task._id, item._id));
@@ -811,8 +810,8 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    * @param {IAttachment[]} items
    */
-  private handleAttachmentsChange = (items, force = false) => {
-    if (!this.startedEditing || force) {
+  private handleAttachmentsChange = (items) => {
+    if (!this.startedEditing) {
       const task = this.state.task;
       this.updateAttachments(items);
       task.attachments = items;
@@ -820,6 +819,9 @@ class EditTask extends React.Component<IProps, IState> {
         task,
       });
       this.originalTask.attachments = items;
+    } else {
+      this.pristineForm = false;
+      this.forceUpdate();
     }
   }
 
