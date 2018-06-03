@@ -25,6 +25,7 @@ import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
 import {some, differenceBy, cloneDeep} from 'lodash';
 import TimeUtiles from 'services/utils/time';
+import {setCurrentAttachment, setCurrentAttachmentList} from 'redux/attachment/actions/index';
 
 const style = require('../../task.css');
 const buttonsStyle = require('../../../../../components/buttons/style.css');
@@ -80,6 +81,8 @@ interface IProps {
    * @memberof IProps
    */
   setCurrentTask: (post: ITask) => {};
+  setCurrentAttachment: (attachment) => void;
+  setCurrentAttachmentList: (attachments) => void;
   /**
    * @prop user
    * @desc Current loggedin user
@@ -356,7 +359,7 @@ class EditTask extends React.Component<IProps, IState> {
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
-    this.handleAttachmentsChange(this.attachments.get.map((i) => i.model), true);
+    this.handleAttachmentsChange(this.attachments.get().map((i) => i.model), true);
     Promise.all(this.updatePromises).then((values) => {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
@@ -828,6 +831,7 @@ class EditTask extends React.Component<IProps, IState> {
    * @param {AttachmentUploader} value
    */
   private referenceAttachments = (value: any) => {
+    console.log(value);
     this.attachments = value;
   }
 
@@ -873,6 +877,12 @@ class EditTask extends React.Component<IProps, IState> {
       task.status = newStatus;
       this.setState({task});
     });
+  }
+
+  private openAttachment = (attachment) => {
+    this.props.setCurrentTask(this.props.task);
+    this.props.setCurrentAttachment(attachment);
+    this.props.setCurrentAttachmentList(this.attachments.get().map((i) => i.model));
   }
   /**
    * @func render
@@ -1223,6 +1233,7 @@ class EditTask extends React.Component<IProps, IState> {
                       mode="task"
                       editable={this.startedEditing}
                       onItemsChanged={this.handleAttachmentsChange}
+                      openAttachment={this.openAttachment}
                       ref={this.referenceAttachments}
                       items={task.attachments || []}
                     />
@@ -1397,6 +1408,12 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   setTasks: (tasks: ITask[]) => (dispatch(setTasks(tasks))),
   setCurrentTask: (task: ITask) => (dispatch(setCurrentTask(task))),
+  setCurrentAttachment: (attach) => {
+    dispatch(setCurrentAttachment(attach));
+  },
+  setCurrentAttachmentList: (attachs) => {
+    dispatch(setCurrentAttachmentList(attachs));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditTask);
