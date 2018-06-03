@@ -838,6 +838,55 @@ class EditTask extends React.Component<IProps, IState> {
       selectedItemsForAssigne = task.candidates;
     }
 
+    let progress = -1;
+    if (task.todos && task.todos.length > 0) {
+      const total = task.todos.length;
+      let done = 0;
+      task.todos.forEach((todo) => {
+        if (todo.done) {
+          done++;
+        }
+      });
+
+      progress = Math.ceil((done / total) * 100);
+    }
+    let taskStatus: string = '';
+    switch (task.status) {
+      default:
+      case C_TASK_STATUS.NO_ASSIGNED:
+        taskStatus = statuses.NOT_ASSIGNED;
+        break;
+      case C_TASK_STATUS.ASSIGNED:
+        if (progress < 0) {
+          taskStatus =  statuses.ASSIGNED_NO_CHECKLIST;
+          break;
+        } else if (progress === 0) {
+          taskStatus =  statuses.ASSIGNED_CHECKLIST;
+          break;
+        } else {
+          taskStatus =  statuses.ASSIGNED_PROGRESS;
+          break;
+        }
+      case C_TASK_STATUS.CANCELED:
+        taskStatus =  statuses.CANCELED;
+        break;
+      case C_TASK_STATUS.REJECTED:
+        taskStatus =  statuses.REJECTED;
+        break;
+      case C_TASK_STATUS.COMPLETED:
+        taskStatus =  statuses.COMPLETED;
+        break;
+      case C_TASK_STATUS.HOLD:
+        taskStatus =  statuses.HOLD;
+        break;
+      case C_TASK_STATUS.OVERDUE:
+        taskStatus =  statuses.OVERDUE;
+        break;
+      case C_TASK_STATUS.FAILED:
+        taskStatus =  statuses.FAILED;
+        break;
+    }
+
     const isHold = task.status === C_TASK_STATUS.HOLD;
     const isCompleted = task.status === C_TASK_STATUS.COMPLETED;
     const isFailed = task.status === C_TASK_STATUS.FAILED;
@@ -916,7 +965,7 @@ class EditTask extends React.Component<IProps, IState> {
             <div className={style.postScrollContent}>
               <div className={style.taskRow}>
                 <div className={style.taskRowIcon}>
-                  <TaskIcon status={statuses.ASSIGNED_CHECKLIST} progress={task.progress}/>
+                  <TaskIcon status={taskStatus} progress={progress}/>
                 </div>
                 {this.editMode && (
                   <div className={style.taskRowItem}>

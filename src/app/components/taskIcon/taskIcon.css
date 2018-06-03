@@ -5,10 +5,18 @@
   width: 32px;
   height: 32px;
 }
+.taskProgressIcon .progress {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .taskProgressIcon .progress svg {
   position: absolute;
-  top: 19px;
-  right: 19px;
+  top: 7px;
+  right: 8px;
   height: 18px;
   width: 18px;
   transform: rotate(-90deg);
