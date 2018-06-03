@@ -133,7 +133,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @type {AttachmentUploader}
    * @memberof Compose
    */
-  private attachments: AttachmentUploader;
+  private attachments: any;
 
   /**
    * @prop targets
@@ -417,7 +417,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
    * @memberof Compose
    * @param {AttachmentUploader} value
    */
-  private referenceAttachments = (value: AttachmentUploader) => {
+  private referenceAttachments = (value: any) => {
     this.attachments = value;
   }
 

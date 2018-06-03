@@ -178,7 +178,7 @@ class EditTask extends React.Component<IProps, IState> {
    * @type {AttachmentUploader}
    * @memberof Compose
    */
-  private attachments: AttachmentUploader;
+  private attachments: any;
 
   /**
    * Creates an instance of Post.
@@ -356,6 +356,7 @@ class EditTask extends React.Component<IProps, IState> {
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
+    this.handleAttachmentsChange(this.attachments.get.map((i) => i.model), true);
     Promise.all(this.updatePromises).then((values) => {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
@@ -807,14 +808,16 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    * @param {IAttachment[]} items
    */
-  private handleAttachmentsChange = (items) => {
-    const task = this.state.task;
-    this.updateAttachments(items);
-    task.attachments = items;
-    this.setState({
-      task,
-    });
-    this.originalTask.attachments = items;
+  private handleAttachmentsChange = (items, force = false) => {
+    if (!this.startedEditing || force) {
+      const task = this.state.task;
+      this.updateAttachments(items);
+      task.attachments = items;
+      this.setState({
+        task,
+      });
+      this.originalTask.attachments = items;
+    }
   }
 
   /**
@@ -824,7 +827,7 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    * @param {AttachmentUploader} value
    */
-  private referenceAttachments = (value: AttachmentUploader) => {
+  private referenceAttachments = (value: any) => {
     this.attachments = value;
   }
 
@@ -1216,15 +1219,13 @@ class EditTask extends React.Component<IProps, IState> {
                         </div>
                       )}
                     </h4>
-                    {task.attachments && (
-                      <AttachmentUploader
-                        mode="task"
-                        editable={true}
-                        onItemsChanged={this.handleAttachmentsChange}
-                        ref={this.referenceAttachments}
-                        items={task.attachments}
-                      />
-                    )}
+                    <AttachmentUploader
+                      mode="task"
+                      editable={this.startedEditing}
+                      onItemsChanged={this.handleAttachmentsChange}
+                      ref={this.referenceAttachments}
+                      items={task.attachments || []}
+                    />
                   </div>
                 </div>
               )}

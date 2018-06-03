@@ -10,6 +10,7 @@
  */
 
 import * as React from 'react';
+import {connect} from 'react-redux';
 import Item from './Item';
 import {Progress} from 'antd';
 import {IcoN} from 'components';
@@ -26,12 +27,13 @@ import Picture from 'services/utils/picture';
 import IProgress from './IProgress';
 import FileUtil from 'services/utils/file';
 const style = require('./attachmentList.css');
-
+import {setCurrentAttachment, setCurrentAttachmentList,
+  setCurrentPost} from '../../redux/attachment/actions/index';
 /**
  * @interface IProps
  * @desc The component properties contract
  */
-interface IProps {
+interface IOwnProps {
   /**
    * @prop file
    * @desc A javascript file. The component starts uploading, On receiving a new file.
@@ -56,7 +58,34 @@ interface IProps {
   mode: string;
   editable: boolean;
 }
-
+interface IProps {
+  /**
+   * @prop file
+   * @desc A javascript file. The component starts uploading, On receiving a new file.
+   * @type {File}
+   * @memberof IProps
+   */
+  file: File;
+  /**
+   * @prop items
+   * @desc The list items
+   * @type {IAttachment[]}
+   * @memberof IProps
+   */
+  items: IAttachment[];
+  /**
+   * @prop onItemsChanged
+   * @desc An event that will be triggered on removing/adding an item.
+   * The new list of items will be given as `items` in args
+   * @memberof IProps
+   */
+  onItemsChanged: (items: IAttachment[]) => void;
+  mode: string;
+  editable: boolean;
+  setCurrentPost: (postId: string) => void;
+  setCurrentAttachment: (attachment: IAttachment) => void;
+  setCurrentAttachmentList: (attachments: IAttachment[]) => void;
+}
 /**
  * @desc The component state contract
  * @interface IState
@@ -411,6 +440,9 @@ class AttachmentUploader extends React.Component<IProps, IState> {
    * @memberof AttachmentUploader
    */
   public handleRemove(item: IAttachmentItem) {
+    if (!this.state.editable) {
+      return;
+    }
     const index = this.state.items.findIndex((i) => i.id === item.id);
     if (index > -1) {
       const uploadIndex = this.uploads.findIndex((u) => u.id === item.id);
@@ -450,6 +482,14 @@ class AttachmentUploader extends React.Component<IProps, IState> {
     return this.state.items;
   }
 
+  public openAttachment = (attachment) => {
+    console.log(attachment, this.props.items, this.state.items.map((item) => item.model));
+    if (!this.state.editable) {
+      this.props.setCurrentAttachment(attachment.model);
+      this.props.setCurrentAttachmentList(this.state.items.map((item) => item.model));
+    }
+  }
+
   /**
    * @desc Checks if has an uploading file in the list or not. The function is defined
    * to be accessible from the component outside
@@ -466,6 +506,7 @@ class AttachmentUploader extends React.Component<IProps, IState> {
               id={item.id}
               item={item}
               key={item.id}
+              editable={this.state.editable}
               onRemove={this.handleRemove}
               picture={upload ? upload.thumb : null}
         />
@@ -474,11 +515,12 @@ class AttachmentUploader extends React.Component<IProps, IState> {
   private renderTaskItem = (item: IAttachmentItem) => {
     const upload = this.uploads.find((u) => u.id === item.id);
     return (
-        <li key={item.id}>
+        <li key={item.id} onClick={this.openAttachment.bind(this, item)}>
           <Item
               id={item.id}
               mode="task"
               item={item}
+              editable={this.state.editable}
               onRemove={this.handleRemove}
               picture={upload ? upload.thumb : null}
           />
@@ -572,4 +614,35 @@ class AttachmentUploader extends React.Component<IProps, IState> {
   }
 }
 
-export default AttachmentUploader;
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (_, ownProps: IOwnProps) => ({
+  editable: ownProps.editable,
+  file: ownProps.file,
+  items: ownProps.items,
+  mode: ownProps.mode,
+  onItemsChanged: ownProps.onItemsChanged,
+});
+
+/**
+ * reducer actions functions mapper
+ * @param dispatch
+ * @returns reducer actions object
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentAttachment: (attach: IAttachment) => {
+      dispatch(setCurrentAttachment(attach));
+    },
+    setCurrentAttachmentList: (attachs: IAttachment[]) => {
+      dispatch(setCurrentAttachmentList(attachs));
+    },
+    setCurrentPost: (postId: string) => {
+      dispatch(setCurrentPost(postId));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AttachmentUploader);

@@ -68,6 +68,7 @@ interface IProps {
    */
   id: number;
   mode?: string;
+  editable: boolean;
 }
 
 interface IState {
@@ -78,6 +79,7 @@ interface IState {
    * @memberof IState
    */
   progress: number;
+  editable: boolean;
 }
 
 /**
@@ -98,6 +100,7 @@ class AttachmentItem extends React.Component<IProps, IState> {
     // Sets default value for the component state
     this.state = {
       progress: 0,
+      editable: props.editable,
     };
   }
 
@@ -114,6 +117,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
         progress: progressValue,
       });
     }
+    this.setState({
+      editable: nextProps.editable,
+    });
   }
 
   /**
@@ -252,12 +258,12 @@ class AttachmentItem extends React.Component<IProps, IState> {
               </span>
             )}
           </div>
-          {this.props.item.mode === Mode.UPLOAD && (
+          {this.props.item.mode === Mode.UPLOAD && this.state.editable && (
             <div className={style.cancelUp} onClick={this.handleRemoveClick}>
               <IcoN size={24} name="xcross24"/>
             </div>
           )}
-          {this.props.item.mode !== Mode.UPLOAD && (
+          {this.props.item.mode !== Mode.UPLOAD && this.state.editable && (
             <div className={style.removeForce} onClick={this.handleRemoveClick}>
               <IcoN size={24} name="bin24"/>
             </div>
