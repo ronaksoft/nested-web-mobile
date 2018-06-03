@@ -1,10 +1,11 @@
 
 import * as React from 'react';
 
+import {connect} from 'react-redux';
 const style = require('../taskViewItem.css');
 import {TaskIcon, IcoN, FullName} from 'components';
-import C_TASK_RESPONSE from '../../../../../../api/task/consts/taskResponseConst';
-
+import {C_TASK_RESPONSE} from '../../../../../../api/task/consts/taskResponseConst';
+import {IUser} from 'api/interfaces';
 import {message} from 'antd';
 import TaskApi from '../../../../../../api/task/index';
 import TimeUntiles from '../../../../../../services/utils/time';
@@ -12,7 +13,7 @@ import ITask from '../../../../../../api/task/interfaces/ITask';
 import statuses from '../../../../../../api/consts/CTaskProgressTask';
 import CTaskStatus from '../../../../../../api/consts/CTaskStatus';
 
-interface IProps {
+interface IOwnProps {
   task: ITask;
   onClick?: () => void;
   onAccept?: () => void;
@@ -22,12 +23,23 @@ interface IProps {
   withDetails?: boolean;
 }
 
+interface IProps {
+  user: IUser;
+  task: ITask;
+  onClick: () => void;
+  onAccept: () => void;
+  onDecline: () => void;
+  from: boolean;
+  to: boolean;
+  withDetails: boolean;
+}
+
 interface IState {
   task: ITask;
   onClick: () => void;
 }
 
-export default class TaskUpcomingView extends React.Component<IProps, IState> {
+class TaskUpcomingView extends React.Component<IProps, IState> {
   private taskApi: TaskApi;
 
   constructor(props: any) {
@@ -46,10 +58,11 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
     });
   }
 
-  public onAccept() {
-    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.accept)
-    .then((response) => {
-      console.log(response);
+  public onAccept = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.ACCEPT)
+    .then(() => {
       // todo update task and redux
       if (typeof this.props.onAccept === 'function') {
         this.props.onAccept();
@@ -60,11 +73,11 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
     });
   }
 
-  public onReject() {
-    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.reject)
-    .then((response) => {
-      console.log(response);
-      // todo update task and redux
+  public onReject = () => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.REJECT)
+    .then(() => {
       if (typeof this.props.onDecline === 'function') {
         this.props.onDecline();
       }
@@ -76,8 +89,8 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
 
   public render() {
     const {task} = this.state;
-    let progress = 0;
-    if (task.todos) {
+    let progress = -1;
+    if (task.todos && task.todos.length > 0) {
       const total = task.todos.length;
       let done = 0;
       task.todos.forEach((todo) => {
@@ -86,9 +99,7 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
         }
       });
 
-      if (total > 0) {
-        progress = Math.ceil((done / total) * 100);
-      }
+      progress = Math.ceil((done / total) * 100);
     }
     let taskStatus: string = '';
     switch (task.status) {
@@ -194,7 +205,7 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
             )}
           </div>
         </div>
-          {isCandidate && (
+          {isCandidate && task.candidates.find((user) => user._id === this.props.user._id) && (
             <div className={style.taskFooter + ' ' + style.candidateButtons}>
               <div className={style.declineButton} onClick={this.onReject}>
                 I can’t
@@ -208,3 +219,20 @@ export default class TaskUpcomingView extends React.Component<IProps, IState> {
     );
   }
 }
+
+/**
+ * redux store mapper
+ * @param store
+ */
+const mapStateToProps = (store, ownProps: IOwnProps) => ({
+  user: store.app.user,
+  task: ownProps.task,
+  onClick: ownProps.onClick,
+  onAccept: ownProps.onAccept,
+  onDecline: ownProps.onDecline,
+  from: ownProps.from,
+  to: ownProps.to,
+  withDetails: ownProps.withDetails,
+});
+
+export default connect(mapStateToProps, {})(TaskUpcomingView);

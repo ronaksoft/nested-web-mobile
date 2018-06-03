@@ -269,7 +269,15 @@ class EditTask extends React.Component<IProps, IState> {
   public enableRow(row: string) {
     this.activeRows[row] = true;
     this.startedEditing = true;
-    this.forceUpdate();
+    const task = this.state.task;
+    if (!task.todos) {
+      task.todos = [];
+      this.setState({
+        task,
+      });
+    } else {
+      this.forceUpdate();
+    }
   }
 
   public disableRow(row: string) {
@@ -331,7 +339,7 @@ class EditTask extends React.Component<IProps, IState> {
     }
     this.closeSuggestions();
     this.updateTaskMain();
-    this.updateCandidates(this.state.task.candidates || []);
+    this.updateCandidates(this.state.task.candidates);
     this.updateTodos(this.state.task.todos);
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
@@ -340,7 +348,7 @@ class EditTask extends React.Component<IProps, IState> {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
       this.updatePromises = [];
-    });
+    }).catch(console.log);
     this.activeRowsClone = cloneDeep(this.activeRows);
   }
 
@@ -497,12 +505,14 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private updateCandidates = (candidates) => {
-    this.updatePromises.push(
-      this.TaskApi.updateAssignee(
-        this.state.task._id,
-        candidates.map((user) => user._id).join(','),
-      ),
-    );
+    if (candidates) {
+      this.updatePromises.push(
+        this.TaskApi.updateAssignee(
+          this.state.task._id,
+          candidates.map((user) => user._id).join(','),
+        ),
+      );
+    }
     // const oldData = this.originalTask;
     // const newItems = differenceBy(candidates, oldData.candidates, '_id');
     // const removedItems = differenceBy(oldData.candidates, candidates, '_id');
@@ -822,14 +832,7 @@ class EditTask extends React.Component<IProps, IState> {
     if (task.assignee) {
       selectedItemsForAssigne = [task.assignee];
     } else if (task.candidates) {
-      selectedItemsForAssigne = task.candidates.map((i) => {
-        const chipsItem: IChipsItem = {
-          _id: i._id,
-          name: i.name,
-          picture: i.picture,
-        };
-        return chipsItem;
-      });
+      selectedItemsForAssigne = task.candidates;
     }
 
     const isHold = task.status === C_TASK_STATUS.HOLD;
@@ -972,7 +975,7 @@ class EditTask extends React.Component<IProps, IState> {
                   </div>
                   <div className={[style.taskRowItem, style.vertical].join(' ')}>
                     <h4>
-                      <span>Set due time...</span>
+                      <span>Due time...</span>
                       {this.startedEditing && (
                       <div onClick={this.disableRow.bind(this, 'date')}><IcoN name="binRed16" size={16}/></div>
                       )}
@@ -988,7 +991,8 @@ class EditTask extends React.Component<IProps, IState> {
                           <time dateTime={TimeUtiles.Date(task.due_date)}>{TimeUtiles.DateParse(task.due_date)}</time>
                         )}
                       </li>
-                      <li>
+                      {task.due_data_has_clock || this.startedEditing && (
+                        <li>
                         {this.startedEditing && (
                           <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00"
                             onChange={this.timeOnChange}
@@ -1001,6 +1005,7 @@ class EditTask extends React.Component<IProps, IState> {
                           <time>-- : --</time>
                         )}
                       </li>
+                      )}
                     </ul>
                   </div>
                 </div>

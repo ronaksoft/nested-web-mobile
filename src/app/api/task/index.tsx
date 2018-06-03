@@ -4,7 +4,7 @@ import ITaskUpdateRequest from './interfaces/ITaskUpdateRequest';
 import IGetTaskCustomFilterRequest from './interfaces/IGetTaskCustomFilterRequest';
 import ITaskUpdateTodoRequest from './interfaces/ITaskUpdateTodoRequest';
 import ITaskGetByFilterRequest from './interfaces/ITaskGetByFilterRequest';
-import C_TASK_RESPONSE from './consts/taskResponseConst';
+// import {E_TASK_RESPONSE} from './consts/taskResponseConst';
 import C_TASK_STATUS from './consts/taskStatusConst';
 // import C_TASK_STATE from './consts/taskStateConst';
 import {IGetActivitiesRequest} from './interfaces/ITaskActivities';
@@ -58,7 +58,7 @@ export default class TaskApi {
     });
   }
 
-  public respond(taskId: string, response: C_TASK_RESPONSE, reason?: string) {
+  public respond(taskId: string, response: string, reason?: string) {
     return this.api.request({
       cmd: 'task/respond',
       data: {

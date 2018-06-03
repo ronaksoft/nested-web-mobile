@@ -2,8 +2,8 @@
 import * as React from 'react';
 
 const style = require('../taskViewItem.css');
-import {TaskIcon} from 'components';
-import C_TASK_RESPONSE from '../../../../../../api/task/consts/taskResponseConst';
+import {TaskIcon, FullName} from 'components';
+import {C_TASK_RESPONSE} from '../../../../../../api/task/consts/taskResponseConst';
 
 import {message} from 'antd';
 import TaskApi from '../../../../../../api/task/index';
@@ -43,7 +43,7 @@ export default class TaskCandidateView extends React.Component<IProps, IState> {
   }
 
   public onAccept() {
-    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.accept)
+    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.ACCEPT)
     .then((response) => {
       console.log(response);
       // todo update task and redux
@@ -57,7 +57,7 @@ export default class TaskCandidateView extends React.Component<IProps, IState> {
   }
 
   public onReject() {
-    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.reject)
+    this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.REJECT)
     .then((response) => {
       console.log(response);
       // todo update task and redux
@@ -123,6 +123,7 @@ export default class TaskCandidateView extends React.Component<IProps, IState> {
         taskStatus =  statuses.FAILED;
         break;
     }
+    console.log(task);
     return (
       <div className={style.candidateItem + ' ' + style.taskItem}>
           <div className={style.taskItemInner}>
@@ -133,7 +134,7 @@ export default class TaskCandidateView extends React.Component<IProps, IState> {
                 <span>{TimeUntiles.dynamic(task.due_date)}</span>
               </div>
               <div className={style.taskDetail}>
-                from me to me
+                from <FullName user_id={task.assignor}/> to <FullName user_id={task.assignee}/>
               </div>
             </div>
           </div>

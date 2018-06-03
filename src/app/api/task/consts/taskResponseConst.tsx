@@ -1,7 +1,10 @@
-enum C_TASK_RESPONSE {
+export const C_TASK_RESPONSE = {
+    ACCEPT: 'accept',
+    REJECT: 'reject',
+    RESIGN: 'resign',
+};
+export enum E_TASK_RESPONSE {
     accept,
     reject,
     resign,
 };
-
-export default C_TASK_RESPONSE;
