@@ -1054,7 +1054,6 @@ class EditTask extends React.Component<IProps, IState> {
    */
   public render() {
     const task: ITask = this.state.task;
-    console.log(task, this.createMode, !task._id && !this.createMode);
     if (!task._id && !this.createMode) {
       return <Loading active={true} position="absolute"/>;
     }
