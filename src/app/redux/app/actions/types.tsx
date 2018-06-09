@@ -45,6 +45,8 @@ export const APP_LIMITS_SET: string = 'APP/LIMITS_SET';
 /** DRAFT ACTION */
 export const APP_DRAFT_SET: string = 'APP/DRAFT_SET';
 export const APP_DRAFT_UNSET: string = 'APP/DRAFT_UNSET';
+export const APP_TASK_DRAFT_SET: string = 'APP/TASK_DRAFT_SET';
+export const APP_TASK_DRAFT_UNSET: string = 'APP/TASK_DRAFT_UNSET';
 
 /** POSTS ACTION */
 export const APP_POSTS_SET: string = 'APP/POSTS_SET';

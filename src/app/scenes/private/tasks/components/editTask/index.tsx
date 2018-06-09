@@ -13,9 +13,10 @@ import ITask from '../../../../../api/task/interfaces/ITask';
 import ITaskRequest from '../../../../../api/task/interfaces/ITaskRequest';
 import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon, AttachmentUploader,
   UserAvatar, FullName, Suggestion, CommentsBoard} from 'components';
+import {Modal} from 'antd';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
-import {setCurrentTask, setTasks} from '../../../../../redux/app/actions/index';
+import {setCurrentTask, setTasks, setTaskDraft, unsetTaskDraft} from '../../../../../redux/app/actions/index';
 import {hashHistory} from 'react-router';
 // import {hashHistory, Link} from 'react-router';
 import C_TASK_STATE from 'api/task/consts/taskStateConst';
@@ -28,6 +29,7 @@ import {some, differenceBy, cloneDeep} from 'lodash';
 import TimeUtiles from 'services/utils/time';
 import {setCurrentAttachment, setCurrentAttachmentList} from 'redux/attachment/actions/index';
 
+const confirm = Modal.confirm;
 const style = require('../../task.css');
 const buttonsStyle = require('../../../../../components/buttons/style.css');
 const AttachmentHandlerStyle = require('../../../../../components/AttachmentHandler/style.css');
@@ -70,6 +72,7 @@ interface IProps {
    * @memberof IProps
    */
   routeParams: any;
+  draft: any;
   /**
    * @prop setPosts
    * @desc Updates posts in store
@@ -84,6 +87,8 @@ interface IProps {
   setCurrentTask: (post: ITask) => {};
   setCurrentAttachment: (attachment) => void;
   setCurrentAttachmentList: (attachments) => void;
+  setDraft: (model) => void;
+  unsetDraft: () => void;
   /**
    * @prop user
    * @desc Current loggedin user
@@ -193,7 +198,7 @@ class EditTask extends React.Component<IProps, IState> {
     super(props);
     this.inProgress = false;
     this.state = {
-      task: this.props.task || {
+      task: (this.props.routeParams.taskId ? this.props.task : cloneDeep(this.props.draft)) || {
         _id: null,
         access: [],
         assignor: this.props.user,
@@ -213,6 +218,11 @@ class EditTask extends React.Component<IProps, IState> {
     if (this.props.routeParams.taskId) {
       this.createMode = false;
       this.viewMode = true;
+    } else {
+      this.createMode = true;
+      this.viewMode = false;
+      this.editMode = false;
+      this.startedEditing = true;
     }
   }
 
@@ -241,15 +251,11 @@ class EditTask extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     this.TaskApi = new TaskApi();
-    if (this.props.task) {
+    if (this.state.task && this.createMode) {
 
-      this.subjectRtl = RTLDetector.getInstance().direction(this.props.task.title);
-      this.descriptionRtl = RTLDetector.getInstance().direction(this.props.task.description);
-
-      this.initTask(this.props.task);
-      this.setState({
-        task: this.props.task ? this.props.task : null,
-      });
+      this.subjectRtl = RTLDetector.getInstance().direction(this.state.task.title);
+      this.descriptionRtl = RTLDetector.getInstance().direction(this.state.task.description);
+      this.initTask(this.state.task);
     } else if (this.props.routeParams.taskId)  {
       this.TaskApi.getMany(this.props.routeParams.taskId)
         .then((response) => {
@@ -777,8 +783,32 @@ class EditTask extends React.Component<IProps, IState> {
    * @private
    * @memberof EditTask
    */
-  private leave() {
-    hashHistory.goBack();
+  private leave = () => {
+    if (this.attachments && this.attachments.isUploading()) {
+      return confirm({
+        title: 'Upload in progress',
+        content: 'An upload is in progress. Do you want to abort the process and leave here?',
+        cancelText: 'Yes, Let me go',
+        okText: 'No',
+        onCancel: () => {
+          this.attachments.abortAll();
+          hashHistory.goBack();
+        },
+      });
+    }
+
+    if (!this.pristineForm) {
+      confirm({
+        title: 'Save a draft',
+        content: `Do you want to save a draft before leaving here?`,
+        okText: 'Yes',
+        cancelText: 'No, Let me go',
+        onCancel: this.discard,
+        onOk: this.draft,
+      });
+    } else {
+      hashHistory.goBack();
+    }
   }
 
   private toggleMoreOpts = () => {
@@ -791,6 +821,28 @@ class EditTask extends React.Component<IProps, IState> {
     this.scrollRef = value;
   }
 
+  /**
+   * @func discard
+   * @desc Removes the stored copy of state
+   * @private
+   */
+  private discard = () => {
+    this.props.unsetDraft();
+    hashHistory.goBack();
+  }
+  /**
+   * @func draft
+   * @desc Save the current state of the component
+   * @private
+   * @memberof Compose
+   */
+  private draft = () => {
+    if (this.state.newTodo.length > 0) {
+      this.newTodo();
+    }
+    this.props.setDraft(this.state.task);
+    hashHistory.goBack();
+  }
   /**
    * register a handler for click on black overlay
    * @private
@@ -947,8 +999,15 @@ class EditTask extends React.Component<IProps, IState> {
     this.props.setCurrentAttachmentList(this.attachments.get().map((i) => i.model));
   }
 
-  private createTask = () => {
+  private createTask = (event) => {
     const {task} = this.state;
+    const target = event.target;
+    if (!task.title || task.candidates.length === 0) {
+      return;
+    }
+    target.disabled = true;
+    const oldLabel = target.innerText;
+    target.innerText = 'wait...';
     const model: ITaskRequest = {
       title: task.title,
     };
@@ -979,7 +1038,12 @@ class EditTask extends React.Component<IProps, IState> {
       model.due_date = task.due_date;
       model.due_data_has_clock = task.due_data_has_clock || false;
     }
-    this.TaskApi.create(model);
+    this.TaskApi.create(model).then((response) => {
+      return hashHistory.push(`/task/edit/${response.task_id}/`);
+    }).catch(() => {
+      target.innerText = oldLabel;
+      target.disabled = false;
+    });
   }
   /**
    * @func render
@@ -1000,12 +1064,12 @@ class EditTask extends React.Component<IProps, IState> {
     let isHold = false;
     let isCompleted = false;
     let isFailed = false;
+    if (task.assignee) {
+      selectedItemsForAssigne = [task.assignee];
+    } else if (task.candidates) {
+      selectedItemsForAssigne = task.candidates;
+    }
     if (task._id) {
-      if (task.assignee) {
-        selectedItemsForAssigne = [task.assignee];
-      } else if (task.candidates) {
-        selectedItemsForAssigne = task.candidates;
-      }
       if (task.todos && task.todos.length > 0) {
         const total = task.todos.length;
         let done = 0;
@@ -1060,7 +1124,7 @@ class EditTask extends React.Component<IProps, IState> {
     const isInProgress = !(isHold || isCompleted || isFailed);
     const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
     return (
-      <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')}>
+      <div className={[style.taskView, !this.props.task ? style.postView : null].join(' ')} key={task._id}>
         <div className={styleNavbar.navbar}>
           <a onClick={this.leave}>
             <IcoN size={24} name="xcross24"/>
@@ -1081,9 +1145,9 @@ class EditTask extends React.Component<IProps, IState> {
               onClick={this.startEdit}>Edit</div>
           )}
           {this.createMode && (
-            <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+            <button className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
               styleNavbar.butnPrimary].join(' ')}
-              onClick={this.createTask}>Create Task</div>
+              onClick={this.createTask}>Create Task</button>
           )}
           {!this.createMode && (
             <a onClick={this.toggleMoreOpts}>
@@ -1485,6 +1549,7 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
   tasks: store.app.tasks,
   user: store.app.user,
   routeParams: ownProps.routeParams,
+  draft: store.app.draftTask,
 });
 
 /**
@@ -1500,6 +1565,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   setCurrentAttachmentList: (attachs) => {
     dispatch(setCurrentAttachmentList(attachs));
+  },
+  setDraft: (model) => {
+    dispatch(setTaskDraft(model));
+  },
+  unsetDraft: () => {
+    dispatch(unsetTaskDraft());
   },
 });
 

@@ -27,6 +27,7 @@ export interface IAppStore {
   currentPost: IPost | null;
   currentTask: ITask | null;
   draft: IComposeState | null;
+  draftTask: IComposeState | null;
   scrollPositions: any;
 }
 

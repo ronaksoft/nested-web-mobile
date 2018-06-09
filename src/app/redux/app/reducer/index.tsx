@@ -158,6 +158,16 @@ export default function appReducer(state = initialState, action?: IAppAction) {
         draft: null,
       });
 
+    case ActionTypes.APP_TASK_DRAFT_SET:
+      return Immutable.merge(state, {
+        draftTask: action.payload,
+      });
+
+    case ActionTypes.APP_TASK_DRAFT_UNSET:
+      return Immutable.merge(state, {
+        draftTask: null,
+      });
+
     case ActionTypes.APP_SCROLL_POSITION_SET:
       return Immutable.merge(state, {
         scrollPositions: Immutable.merge(state.scrollPositions, action.payload),

@@ -232,3 +232,16 @@ export function setDraft(model: IComposeState): IAppAction {
     payload: model,
   };
 }
+
+export function unsetTaskDraft(): IAppAction {
+  return {
+    type: ActionTypes.APP_TASK_DRAFT_UNSET,
+  };
+}
+
+export function setTaskDraft(model: any): IAppAction {
+  return {
+    type: ActionTypes.APP_TASK_DRAFT_SET,
+    payload: model,
+  };
+}
