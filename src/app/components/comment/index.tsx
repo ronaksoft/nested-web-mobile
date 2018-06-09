@@ -123,7 +123,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @type {boolean}
    * @memberof CommentsBoard
    */
-  private hasBeforeComments: boolean = true;
+  private hasBeforeComments: boolean = false;
 
   private notifyNewComment: () => void = () => console.log('no notify registered!');
 
@@ -178,9 +178,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
       })
         .then((comments: IComment[]) => {
 
-          if (comments.length < 3) {
-            this.hasBeforeComments = false;
-          }
+          this.hasBeforeComments = comments.length === 3;
 
           this.setState({
             comments: orderBy(comments, 'timestamp', 'asc'),
@@ -205,9 +203,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         only_comments: true,
         details: true,
       }).then((activities: ITaskActivity[]) => {
-        if (activities.length < 3) {
-          this.hasBeforeComments = false;
-        }
+        this.hasBeforeComments = activities.length === 3;
         const comments: IComment[] = this.mapTaskActivityToComment(activities);
 
         this.setState({
@@ -334,9 +330,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         only_comments: true,
         details: true,
       }).then((activities: ITaskActivity[]) => {
-        if (activities.length < 20) {
-          this.hasBeforeComments = false;
-        }
+        this.hasBeforeComments = activities.length === 20;
         const comments: IComment[] = this.mapTaskActivityToComment(activities);
 
         this.setState({
@@ -353,10 +347,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         limit: 20,
         post_id: this.props.post._id,
       }).then((comments: IComment[]) => {
-
-          if (comments.length < 20) {
-            this.hasBeforeComments = false;
-          }
+        this.hasBeforeComments = comments.length === 20;
 
           this.setState({
             comments: ArrayUntiles.uniqueObjects(comments.concat(this.state.comments), '_id')
