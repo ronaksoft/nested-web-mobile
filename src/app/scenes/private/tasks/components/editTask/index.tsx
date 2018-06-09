@@ -1083,7 +1083,7 @@ class EditTask extends React.Component<IProps, IState> {
               <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
                 <div className={style.taskRowIcon}>
                   {task.assignee && (!task.candidates || task.candidates.length === 0) &&
-                    <UserAvatar user_id={task.assignee._id} borderRadius="24px" size={24}/>}
+                    <UserAvatar user_id={task.assignee} borderRadius="24px" size={24}/>}
                   {!task.assignee && !task.candidates && <IcoN name="askWire24" size={24}/>}
                   {task.candidates && <IcoN name="candidate32" size={32}/>}
                 </div>
@@ -1097,7 +1097,12 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowItem}>
                     <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
                                 mode="user"
-                                editable={this.startedEditing || this.createMode}
+                                editable={
+                                  (
+                                    this.startedEditing &&
+                                    (this.access.CHANGE_ASSIGNEE || this.access.ADD_CANDIDATE)
+                                  )
+                                  || this.createMode}
                                 placeholder="Assignees"
                                 selectedItems={selectedItemsForAssigne}
                                 onSelectedItemsChanged={this.handleAssigneChanged}
