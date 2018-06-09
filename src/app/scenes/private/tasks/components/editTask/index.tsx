@@ -10,6 +10,7 @@
 
 import * as React from 'react';
 import ITask from '../../../../../api/task/interfaces/ITask';
+import ITaskRequest from '../../../../../api/task/interfaces/ITaskRequest';
 import {IcoN, Loading, Scrollable, RTLDetector, TaskIcon, AttachmentUploader,
   UserAvatar, FullName, Suggestion, CommentsBoard} from 'components';
 import TaskApi from '../../../../../api/task/index';
@@ -192,7 +193,18 @@ class EditTask extends React.Component<IProps, IState> {
     super(props);
     this.inProgress = false;
     this.state = {
-      task: this.props.task,
+      task: this.props.task || {
+        _id: null,
+        access: [],
+        assignor: this.props.user,
+        title: '',
+        attachments: [],
+        watchers: [],
+        editors: [],
+        todos: [],
+        candidates: [],
+        labels: [],
+      },
       showMoreOptions: false,
       Loading: false,
       attachModal: false,
@@ -234,7 +246,7 @@ class EditTask extends React.Component<IProps, IState> {
       this.setState({
         task: this.props.task ? this.props.task : null,
       });
-    } else {
+    } else if (this.props.routeParams.taskId)  {
       this.TaskApi.getMany(this.props.routeParams.taskId)
         .then((response) => {
           this.initTask(response.tasks[0]);
@@ -724,7 +736,7 @@ class EditTask extends React.Component<IProps, IState> {
    */
   private handleAssigneChanged = (items: IChipsItem[]) => {
     this.pristineForm = false;
-    const task = this.state.task;
+    const task: ITask | any = this.state.task || {};
     task.candidates = items;
     this.setState({
       task,
@@ -831,14 +843,20 @@ class EditTask extends React.Component<IProps, IState> {
    * @param {IAttachment[]} items
    */
   private handleAttachmentsChange = (items) => {
+    const task = this.state.task;
     if (!this.startedEditing) {
-      const task = this.state.task;
       this.updateAttachments(items);
       task.attachments = items;
       this.setState({
         task,
       });
       this.originalTask.attachments = items;
+    } else if (!task._id) {
+      this.pristineForm = false;
+      task.attachments = items;
+      this.setState({
+        task,
+      });
     } else {
       this.pristineForm = false;
       this.forceUpdate();
@@ -857,6 +875,27 @@ class EditTask extends React.Component<IProps, IState> {
     this.attachments = value;
   }
 
+  private b64EncodeUnicode = (str) => {
+    console.log(str);
+    // first we use encodeURIComponent to get percent-encoded UTF-8,
+    // then we convert the percent encodings into raw bytes which
+    // can be fed into btoa.
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      (_, p1) => {
+        console.log(parseInt('0x' + p1, 16), p1);
+        return String.fromCharCode(parseInt('0x' + p1, 16));
+      }),
+    );
+  }
+
+  private getTodoTransform = (todos): string => {
+    console.log(todos);
+    return todos
+    .filter((todo) => todo.txt.trim().length > 0)
+    .map((todo) => this.b64EncodeUnicode(todo.txt) + ';' + todo.weight)
+    .join(',');
+
+  }
   /**
    * @func referenceTargets
    * @desc Keeps reference of Suggestion component
@@ -906,6 +945,39 @@ class EditTask extends React.Component<IProps, IState> {
     this.props.setCurrentAttachment(attachment);
     this.props.setCurrentAttachmentList(this.attachments.get().map((i) => i.model));
   }
+
+  private createTask = () => {
+    const {task} = this.state;
+    const model: ITaskRequest = {
+      title: task.title,
+    };
+    if (task.description) {
+       model.desc = task.description;
+    }
+     if (task.candidates.length > 1) {
+       model.candidate_id = task.candidates.map((user) => user._id).join(',');
+    } else {
+      model.assignee_id = task.candidates[0]._id;
+    }
+    if (task.attachments) {
+      model.attachment_id = task.attachments.map((attachment) => attachment._id).join(',');
+    }
+    if (task.watchers) {
+      model.watcher_id = task.watchers.map((watchers) => watchers._id).join(',');
+    }
+    if (task.labels) {
+      model.label_id = task.labels.map((labels) => labels._id).join(',');
+    }
+    if (task.todos) {
+      model.todos = this.getTodoTransform(task.todos);
+    }
+    if (task.due_date) {
+      model.due_date = task.due_date + '';
+      model.due_data_has_clock = task.due_data_has_clock || false;
+    }
+    console.log(task, model);
+    // this.TaskApi.create(model);
+  }
   /**
    * @func render
    * @desc Renders the component
@@ -914,70 +986,75 @@ class EditTask extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    const {task} = this.state;
-    if (!task) {
+    const task: ITask = this.state.task;
+    if (!task && !this.createMode) {
       return <Loading active={true} position="absolute"/>;
     }
 
     let selectedItemsForAssigne = [];
-    if (task.assignee) {
-      selectedItemsForAssigne = [task.assignee];
-    } else if (task.candidates) {
-      selectedItemsForAssigne = task.candidates;
-    }
-
     let progress = -1;
-    if (task.todos && task.todos.length > 0) {
-      const total = task.todos.length;
-      let done = 0;
-      task.todos.forEach((todo) => {
-        if (todo.done) {
-          done++;
-        }
-      });
+    let taskStatus: string = statuses.ASSIGNED_NO_CHECKLIST;
+    let isHold = false;
+    let isCompleted = false;
+    let isFailed = false;
+    if (task._id) {
+      if (task.assignee) {
+        selectedItemsForAssigne = [task.assignee];
+      } else if (task.candidates) {
+        selectedItemsForAssigne = task.candidates;
+      }
 
-      progress = Math.ceil((done / total) * 100);
-    }
-    let taskStatus: string = '';
-    switch (task.status) {
-      default:
-      case C_TASK_STATUS.NO_ASSIGNED:
-        taskStatus = statuses.NOT_ASSIGNED;
-        break;
-      case C_TASK_STATUS.ASSIGNED:
-        if (progress < 0) {
-          taskStatus =  statuses.ASSIGNED_NO_CHECKLIST;
-          break;
-        } else if (progress === 0) {
-          taskStatus =  statuses.ASSIGNED_CHECKLIST;
-          break;
-        } else {
-          taskStatus =  statuses.ASSIGNED_PROGRESS;
-          break;
-        }
-      case C_TASK_STATUS.CANCELED:
-        taskStatus =  statuses.CANCELED;
-        break;
-      case C_TASK_STATUS.REJECTED:
-        taskStatus =  statuses.REJECTED;
-        break;
-      case C_TASK_STATUS.COMPLETED:
-        taskStatus =  statuses.COMPLETED;
-        break;
-      case C_TASK_STATUS.HOLD:
-        taskStatus =  statuses.HOLD;
-        break;
-      case C_TASK_STATUS.OVERDUE:
-        taskStatus =  statuses.OVERDUE;
-        break;
-      case C_TASK_STATUS.FAILED:
-        taskStatus =  statuses.FAILED;
-        break;
-    }
+      if (task.todos && task.todos.length > 0) {
+        const total = task.todos.length;
+        let done = 0;
+        task.todos.forEach((todo) => {
+          if (todo.done) {
+            done++;
+          }
+        });
 
-    const isHold = task.status === C_TASK_STATUS.HOLD;
-    const isCompleted = task.status === C_TASK_STATUS.COMPLETED;
-    const isFailed = task.status === C_TASK_STATUS.FAILED;
+        progress = Math.ceil((done / total) * 100);
+      }
+      switch (task.status) {
+        default:
+        case C_TASK_STATUS.NO_ASSIGNED:
+          taskStatus = statuses.NOT_ASSIGNED;
+          break;
+        case C_TASK_STATUS.ASSIGNED:
+          if (progress < 0) {
+            taskStatus =  statuses.ASSIGNED_NO_CHECKLIST;
+            break;
+          } else if (progress === 0) {
+            taskStatus =  statuses.ASSIGNED_CHECKLIST;
+            break;
+          } else {
+            taskStatus =  statuses.ASSIGNED_PROGRESS;
+            break;
+          }
+        case C_TASK_STATUS.CANCELED:
+          taskStatus =  statuses.CANCELED;
+          break;
+        case C_TASK_STATUS.REJECTED:
+          taskStatus =  statuses.REJECTED;
+          break;
+        case C_TASK_STATUS.COMPLETED:
+          taskStatus =  statuses.COMPLETED;
+          break;
+        case C_TASK_STATUS.HOLD:
+          taskStatus =  statuses.HOLD;
+          break;
+        case C_TASK_STATUS.OVERDUE:
+          taskStatus =  statuses.OVERDUE;
+          break;
+        case C_TASK_STATUS.FAILED:
+          taskStatus =  statuses.FAILED;
+          break;
+      }
+
+      isHold = task.status === C_TASK_STATUS.HOLD;
+      isCompleted = task.status === C_TASK_STATUS.COMPLETED;
+      isFailed = task.status === C_TASK_STATUS.FAILED;
+    }
     const isInProgress = !(isHold || isCompleted || isFailed);
     const someRowNotBinded = some(Object.keys(this.activeRows), (rowKey) => !this.activeRows[rowKey]);
     return (
@@ -1000,6 +1077,11 @@ class EditTask extends React.Component<IProps, IState> {
             <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
               styleNavbar.butnPrimary].join(' ')}
               onClick={this.startEdit}>Edit</div>
+          )}
+          {this.createMode && (
+            <div className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
+              styleNavbar.butnPrimary].join(' ')}
+              onClick={this.createTask}>Create Task</div>
           )}
           {!this.createMode && (
             <a onClick={this.toggleMoreOpts}>
@@ -1055,14 +1137,14 @@ class EditTask extends React.Component<IProps, IState> {
                 <div className={style.taskRowIcon}>
                   <TaskIcon status={taskStatus} progress={progress}/>
                 </div>
-                {this.editMode && (
+                {(this.editMode || this.createMode) && (
                   <div className={style.taskRowItem}>
-                    {this.startedEditing && (
+                    {(this.startedEditing || this.createMode) && (
                       <h1>
                         <input type="text" placeholder="Task title" value={task.title} onChange={this.editTitle}/>
                       </h1>
                     )}
-                    {!this.startedEditing && (
+                    {!this.startedEditing && !this.createMode && (
                       <h1>
                         {task.title}
                       </h1>
@@ -1072,11 +1154,6 @@ class EditTask extends React.Component<IProps, IState> {
                 {this.viewMode && (
                   <div className={style.taskRowItem}>
                     {task.title}
-                  </div>
-                )}
-                {this.createMode && (
-                  <div className={style.taskRowItem}>
-                    <input type="text" placeholder="Task title"/>
                   </div>
                 )}
               </div>
@@ -1093,7 +1170,7 @@ class EditTask extends React.Component<IProps, IState> {
                     Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
                   </div>
                 )}
-                {this.createMode || this.editMode && (
+                {(this.createMode || this.editMode) && (
                   <div className={style.taskRowItem}>
                     <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
                                 mode="user"
@@ -1252,7 +1329,7 @@ class EditTask extends React.Component<IProps, IState> {
                         </div>
                       )}
                     </h4>
-                    {this.access.ADD_ATTACHMENT && (
+                    {(this.createMode || this.access.ADD_ATTACHMENT) && (
                       <AttachmentUploader
                         mode="task"
                         editable={this.startedEditing}
@@ -1316,25 +1393,23 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                   <IcoN name="tag16" size={16}/>
                   </div>
-                  {this.createMode || this.editMode && (
-                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                      <h4>
-                        <span>labels</span>
-                        {this.startedEditing && (
-                        <div onClick={this.disableRow.bind(this, 'labels')}>
-                          <IcoN name="binRed16" size={16}/>
-                        </div>
-                        )}
-                      </h4>
-                      <Suggestion ref={this.referenceTargets.bind(this, 'labels')}
-                                  mode="label"
-                                  editable={(this.startedEditing && this.access.ADD_LABEL) || this.createMode}
-                                  placeholder="Add labels..."
-                                  selectedItems={task.labels}
-                                  onSelectedItemsChanged={this.handleLabelsChanged}
-                      />
-                    </div>
-                  )}
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>labels</span>
+                      {this.startedEditing && (
+                      <div onClick={this.disableRow.bind(this, 'labels')}>
+                        <IcoN name="binRed16" size={16}/>
+                      </div>
+                      )}
+                    </h4>
+                    <Suggestion ref={this.referenceTargets.bind(this, 'labels')}
+                                mode="label"
+                                editable={(this.startedEditing && this.access.ADD_LABEL) || this.createMode}
+                                placeholder="Add labels..."
+                                selectedItems={task.labels}
+                                onSelectedItemsChanged={this.handleLabelsChanged}
+                    />
+                  </div>
                 </div>
               )}
               {this.access.COMMENT && !this.startedEditing && (

@@ -187,9 +187,16 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
           {this.state.notifCount > 0 && <span>{this.state.notifCount}</span>}
         </a>
         {/* open compose scene */}
-        <Link to="/compose">
-          <IcoN size={24} name="compose24"/>
-        </Link>
+        {this.state.postsApp && (
+          <Link to="/compose">
+            <IcoN size={24} name="compose24"/>
+          </Link>
+        )}
+        {!this.state.postsApp && (
+          <Link to="/task/create">
+            <IcoN size={24} name="cross24"/>
+          </Link>
+        )}
       </div>
     );
   }

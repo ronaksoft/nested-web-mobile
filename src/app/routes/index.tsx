@@ -60,6 +60,7 @@ export default (
         <Route path="/task/created_by_me/completed" component={Tasks}/>
         <Route path="/task/watchlist/normal" component={Tasks}/>
         <Route path="/task/watchlist/completed" component={Tasks}/>
+        <Route path="/task/create" component={TaskEdit}/>
         <Route path="/task/edit/:taskId" component={TaskEdit}/>
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
