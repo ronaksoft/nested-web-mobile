@@ -1265,30 +1265,23 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                   <IcoN name="person16" size={16}/>
                   </div>
-                  {this.viewMode && (
-                    <div className={style.taskRowItem}>
-                      watchers
-                    </div>
-                  )}
-                  {this.createMode || (this.editMode && this.access.ADD_WATCHER) && (
-                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                      <h4>
-                        <span>Watchers</span>
-                        {this.startedEditing && (
-                          <div onClick={this.disableRow.bind(this, 'watchers')}>
-                            <IcoN name="binRed16" size={16}/>
-                          </div>
-                        )}
-                      </h4>
-                      <Suggestion ref={this.referenceTargets.bind(this, 'watchers')}
-                                  mode="user"
-                                  editable={this.startedEditing || this.createMode}
-                                  placeholder="Add peoples who wants to follow task..."
-                                  selectedItems={task.watchers}
-                                  onSelectedItemsChanged={this.handleWatchersChanged}
-                      />
-                    </div>
-                  )}
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>Watchers</span>
+                      {this.startedEditing && (
+                        <div onClick={this.disableRow.bind(this, 'watchers')}>
+                          <IcoN name="binRed16" size={16}/>
+                        </div>
+                      )}
+                    </h4>
+                    <Suggestion ref={this.referenceTargets.bind(this, 'watchers')}
+                                mode="user"
+                                editable={(this.startedEditing && this.access.ADD_WATCHER) || this.createMode}
+                                placeholder="Add peoples who wants to follow task..."
+                                selectedItems={task.watchers}
+                                onSelectedItemsChanged={this.handleWatchersChanged}
+                    />
+                  </div>
                 </div>
               )}
               {this.activeRows.editors && (
@@ -1296,28 +1289,21 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                   <IcoN name="pencil16" size={16}/>
                   </div>
-                  {this.viewMode || !this.access.ADD_EDITOR && (
-                    <div className={style.taskRowItem}>
-                      editors
-                    </div>
-                  )}
-                  {this.createMode || (this.editMode && this.access.ADD_EDITOR) && (
-                    <div className={[style.taskRowItem, style.vertical].join(' ')}>
-                      <h4>
-                        <span>Editors</span>
-                        {this.startedEditing && (
-                        <div onClick={this.disableRow.bind(this, 'editors')}><IcoN name="binRed16" size={16}/></div>
-                        )}
-                      </h4>
-                      <Suggestion ref={this.referenceTargets.bind(this, 'editors')}
-                                  mode="user"
-                                  editable={this.startedEditing || this.createMode}
-                                  placeholder="Add peoples who wants to edit task..."
-                                  selectedItems={task.editors}
-                                  onSelectedItemsChanged={this.handleEditorsChanged}
-                      />
-                    </div>
-                  )}
+                  <div className={[style.taskRowItem, style.vertical].join(' ')}>
+                    <h4>
+                      <span>Editors</span>
+                      {this.startedEditing && (
+                      <div onClick={this.disableRow.bind(this, 'editors')}><IcoN name="binRed16" size={16}/></div>
+                      )}
+                    </h4>
+                    <Suggestion ref={this.referenceTargets.bind(this, 'editors')}
+                                mode="user"
+                                editable={(this.startedEditing && this.access.ADD_EDITOR) || this.createMode}
+                                placeholder="Add peoples who wants to edit task..."
+                                selectedItems={task.editors}
+                                onSelectedItemsChanged={this.handleEditorsChanged}
+                    />
+                  </div>
                 </div>
               )}
               {this.activeRows.labels && (
@@ -1325,11 +1311,6 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                   <IcoN name="tag16" size={16}/>
                   </div>
-                  {this.viewMode && (
-                    <div className={style.taskRowItem}>
-                      labels
-                    </div>
-                  )}
                   {this.createMode || this.editMode && (
                     <div className={[style.taskRowItem, style.vertical].join(' ')}>
                       <h4>
@@ -1342,7 +1323,7 @@ class EditTask extends React.Component<IProps, IState> {
                       </h4>
                       <Suggestion ref={this.referenceTargets.bind(this, 'labels')}
                                   mode="label"
-                                  editable={this.startedEditing || this.createMode}
+                                  editable={(this.startedEditing && this.access.ADD_LABEL) || this.createMode}
                                   placeholder="Add labels..."
                                   selectedItems={task.labels}
                                   onSelectedItemsChanged={this.handleLabelsChanged}

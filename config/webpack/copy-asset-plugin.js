@@ -1,5 +1,5 @@
 var fs = require('fs');
-
+const path = require('path');
 function CopyAssetsPlugin() {
 }
 CopyAssetsPlugin.prototype.apply = function(compiler) {
