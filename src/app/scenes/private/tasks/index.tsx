@@ -501,7 +501,6 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   private gotoTask(task: ITask) {
-    console.log(task);
     this.props.setCurrentTask(task);
     hashHistory.push(`/task/edit/${task._id}`);
   }
@@ -519,7 +518,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/assigned_to_me/normal`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: true,
             icon: '',
@@ -539,7 +538,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/assigned_to_me/normal`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: false,
             icon: '',
@@ -559,7 +558,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/created_by_me/normal`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: true,
             icon: '',
@@ -579,7 +578,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/created_by_me/normal`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: false,
             icon: '',
@@ -599,7 +598,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/watchlist/noraml`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: true,
             icon: '',
@@ -619,7 +618,7 @@ class Tasks extends React.Component<IProps, IState> {
         menu: [
           {
             onClick: () => hashHistory.push(`/task/watchlist/normal`),
-            name: 'UnFinished',
+            name: 'Unfinished',
             type: 'kind',
             isChecked: false,
             icon: '',

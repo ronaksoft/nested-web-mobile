@@ -151,7 +151,7 @@
   font-size: 14px;
   line-height: 1.4;
   margin-bottom: 16px;
-  white-space: pre;
+  white-space: pre-line;
   color: #323D47;
 }
 .taskRowItem input ,
@@ -186,7 +186,7 @@
   margin-bottom: 24px;
 }
 .todoList li{
-  height: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
 }
@@ -197,7 +197,9 @@
 .todoList li input[type="checkbox"]{
   width: 12px;
   height: 12px;
-  margin: 0 22px;
+  flex: none;
+  align-self: flex-start;
+  margin: 10px 22px 0;
 }
 .todoList li input[type="text"]{
   width: 100%;
