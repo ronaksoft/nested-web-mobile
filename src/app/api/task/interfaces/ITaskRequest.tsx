@@ -9,7 +9,7 @@ interface ITaskRequest {
     watcher_id?: string;
     label_id?: string;
     todos?: string;
-    due_date?: string;
+    due_date?: number;
     due_data_has_clock?: boolean;
 }
 export default ITaskRequest;

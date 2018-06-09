@@ -210,6 +210,10 @@ class EditTask extends React.Component<IProps, IState> {
       attachModal: false,
       newTodo: '',
     };
+    if (this.props.routeParams.taskId) {
+      this.createMode = false;
+      this.viewMode = true;
+    }
   }
 
   // private updateLabels = (labels) => {
@@ -871,25 +875,22 @@ class EditTask extends React.Component<IProps, IState> {
    * @param {AttachmentUploader} value
    */
   private referenceAttachments = (value: any) => {
-    console.log(value);
     this.attachments = value;
   }
 
   private b64EncodeUnicode = (str) => {
-    console.log(str);
     // first we use encodeURIComponent to get percent-encoded UTF-8,
     // then we convert the percent encodings into raw bytes which
     // can be fed into btoa.
     return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
       (_, p1) => {
-        console.log(parseInt('0x' + p1, 16), p1);
         return String.fromCharCode(parseInt('0x' + p1, 16));
       }),
     );
   }
 
   private getTodoTransform = (todos): string => {
-    console.log(todos);
+
     return todos
     .filter((todo) => todo.txt.trim().length > 0)
     .map((todo) => this.b64EncodeUnicode(todo.txt) + ';' + todo.weight)
@@ -959,24 +960,26 @@ class EditTask extends React.Component<IProps, IState> {
     } else {
       model.assignee_id = task.candidates[0]._id;
     }
-    if (task.attachments) {
+    if (task.attachments.length > 0) {
       model.attachment_id = task.attachments.map((attachment) => attachment._id).join(',');
     }
-    if (task.watchers) {
+    if (task.watchers.length > 0) {
       model.watcher_id = task.watchers.map((watchers) => watchers._id).join(',');
     }
-    if (task.labels) {
+    if (task.labels.length > 0) {
       model.label_id = task.labels.map((labels) => labels._id).join(',');
     }
-    if (task.todos) {
+    if (this.state.newTodo.length > 0) {
+      this.newTodo();
+    }
+    if (task.todos.length > 0) {
       model.todos = this.getTodoTransform(task.todos);
     }
     if (task.due_date) {
-      model.due_date = task.due_date + '';
+      model.due_date = task.due_date;
       model.due_data_has_clock = task.due_data_has_clock || false;
     }
-    console.log(task, model);
-    // this.TaskApi.create(model);
+    this.TaskApi.create(model);
   }
   /**
    * @func render
@@ -1003,7 +1006,6 @@ class EditTask extends React.Component<IProps, IState> {
       } else if (task.candidates) {
         selectedItemsForAssigne = task.candidates;
       }
-
       if (task.todos && task.todos.length > 0) {
         const total = task.todos.length;
         let done = 0;
@@ -1164,13 +1166,17 @@ class EditTask extends React.Component<IProps, IState> {
                   {!task.assignee && !task.candidates && <IcoN name="askWire24" size={24}/>}
                   {task.candidates && <IcoN name="candidate32" size={32}/>}
                 </div>
-                {this.viewMode && (
+                {this.viewMode && task.assignee && (
                   <div className={style.taskRowItem}>
-                    Assigned to <b> <FullName user_id={task.assignee._id} /></b>
+                    Assigned to <b> <FullName user_id={task.assignee} /></b>
+                  </div>
+                )}
+                {this.viewMode && !task.assignee && (
+                  <div className={style.taskRowItem}>
                     Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
                   </div>
                 )}
-                {(this.createMode || this.editMode) && (
+                {(this.createMode || (this.editMode && selectedItemsForAssigne.length > 0)) && (
                   <div className={style.taskRowItem}>
                     <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
                                 mode="user"

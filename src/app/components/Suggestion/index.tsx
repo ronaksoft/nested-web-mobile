@@ -548,6 +548,7 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
         });
       break;
     }
+    console.log(recipients, this.state.selectedItems);
     return (
       <div className={style.suggestionWrpper}>
         <div className={style.input}>
