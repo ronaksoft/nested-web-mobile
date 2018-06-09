@@ -186,12 +186,13 @@
   margin-bottom: 24px;
 }
 .todoList li{
-  min-height: 32px;
+  /* min-height: 32px; */
   display: flex;
   align-items: center;
 }
 .todoList li label{
   font-size: 14px;
+  padding: 6px 0;
   color: #323D47;
 }
 .todoList li input[type="checkbox"]{

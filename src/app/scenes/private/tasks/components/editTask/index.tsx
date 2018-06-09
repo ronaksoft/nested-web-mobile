@@ -1054,7 +1054,8 @@ class EditTask extends React.Component<IProps, IState> {
    */
   public render() {
     const task: ITask = this.state.task;
-    if (!task && !this.createMode) {
+    console.log(task, this.createMode, !task._id && !this.createMode);
+    if (!task._id && !this.createMode) {
       return <Loading active={true} position="absolute"/>;
     }
 
@@ -1193,9 +1194,6 @@ class EditTask extends React.Component<IProps, IState> {
             </ul>
           </div>
         )}
-        {this.state.showMoreOptions &&
-          <div onClick={this.toggleMoreOpts} className={style.overlay}/>
-        }
         <Scrollable active={true} ref={this.scrollRefHandler} shrinkHeight={someRowNotBinded ? 56 : 0}>
           <div className={style.postScrollContainer}>
             <div className={style.postScrollContent}>
@@ -1491,6 +1489,9 @@ class EditTask extends React.Component<IProps, IState> {
             </div>
           </div>
         </Scrollable>
+        {this.state.showMoreOptions &&
+          <div onClick={this.toggleMoreOpts} className={style.overlay}/>
+        }
         {(this.startedEditing || this.createMode) && someRowNotBinded && (
           <div className={style.taskBinder}>
             {!this.activeRows.date && (
