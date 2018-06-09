@@ -141,8 +141,8 @@ class EditTask extends React.Component<IProps, IState> {
   private editMode: boolean = false;
   private createMode: boolean = true;
   private viewMode: boolean = false;
-  private commentAccess: boolean = false;
   private removeTodoProcess: boolean = false;
+  private access: any = {};
   private activeRows: any = {
     date: false,
     description: false,
@@ -248,13 +248,25 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private initTask = (task: ITask) => {
-    if (task.access.indexOf(C_TASK_ACCESS.UPDATE_TASK) > -1) {
+    const obj = {};
+    for (const k in C_TASK_ACCESS) {
+      if (task) {
+        obj[k] = task.access.indexOf(C_TASK_ACCESS[k]) > -1;
+      } else {
+        obj[k] = false;
+      }
+    }
+    this.access = obj;
+    console.log(this.access);
+    if (this.access.UPDATE_TASK) {
       this.editMode = true;
       this.createMode = false;
       this.viewMode = false;
     }
-    if (task.access.indexOf(C_TASK_ACCESS.COMMENT) > -1) {
-      this.commentAccess = true;
+    if (this.access.PICK_TASK) {
+      this.editMode = true;
+      this.createMode = false;
+      this.viewMode = false;
     }
     this.originalTask = cloneDeep(task);
     if (task.attachments && task.attachments.length > 0) {
@@ -359,7 +371,9 @@ class EditTask extends React.Component<IProps, IState> {
     this.updateWatchers(this.state.task.watchers);
     this.updateEditors(this.state.task.editors);
     this.updateLabels(this.state.task.labels);
-    this.updateAttachments(this.attachments.get().map((i) => i.model));
+    if (this.attachments) {
+      this.updateAttachments(this.attachments.get().map((i) => i.model));
+    }
     Promise.all(this.updatePromises).then((values) => {
       this.originalTask = cloneDeep(this.state.task);
       console.log(values);
@@ -1108,7 +1122,7 @@ class EditTask extends React.Component<IProps, IState> {
                           <time dateTime={TimeUtiles.Date(task.due_date)}>{TimeUtiles.DateParse(task.due_date)}</time>
                         )}
                       </li>
-                      {task.due_data_has_clock || this.startedEditing && (
+                      {(task.due_data_has_clock || this.startedEditing) && (
                         <li>
                         {this.startedEditing && (
                           <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00"
@@ -1168,16 +1182,16 @@ class EditTask extends React.Component<IProps, IState> {
                     <ul className={style.todoList}>
                       {task.todos.map((todo, index) => (
                         <li key={todo._id}>
-                          <input type="checkbox" id="todo1" defaultChecked={todo.done}
+                          <input type="checkbox" id={todo._id} defaultChecked={todo.done}
                             onChange={this.checkTodo.bind(this, index)}/>
                           {this.startedEditing && (
-                            <label htmlFor="todo1">
+                            <label htmlFor={todo._id}>
                               <input type="text" value={todo.txt} onChange={this.todoTextEdit.bind(this, index)}
                                 onKeyDown={this.todoKeyDown.bind(this, index)}/>
                             </label>
                           )}
                           {!this.startedEditing && (
-                            <label htmlFor="todo1">{todo.txt}</label>
+                            <label htmlFor={todo._id}>{todo.txt}</label>
                           )}
                         </li>
                       ))}
@@ -1231,14 +1245,16 @@ class EditTask extends React.Component<IProps, IState> {
                         </div>
                       )}
                     </h4>
-                    <AttachmentUploader
-                      mode="task"
-                      editable={this.startedEditing}
-                      onItemsChanged={this.handleAttachmentsChange}
-                      openAttachment={this.openAttachment}
-                      ref={this.referenceAttachments}
-                      items={task.attachments || []}
-                    />
+                    {this.access.ADD_ATTACHMENT && (
+                      <AttachmentUploader
+                        mode="task"
+                        editable={this.startedEditing}
+                        onItemsChanged={this.handleAttachmentsChange}
+                        openAttachment={this.openAttachment}
+                        ref={this.referenceAttachments}
+                        items={task.attachments || []}
+                      />
+                    )}
                   </div>
                 </div>
               )}
@@ -1278,12 +1294,12 @@ class EditTask extends React.Component<IProps, IState> {
                   <div className={style.taskRowIcon}>
                   <IcoN name="pencil16" size={16}/>
                   </div>
-                  {this.viewMode && (
+                  {this.viewMode || !this.access.ADD_EDITOR && (
                     <div className={style.taskRowItem}>
                       editors
                     </div>
                   )}
-                  {this.createMode || this.editMode && (
+                  {this.createMode || (this.editMode && this.access.ADD_EDITOR) && (
                     <div className={[style.taskRowItem, style.vertical].join(' ')}>
                       <h4>
                         <span>Editors</span>
@@ -1333,7 +1349,7 @@ class EditTask extends React.Component<IProps, IState> {
                   )}
                 </div>
               )}
-              {this.commentAccess && !this.startedEditing && (
+              {this.access.COMMENT && !this.startedEditing && (
                 <CommentsBoard no_comment={false}
                   task={this.state.task}
                   user={this.props.user}/>
