@@ -26,6 +26,9 @@ class TimeUntiles {
   public full(timestamp: number) {
     return moment(timestamp).format('dddd, MMMM DD YYYY, HH:mm');
   }
+  public fullOnlyDate(timestamp: number) {
+    return moment(timestamp).format('dddd, MM/DD/YYYY');
+  }
 
   public Date(timestamp: number) {
     return moment(timestamp).format('YYYY-MM-DD');

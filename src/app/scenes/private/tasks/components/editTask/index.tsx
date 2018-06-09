@@ -1117,33 +1117,29 @@ class EditTask extends React.Component<IProps, IState> {
                       <div onClick={this.disableRow.bind(this, 'date')}><IcoN name="binRed16" size={16}/></div>
                       )}
                     </h4>
-                    <ul className={style.setDateTime}>
-                      <li>
-                        {this.startedEditing && (
-                          <input type="date" placeholder="Set date..."
-                            onChange={this.dateOnChange}
-                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUtiles.Date(task.due_date)}/>
-                        )}
-                        {!this.startedEditing && (
-                          <time dateTime={TimeUtiles.Date(task.due_date)}>{TimeUtiles.DateParse(task.due_date)}</time>
-                        )}
-                      </li>
-                      {(task.due_data_has_clock || this.startedEditing) && (
+                    {this.startedEditing && (
+                      <ul className={style.setDateTime}>
                         <li>
-                        {this.startedEditing && (
+                            <input type="date" placeholder="Set date..."
+                              onChange={this.dateOnChange}
+                              pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value={TimeUtiles.Date(task.due_date)}/>
+                        </li>
+                        <li>
                           <input type="time" placeholder="Set time..." pattern="[0-9]{2}:[0-9]{2}" min="00:00"
                             onChange={this.timeOnChange}
                             value={task.due_data_has_clock ? TimeUtiles.Time(task.due_date) : ''} max="23:59"/>
-                        )}
-                        {!this.startedEditing && task.due_data_has_clock && (
+                        </li>
+                      </ul>
+                    )}
+                    {!this.startedEditing && task.due_date && (
+                      <p>
+                        <time dateTime={TimeUtiles.Date(task.due_date)}>{TimeUtiles.fullOnlyDate(task.due_date)}</time>
+                        <br/>
+                        {task.due_data_has_clock && (
                           <time dateTime={TimeUtiles.Time(task.due_date)}>{TimeUtiles.TimeParse(task.due_date)}</time>
                         )}
-                        {!this.startedEditing && !task.due_data_has_clock && (
-                          <time>-- : --</time>
-                        )}
-                      </li>
-                      )}
-                    </ul>
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -1274,7 +1270,7 @@ class EditTask extends React.Component<IProps, IState> {
                       watchers
                     </div>
                   )}
-                  {this.createMode || this.editMode && (
+                  {this.createMode || (this.editMode && this.access.ADD_WATCHER) && (
                     <div className={[style.taskRowItem, style.vertical].join(' ')}>
                       <h4>
                         <span>Watchers</span>
