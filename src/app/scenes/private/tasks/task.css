@@ -151,6 +151,7 @@
   font-size: 14px;
   line-height: 1.4;
   margin-bottom: 16px;
+  white-space: pre;
   color: #323D47;
 }
 .taskRowItem input ,
