@@ -805,6 +805,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         }
         {/* suggestion component for recipients */}
         <Suggestion ref={this.referenceTargets}
+                    editable={true}
                     selectedItems={this.state.targets}
                     onSelectedItemsChanged={this.handleTargetsChanged}
         />
