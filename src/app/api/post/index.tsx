@@ -66,7 +66,7 @@ export default class PostApi {
    */
   public pinPost(postId: string) {
     return this.api.request({
-      cmd: 'post/pin',
+      cmd: 'post/add_to_bookmarks',
       data: {
         post_id: postId,
       },
@@ -82,7 +82,7 @@ export default class PostApi {
    */
   public unpinPost(postId: string) {
     return this.api.request({
-      cmd: 'post/unpin',
+      cmd: 'post/remove_from_bookmarks',
       data: {
         post_id: postId,
       },
