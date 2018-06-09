@@ -586,16 +586,22 @@ class EditTask extends React.Component<IProps, IState> {
 
   }
 
-  private checkTodo = (index) => {
+  private checkTodo = (index, event) => {
+    event.nativeEvent.preventDefault();
+    const target = event.target;
     const task = this.state.task;
     const isChecked: boolean = !task.todos[index].done;
-    task.todos[index].done = isChecked;
     this.TaskApi.updateTodo({
       done: isChecked,
-      task_id: this.state.task._id,
-      todo_id: this.state.task.todos[index]._id,
+      task_id: task._id,
+      todo_id: task.todos[index]._id,
+    }).then(() => {
+      task.todos[index].done = isChecked;
+      target.checked = isChecked;
+      this.originalTask.todos[index].done = isChecked;
+    }).catch(() => {
+      task.todos[index].done = !isChecked;
     });
-    this.originalTask.todos[index].done = isChecked;
     // todo : update progress
     // todo : if all done so finish task
   }
