@@ -23,7 +23,9 @@ export default class Created extends React.Component <IProps, any> {
             </b>
             <aside>Created the task</aside>
           </div>
-          <IcoN size={16} name={'taskInProgress16'}/>
+          <div className={style.green}>
+          <IcoN size={16} name={'checkBox16'}/>
+          </div>
         </div>
       </a>
     );

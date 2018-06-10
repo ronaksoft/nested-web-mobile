@@ -1222,7 +1222,7 @@ class EditTask extends React.Component<IProps, IState> {
               </li>
               <li className={style.hr}/>
               <li>
-                <IcoN size={16} name={'chain16'}/>
+                <IcoN size={16} name={'log16'}/>
                 <Link to={`task/activity/${task._id}`}>Task Activities</Link>
               </li>
               <li onClick={this.createRelatedTask}>

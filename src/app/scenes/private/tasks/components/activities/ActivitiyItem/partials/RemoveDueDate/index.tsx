@@ -12,7 +12,6 @@ interface IProps {
 export default class RemoveDueDate extends React.Component <IProps, any> {
   public render() {
     const activity = this.props.activity;
-    console.log(activity);
     return (
       <a className={[style.notifWrapper].join(' ')}>
         <UserAvatar user_id={activity.actor} size={32} borderRadius={'16px'}/>
@@ -24,7 +23,9 @@ export default class RemoveDueDate extends React.Component <IProps, any> {
             </b>
             <aside>Removed Due Date</aside>
           </div>
-          <IcoN size={16} name={'taskInProgress16'}/>
+          <div className={style.red}>
+            <IcoN size={16} name={'finishFlag16'}/>
+          </div>
         </div>
       </a>
     );

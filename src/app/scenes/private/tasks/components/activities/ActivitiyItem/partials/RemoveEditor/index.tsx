@@ -29,7 +29,9 @@ export default class RemoveEditor extends React.Component <IProps, any> {
               ))}
             </div>
           </div>
-          <IcoN size={16} name={'pencil16'}/>
+          <div className={style.red}>
+            <IcoN size={16} name={'pencil16'}/>
+          </div>
         </div>
       </a>
     );
