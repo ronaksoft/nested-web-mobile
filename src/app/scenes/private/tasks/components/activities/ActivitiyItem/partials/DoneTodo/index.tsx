@@ -24,7 +24,7 @@ export default class UnoneTodo extends React.Component <IProps, any> {
             <aside>Marked a to-do task as done:</aside>
             <p>“{activity.todo_text}”</p>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <IcoN size={16} name={'bulletList16'}/>
         </div>
       </a>
     );

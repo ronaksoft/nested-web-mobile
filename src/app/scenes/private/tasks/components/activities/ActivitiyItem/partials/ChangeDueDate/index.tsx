@@ -30,7 +30,7 @@ export default class ChangeDueDate extends React.Component <IProps, any> {
               )}
             </p>
           </div>
-          <IcoN size={16} name={'taskInProgress16'}/>
+          <IcoN size={16} name={'finishFlag16'}/>
         </div>
       </a>
     );

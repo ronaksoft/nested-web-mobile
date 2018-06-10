@@ -29,7 +29,7 @@ export default class AddEditor extends React.Component <IProps, any> {
               ))}
             </div>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <IcoN size={16} name={'pencil16'}/>
         </div>
       </a>
     );
