@@ -166,18 +166,18 @@
 .item.task:hover .uploadprogress {
   opacity: .32;
 }
-.item.task:hover .cancelUp ,
-.item.task:hover .removeForce {
+.item.task:hover:not(.uneditable) .cancelUp ,
+.item.task:hover:not(.uneditable) .removeForce {
   display: flex;
 }
-.item.task:hover {
+.item.task:hover:not(.uneditable) {
   background: #323D47;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
 }
-.item.task:hover .thumb img{
+.item.task:hover:not(.uneditable) .thumb img{
   display: none;
 }
-.item.task:hover .atachmentDetail .name {
+.item.task:hover:not(.uneditable) .atachmentDetail .name {
   color: #fff;
 }
 .item.task .thumb {

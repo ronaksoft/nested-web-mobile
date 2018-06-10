@@ -4,6 +4,8 @@ import {
   AddCandidate, RemoveCandidate, AddWatcher, RemoveWatcher,
   AddEditor, RemoveEditor, RemoveLabel, AddLabel,
   AddTodo, RemoveTodo, ChangeTodo, DoneTodo, UndoneTodo,
+  AddAttachment, RemoveAttachment, Created, Updated,
+  ChangeStatus, RemoveDueDate, ChangeDueDate,
 } from './partials';
 import {ITaskActivity} from 'api/interfaces/';
 import C_TASK_ACTIVITY from 'api/consts/CTaskActivity';
@@ -131,34 +133,34 @@ class ActivitiyItem extends React.Component<IProps, IState> {
         return (
           <UndoneTodo activity={activity}/>
         );
-      // case C_TASK_ACTIVITY.ATTACHMENT_ADDED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.ATTACHMENT_REMOVED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.CREATED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.UPDATED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.STATUS_CHANGED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.DUE_DATE_REMOVED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
-      // case C_TASK_ACTIVITY.DUE_DATE_UPDATED:
-      //   return (
-      //     <RemoveCandidate activity={activity}/>
-      //   );
+      case C_TASK_ACTIVITY.ATTACHMENT_ADDED:
+        return (
+          <AddAttachment activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.ATTACHMENT_REMOVED:
+        return (
+          <RemoveAttachment activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.CREATED:
+        return (
+          <Created activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.UPDATED:
+        return (
+          <Updated activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.STATUS_CHANGED:
+        return (
+          <ChangeStatus activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.DUE_DATE_REMOVED:
+        return (
+          <RemoveDueDate activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.DUE_DATE_UPDATED:
+        return (
+          <ChangeDueDate activity={activity}/>
+        );
       default:
         return null;
     }

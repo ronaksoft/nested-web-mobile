@@ -9,7 +9,7 @@ interface IProps {
   activity: ITaskActivity;
 }
 
-export default class DoneTodo extends React.Component <IProps, any> {
+export default class Created extends React.Component <IProps, any> {
   public render() {
     const activity = this.props.activity;
     return (
@@ -21,10 +21,9 @@ export default class DoneTodo extends React.Component <IProps, any> {
               <FullName user_id={activity.actor}/>
               <time className={style.time}> • {TimeUntiles.dynamic(activity.timestamp)}</time>
             </b>
-            <aside>Marked a to-do task as undone:</aside>
-            <p>“{activity.todo_text}”</p>
+            <aside>Created the task</aside>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <IcoN size={16} name={'taskInProgress16'}/>
         </div>
       </a>
     );

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {IcoN, UserAvatar, FullName} from 'components';
-import {ITaskActivity} from 'api/interfaces/';
+import {ITaskActivity, IAttachment} from 'api/interfaces/';
 import TimeUntiles from 'services/utils/time';
+import Item from 'components/AttachmentUploader/Item';
 
 const style = require('../../ActivityItem.css');
 
@@ -9,11 +10,11 @@ interface IProps {
   activity: ITaskActivity;
 }
 
-export default class DoneTodo extends React.Component <IProps, any> {
+export default class AddAttachment extends React.Component <IProps, any> {
   public render() {
     const activity = this.props.activity;
     return (
-      <a className={[style.notifWrapper].join(' ')}>
+      <div className={[style.notifWrapper].join(' ')}>
         <UserAvatar user_id={activity.actor} size={32} borderRadius={'16px'}/>
         <div className={style.notifContainer}>
           <div className={style.notifData}>
@@ -21,12 +22,21 @@ export default class DoneTodo extends React.Component <IProps, any> {
               <FullName user_id={activity.actor}/>
               <time className={style.time}> • {TimeUntiles.dynamic(activity.timestamp)}</time>
             </b>
-            <aside>Marked a to-do task as undone:</aside>
-            <p>“{activity.todo_text}”</p>
+            <aside>Added a attachment:</aside>
+            <div className={style.chipsWrapper}>
+              {activity.attachments.map((attach: IAttachment) => (
+                <Item
+                  key={attach._id}
+                  mode="task"
+                  item={{model: attach}}
+                  editable={false}
+                />
+              ))}
+            </div>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <IcoN size={16} name={'attach16'}/>
         </div>
-      </a>
+      </div>
     );
   }
 }

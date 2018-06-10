@@ -344,7 +344,7 @@ class EditTask extends React.Component<IProps, IState> {
         task.todos = [];
         break;
       case 'date':
-        task.due_date = null;
+        task.due_date = 0;
         break;
       case 'description':
         task.description = '';

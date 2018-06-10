@@ -9,7 +9,7 @@ interface IProps {
   activity: ITaskActivity;
 }
 
-export default class DoneTodo extends React.Component <IProps, any> {
+export default class ChangeDueDate extends React.Component <IProps, any> {
   public render() {
     const activity = this.props.activity;
     return (
@@ -21,10 +21,16 @@ export default class DoneTodo extends React.Component <IProps, any> {
               <FullName user_id={activity.actor}/>
               <time className={style.time}> • {TimeUntiles.dynamic(activity.timestamp)}</time>
             </b>
-            <aside>Marked a to-do task as undone:</aside>
-            <p>“{activity.todo_text}”</p>
+            <aside>Changed due date:</aside>
+            <p>
+              <time dateTime={TimeUntiles.Date(activity.due_date)}>{TimeUntiles.fullOnlyDate(activity.due_date)}</time>
+              <br/>
+              {activity.due_data_has_clock && (
+                <time dateTime={TimeUntiles.Time(activity.due_date)}>{TimeUntiles.TimeParse(activity.due_date)}</time>
+              )}
+            </p>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <IcoN size={16} name={'taskInProgress16'}/>
         </div>
       </a>
     );

@@ -40,7 +40,7 @@ interface IProps {
    * @type {IAttachmentItem}
    * @memberof IProps
    */
-  item: IAttachmentItem;
+  item: any;
   /**
    * @property {Array<IPostAttachment>} attachments - list of attachments
    * @desc routing state receive from react-router-redux
@@ -66,7 +66,7 @@ interface IProps {
    * @type {number}
    * @memberof IProps
    */
-  id: number;
+  id?: number;
   mode?: string;
   editable: boolean;
 }
@@ -227,7 +227,8 @@ class AttachmentItem extends React.Component<IProps, IState> {
       const thumb = this.getThumbnail(this.props.item.model);
       const thumb2x = this.getThumbnail(this.props.item.model, '@2x');
       return (
-        <a className={[style.item, this.props.mode === 'task' ? style.task : ''].join(' ')}>
+        <a className={[style.item, this.props.mode === 'task' ? style.task : '',
+          !this.props.editable ? style.uneditable : ''].join(' ')}>
           <span className={style.thumb}>
             {this.props.mode === 'task' && (
               <img width="32" src={thumb}
