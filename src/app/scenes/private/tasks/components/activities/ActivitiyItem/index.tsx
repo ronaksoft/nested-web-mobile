@@ -2,7 +2,8 @@ import * as React from 'react';
 import {
   Comment, ChangeTitle, ChangeDescription, AssigneeChanged,
   AddCandidate, RemoveCandidate, AddWatcher, RemoveWatcher,
-  AddEditor, RemoveEditor,
+  AddEditor, RemoveEditor, RemoveLabel, AddLabel,
+  AddTodo, RemoveTodo, ChangeTodo, DoneTodo, UndoneTodo,
 } from './partials';
 import {ITaskActivity} from 'api/interfaces/';
 import C_TASK_ACTIVITY from 'api/consts/CTaskActivity';
@@ -102,6 +103,34 @@ class ActivitiyItem extends React.Component<IProps, IState> {
         return (
           <RemoveEditor activity={activity}/>
         );
+      case C_TASK_ACTIVITY.LABEL_ADDED:
+        return (
+          <AddLabel activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.LABEL_REMOVED:
+        return (
+          <RemoveLabel activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.TODO_ADDED:
+        return (
+          <AddTodo activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.TODO_REMOVED:
+        return (
+          <RemoveTodo activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.TODO_CHANGED:
+        return (
+          <ChangeTodo activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.TODO_DONE:
+        return (
+          <DoneTodo activity={activity}/>
+        );
+      case C_TASK_ACTIVITY.TODO_UNDONE:
+        return (
+          <UndoneTodo activity={activity}/>
+        );
       // case C_TASK_ACTIVITY.ATTACHMENT_ADDED:
       //   return (
       //     <RemoveCandidate activity={activity}/>
@@ -115,6 +144,10 @@ class ActivitiyItem extends React.Component<IProps, IState> {
       //     <RemoveCandidate activity={activity}/>
       //   );
       // case C_TASK_ACTIVITY.UPDATED:
+      //   return (
+      //     <RemoveCandidate activity={activity}/>
+      //   );
+      // case C_TASK_ACTIVITY.STATUS_CHANGED:
       //   return (
       //     <RemoveCandidate activity={activity}/>
       //   );

@@ -1,4 +1,4 @@
-import {IUser, IAttachment} from 'api/interfaces';
+import {IUser, IAttachment, ILabel} from 'api/interfaces';
 
 interface ITaskActivity {
   _id: string;
@@ -9,6 +9,7 @@ interface ITaskActivity {
   editors?: IUser[];
   watchers?: IUser[];
   candidates?: IUser[];
+  labels?: ILabel[];
   assignee?: IUser;
   attachments?: IAttachment[];
   title?: string;

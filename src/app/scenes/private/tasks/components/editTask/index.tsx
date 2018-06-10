@@ -25,7 +25,7 @@ import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
 import C_TASK_ACCESS from 'api/consts/CTaskAccess';
 import statuses from 'api/consts/CTaskProgressTask';
-import {some, differenceBy, cloneDeep} from 'lodash';
+import {some, differenceBy, cloneDeep, intersectionBy} from 'lodash';
 import TimeUtiles from 'services/utils/time';
 import {setCurrentAttachment, setCurrentAttachmentList} from 'redux/attachment/actions/index';
 
@@ -493,6 +493,8 @@ class EditTask extends React.Component<IProps, IState> {
     const oldData = this.originalTask;
     const newItems = differenceBy(todos, oldData.todos, '_id');
     const removedItems = differenceBy(oldData.todos, todos, '_id');
+    const sameItems = intersectionBy(todos, oldData.todos, '_id');
+    const updatedItems = differenceBy(sameItems, oldData.todos, 'txt');
 
     if (newItems.length > 0) {
       newItems.forEach((item) => {
@@ -503,6 +505,16 @@ class EditTask extends React.Component<IProps, IState> {
     if (removedItems.length > 0) {
       removedItems.forEach((item) => {
         this.updatePromises.push(this.TaskApi.removeTodo(this.state.task._id, item._id));
+      });
+    }
+
+    if (updatedItems.length > 0) {
+      updatedItems.forEach((item) => {
+        this.updatePromises.push(this.TaskApi.updateTodo({
+          task_id: this.state.task._id,
+          todo_id: item._id,
+          txt: item.txt,
+        }));
       });
     }
   }

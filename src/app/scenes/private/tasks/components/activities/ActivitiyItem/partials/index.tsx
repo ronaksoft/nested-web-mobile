@@ -8,7 +8,15 @@ import AddWatcher from './AddWatcher';
 import RemoveWatcher from './RemoveWatcher';
 import AddEditor from './AddEditor';
 import RemoveEditor from './RemoveEditor';
+import AddLabel from './AddLabel';
+import RemoveLabel from './RemoveLabel';
+import AddTodo from './AddTodo';
+import RemoveTodo from './RemoveTodo';
+import ChangeTodo from './ChangeTodo';
+import DoneTodo from './DoneTodo';
+import UndoneTodo from './UndoneTodo';
 
 export {Comment, ChangeTitle, ChangeDescription, AssigneeChanged,
     AddCandidate, RemoveCandidate, AddWatcher, RemoveWatcher,
-    RemoveEditor, AddEditor};
+    RemoveEditor, AddEditor, RemoveLabel, AddLabel,
+    AddTodo, RemoveTodo, ChangeTodo, DoneTodo, UndoneTodo};
