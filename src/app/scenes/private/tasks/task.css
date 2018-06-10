@@ -189,18 +189,38 @@
   /* min-height: 32px; */
   display: flex;
   align-items: center;
+  position: relative;
 }
 .todoList li label{
   font-size: 14px;
   padding: 6px 0;
   color: #323D47;
 }
+.todoList li i{
+  margin: 0 22px;
+  transform: scale(.8, .8);
+  display: inline-flex;
+}
 .todoList li input[type="checkbox"]{
-  width: 12px;
-  height: 12px;
+  height: 26px;
   flex: none;
   align-self: flex-start;
-  margin: 10px 22px 0;
+  width: 56px;
+  opacity: 0;
+  z-index: 2;
+  position: absolute;
+}
+.todoList li input[type="checkbox"] + i{
+  display: none;
+}
+.todoList li input[type="checkbox"] + i + i{
+  display: inline-flex;
+}
+.todoList li input[type="checkbox"]:checked + i{
+  display: inline-flex;
+}
+.todoList li input[type="checkbox"]:checked + i + i{
+  display: none;
 }
 .todoList li input[type="text"]{
   width: 100%;

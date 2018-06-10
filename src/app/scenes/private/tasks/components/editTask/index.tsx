@@ -1335,6 +1335,8 @@ class EditTask extends React.Component<IProps, IState> {
                         <li key={todo._id}>
                           <input type="checkbox" id={todo._id} defaultChecked={todo.done}
                             onChange={this.checkTodo.bind(this, index)}/>
+                            <IcoN name="todoDone16" size={16}/>
+                            <IcoN name="todoUndone16" size={16}/>
                           {this.startedEditing && (
                             <label htmlFor={todo._id}>
                               <input type="text" value={todo.txt} onChange={this.todoTextEdit.bind(this, index)}
@@ -1342,7 +1344,9 @@ class EditTask extends React.Component<IProps, IState> {
                             </label>
                           )}
                           {!this.startedEditing && (
-                            <label htmlFor={todo._id}>{todo.txt}</label>
+                            <label htmlFor={todo._id}>
+                              {todo.txt}
+                            </label>
                           )}
                         </li>
                       ))}
