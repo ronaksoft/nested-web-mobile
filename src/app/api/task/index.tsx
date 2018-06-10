@@ -7,7 +7,7 @@ import ITaskGetByFilterRequest from './interfaces/ITaskGetByFilterRequest';
 // import {E_TASK_RESPONSE} from './consts/taskResponseConst';
 import C_TASK_STATUS from './consts/taskStatusConst';
 // import C_TASK_STATE from './consts/taskStateConst';
-import {IGetActivitiesRequest} from './interfaces/ITaskActivities';
+import {IGetActivitiesRequest, IGetActivitiesResponse} from './interfaces/ITaskActivities';
 
 export default class TaskApi {
   /**
@@ -273,7 +273,7 @@ export default class TaskApi {
       this.api.request({
         cmd: 'task/get_activities',
         data,
-      }).then((res) => {
+      }).then((res: IGetActivitiesResponse) => {
         resolve(res.activities);
       }).catch(reject);
     });

@@ -23,6 +23,7 @@ import Posts from './posts';
 import PostsContainer from './PostsContainer';
 import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
+import TaskActivities from './tasks/components/activities/';
 import Notifications from './notifications';
 import AttachmentView from '../../components/AttachmentView/index';
 
@@ -261,7 +262,6 @@ class Private extends React.Component<IProps, IState> {
   }
   private appHeight = () => {
     const doc = document.documentElement;
-    console.log(doc, window.innerHeight);
     doc.style.setProperty('--app-height', `${window.innerHeight}px`);
   }
 
@@ -464,5 +464,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
   Posts, Activities, Files, Notifications, Compose,
-  Signout, Tasks, TaskEdit, PostsContainer,
+  Signout, Tasks, TaskEdit, PostsContainer, TaskActivities,
 };

@@ -143,7 +143,6 @@ class Notifications extends React.Component<IProps, IState> {
     const notificationApi = new NotificationApi();
     const {activeTab} = this.state;
     const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications ;
-    console.log('getNotificationBefore', activeTab === 0 ? 'post' : 'task');
     // receive notifications with declared limits and before timestamp of
     // the latest notification item in state, otherwise the current timestamp.
     notificationApi.get({
@@ -166,7 +165,6 @@ class Notifications extends React.Component<IProps, IState> {
       const state = {};
       state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
       this.setState(state);
-      console.log(state);
       // check saveInStore value and store notification items in redux store
       if (saveInStore) {
         if (activeTab === 0) {

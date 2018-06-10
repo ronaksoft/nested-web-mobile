@@ -26,6 +26,13 @@
   align-items: center;
   position: relative;
 }
+.navbar h1 {
+  display: flex;
+  flex: none;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  font-weight: bold;
+}
 .navbar > a.active {
   border-radius: 8px;
   background-color: rgba(50, 61, 71, .08)!important;

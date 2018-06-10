@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   Posts, PostsContainer,
   Notifications, Activities, Files, Compose, Signout,
-  Tasks, TaskEdit,
+  Tasks, TaskEdit, TaskActivities,
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
@@ -63,6 +63,7 @@ export default (
         <Route path="/task/create" component={TaskEdit}/>
         <Route path="/task/create/:relatedTask" component={TaskEdit}/>
         <Route path="/task/edit/:taskId" component={TaskEdit}/>
+        <Route path="/task/activity/:taskId" component={TaskActivities}/>
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
         <Route path="/notifications/:app" component={Notifications}/>

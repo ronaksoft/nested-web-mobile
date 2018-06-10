@@ -17,8 +17,8 @@ import {Modal} from 'antd';
 import TaskApi from '../../../../../api/task/index';
 import {connect} from 'react-redux';
 import {setCurrentTask, setTasks, setTaskDraft, unsetTaskDraft} from '../../../../../redux/app/actions/index';
-import {hashHistory} from 'react-router';
-// import {hashHistory, Link} from 'react-router';
+// import {hashHistory} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import C_TASK_STATE from 'api/task/consts/taskStateConst';
 import {IUser} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
@@ -579,7 +579,15 @@ class EditTask extends React.Component<IProps, IState> {
   }
 
   private updateCandidates = (candidates) => {
-    if (candidates) {
+    const oldData = this.originalTask;
+    let assigneData;
+    if (oldData.assignee) {
+      assigneData = [oldData.assignee];
+    } else if (oldData.candidates) {
+      assigneData = oldData.candidates;
+    }
+    if (candidates &&
+      assigneData.map((user) => user._id).join(',') !== candidates.map((user) => user._id).join(',')) {
       this.updatePromises.push(
         this.TaskApi.updateAssignee(
           this.state.task._id,
@@ -587,29 +595,6 @@ class EditTask extends React.Component<IProps, IState> {
         ),
       );
     }
-    // const oldData = this.originalTask;
-    // const newItems = differenceBy(candidates, oldData.candidates, '_id');
-    // const removedItems = differenceBy(oldData.candidates, candidates, '_id');
-    // if (candidates.length === 1 && oldData.assignee._id !== candidates[0]._id) {
-    //   this.updatePromises.push(this.TaskApi.updateAssignee(this.state.task._id, candidates[0]._id));
-    // } else if (candidates.length > 1) {
-    //   if (newItems.length > 0) {
-    //     newItems.forEach((item) => {
-    //       console.log(item);
-    //       this.updatePromises.push(this.TaskApi.addCandidate(this.state.task._id, item._id));
-    //       // .then((res) => {
-    //       //   if (res.accepted_candidates && res.accepted_candidates[0] == item._id) {
-    //       //     // message.success
-    //       //   }
-    //       // });
-    //     });
-    //   }
-    //   if (removedItems.length > 0) {
-    //     removedItems.forEach((item) => {
-    //       this.updatePromises.push(this.TaskApi.removeCandidate(this.state.task._id, item._id));
-    //     });
-    //   }
-    // }
 
   }
 
@@ -1189,7 +1174,9 @@ class EditTask extends React.Component<IProps, IState> {
           {this.createMode && (
             <button className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
               styleNavbar.butnPrimary].join(' ')}
-              onClick={this.createTask}>Create Task</button>
+              onClick={this.createTask}>
+              {this.props.routeParams.relatedTask ? 'Create a related Task' : 'Create Task'}
+            </button>
           )}
           {!this.createMode && (
             <a onClick={this.toggleMoreOpts}>
@@ -1222,6 +1209,10 @@ class EditTask extends React.Component<IProps, IState> {
                 {isFailed && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
               <li className={style.hr}/>
+              <li>
+                <IcoN size={16} name={'chain16'}/>
+                <Link to={`task/activity/${task._id}`}>Task Activities</Link>
+              </li>
               <li onClick={this.createRelatedTask}>
                 <IcoN size={16} name={'chain16'}/>
                 <a>Create a related Task</a>

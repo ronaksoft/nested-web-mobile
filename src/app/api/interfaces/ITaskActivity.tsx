@@ -12,6 +12,7 @@ interface ITaskActivity {
   assignee?: IUser;
   attachments?: IAttachment[];
   title?: string;
+  description?: string;
   status?: number;
   todo_text?: string;
   comment_text?: string;
