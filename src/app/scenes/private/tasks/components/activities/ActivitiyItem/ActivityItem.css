@@ -96,6 +96,12 @@
   display: flex;
   margin-top: 8px;
 }
+.red,
+.green,
+.blue {
+  display: flex;
+  flex: none;
+}
 .red path{
   fill: #FF3344
 }

@@ -24,7 +24,9 @@ export default class AddTodo extends React.Component <IProps, any> {
             <aside>Added a todo:</aside>
             <p>“{activity.todo_text}”</p>
           </div>
-          <IcoN size={16} name={'bulletList16'}/>
+          <div className={style.green}>
+            <IcoN size={16} name={'bulletList16'}/>
+          </div>
         </div>
       </a>
     );

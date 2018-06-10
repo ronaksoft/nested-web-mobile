@@ -24,7 +24,11 @@ export default class DoneTodo extends React.Component <IProps, any> {
             <aside>Marked a to-do task as undone:</aside>
             <p>“{activity.todo_text}”</p>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          
+          <div className={style.red}>
+            <IcoN size={16} name={'negativeXCross16'}/>
+            <IcoN size={16} name={'bulletList16'}/>
+          </div>
         </div>
       </a>
     );

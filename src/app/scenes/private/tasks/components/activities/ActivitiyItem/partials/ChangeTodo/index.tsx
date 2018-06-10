@@ -24,7 +24,9 @@ export default class ChangeTodo extends React.Component <IProps, any> {
             <aside>Changed a todo:</aside>
             <p>“{activity.todo_text}”</p>
           </div>
-          <IcoN size={16} name={'bulletList16'}/>
+          <div className={style.blue}>
+            <IcoN size={16} name={'bulletList16'}/>
+          </div>
         </div>
       </a>
     );

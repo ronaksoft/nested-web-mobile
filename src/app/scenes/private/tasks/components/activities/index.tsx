@@ -135,7 +135,7 @@ class TaskActivities extends React.Component<IProps, IState> {
     this.TaskApi = new TaskApi();
     this.getActivities();
   }
-  private getActivities() {
+  private getActivities = () => {
     this.TaskApi.getActivities({
       limit: this.pagination.limit,
       skip: this.pagination.skip,
@@ -145,7 +145,6 @@ class TaskActivities extends React.Component<IProps, IState> {
     })
     .then((activities: ITaskActivity[]) => {
       const reachedTheEnd = activities.length < this.pagination.limit;
-      console.log(activities);
       const newItems = differenceBy(activities, this.state.activities, '_id');
       this.pagination.skip += activities.length;
       this.setState({
