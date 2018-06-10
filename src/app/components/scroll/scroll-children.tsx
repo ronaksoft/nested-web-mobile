@@ -172,7 +172,7 @@ export default class Scrollable extends React.Component<IProps, IState> {
     let styleContainer = {};
     if (this.state.shrinkHeight) {
       styleContainer = {
-        maxHeight: `calc(100vh - ${56 + this.state.shrinkHeight}px)`,
+        maxHeight: `calc(var(--app-height) - ${56 + this.state.shrinkHeight}px)`,
       };
     }
     return (

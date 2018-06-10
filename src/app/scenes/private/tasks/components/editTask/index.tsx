@@ -95,6 +95,7 @@ interface IProps {
    * @memberof IProps
    */
   user: IUser;
+  location: any;
 }
 
 /**
@@ -149,7 +150,7 @@ class EditTask extends React.Component<IProps, IState> {
   private viewMode: boolean = false;
   private removeTodoProcess: boolean = false;
   private access: any = {};
-  private activeRows: any = {
+  private activeRowsInitial: any = {
     date: false,
     description: false,
     todos: false,
@@ -158,6 +159,7 @@ class EditTask extends React.Component<IProps, IState> {
     editors: false,
     labels: false,
   };
+  private activeRows: any = cloneDeep(this.activeRowsInitial);
   private activeRowsClone = {};
   private updatePromises = [];
   /**
@@ -188,6 +190,18 @@ class EditTask extends React.Component<IProps, IState> {
    * @memberof Compose
    */
   private attachments: any;
+  private emptyTask: ITask = {
+    _id: null,
+    access: [],
+    assignor: this.props.user,
+    title: '',
+    attachments: [],
+    watchers: [],
+    editors: [],
+    todos: [],
+    candidates: [],
+    labels: [],
+  };
 
   /**
    * Creates an instance of Post.
@@ -198,18 +212,9 @@ class EditTask extends React.Component<IProps, IState> {
     super(props);
     this.inProgress = false;
     this.state = {
-      task: (this.props.routeParams.taskId ? this.props.task : cloneDeep(this.props.draft)) || {
-        _id: null,
-        access: [],
-        assignor: this.props.user,
-        title: '',
-        attachments: [],
-        watchers: [],
-        editors: [],
-        todos: [],
-        candidates: [],
-        labels: [],
-      },
+      task:
+        (this.props.routeParams.taskId ? this.props.task : cloneDeep(this.props.draft))
+        || cloneDeep(this.emptyTask),
       showMoreOptions: false,
       Loading: false,
       attachModal: false,
@@ -610,6 +615,7 @@ class EditTask extends React.Component<IProps, IState> {
 
   private checkTodo = (index, event) => {
     event.nativeEvent.preventDefault();
+    event.nativeEvent.stopPropagation();
     const target = event.target;
     const task = this.state.task;
     const isChecked: boolean = !task.todos[index].done;
@@ -664,17 +670,20 @@ class EditTask extends React.Component<IProps, IState> {
     //   event.target.blur();
     // }
   }
+
   private newTodoKeyUp = (event) => {
     this.pristineForm = false;
     if (event.which === 13) {
       this.newTodo();
     }
   }
+
   private newTodoOnChange = (event) => {
     this.setState({
       newTodo: event.target.value,
     });
   }
+
   private newTodo = () => {
     if (this.state.newTodo.length === 0) {
       return;
@@ -731,6 +740,28 @@ class EditTask extends React.Component<IProps, IState> {
    * @override
    */
   public componentWillReceiveProps(newProps: IProps) {
+    if (!this.props.routeParams.relatedTask && newProps.routeParams.relatedTask) {
+      this.createMode = true;
+      this.viewMode = false;
+      this.editMode = false;
+      this.startedEditing = true;
+      this.activeRows = cloneDeep(this.activeRowsInitial);
+      const newTask = cloneDeep(this.props.draft) || cloneDeep(this.emptyTask);
+      this.initTask(newTask);
+      this.setState({
+        task: newTask,
+        showMoreOptions: false,
+      });
+    }
+    if (!this.props.routeParams.taskId && newProps.routeParams.taskId) {
+      this.TaskApi.getMany(newProps.routeParams.taskId)
+      .then((response) => {
+        this.initTask(response.tasks[0]);
+        this.setState({
+          task: response.tasks[0],
+        });
+      });
+    }
     if (this.props.task) {
       this.setState({
         task: newProps.task ? newProps.task : null,
@@ -1006,6 +1037,8 @@ class EditTask extends React.Component<IProps, IState> {
       return;
     }
     target.disabled = true;
+    this.pristineForm = true;
+    this.startedEditing = false;
     const oldLabel = target.innerText;
     target.innerText = 'wait...';
     const model: ITaskRequest = {
@@ -1038,12 +1071,21 @@ class EditTask extends React.Component<IProps, IState> {
       model.due_date = task.due_date;
       model.due_data_has_clock = task.due_data_has_clock || false;
     }
+    if (this.props.routeParams.relatedTask) {
+      model.related_to = this.props.routeParams.relatedTask;
+    }
     this.TaskApi.create(model).then((response) => {
-      return hashHistory.push(`/task/edit/${response.task_id}/`);
+      this.props.unsetDraft();
+      return hashHistory.replace(`/task/edit/${response.task_id}/`);
     }).catch(() => {
       target.innerText = oldLabel;
+      this.startedEditing = true;
+      this.pristineForm = false;
       target.disabled = false;
     });
+  }
+  private createRelatedTask = () => {
+    return hashHistory.replace(`/task/create/${this.state.task._id}/`);
   }
   /**
    * @func render
@@ -1180,10 +1222,10 @@ class EditTask extends React.Component<IProps, IState> {
                 {isFailed && <IcoN size={16} name={'heavyCheck16'}/>}
               </li>
               <li className={style.hr}/>
-              {/* <li>
+              <li onClick={this.createRelatedTask}>
                 <IcoN size={16} name={'chain16'}/>
-                <Link to={`/forward/${task._id}`}>Create a related Task</Link>
-              </li> */}
+                <a>Create a related Task</a>
+              </li>
               {task.access.indexOf(C_TASK_ACCESS.DELETE_TASK) > -1 && (
                 <li>
                   <IcoN size={16} name={'binRed16'}/>
@@ -1193,7 +1235,8 @@ class EditTask extends React.Component<IProps, IState> {
             </ul>
           </div>
         )}
-        <Scrollable active={true} ref={this.scrollRefHandler} shrinkHeight={someRowNotBinded ? 56 : 0}>
+        <Scrollable active={true} ref={this.scrollRefHandler}
+          shrinkHeight={someRowNotBinded && this.startedEditing ? 56 : 0}>
           <div className={style.postScrollContainer}>
             <div className={style.postScrollContent}>
               <div className={style.taskRow}>
@@ -1353,6 +1396,8 @@ class EditTask extends React.Component<IProps, IState> {
                       {this.startedEditing && (
                         <li key="newTodo">
                           <input type="checkbox" id="todo1" defaultChecked={false}/>
+                          <IcoN name="todoDone16" size={16}/>
+                          <IcoN name="todoUndone16" size={16}/>
                           <label htmlFor="todo1">
                             <input type="text" value={this.state.newTodo} onChange={this.newTodoOnChange}
                               placeholder="+ Add a to-do" onKeyUp={this.newTodoKeyUp}/>

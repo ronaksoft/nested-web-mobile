@@ -1,5 +1,5 @@
 .container {
-  max-height: calc(100vh - 56px);
+  max-height: calc(var(--app-height) - 56px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 22;

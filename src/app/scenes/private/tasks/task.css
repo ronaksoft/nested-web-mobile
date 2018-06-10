@@ -28,7 +28,7 @@
 }
 
 .taskView {
-  height: 100vh;
+  height: var(--app-height);
   margin-top: -56px;
   overflow: hidden;
 }
@@ -76,7 +76,7 @@
   color: rgba(50, 61, 71, 0.4);
 }
 .overlay {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
@@ -197,9 +197,10 @@
   color: #323D47;
 }
 .todoList li i{
-  margin: 0 22px;
+  margin: 8px 22px 0;
   transform: scale(.8, .8);
   display: inline-flex;
+  align-self: flex-start;
 }
 .todoList li input[type="checkbox"]{
   height: 26px;

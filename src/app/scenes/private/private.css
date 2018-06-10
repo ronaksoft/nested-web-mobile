@@ -1,5 +1,6 @@
 :root {
   --color-force: #ff3344;
+  --app-height: 100px;
 }
 @font-face{
   font-family: 'OpenSans';

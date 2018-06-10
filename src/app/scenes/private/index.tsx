@@ -248,7 +248,6 @@ class Private extends React.Component<IProps, IState> {
   }
 
   private scrollPreventer = (e) => {
-    console.log('scrollPreventer');
     e = e || window.event;
     // if (this.isiOS()) {
       e.returnValue = false;
@@ -259,6 +258,11 @@ class Private extends React.Component<IProps, IState> {
       }
       return false; // or return e, doesn't matter
     // }
+  }
+  private appHeight = () => {
+    const doc = document.documentElement;
+    console.log(doc, window.innerHeight);
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
   }
 
   /**
@@ -274,6 +278,7 @@ class Private extends React.Component<IProps, IState> {
     document.body.addEventListener('scroll', this.scrollPreventer, false);
     document.addEventListener('touchmove', this.scrollPreventer, false);
     document.body.addEventListener('touchmove', this.scrollPreventer, false);
+    window.addEventListener('resize', this.appHeight, false);
 
     // document.addEventListener('touchstart', (e) => {
     //   this.xStart = e.touches[0].screenY;
@@ -298,6 +303,7 @@ class Private extends React.Component<IProps, IState> {
       });
     }, 1000);
 
+    this.appHeight();
     /**
      * calls on every route change
      * and gets unread notifications count also
@@ -369,6 +375,7 @@ class Private extends React.Component<IProps, IState> {
     document.body.removeEventListener('touchmove', this.scrollPreventer);
     document.removeEventListener('scroll', this.scrollPreventer);
     document.body.removeEventListener('scroll', this.scrollPreventer);
+    document.removeEventListener('resize', this.appHeight);
   }
 
   /**
