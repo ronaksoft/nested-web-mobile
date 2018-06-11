@@ -29,7 +29,9 @@ export default class AddCandidate extends React.Component <IProps, any> {
               ))}
             </div>
           </div>
-          <IcoN size={16} name={'person16'}/>
+          <div className={style.green}>
+            <IcoN size={16} name={'hourglass16'}/>
+          </div>
         </div>
       </a>
     );

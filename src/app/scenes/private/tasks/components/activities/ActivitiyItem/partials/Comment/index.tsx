@@ -24,7 +24,9 @@ export default class CommentTask extends React.Component <IProps, any> {
             <aside>Commented:</aside>
             <p>“{activity.comment_text}”</p>
           </div>
-          <IcoN size={16} name={'comment16'}/>
+          <div className={style.green}>
+            <IcoN size={16} name={'comment16'}/>
+          </div>
         </div>
       </a>
     );

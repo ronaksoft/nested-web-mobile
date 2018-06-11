@@ -1,3 +1,6 @@
+:root {
+  --app-height: 100vh;
+}
 .container {
   max-height: calc(var(--app-height) - 56px);
   overflow: auto;

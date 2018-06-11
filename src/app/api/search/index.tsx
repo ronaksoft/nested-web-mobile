@@ -33,15 +33,15 @@ export default class SearchApi {
       this.api.request({
         cmd: 'search/accounts_for_search',
         data,
-      }).then((data) => {
-        if (data.accounts && data.accounts.length > 0) {
-          res(data.accounts);
+      }).then((response) => {
+        if (response.accounts && response.accounts.length > 0) {
+          res(response.accounts);
         } else {
           this.api.request({
             cmd: 'search/accounts',
             data,
-          }).then((response) => {
-            res(response.accounts);
+          }).then((result) => {
+            res(result.accounts);
           }).catch(rej);
         }
       });

@@ -1201,24 +1201,24 @@ class EditTask extends React.Component<IProps, IState> {
             <ul>
               <li className={isInProgress ? 'active' : ''}
                 onClick={this.setStatus.bind(this, C_TASK_STATE.in_progress)}>
-                <IcoN size={16} name={'taskInProgress16'}/>
+                <IcoN size={16} name={'taskInProgressBlue16'}/>
                 <a>In Progress</a>
-                {isInProgress && <IcoN size={16} name={'heavyCheck16'}/>}
+                {isInProgress && <IcoN size={16} name={'heavyCheckGreen16'}/>}
               </li>
               <li className={isHold ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.hold)}>
-                <IcoN size={16} name={'taskHold16'}/>
+                <IcoN size={16} name={'taskHoldYellow16'}/>
                 <a>Hold</a>
-                {isHold && <IcoN size={16} name={'heavyCheck16'}/>}
+                {isHold && <IcoN size={16} name={'heavyCheckGreen16'}/>}
               </li>
               <li className={isCompleted ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.complete)}>
-                <IcoN size={16} name={'taskCompleted16'}/>
+                <IcoN size={16} name={'taskCompletedGreen16'}/>
                 <a>Completed</a>
-                {isCompleted && <IcoN size={16} name={'heavyCheck16'}/>}
+                {isCompleted && <IcoN size={16} name={'heavyCheckGreen16'}/>}
               </li>
               <li className={isFailed ? 'active' : ''} onClick={this.setStatus.bind(this, C_TASK_STATE.failed)}>
                 <IcoN size={16} name={'failed16'}/>
                 <a>Failed</a>
-                {isFailed && <IcoN size={16} name={'heavyCheck16'}/>}
+                {isFailed && <IcoN size={16} name={'heavyCheckGreen16'}/>}
               </li>
               <li className={style.hr}/>
               <li>

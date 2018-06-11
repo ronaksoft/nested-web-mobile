@@ -24,7 +24,7 @@ export default class ChangeTitle extends React.Component <IProps, any> {
             <aside>Changed the title:</aside>
             <p>“{activity.title}”</p>
           </div>
-          <IcoN size={16} name={'taskInProgress16'}/>
+          <IcoN size={16} name={'taskInProgressWithTodo16'}/>
         </div>
       </a>
     );
