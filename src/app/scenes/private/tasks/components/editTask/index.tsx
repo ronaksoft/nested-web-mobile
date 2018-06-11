@@ -1268,10 +1268,12 @@ class EditTask extends React.Component<IProps, IState> {
               </div>
               <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
                 <div className={style.taskRowIcon}>
-                  {task.assignee && (!task.candidates || task.candidates.length === 0) &&
-                    <UserAvatar user_id={task.assignee} borderRadius="24px" size={24}/>}
-                  {!task.assignee && !task.candidates && <IcoN name="askWire24" size={24}/>}
-                  {task.candidates && <IcoN name="candidate32" size={32}/>}
+                  {task.assignee || (task.candidates && task.candidates.length === 1) &&
+                    <UserAvatar user_id={task.assignee || task.candidates[0]} borderRadius="24px" size={24}/>}
+                  {!task.assignee && (!task.candidates || task.candidates.length === 0) &&
+                    <IcoN name="askWire24" size={24}/>
+                  }
+                  {task.candidates && task.candidates.length > 1 && <IcoN name="candidate32" size={32}/>}
                 </div>
                 {this.viewMode && task.assignee && (
                   <div className={style.taskRowItem}>
@@ -1293,7 +1295,7 @@ class EditTask extends React.Component<IProps, IState> {
                                     (this.access.CHANGE_ASSIGNEE || this.access.ADD_CANDIDATE)
                                   )
                                   || this.createMode}
-                                placeholder="Assignees"
+                                placeholder={task.candidates.length > 0 ? 'Add Candidate' : 'Add Assignee'}
                                 selectedItems={selectedItemsForAssigne}
                                 onSelectedItemsChanged={this.handleAssigneChanged}
                     />
