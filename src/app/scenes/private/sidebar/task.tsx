@@ -5,7 +5,7 @@ import TaskApi from '../../../api/task/index';
 import ICustomFilter from '../../../api/task/interfaces/ICustomFilter';
 
 // import {sortBy} from 'lodash';
-import {IcoN} from 'components';
+import {IcoN, Scrollable} from 'components';
 
 const style = require('./sidebar.css');
 
@@ -62,15 +62,6 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
   private TaskApi: TaskApi;
 
   /**
-   * @prop sidebarElement
-   * @desc Reference of sidebar element
-   * @private
-   * @type {HTMLDivElement}
-   * @memberof TaskSidebar
-   */
-  private sidebarElement: HTMLDivElement;
-
-  /**
    * @constructor
    * Creates an instance of TaskSidebar.
    * @param {ISidebarProps} props
@@ -95,27 +86,7 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
    * @memberof TaskSidebar
    */
   public componentDidMount() {
-
-    this.sidebarElement.addEventListener('touchmove', (e: any) => {
-      e = e || window.event;
-      document.body.scrollTop = 0;
-      e.stopImmediatePropagation();
-      e.cancelBubble = true;
-      e.stopPropagation();
-    }, false);
-
     this.TaskApi = new TaskApi();
-
-  }
-
-  /**
-   * @func refHandler
-   * @private
-   * @memberof TaskSidebar
-   * @param {HTMLDivElement} value
-   */
-  private refHandler = (value) => {
-    this.sidebarElement = value;
   }
 
   /**
@@ -127,73 +98,77 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
    */
   public render() {
     return (
-      <div className={style.sidebar} ref={this.refHandler}>
-        <div>
-          {/* Close TaskSidebar button */}
-          <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
-            <IcoN size={24} name={'xcrossWhite24'}/>
-          </div>
-          <ul className={style.sidebarActions}>
-            <li>
-              <Link to={`/task/glance`}>
-                <IcoN size={16} name={'glance16'}/>
-                Glance
-              </Link>
-            </li>
-            <li>
-              <Link to={`/task/assigned_to_me/normal`}>
-                <IcoN size={16} name={'internal16'}/>
-                Assigned to me
-              </Link>
-            </li>
-            <li>
-              <Link to={`/task/created_by_me/normal`}>
-                <IcoN size={16} name={'external16'}/>
-                Created by me
-              </Link>
-            </li>
-            <li>
-              <Link to={`/task/watchlist/normal`}>
-                <IcoN size={16} name={'raggedList16'}/>
-                Watchlist
-              </Link>
-            </li>
-          </ul>
-          <ul className={style.filters}>
-          {this.state.customFilters.map((filter, i) => (
-              <li key={i}>
-                {/* horizental rule for grand places */}
-                <hr className={style.hrDark}/>
-                <hr className={style.hrLight}/>
-                <Link to={`/task/custom_filter/${filter.id}`} activeClassName="active">
-                  <div className={style.filter}>
-                    <IcoN size={16} name={'filter16'}/>
-                    <div className={style.indent}/>
-                    <span>{filter.name}</span>
-                  </div>
-                </Link>
-              </li>
-            ),
-          )}
-          </ul>
-          <hr className={style.hrDark}/>
-          <hr className={style.hrLight}/>
-          <ul className={style.sidebarActions}>
-            {/* Help center external link */}
-            <li>
-              <a href={`http://help.nested.me`} target="_blank">
-                <IcoN size={16} name={'ask16White'}/>
-                Help Center
-              </a>
-            </li>
-            {/* Logging out button */}
-            <li>
-              <Link to={`/signout`}>
-                <IcoN size={16} name={'exit16White'}/>
-                Sign out
-              </Link>
-            </li>
-          </ul>
+      <div className={style.sidebar}>
+        {/* Close TaskSidebar button */}
+        <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
+          <IcoN size={24} name={'xcrossWhite24'}/>
+        </div>
+        <div className={style.scrollContainer}>
+          <Scrollable active={true}>
+            <div className={style.itemContainer}>
+              <ul className={style.sidebarActions}>
+                <li>
+                  <Link to={`/task/glance`}>
+                    <IcoN size={16} name={'glance16'}/>
+                    Glance
+                  </Link>
+                </li>
+                <li>
+                  <Link to={`/task/assigned_to_me/normal`}>
+                    <IcoN size={16} name={'internal16'}/>
+                    Assigned to me
+                  </Link>
+                </li>
+                <li>
+                  <Link to={`/task/created_by_me/normal`}>
+                    <IcoN size={16} name={'external16'}/>
+                    Created by me
+                  </Link>
+                </li>
+                <li>
+                  <Link to={`/task/watchlist/normal`}>
+                    <IcoN size={16} name={'raggedList16'}/>
+                    Watchlist
+                  </Link>
+                </li>
+              </ul>
+              <ul className={style.filters}>
+              {this.state.customFilters.map((filter, i) => (
+                  <li key={i}>
+                    {/* horizental rule for grand places */}
+                    <hr className={style.hrDark}/>
+                    <hr className={style.hrLight}/>
+                    <Link to={`/task/custom_filter/${filter.id}`} activeClassName="active">
+                      <div className={style.filter}>
+                        <IcoN size={16} name={'filter16'}/>
+                        <div className={style.indent}/>
+                        <span>{filter.name}</span>
+                      </div>
+                    </Link>
+                  </li>
+                ),
+              )}
+              </ul>
+              <hr className={style.hrDark}/>
+              <hr className={style.hrLight}/>
+              <ul className={style.sidebarActions}>
+                {/* Help center external link */}
+                <li>
+                  <a href={`http://help.nested.me`} target="_blank">
+                    <IcoN size={16} name={'ask16White'}/>
+                    Help Center
+                  </a>
+                </li>
+                {/* Logging out button */}
+                <li>
+                  <Link to={`/signout`}>
+                    <IcoN size={16} name={'exit16White'}/>
+                    Sign out
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </Scrollable>
         </div>
       </div>
     );
