@@ -791,8 +791,8 @@ class Post extends React.Component<IProps, IState> {
               </div>
               {/* renders the comments and comment input in post view */}
               {!this.props.post && (
-                <CommentsBoard no_comment={this.state.post.no_comment} post={this.state.post}
-                               user={this.props.user} newComment={this.newCommentReceived}/>
+                <CommentsBoard no_comment={this.state.post.no_comment} newComment={this.newCommentReceived}
+                                count={post.counters.comments} post={this.state.post} user={this.props.user}/>
               )}
               {postView && <div className={privateStyle.bottomSpace}/>}
             </div>

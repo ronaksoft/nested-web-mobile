@@ -1538,7 +1538,7 @@ class EditTask extends React.Component<IProps, IState> {
               )}
               {this.access.COMMENT && !this.startedEditing && (
                 <CommentsBoard no_comment={false}
-                  task={this.state.task}
+                  task={this.state.task} count={task.counters.comments}
                   user={this.props.user}/>
                 )}
               <div className={privateStyle.bottomSpace}/>

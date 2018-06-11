@@ -56,6 +56,7 @@ interface IProps {
    */
   user?: IUser;
   newComment?: () => void;
+  count?: number;
 }
 
 /**
@@ -478,6 +479,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className={style.commentBoard} id={'comment-board'}>
+        <div className={style.loadMore}>
+          <IcoN size={16} name={'comments16'}/>
+          {this.props.count >= this.state.comments.length && this.props.count}
+          {this.props.count < this.state.comments.length && this.state.comments.length}
+          &nbsp;Comments
+        </div>
         {
           this.hasBeforeComments && (
             <div id={'load-older-comments'} className={style.loadMore}
