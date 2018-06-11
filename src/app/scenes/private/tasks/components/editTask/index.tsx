@@ -1186,6 +1186,7 @@ class EditTask extends React.Component<IProps, IState> {
           {this.createMode && (
             <button className={[buttonsStyle.butn, buttonsStyle.butnSolid, buttonsStyle.secondary,
               styleNavbar.butnPrimary].join(' ')}
+              disabled={task.title.length < 1 || task.candidates.length === 0}
               onClick={this.createTask}>
               {this.props.routeParams.relatedTask ? 'Create a related Task' : 'Create Task'}
             </button>
@@ -1268,8 +1269,8 @@ class EditTask extends React.Component<IProps, IState> {
               </div>
               <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
                 <div className={style.taskRowIcon}>
-                  {task.assignee || (task.candidates && task.candidates.length === 1) &&
-                    <UserAvatar user_id={task.assignee || task.candidates[0]} borderRadius="24px" size={24}/>}
+                  {(task.assignee || (task.candidates && task.candidates.length === 1)) &&
+                    <UserAvatar user_id={selectedItemsForAssigne[0]} borderRadius="24px" size={24}/>}
                   {!task.assignee && (!task.candidates || task.candidates.length === 0) &&
                     <IcoN name="askWire24" size={24}/>
                   }
@@ -1295,7 +1296,9 @@ class EditTask extends React.Component<IProps, IState> {
                                     (this.access.CHANGE_ASSIGNEE || this.access.ADD_CANDIDATE)
                                   )
                                   || this.createMode}
-                                placeholder={task.candidates.length > 0 ? 'Add Candidate' : 'Add Assignee'}
+                                placeholder={task.candidates && task.candidates.length > 0
+                                  ? 'Add Candidate'
+                                  : 'Add Assignee'}
                                 selectedItems={selectedItemsForAssigne}
                                 onSelectedItemsChanged={this.handleAssigneChanged}
                     />
