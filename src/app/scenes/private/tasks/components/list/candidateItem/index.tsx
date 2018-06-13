@@ -123,7 +123,6 @@ export default class TaskCandidateView extends React.Component<IProps, IState> {
         taskStatus =  statuses.FAILED;
         break;
     }
-    console.log(task);
     return (
       <div className={style.candidateItem + ' ' + style.taskItem}>
           <div className={style.taskItemInner}>

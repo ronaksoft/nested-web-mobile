@@ -73,7 +73,7 @@ class TaskUpcomingView extends React.Component<IProps, IState> {
     });
   }
 
-  public onReject = () => {
+  public onReject = (event) => {
     event.preventDefault();
     event.stopPropagation();
     this.taskApi.respond(this.state.task._id, C_TASK_RESPONSE.REJECT)
