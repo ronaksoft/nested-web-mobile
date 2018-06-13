@@ -21,9 +21,11 @@ import clientApi from 'api/client';
 import {hashHistory} from 'react-router';
 import IComposeState from 'api/post/interfaces/IComposeState';
 import {setDraft, unsetDraft} from 'redux/app/actions';
+import {postUpdate} from 'redux/posts/actions';
 import {connect} from 'react-redux';
 import {IAttachment} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
+import {cloneDeep} from 'lodash';
 import IPost from 'api/post/interfaces/IPost';
 
 const confirm = Modal.confirm;
@@ -81,6 +83,7 @@ interface IComposeProps {
    * @memberof IComposeProps
    */
   draft: IComposeState;
+  posts: IPost[];
   /**
    * @prop setDraft
    * @desc Stores a copy of message based on IComposeState interface
@@ -93,6 +96,7 @@ interface IComposeProps {
    * @memberof IComposeProps
    */
   unsetDraft: () => void;
+  postUpdate: (post: IPost) => {};
   /**
    * @property route
    * @desc Route of this component
@@ -576,14 +580,21 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
     this.setState({
       sending: true,
     });
-
+    const body = this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6);
     const params: IEditRequest = {
       post_id: this.props.params.editPostId,
-      body: this.htmlBodyRef.innerHTML.replace('<div contenteditable="true">', '').slice(0, -6),
+      body,
       subject: this.state.subject,
     };
     this.postApi.edit(params).then(() => {
       message.success(`Your post has been edited.`);
+
+      const posts = cloneDeep(this.props.posts);
+      const post = posts[this.props.params.editPostId];
+      if (post) {
+        post.body = body;
+        this.props.postUpdate(post);
+      }
 
       this.setState({
         sending: false,
@@ -884,6 +895,7 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
 
 const mapStateToProps = (store) => ({
   draft: store.app.draft,
+  posts: store.posts,
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -894,6 +906,7 @@ const mapDispatchToProps = (dispatch) => {
     unsetDraft: () => {
       dispatch(unsetDraft());
     },
+    postUpdate: (post: IPost) => (dispatch(postUpdate(post))),
   });
 };
 

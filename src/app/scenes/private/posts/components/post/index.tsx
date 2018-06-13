@@ -25,7 +25,7 @@ import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
-import {difference} from 'lodash';
+import {difference, cloneDeep} from 'lodash';
 import {message} from 'antd';
 import * as md5 from 'md5';
 
@@ -272,13 +272,13 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    * @override
    */
-  public componentWillReceiveProps(newProps: IProps) {
-    if (this.props.post) {
-      this.setState({
-        post: newProps.post ? newProps.post : null,
-      });
-    }
-  }
+  // public componentWillReceiveProps(newProps: IProps) {
+  //   if (this.props.post) {
+  //     this.setState({
+  //       post: newProps.post ? newProps.post : null,
+  //     });
+  //   }
+  // }
 
   /**
    * @func updatePostsInStore
@@ -290,7 +290,7 @@ class Post extends React.Component<IProps, IState> {
    */
   private updatePostsInStore(key: string, value: any) {
 
-    const posts = JSON.parse(JSON.stringify(this.props.posts));
+    const posts = cloneDeep(this.props.posts);
     const post = posts[this.state.post._id];
     if (post) {
       post[key] = value;
@@ -423,8 +423,7 @@ class Post extends React.Component<IProps, IState> {
     event.stopPropagation();
     event.preventDefault();
     // change pinned of post
-    let post;
-    post = JSON.parse(JSON.stringify(this.state.post));
+    const post = cloneDeep(this.state.post);
     post.pinned = !post.pinned;
     this.setState({post});
 
@@ -440,9 +439,7 @@ class Post extends React.Component<IProps, IState> {
         })
         .catch(() => {
           // roll back if has error in api call
-          let post;
           this.inProgress = false;
-          post = this.state.post;
           post.pinned = !post.pinned;
           this.setState({post});
         });
@@ -454,7 +451,6 @@ class Post extends React.Component<IProps, IState> {
           this.updatePostsInStore('pinned', false);
         })
         .catch(() => {
-
           // set action is not in progress
           this.inProgress = false;
 
