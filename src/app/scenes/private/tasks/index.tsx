@@ -488,6 +488,10 @@ class Tasks extends React.Component<IProps, IState> {
     if (this.state.route.indexOf('filter') > -1) {
       this.getTasksByCustom(true);
     } else {
+      if (this.state.route === 'glance') {
+        this.getOverDueTasks();
+        this.getCandidateTasks();
+      }
       this.getTasks(true);
     }
   }
