@@ -42,7 +42,7 @@ export default class MentionTask extends React.Component <IProps, any> {
   public render() {
     const notification = this.props.notification;
     return (
-      <Link to={`/task/${notification._id}/`}
+      <Link to={`/task/edit/${notification.task_id}/`}
             className={[style.notifWrapper, notification.read ? style.read : null].join(' ')}>
         {/* using UserAvatar component for rendering user avatar */}
         <UserAvatar user_id={notification.actor} size={32} borderRadius={'16px'}/>

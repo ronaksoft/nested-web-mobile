@@ -20,6 +20,7 @@ interface INotification {
   others?: any;
   label_id?: string;
   label?: ILabel;
+  task_id?: string;
   client_id?: string;
 }
 
