@@ -224,6 +224,10 @@ class Post extends React.Component<IProps, IState> {
             post.post_read = true;
             this.updatePostsInStore('post_read', true);
           }
+        }).catch((err) => {
+          if (err && err.err_code === 3) {
+            hashHistory.goBack();
+          }
         });
 
       window.scrollTo(0, 0);
