@@ -654,6 +654,7 @@ class Tasks extends React.Component<IProps, IState> {
         <div className={privateStyle.tasksArea + ' ' + style.tasksList}>
           <InfiniteScroll
             pullDownToRefresh={true}
+            pullLoading={this.state.loadingBefore || this.state.loadingAfter}
             refreshFunction={this.refresh}
             next={loadMore}
             route={this.props.location.pathname}

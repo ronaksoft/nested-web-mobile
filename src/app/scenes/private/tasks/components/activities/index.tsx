@@ -201,6 +201,7 @@ class TaskActivities extends React.Component<IProps, IState> {
         </div>
         <InfiniteScroll
             pullDownToRefresh={true}
+            pullLoading={this.state.Loading}
             refreshFunction={this.refresh}
             next={this.getActivities}
             route={this.props.location.pathname}

@@ -622,6 +622,7 @@ class Posts extends React.Component<IProps, IState> {
           {(this.state.posts.length > 0 && getPinnedPosts) && (
             <InfiniteScroll
               pullDownToRefresh={true}
+              pullLoading={this.state.loadingBefore || this.state.loadingAfter}
               refreshFunction={this.refresh}
               next={loadMore}
               route={route}

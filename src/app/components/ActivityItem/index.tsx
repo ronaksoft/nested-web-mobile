@@ -96,8 +96,8 @@ class ActivityItem extends React.Component<IProps, any> {
         return (
           <p>
             <b>{act.actor.fname} {act.actor.lname}: </b>
-            {act.post.subject.length > 0 && act.post.subject}
-            {act.post.subject.length > 0 && act.post.subject.length === 0 &&
+            {act.post && act.post.subject && act.post.subject}
+            {act.post && !act.post.subject && act.post.preview &&
               <span dangerouslySetInnerHTML={{__html: act.post.preview}}/>
             }
           </p>

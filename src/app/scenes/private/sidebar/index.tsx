@@ -624,6 +624,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.scrollContainer}>
           <InfiniteScroll
               pullDownToRefresh={true}
+              pullLoading={this.state.loading}
               refreshFunction={this.refresh}
               route={'sidebar-post'}
               hasMore={false}

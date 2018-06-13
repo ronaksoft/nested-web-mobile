@@ -30,6 +30,7 @@ const privateStyle = require('../private.css');
  */
 interface IState {
   activeTab: number;
+  loading: boolean;
   postNotifications: INotification[];
   taskNotifications: INotification[];
 }
@@ -90,6 +91,7 @@ class Notifications extends React.Component<IProps, IState> {
       postNotifications: this.props.postNotifications || [],
       taskNotifications: this.props.taskNotifications || [],
       activeTab: 0,
+      loading: false,
     };
   }
 
@@ -141,6 +143,7 @@ class Notifications extends React.Component<IProps, IState> {
   private getNotificationBefore(saveInStore: boolean, getFromNow?: boolean) {
     // define the notification Api class
     const notificationApi = new NotificationApi();
+    this.setState({loading: true});
     const {activeTab} = this.state;
     const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications ;
     // receive notifications with declared limits and before timestamp of
@@ -162,7 +165,8 @@ class Notifications extends React.Component<IProps, IState> {
           });
 
       // Update state with new notifications array
-      const state = {};
+      const state: any = {};
+      state.loading = false;
       state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
       this.setState(state);
       // check saveInStore value and store notification items in redux store
@@ -185,6 +189,7 @@ class Notifications extends React.Component<IProps, IState> {
 
     // define the notification Api class
     const notificationApi = new NotificationApi();
+    this.setState({loading: true});
     const {activeTab} = this.state;
     const thisNotifs = activeTab === 0 ? this.state.postNotifications : this.state.taskNotifications;
 
@@ -215,7 +220,8 @@ class Notifications extends React.Component<IProps, IState> {
           });
 
       // Update state with new notifications array
-      const state = {};
+      const state: any = {};
+      state.loading = false;
       state[activeTab === 0 ? 'postNotifications' : 'taskNotifications'] = notifs;
       this.setState(state);
     });
@@ -360,6 +366,7 @@ class Notifications extends React.Component<IProps, IState> {
           {this.state.activeTab === 1 && this.state.taskNotifications.length > 0 && (
             <InfiniteScroll
               pullDownToRefresh={true}
+              pullLoading={this.state.loading}
               refreshFunction={this.refresh}
               next={this.loadMore}
               route={'taskNotifications'}
@@ -378,6 +385,7 @@ class Notifications extends React.Component<IProps, IState> {
             <InfiniteScroll
               pullDownToRefresh={true}
               refreshFunction={this.refresh}
+              pullLoading={this.state.loading}
               next={this.loadMore}
               route={'postNotifications'}
               hasMore={true}

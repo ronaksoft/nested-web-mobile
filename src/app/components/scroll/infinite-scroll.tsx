@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {IcoN} from 'components';
+import {IcoN, Loading} from 'components';
 import {setScroll, unsetScroll} from '../../redux/app/actions/index';
 
 import {throttle} from 'lodash';
@@ -9,9 +9,11 @@ interface IState {
     showLoader: boolean;
     lastScrollTop: number;
     actionTriggered: boolean;
+    pullLoading: boolean;
     pullToRefreshThresholdBreached: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
+    pullLoadingContent: any;
     route: string;
     scrollPositions: any;
     pullDownToRefreshThreshold: number;
@@ -30,10 +32,12 @@ interface IOwnProps {
     style?: any;
     height?: number;
     scrollableTarget?: any;
+    pullLoading?: boolean;
     hasChildren?: boolean;
     pullDownToRefresh?: boolean;
     pullDownToRefreshContent?: any;
     releaseToRefreshContent?: any;
+    pullLoadingContent?: any;
     pullDownToRefreshThreshold?: number;
     refreshFunction?: () => void;
     onScroll?: (evt: Event) => void;
@@ -55,6 +59,7 @@ interface IProps {
     pullDownToRefresh: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
+    pullLoadingContent: any;
     pullDownToRefreshThreshold: number;
     refreshFunction: () => void;
     onScroll: (evt: Event) => void;
@@ -83,6 +88,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
         scrollPositions: {},
         lastScrollTop: 0,
         actionTriggered: false,
+        pullLoading: false,
         pullToRefreshThresholdBreached: false,
         route: props.route,
         pullDownToRefreshContent: props.pullDownToRefreshContent || (
@@ -95,6 +101,12 @@ class InfiniteScroll extends React.Component<IProps, IState> {
           <h3 className={style.release}>
             <IcoN size={16} name={'arrow16'}/>
             <span>Release to refresh</span>
+          </h3>
+        ),
+        pullLoadingContent: props.pullLoadingContent || (
+          <h3 className={style.release}>
+            <Loading active={true}/>
+            <span>Loading</span>
           </h3>
         ),
         pullDownToRefreshThreshold: props.pullDownToRefreshThreshold || 72,
@@ -201,6 +213,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       showLoader: false,
       actionTriggered: false,
       pullToRefreshThresholdBreached: false,
+      pullLoading: props.pullLoading,
       scrollPositions: props.scrollPositions,
       route: props.route,
     });
@@ -390,15 +403,17 @@ class InfiniteScroll extends React.Component<IProps, IState> {
               ref={this.pullDownHandler}
             >
               <div style={{
-                position: 'absolute',
+                position: !this.state.pullLoading ? 'absolute' : 'relative',
                 left: 0,
                 right: 0,
-                top: (-1 * this.maxPullDownDistance),
+                top: !this.state.pullLoading ? (-1 * this.maxPullDownDistance) : 0,
               }}>
-                {!this.state.pullToRefreshThresholdBreached &&
+                {!this.state.pullToRefreshThresholdBreached && !this.state.pullLoading &&
                   this.state.pullDownToRefreshContent}
-                {this.state.pullToRefreshThresholdBreached &&
+                {this.state.pullToRefreshThresholdBreached && !this.state.pullLoading &&
                   this.state.releaseToRefreshContent}
+                {this.state.pullLoading &&
+                  this.state.pullLoadingContent}
               </div>
             </div>
           )}
