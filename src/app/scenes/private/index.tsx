@@ -274,6 +274,7 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     document.body.scrollTop = 0;
+    // TODO : add this as component
     document.addEventListener('scroll', this.scrollPreventer, false);
     document.body.addEventListener('scroll', this.scrollPreventer, false);
     document.addEventListener('touchmove', this.scrollPreventer, false);

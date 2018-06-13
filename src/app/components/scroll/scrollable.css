@@ -13,5 +13,5 @@
   transition: max-height .2s ease-in-out;
 }
 .container > div{
-  min-height: 100vh;
+  min-height: calc(var(--app-height));
 }

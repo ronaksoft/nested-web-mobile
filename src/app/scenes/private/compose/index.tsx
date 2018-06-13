@@ -865,15 +865,18 @@ class Compose extends React.Component<IComposeProps, IComposeState> {
         </div>
         </Scrollable>
         {/* attachments uploading/uploaded list */}
-        <AttachmentUploader
-          mode="compose"
-          editable={true}
-          onItemsChanged={this.handleAttachmentsChange}
-          ref={this.referenceAttachments}
-          items={this.state.attachments}
-        />
+        <div className={style.AttachmentUploader}>
+          <AttachmentUploader
+            mode="compose"
+            editable={true}
+            onItemsChanged={this.handleAttachmentsChange}
+            ref={this.referenceAttachments}
+            items={this.state.attachments}
+          />
+        </div>
         {/* hidden input for attachment upload */}
-        <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload} style={{display: 'none'}}/>
+        <input ref={this.referenceFile} id="myFile" type="file" onChange={this.upload}
+          multiple={true} style={{display: 'none'}}/>
       </div>
     );
   }
