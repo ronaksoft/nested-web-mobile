@@ -19,6 +19,7 @@ import SyncActions from './actions';
 import ActivityApi from '../../api/place/index';
 import * as _ from 'lodash';
 import {IPlaceActivity} from 'api/interfaces/';
+import nstTime from 'services/time';
 
 /**
  * @interface IChanel
@@ -50,9 +51,11 @@ export default class SyncActivity {
   private API: Api = Api.getInstance();
   private activityApi = new ActivityApi();
   private listenerCanceler = null;
+  private nestedTime = nstTime.getInstance();
 
   private constructor() {
     // start Sync Activities
+    this.latestActivityTimestamp = this.nestedTime.now();
   }
 
   /**
@@ -81,6 +84,9 @@ export default class SyncActivity {
    * @returns {function} canceller function
    */
   public openChannel(placeId: string, action: SyncActions, callback: (activity?: IPlaceActivity) => void): any {
+    if (Object.keys(this.openChannelsStack).length === 0) {
+      this.latestActivityTimestamp = this.nestedTime.now();
+    }
     if (this.listenerCanceler === null) {
       this.listenerCanceler = this.API.addPlaceSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
@@ -145,7 +151,7 @@ export default class SyncActivity {
       place_id: syncObj.place_id,
       details: true,
     }).then((activities: IPlaceActivity[]) => {
-      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp').timestamp;
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];

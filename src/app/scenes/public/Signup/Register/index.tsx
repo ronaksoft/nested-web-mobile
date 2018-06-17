@@ -27,6 +27,7 @@ import {ILoginResponse } from 'api/account/interfaces';
 import AAA from 'services/aaa';
 import {Scrollable} from 'components';
 import Client from 'services/utils/client';
+import nstTime from 'services/time';
 
 const publicStyle = require('../../public.css');
 const style = require('./register.css');
@@ -72,6 +73,7 @@ interface IProps {
  */
 class Register extends React.Component<IProps, IState> {
   private accountApi: AccountApi;
+  private nestedTime = nstTime.getInstance();
 
   constructor() {
     super();
@@ -516,7 +518,8 @@ class Register extends React.Component<IProps, IState> {
           Client.setDt(dt);
           // Puts the authenticated user data in `store.app` reducer
           this.props.setLogin(response.account);
-
+          // Sets client time stamp
+          this.nestedTime.setServerTime(response.server_timestamp);
           // Navigates to the default route which is `/feed`
           hashHistory.push('/m');
           message.success('Congratulations! Your account has been created successfully. Now you can explore Nested :)');

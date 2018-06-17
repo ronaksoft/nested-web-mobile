@@ -19,6 +19,7 @@ import SyncActions from './actions';
 import ActivityApi from '../../api/post/index';
 import {IPostActivity} from 'api/interfaces/';
 import * as _ from 'lodash';
+import nstTime from 'services/time';
 
 /**
  * @interface IChanel
@@ -50,9 +51,11 @@ export default class SyncActivity {
   private API: Api = Api.getInstance();
   private activityApi = new ActivityApi();
   private listenerCanceler = null;
+  private nestedTime = nstTime.getInstance();
 
   private constructor() {
     // start Sync Activities
+    this.latestActivityTimestamp = this.nestedTime.now();
   }
 
   /**
@@ -81,6 +84,9 @@ export default class SyncActivity {
    * @returns {function} canceller function
    */
   public openChannel(postId: string, action: SyncActions, callback: (activity?: IPostActivity) => void): any {
+    if (Object.keys(this.openChannelsStack).length === 0) {
+      this.latestActivityTimestamp = this.nestedTime.now();
+    }
     if (this.listenerCanceler === null) {
       this.listenerCanceler = this.API.addPostSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
@@ -131,7 +137,7 @@ export default class SyncActivity {
    */
   public dispatchActivityPushEvents(syncObj: any): void {
     const filteredChannelsWithPostId = Object.keys(this.openChannelsStack).filter((channelUid: string): boolean => {
-      return this.openChannelsStack[channelUid].postId === syncObj.postId ||
+      return this.openChannelsStack[channelUid].postId === syncObj.post_id ||
         this.openChannelsStack[channelUid].action === SyncActions.ALL_ACTIONS;
     });
 
@@ -142,10 +148,10 @@ export default class SyncActivity {
     this.activityApi.getActivities({
       // fixme:: fix time
       after: this.latestActivityTimestamp - 10000,
-      post_id: syncObj.postId,
+      post_id: syncObj.post_id,
       details: true,
     }).then((activities: IPostActivity[]) => {
-      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp').timestamp;
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];

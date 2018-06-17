@@ -19,6 +19,7 @@ import SyncActions from './actions';
 import ActivityApi from '../../api/task/index';
 import {ITaskActivity} from 'api/interfaces/';
 import * as _ from 'lodash';
+import nstTime from 'services/time';
 
 /**
  * @interface IChanel
@@ -50,9 +51,11 @@ export default class SyncActivity {
   private API: Api = Api.getInstance();
   private activityApi = new ActivityApi();
   private listenerCanceler = null;
+  private nestedTime = nstTime.getInstance();
 
   private constructor() {
     // start Sync Activities
+    this.latestActivityTimestamp = this.nestedTime.now();
   }
 
   /**
@@ -81,6 +84,9 @@ export default class SyncActivity {
    * @returns {function} canceller function
    */
   public openChannel(taskId: string, action: SyncActions, callback: (activity?: ITaskActivity) => void): any {
+    if (Object.keys(this.openChannelsStack).length === 0) {
+      this.latestActivityTimestamp = this.nestedTime.now();
+    }
     if (this.listenerCanceler === null) {
       this.listenerCanceler = this.API.addTaskSyncActivityListener(this.dispatchActivityPushEvents.bind(this));
     }
@@ -145,7 +151,7 @@ export default class SyncActivity {
       task_id: syncObj.task_id,
       details: true,
     }).then((activities: ITaskActivity[]) => {
-      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp');
+      this.latestActivityTimestamp = _.maxBy(activities, 'timestamp').timestamp;
 
       let calledChannelCallbacks;
       calledChannelCallbacks = [];

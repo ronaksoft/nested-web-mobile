@@ -25,7 +25,7 @@ import SyncPlaceActivity from 'services/sync-place-activity/index';
 import SyncPlaceActions from 'services/sync-place-activity/actions';
 import SyncPostActivity from 'services/sync-post-activity/index';
 import SyncPostActions from 'services/sync-post-activity/actions';
-import {IPlaceActivity, IUser} from 'api/interfaces/';
+import {IPlaceActivity, IPostActivity, IUser} from 'api/interfaces/';
 import AccountApi from 'api/account/index';
 import {NewBadge} from 'components/NewBadge';
 import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
@@ -306,7 +306,7 @@ class Posts extends React.Component<IProps, IState> {
     // Needs documentation
     this.syncActivityListeners.push(
       this.syncPostActivity.openAllChannel(
-        (activity: IPlaceActivity) => {
+        (activity: IPostActivity) => {
           switch (activity.action) {
             case SyncPostActions.COMMENT_ADD:
             case SyncPostActions.COMMENT_REMOVE:

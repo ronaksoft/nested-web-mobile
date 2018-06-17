@@ -25,6 +25,7 @@ import {some, orderBy, filter, findIndex, chain} from 'lodash';
 import {message} from 'antd';
 import VoiceComment from '../VoiceComment';
 import MiniPlayer from 'services/miniplayer';
+import nstTime from 'services/time';
 
 const style = require('./comment-board.css');
 
@@ -125,6 +126,8 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private hasBeforeComments: boolean = false;
+
+  private nestedTime = nstTime.getInstance();
 
   private notifyNewComment: () => void = () => console.log('no notify registered!');
 
@@ -250,7 +253,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
       const lastComment = lastCommeents[lastCommeents.length - 2];
       this.Api.getActivities({
         after: this.state.comments.length > 0 && lastComment ?
-          lastComment.timestamp : Date.now() - 60000,
+          lastComment.timestamp : this.nestedTime.now(),
         limit: 20,
         task_id: this.props.task._id,
         only_comments: true,
@@ -286,7 +289,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
       const lastComment = lastCommeents[lastCommeents.length - 2];
       this.Api.getComments({
         after: this.state.comments.length > 0 && lastComment ?
-          lastComment.timestamp : Date.now() - 60000,
+          lastComment.timestamp : this.nestedTime.now(),
         limit: 20,
         post_id: this.props.post._id,
       })

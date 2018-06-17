@@ -24,6 +24,7 @@ import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
 import Failure from 'services/server/failure';
 import Client from 'services/utils/client';
+import nstTime from 'services/time';
 
 const publicStyle = require('../public.css');
 const signinStyle = require('./style.css');
@@ -52,6 +53,7 @@ interface IProps {
 class Signin extends React.Component<IProps, IState> {
   // ( document on assigns and defines )
   private accountApi: AccountApi = new AccountApi();
+  private nestedTime = nstTime.getInstance();
 
   /**
    * Creates an instance of Signin.
@@ -151,7 +153,8 @@ class Signin extends React.Component<IProps, IState> {
 
           // Puts the authenticated user data in `store.app` reducer
           this.props.setLogin(response.account);
-
+          // Sets client time stamp
+          this.nestedTime.setServerTime(response.server_timestamp);
           // Navigates to the default route which is `/feed`
           // todo back to previous url !
           hashHistory.push('/');

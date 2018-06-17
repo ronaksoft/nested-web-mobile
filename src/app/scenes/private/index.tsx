@@ -36,6 +36,8 @@ import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
 import FCM from '../../services/fcm/index';
 import Client from 'services/utils/client';
+import nstTime from 'services/time';
+
 const style = require('./private.css');
 
 /**
@@ -119,6 +121,8 @@ class Private extends React.Component<IProps, IState> {
 
   private internalRecall: any;
 
+  private nestedTime = nstTime.getInstance();
+
   public constructor(props: IProps) {
     super(props);
 
@@ -194,6 +198,7 @@ class Private extends React.Component<IProps, IState> {
           isLogin: true,
         });
         this.props.setLogin(response.account);
+        this.nestedTime.setServerTime(response.server_timestamp);
       }, () => {
         aaa.clearCredentials();
         hashHistory.push('/signin');
@@ -251,13 +256,13 @@ class Private extends React.Component<IProps, IState> {
   private scrollPreventer = (e) => {
     e = e || window.event;
     // if (this.isiOS()) {
-      e.returnValue = false;
-      e.cancelBubble = false;
-      if (e.preventDefault) {
-          e.preventDefault();
-          e.stopPropagation();
-      }
-      return false; // or return e, doesn't matter
+    e.returnValue = false;
+    e.cancelBubble = false;
+    if (e.preventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    return false; // or return e, doesn't matter
     // }
   }
   private appHeight = () => {
@@ -405,16 +410,16 @@ class Private extends React.Component<IProps, IState> {
             <div>
               <div ref={this.refHandler} className={style.container}>
                 <Navbar sidebarOpen={this.openSidebar} composeOpen={this.FeedPage}
-                  changeApp={this.changeApp}
-                  notifCount={this.state.notificationsCount} user={this.props.user} />
+                        changeApp={this.changeApp}
+                        notifCount={this.state.notificationsCount} user={this.props.user}/>
                 {this.props.children}
               </div>
               {/* Sidebar elemnt with visibility state check */}
               {(this.state.sidebarOpen && this.state.isPostsApp) &&
-                <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
+              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
               }
               {(this.state.sidebarOpen && !this.state.isPostsApp) &&
-                <TaskSidebar closeSidebar={this.closeSidebar}/>
+              <TaskSidebar closeSidebar={this.closeSidebar}/>
               }
               {/* Attachments modal view component */}
               <AttachmentView/>
