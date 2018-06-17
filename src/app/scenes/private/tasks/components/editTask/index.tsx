@@ -20,7 +20,7 @@ import {setCurrentTask, setTasks, setTaskDraft, unsetTaskDraft} from '../../../.
 // import {hashHistory} from 'react-router';
 import {hashHistory, Link} from 'react-router';
 import C_TASK_STATE from 'api/task/consts/taskStateConst';
-import {IUser} from 'api/interfaces';
+import {IUser, ITaskActivity} from 'api/interfaces';
 import {IChipsItem} from 'components/Chips';
 import C_TASK_STATUS from 'api/consts/CTaskStatus';
 import C_TASK_ACCESS from 'api/consts/CTaskAccess';
@@ -28,6 +28,7 @@ import statuses from 'api/consts/CTaskProgressTask';
 import {some, differenceBy, cloneDeep, intersectionBy} from 'lodash';
 import TimeUtiles from 'services/utils/time';
 import {setCurrentAttachment, setCurrentAttachmentList} from 'redux/attachment/actions/index';
+import SyncTaskActivity from 'services/sync-task-activity';
 
 const confirm = Modal.confirm;
 const style = require('../../task.css');
@@ -202,6 +203,8 @@ class EditTask extends React.Component<IProps, IState> {
     candidates: [],
     labels: [],
   };
+  private syncTaskActivity = SyncTaskActivity.getInstance();
+  private syncActivityListeners = [];
 
   /**
    * Creates an instance of Post.
@@ -262,7 +265,8 @@ class EditTask extends React.Component<IProps, IState> {
       this.descriptionRtl = RTLDetector.getInstance().direction(this.state.task.description);
       this.initTask(this.state.task);
     } else if (this.props.routeParams.taskId)  {
-      this.TaskApi.getMany(this.props.routeParams.taskId)
+      const taskId = this.props.routeParams.taskId;
+      this.TaskApi.getMany(taskId)
         .then((response) => {
           this.initTask(response.tasks[0]);
           this.setState({
@@ -271,7 +275,34 @@ class EditTask extends React.Component<IProps, IState> {
         });
       // scroll top to clear previous page scroll
       window.scrollTo(0, 0);
+
+      this.syncActivityListeners.push(
+        this.syncTaskActivity.openAllChannel(
+          (activity) => {
+            if (activity.task_id !== taskId) {
+              return;
+            }
+            this.syncTaskUpdate(activity);
+          },
+        ));
     }
+  }
+
+  private syncTaskUpdate(activity: ITaskActivity) {
+    this.TaskApi.getMany(activity.task_id).then((response) => {
+      this.originalTask = cloneDeep(response.tasks[0]);
+      this.setState({
+        task: response.tasks[0],
+      });
+    });
+  }
+
+  public componentWillUnmount() {
+    this.syncActivityListeners.forEach((canceller) => {
+      if (typeof canceller === 'function') {
+        canceller();
+      }
+    });
   }
 
   private initTask = (task: ITask) => {

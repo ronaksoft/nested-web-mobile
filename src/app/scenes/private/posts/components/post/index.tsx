@@ -16,15 +16,15 @@ import {
 } from 'components';
 import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
-import PostApi from '../../../../../api/post/index';
+import PostApi from 'api/post/index';
 import {connect} from 'react-redux';
 import {setCurrentPost} from '../../../../../redux/app/actions/index';
 import {postAdd, postUpdate} from '../../../../../redux/posts/actions/index';
 import CommentsBoard from 'components/comment/index';
 import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
-import IAddLabelRequest from '../../../../../api/post/interfaces/IAddLabelRequest';
-import IRemoveLabelRequest from '../../../../../api/post/interfaces/IRemoveLabelRequest';
+import IAddLabelRequest from 'api/post/interfaces/IAddLabelRequest';
+import IRemoveLabelRequest from 'api/post/interfaces/IRemoveLabelRequest';
 import {difference, cloneDeep} from 'lodash';
 import {message} from 'antd';
 import * as md5 from 'md5';
@@ -34,6 +34,10 @@ const styleNavbar = require('../../../../../components/navbar/navbar.css');
 const privateStyle = require('../../../private.css');
 import CONFIG from '../../../../../config';
 import AppApi from '../../../../../api/app';
+import SyncPostActions from 'services/sync-post-activity/actions';
+import SyncPostActivity from 'services/sync-post-activity';
+import {IPostActivity} from 'api/interfaces';
+import * as _ from 'lodash';
 
 /**
  * @interface IOwnProps
@@ -162,6 +166,9 @@ class Post extends React.Component<IProps, IState> {
    */
   private iframeObj: any;
 
+  private syncPostActivity = SyncPostActivity.getInstance();
+  private syncActivityListeners = [];
+
   /**
    * @prop htmlBodyRef
    * @desc Reference of html email body element
@@ -213,7 +220,8 @@ class Post extends React.Component<IProps, IState> {
         this.applySubjectDirection(storedPost.subject);
         this.applyBodyDirection(storedPost.body || storedPost.preview);
       }
-      this.PostApi.getPost(this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id, true)
+      const postId = this.props.routeParams.postId ? this.props.routeParams.postId : this.props.post._id;
+      this.PostApi.getPost(postId, true)
         .then((post: IPost) => {
           this.setState({
             post,
@@ -225,14 +233,115 @@ class Post extends React.Component<IProps, IState> {
             this.updatePostsInStore('post_read', true);
           }
         }).catch((err) => {
-          if (err && err.err_code === 3) {
-            hashHistory.goBack();
-          }
-        });
+        if (err && err.err_code === 3) {
+          hashHistory.goBack();
+        }
+      });
 
       window.scrollTo(0, 0);
+
+      this.syncActivityListeners.push(
+        this.syncPostActivity.openChannel(
+          postId,
+          SyncPostActions.LABEL_ADD,
+          (activity) => {
+            this.syncAddLabel(activity);
+          },
+        ));
+
+      this.syncActivityListeners.push(
+        this.syncPostActivity.openChannel(
+          postId,
+          SyncPostActions.LABEL_REMOVE,
+          (activity) => {
+            this.syncRemoveLabel(activity);
+          },
+        ));
+
+      this.syncActivityListeners.push(
+        this.syncPostActivity.openChannel(
+          postId,
+          SyncPostActions.EDITED,
+          (activity) => {
+            this.syncEditPost(activity);
+          },
+        ));
+
+      this.syncActivityListeners.push(
+        this.syncPostActivity.openChannel(
+          postId,
+          SyncPostActions.PLACE_ATTACH,
+          (activity) => {
+            this.syncPlaceAttach(activity);
+          },
+        ));
+
+      this.syncActivityListeners.push(
+        this.syncPostActivity.openChannel(
+          postId,
+          SyncPostActions.PLACE_MOVE,
+          (activity) => {
+            this.syncPlaceMove(activity);
+          },
+        ));
     }
 
+  }
+
+  private syncAddLabel(activity: IPostActivity) {
+    const post = this.state.post;
+    const index =  _.findIndex(post.post_labels, {_id: activity.label._id});
+    if (index === -1) {
+      post.post_labels.push(activity.label);
+      this.setState({
+        post,
+      });
+    }
+  }
+
+  private syncRemoveLabel(activity: IPostActivity) {
+    const post = this.state.post;
+    const index =  _.findIndex(post.post_labels, {_id: activity.label._id});
+    if (index > -1) {
+      post.post_labels.splice(index, 1);
+      this.setState({
+        post,
+      });
+    }
+  }
+
+  private syncEditPost(activity: IPostActivity) {
+    this.setState({
+      post: activity.post,
+    });
+  }
+
+  private syncPlaceAttach(activity: IPostActivity) {
+    const post = this.state.post;
+    if (!_.some(post.post_places, {
+        id: activity.new_place._id,
+      })) {
+      post.post_places.push(activity.new_place);
+    }
+    this.setState({
+      post,
+    });
+  }
+
+  private syncPlaceMove(activity: IPostActivity) {
+    const post = this.state.post;
+    if (!_.some(post.post_places, {
+        id: activity.new_place._id,
+      })) {
+      post.post_places.push(activity.new_place);
+    }
+    const index = _.findIndex(post.post_places, {id: activity.old_place._id});
+    if (index > -1) {
+      post.post_places.splice(index, 1);
+    }
+    this.setState({
+      post,
+    });
   }
 
   private applySubjectDirection = (subject: string = '') => {
@@ -267,6 +376,11 @@ class Post extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     window.removeEventListener('message', this.onIframeMessageHandler);
+    this.syncActivityListeners.forEach((item) => {
+      if (typeof item === 'function') {
+        item();
+      }
+    });
   }
 
   /**
@@ -792,7 +906,7 @@ class Post extends React.Component<IProps, IState> {
               {/* renders the comments and comment input in post view */}
               {!this.props.post && (
                 <CommentsBoard no_comment={this.state.post.no_comment} newComment={this.newCommentReceived}
-                                count={post.counters.comments} post={this.state.post} user={this.props.user}/>
+                               count={post.counters.comments} post={this.state.post} user={this.props.user}/>
               )}
               {postView && <div className={privateStyle.bottomSpace}/>}
             </div>

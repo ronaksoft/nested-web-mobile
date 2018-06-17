@@ -19,6 +19,8 @@ import {IcoN, Loading} from 'components';
 import IPost from 'api/post/interfaces/IPost';
 import SyncPostActivity from 'services/sync-post-activity';
 import SyncPostActions from 'services/sync-post-activity/actions';
+import SyncTaskActivity from 'services/sync-task-activity';
+import SyncTaskActions from 'services/sync-task-activity/actions';
 import {IUser, ITask, IComment, ITaskActivity} from 'api/interfaces';
 import RTLDetector from '../RTLDetector/';
 import {some, orderBy, filter, findIndex, chain} from 'lodash';
@@ -111,6 +113,13 @@ class CommentsBoard extends React.Component<IProps, IState> {
    * @memberof CommentsBoard
    */
   private syncPostActivity = SyncPostActivity.getInstance();
+  /**
+   * @prop syncTaskActivity
+   * @desc An instance SyncTaskActivity
+   * @private
+   * @memberof CommentsBoard
+   */
+  private syncTaskActivity = SyncTaskActivity.getInstance();
   /**
    * @prop syncActivityListeners
    * @desc The channels of activity which the component is listening to
@@ -215,6 +224,17 @@ class CommentsBoard extends React.Component<IProps, IState> {
         });
       })
       .catch(console.log);
+
+      if (this.props.task) {
+        this.syncActivityListeners.push(
+          this.syncTaskActivity.openChannel(
+            this.props.task._id,
+            SyncTaskActions.COMMENT,
+            () => {
+              this.getAfterComments(true);
+            },
+          ));
+      }
     }
   }
 

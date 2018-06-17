@@ -318,6 +318,14 @@ class Posts extends React.Component<IProps, IState> {
       ));
   }
 
+  public componentWillUnmount() {
+    this.syncActivityListeners.forEach((canceller) => {
+      if (typeof canceller === 'function') {
+        canceller();
+      }
+    });
+  }
+
   public getFavPlaces() {
     /**
      * define the account Api

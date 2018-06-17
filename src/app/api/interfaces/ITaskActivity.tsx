@@ -2,6 +2,7 @@ import {IUser, IAttachment, ILabel} from 'api/interfaces';
 
 interface ITaskActivity {
   _id: string;
+  task_id?: string;
   action: number;
   timestamp: number;
   actor_id?: string;

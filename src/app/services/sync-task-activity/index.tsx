@@ -157,7 +157,7 @@ export default class SyncActivity {
       calledChannelCallbacks = [];
 
       activities.forEach((activity: ITaskActivity) => {
-
+        activity.task_id = syncObj.task_id;
         filteredChannelsWithTaskId.forEach((channelUid: string) => {
           const channel: IChanel = this.openChannelsStack[channelUid];
           if ((channel.action === activity.action || channel.action === SyncActions.ALL_ACTIONS)) {
