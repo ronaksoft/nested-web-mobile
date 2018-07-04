@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 import Api from 'api';
 import IValidatableField from '../IValidatableField';
 import IValidationResult from '../IValidationResult';
+import CONFIG from '../../../config';
 
 const publicStyle = require('../public.css');
 const signinStyle = require('./style.css');
@@ -129,7 +130,7 @@ class Workspace extends React.Component<IProps, IState> {
    * @memberof Signin
    */
   public render() {
-    const windowObj: Window = window;
+    const domain = CONFIG().DOMAIN;
     return (
       <div className={publicStyle.publicPage}>
         <div className={publicStyle.publicHead}>
@@ -143,7 +144,7 @@ class Workspace extends React.Component<IProps, IState> {
             validateStatus={this.state.workspace.status}
           >
             <Input
-              placeholder={`e.g., ${windowObj.__NESTED_CONFIG__.DOMAIN}`}
+              placeholder={`e.g., ${domain}`}
               value={this.state.workspace.value}
               onChange={this.handleWorkspaceChange}
             />

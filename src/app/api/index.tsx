@@ -302,7 +302,6 @@ class Api {
     });
     let cyrusHttpUrl = '';
     let cyrusWsUrl = '';
-    let xerxesUrl;
     let config: any = {};
     forEach(cyrus, (item) => {
       config = this.parseConfigData(item);
@@ -312,7 +311,6 @@ class Api {
         cyrusWsUrl = this.getCompleteUrl(config);
       }
     });
-    xerxesUrl = this.getCompleteUrl(this.parseConfigData(xerxes[0]));
 
     return {
       websocket: cyrusWsUrl + '/api',
