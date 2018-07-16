@@ -9,27 +9,23 @@
  *              Date of review:         -
  */
 import * as React from 'react';
-import {IUser} from 'api/interfaces';
 
 const style = require('./navbar.css');
-import {IcoN, UserAvatar} from 'components';
+import {IcoN} from 'components';
 import {hashHistory, Link} from 'react-router';
 
 interface INavbarProps {
-  changeApp: (sts: boolean) => void;
+  changeApp: (sts: string) => void;
   sidebarOpen: () => void;
   composeOpen: () => void;
   notifCount: number;
-  user: IUser;
+  thisApp: string;
 }
 
 interface INavbarState {
-  notificationOpen: boolean;
-  postsApp: boolean;
+  thisApp: string;
   isMounted: boolean;
   notifCount: number;
-  lastTaskRoute: string;
-  lastPostRoute: string;
 }
 
 /**
@@ -54,12 +50,9 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
      * @property {boolean} notificationOpen - the statement of notification scene
      */
     this.state = {
-      lastTaskRoute: '/task/glance',
-      lastPostRoute: '/feed',
-      postsApp: true,
+      thisApp: 'Posts',
       isMounted: true,
       notifCount: this.props.notifCount,
-      notificationOpen: false,
     };
   }
 
@@ -69,18 +62,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    * @memberof Navbar
    */
   public componentWillReceiveProps(newProps: INavbarProps) {
-    const path = hashHistory.getCurrentLocation().pathname;
-    if (this.state.postsApp && path.indexOf('task') > -1) {
-      this.setState({
-        postsApp: false,
-      });
-      this.props.changeApp(false);
-    }
-    if (path.indexOf('notifications') > -1) {
-      this.setState({
-        notificationOpen: true,
-      });
-    }
+
     /**
      * Counts of unread notifications from props
      * @type {object}
@@ -88,6 +70,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
      */
     this.setState({
       notifCount: newProps.notifCount,
+      thisApp: newProps.thisApp,
     });
   }
 
@@ -99,57 +82,26 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    * @memberof Navbar
    */
   private goToNotification() {
-    if (this.state.notificationOpen) {
+    if (this.state.thisApp === 'Notifications') {
       hashHistory.goBack();
     } else {
-      hashHistory.push('/notifications');
+      this.props.changeApp('Notifications');
+    }
+  }
+
+  private goToSearch() {
+    if (this.state.thisApp === 'Search') {
+      hashHistory.goBack();
+    } else {
+      this.props.changeApp('Search');
     }
 
-    // update the state to new enviorment
-    this.setState({
-      notificationOpen: !this.state.notificationOpen,
-    });
   }
 
   public componentWillUnmount() {
       this.setState({
         isMounted: false,
       });
-  }
-
-  private switchApp = () => {
-    const thisPath = hashHistory.getCurrentLocation().pathname;
-    const state: any = {
-      notificationOpen: false,
-    };
-    if (thisPath.indexOf('notifications') === -1) {
-      state.postsApp = !this.state.postsApp;
-      if (state.postsApp) {
-        state.lastTaskRoute = thisPath;
-      } else {
-        state.lastPostRoute = thisPath;
-      }
-      this.setState(state, () => {
-        if (this.state.isMounted) {
-          this.props.changeApp(state.postsApp);
-          if (!this.state.postsApp) {
-            hashHistory.push(this.state.lastTaskRoute);
-          } else {
-            hashHistory.push(this.state.lastPostRoute);
-          }
-        }
-      });
-    } else {
-      if (this.state.isMounted) {
-        this.setState(state, () => {
-          if (!this.state.postsApp) {
-            hashHistory.push(this.state.lastTaskRoute);
-          } else {
-            hashHistory.push(this.state.lastPostRoute);
-          }
-        });
-      }
-    }
   }
 
   /**
@@ -166,33 +118,33 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         <a onClick={this.props.sidebarOpen}>
           <IcoN size={24} name="menu24"/>
         </a>
-        {this.props.user && (
-          <a>
-            <UserAvatar user_id={this.props.user._id} size={24} borderRadius={'16px'}/>
-          </a>
-        )}
-        <div className={style.filler}/>
-        <div className={[style.appSwitcher, !this.state.postsApp ? style.active : style.deActive].join(' ')}
+        {/* <div className={[style.appSwitcher, !this.state.postsApp ? style.active : style.deActive].join(' ')}
           onClick={this.switchApp}>
           <a>Posts</a>
           <small>
             <a>Tasks</a>
           </small>
-        </div>
+        </div> */}
+        <h2>{this.state.thisApp}</h2>
         <div className={style.filler}/>
         {/* notification scene toggler */}
-        <a className={this.state.notificationOpen ? style.active : null} onClick={this.goToNotification.bind(this, '')}>
+        <a className={this.state.thisApp === 'Search' ? style.active : null}
+          onClick={this.goToSearch.bind(this, '')}>
+          <IcoN size={24} name="search24"/>
+        </a>
+        <a className={this.state.thisApp === 'Notifications' ? style.active : null}
+          onClick={this.goToNotification.bind(this, '')}>
           <IcoN size={24} name="bell24"/>
           {/* red badge for unseen notifications */}
           {this.state.notifCount > 0 && <span>{this.state.notifCount}</span>}
         </a>
         {/* open compose scene */}
-        {this.state.postsApp && (
+        {this.state.thisApp !== 'Tasks' && (
           <Link to="/compose">
             <IcoN size={24} name="compose24"/>
           </Link>
         )}
-        {!this.state.postsApp && (
+        {this.state.thisApp === 'Tasks' && (
           <Link to="/task/create">
             <IcoN size={24} name="cross24"/>
           </Link>

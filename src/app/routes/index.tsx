@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   Posts, PostsContainer,
-  Notifications, Activities, Files, Compose, Signout,
+  Notifications, Activities, Files, Compose, Signout, Search,
   Tasks, TaskEdit, TaskActivities,
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
@@ -67,6 +67,7 @@ export default (
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
         <Route path="/notifications/:app" component={Notifications}/>
+        <Route path="/Search" component={Search}/>
 
         <Route path="/signout" component={Signout}/>
       </Route>

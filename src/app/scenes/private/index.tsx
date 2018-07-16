@@ -25,6 +25,7 @@ import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
 import TaskActivities from './tasks/components/activities/';
 import Notifications from './notifications';
+import Search from './search';
 import AttachmentView from '../../components/AttachmentView/index';
 
 import AccountApi from 'api/account';
@@ -51,8 +52,10 @@ const style = require('./private.css');
 interface IState {
   isLogin: boolean;
   sidebarOpen: boolean;
-  isPostsApp: boolean;
+  thisApp: string;
   notificationsCount: number;
+  lastTaskRoute: string;
+  lastPostRoute: string;
 };
 
 /**
@@ -133,7 +136,9 @@ class Private extends React.Component<IProps, IState> {
     this.state = {
       isLogin: false,
       sidebarOpen: false,
-      isPostsApp: true,
+      lastTaskRoute: '/task/glance',
+      lastPostRoute: '/feed',
+      thisApp: 'Posts',
       notificationsCount: this.props.notificationsCount.unread_notifications,
     };
   }
@@ -151,6 +156,16 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    */
   public componentWillReceiveProps(newProps: IProps) {
+    // const path = hashHistory.getCurrentLocation().pathname;
+    // if (this.state.thisApp !== 'Task' && path.indexOf('task') > -1) {
+    //   this.changeApp('Tasks');
+    // }
+    // if (this.state.thisApp !== 'Posts' && path.indexOf('post') > -1) {
+    //   this.changeApp('Posts');
+    // }
+    // if (path.indexOf('notifications') > -1) {
+    //   this.changeApp('Notifications');
+    // }
     this.setState({
       notificationsCount: newProps.notificationsCount.unread_notifications,
     });
@@ -361,9 +376,23 @@ class Private extends React.Component<IProps, IState> {
     });
   }
 
-  public changeApp = (isPostsApp) => {
+  public changeApp = (thisApp) => {
+    const thisPath = hashHistory.getCurrentLocation().pathname;
+    const state: any = {};
+    state.thisApp = thisApp;
+    if (thisApp === 'Tasks' && this.state.thisApp === 'Posts') {
+      hashHistory.push(this.state.lastTaskRoute);
+      state.lastPostRoute = thisPath;
+    } else if (thisApp === 'Posts' && this.state.thisApp === 'Tasks') {
+      hashHistory.push(this.state.lastPostRoute);
+      state.lastTaskRoute = thisPath;
+    } else if (thisApp === 'Search') {
+      hashHistory.push('/Search');
+    } else if (thisApp === 'notifications') {
+      hashHistory.push('/notifications');
+    }
     this.setState({
-      isPostsApp,
+      thisApp,
     });
   }
 
@@ -410,17 +439,19 @@ class Private extends React.Component<IProps, IState> {
             <div>
               <div ref={this.refHandler} className={style.container}>
                 <Navbar sidebarOpen={this.openSidebar} composeOpen={this.FeedPage}
-                        changeApp={this.changeApp}
-                        notifCount={this.state.notificationsCount} user={this.props.user}/>
+                        changeApp={this.changeApp} thisApp={this.state.thisApp}
+                        notifCount={this.state.notificationsCount}/>
                 {this.props.children}
               </div>
               {/* Sidebar elemnt with visibility state check */}
-              {(this.state.sidebarOpen && this.state.isPostsApp) &&
-              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}/>
-              }
-              {(this.state.sidebarOpen && !this.state.isPostsApp) &&
-              <TaskSidebar closeSidebar={this.closeSidebar}/>
-              }
+              {(this.state.sidebarOpen && this.state.thisApp !== 'Tasks') && (
+              <Sidebar closeSidebar={this.closeSidebar} openPlace={this.props.params}
+                thisApp={this.state.thisApp} changeApp={this.changeApp}/>
+              )}
+              {(this.state.sidebarOpen && this.state.thisApp === 'Tasks') && (
+              <TaskSidebar closeSidebar={this.closeSidebar} changeApp={this.changeApp}
+                thisApp={this.state.thisApp} />
+              )}
               {/* Attachments modal view component */}
               <AttachmentView/>
               {/* <AttachmentView onClose={this.onHiddenAttachment.bind(this, '')}
@@ -469,6 +500,6 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Private);
 
 export {
-  Posts, Activities, Files, Notifications, Compose,
+  Posts, Activities, Files, Notifications, Compose, Search,
   Signout, Tasks, TaskEdit, PostsContainer, TaskActivities,
 };

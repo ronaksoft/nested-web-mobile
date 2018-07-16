@@ -39,7 +39,7 @@ input[type="password"].nstInput, .nstInput input[type="password"] {
 
 input[type="text"].nstInput, .nstInput input[type="text"]:hover,
 input[type="password"].nstInput, .nstInput input[type="password"]:hover {
-  border: 1px solid rgba(50, 61, 71, .72);
+  border: 1px solid rgba(50, 60, 71, 0.72);
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"]:focus,

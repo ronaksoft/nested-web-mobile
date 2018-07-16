@@ -29,8 +29,10 @@ const style = require('./sidebar.css');
 // import {hashHistory} from 'react-router';
 
 interface IOwnProps {
+  changeApp: (sts: string) => void;
   closeSidebar: () => void;
   openPlace: any;
+  thisApp: string;
 }
 
 /**
@@ -47,6 +49,7 @@ interface IOwnProps {
  * @property {Array<IPlace>} places - Places Stored in redux store
  */
 interface ISidebarProps {
+  changeApp: (sts: string) => void;
   closeSidebar: () => void;
   placeAdd: (place: IPlace) => void;
   setSidebarPlaces: (sidebarPlaces: ISidebarPlace[]) => void;
@@ -55,6 +58,7 @@ interface ISidebarProps {
   sidebarPlacesUnreads: IUnreadPlace;
   places: IPlace[];
   openPlace: any;
+  thisApp: string;
 }
 
 /**
@@ -70,6 +74,7 @@ interface ISidebarState {
   placesConjuction?: any; // TODO Define interface
   sidebarPlacesUnreads?: IUnreadPlace;
   loading: boolean;
+  thisApp: string;
 }
 
 /**
@@ -112,11 +117,18 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     this.state = {
       places: [],
       loading: true,
+      thisApp: props.thisApp,
       sidebarPlacesUnreads: {
         placesUnreadCounts: {},
         placesUnreadChildrens: {},
       },
     };
+  }
+
+  public componentWillReceiveProps(newProps: ISidebarProps) {
+    this.setState({
+      thisApp: newProps.thisApp,
+    });
   }
 
   private checkDataIsReach = () => {
@@ -621,6 +633,12 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
+        <div className={style.appSwitcher}>
+          <button className={this.state.thisApp === 'Posts' ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts</button>
+          <button className={this.state.thisApp === 'Tasks' ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks</button>
+        </div>
         <div className={style.scrollContainer}>
           <InfiniteScroll
               pullDownToRefresh={true}
@@ -698,7 +716,9 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => {
     sidebarPlaces: store.app.sidebarPlaces,
     sidebarPlacesUnreads: store.app.sidebarPlacesUnreads,
     closeSidebar: ownPlops.closeSidebar,
+    changeApp: ownPlops.changeApp,
     openPlace: ownPlops.openPlace,
+    thisApp: ownPlops.thisApp,
   };
 };
 

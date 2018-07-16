@@ -4,17 +4,17 @@ export default {
   DOMAIN: 'ronaksoftware.com',
   SIGN_OUT_TARGET: 'https://nested.me',
   WEBSOCKET: {
-    URL: process.env.NST_WS_CYRUS_URL || 'wss://webapp.ronaksoftware.com:81/api',
+    URL: process.env.NST_WS_CYRUS_URL || 'wss://c-webapp.ronaksoftware.com',
     TIMEOUT: 60000,
     REQUEST_MAX_RETRY_TIMES: 16,
   },
   STORE: {
-    URL: process.env.NST_XERXES_URL || 'https://webapp.ronaksoftware.com:81/file',
+    URL: process.env.NST_XERXES_URL || 'https://c-webapp.ronaksoftware.com/file',
     TOKEN_EXPMS: 3550000,
   },
   REGISTER: {
     AJAX: {
-      URL: process.env.NST_HTTP_CYRUS_URL || 'https://webapp.ronaksoftware.com:81/api',
+      URL: process.env.NST_HTTP_CYRUS_URL || 'https://c-webapp.ronaksoftware.com',
     },
   },
   GRAND_PLACE_REGEX: /^[a-zA-Z][a-zA-Z0-9-]{3,30}[a-zA-Z0-9]$/,

@@ -540,7 +540,7 @@ class AttachmentView extends React.Component<IProps, IState> {
             <div className={style.currentItem}>
               {(this.state.currentAttachment.type === AttachmentType.GIF ||
                 this.state.currentAttachment.type === AttachmentType.IMAGE) &&
-              <ImageThumbnail attachment={this.state.currentAttachment}/>
+                <ImageThumbnail attachment={this.state.currentAttachment}/>
               }
               {this.state.currentAttachment.type === AttachmentType.VIDEO &&
               (

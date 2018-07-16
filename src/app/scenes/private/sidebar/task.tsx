@@ -12,7 +12,9 @@ const style = require('./sidebar.css');
 // import {hashHistory} from 'react-router';
 
 interface IOwnProps {
+  changeApp: (sts: string) => void;
   closeSidebar: () => void;
+  thisApp: string;
 }
 
 /**
@@ -31,6 +33,8 @@ interface IOwnProps {
 interface ISidebarProps {
   closeSidebar: () => void;
   customFilters: ICustomFilter[];
+  changeApp: (sts: string) => void;
+  thisApp: string;
 }
 
 /**
@@ -43,6 +47,7 @@ interface ISidebarProps {
  */
 interface ISidebarState {
   customFilters?: ICustomFilter[];
+  thisApp: string;
 }
 
 /**
@@ -76,7 +81,14 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     this.state = {
       customFilters: this.props.customFilters || [],
+      thisApp: props.thisApp,
     };
+  }
+
+  public componentWillReceiveProps(newProps: ISidebarProps) {
+    this.setState({
+      thisApp: newProps.thisApp,
+    });
   }
 
   /**
@@ -102,6 +114,12 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
         {/* Close TaskSidebar button */}
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
+        </div>
+        <div className={style.appSwitcher}>
+          <button className={this.state.thisApp === 'Posts' ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts</button>
+          <button className={this.state.thisApp === 'Tasks' ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks</button>
         </div>
         <div className={style.scrollContainer}>
           <Scrollable active={true}>
@@ -184,6 +202,8 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => {
   return {
     customFilters: store.app.taskCustomFilters,
     closeSidebar: ownPlops.closeSidebar,
+    changeApp: ownPlops.changeApp,
+    thisApp: ownPlops.thisApp,
   };
 };
 
