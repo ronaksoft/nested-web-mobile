@@ -2,6 +2,7 @@ import Api from './../index';
 import ISearchForComposeRequest from './interfaces/ISearchForComposeRequest';
 import ISearchForComposeResponse from './interfaces/ISearchForComposeResponse';
 import IUser from 'api/interfaces/IUser';
+import ISuggestion from '../interfaces/ISuggestion';
 
 export default class SearchApi {
   private api;
@@ -45,6 +46,16 @@ export default class SearchApi {
           }).catch(rej);
         }
       });
+    });
+  }
+
+  public sugesstion(keyword: string): Promise<ISuggestion> {
+    const params = {
+      keyword,
+    };
+    return this.api.request({
+      cmd: 'search/suggestions',
+      params,
     });
   }
 

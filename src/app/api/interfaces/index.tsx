@@ -8,6 +8,7 @@ import IPostActivity from './IPostActivity';
 import ITaskActivity from './ITaskActivity';
 import IAttachment from './IAttachment';
 import INotification from './INotification';
+import ISuggestion from './ISuggestion';
 import IPost from '../post/interfaces/IPost';
 import ITask from '../task/interfaces/ITask';
 
@@ -24,4 +25,5 @@ export {
   INotification,
   IPost,
   ITask,
+  ISuggestion,
 };

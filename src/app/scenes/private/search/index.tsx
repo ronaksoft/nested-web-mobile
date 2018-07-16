@@ -1,30 +1,21 @@
 import * as React from 'react';
 import SearchApi from '../../../api/search/index';
-import {IUser} from 'api/interfaces/';
-import {Scrollable, Loading, UserAvatar, FullName} from 'components';
+import {ISuggestion} from 'api/interfaces/';
+import {Scrollable, Loading} from 'components';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
 
 /**
- *
- * @implements
  * @interface IState
  */
 interface IState {
   loading: boolean;
-  accounts: IUser[];
-  histories: any[];
-  places: any[];
-  labels: any[];
-  apps: any[];
-  tos: any[];
+  result: ISuggestion;
   thisApp: string;
 }
 
 /**
- *
- * @implements
  * @interface IProps
  */
 interface IProps {
@@ -35,6 +26,9 @@ class Search extends React.Component<IProps, IState> {
 
   private notificationScrollbar: HTMLDivElement;
   private searchApi: SearchApi;
+  private defaultSuggestion: ISuggestion;
+
+  // private suggestion: ISuggestion;
 
   constructor(props) {
     super(props);
@@ -45,12 +39,14 @@ class Search extends React.Component<IProps, IState> {
      * @property {string} notifications - notification items
      */
     this.state = {
-      histories: [],
-      places: [],
-      accounts: [],
-      labels: [],
-      tos: [],
-      apps: [],
+      result: {
+        history: [],
+        places: [],
+        accounts: [],
+        labels: [],
+        tos: [],
+        apps: [],
+      },
       loading: false,
       thisApp: props.thisApp,
     };
@@ -58,7 +54,11 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    
+    console.log('here');
+    this.searchApi.sugesstion('').then((data) => {
+      this.defaultSuggestion = data;
+      console.log(data);
+    });
   }
 
   public componentWillReceiveProps(newProps: IProps) {
@@ -82,14 +82,14 @@ class Search extends React.Component<IProps, IState> {
             <div>
               <div className={style.block}>
                 <div className={style.head}>Posts from:</div>
-                <ul>
+                {/*<ul>
                   {this.state.accounts.map((account) => (
                     <li>
                       <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                       <FullName user_id={account}/>
                     </li>
                   ))}
-                </ul>
+                </ul>*/}
               </div>
               <Loading active={this.state.loading} position="fixed"/>
               <div className={privateStyle.bottomSpace}/>
