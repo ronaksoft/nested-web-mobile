@@ -1,4 +1,5 @@
 import SearchConst from './CSearchPrefix';
+import SearchRegex from './CSearchRegex';
 import * as _ from 'lodash';
 
 const locale = 'en-US';
@@ -21,7 +22,7 @@ export default class Search {
   private prefixes: any;
   private prefixLocale: any;
 
-  private constructor() {
+  public constructor() {
     if (locale === 'en-US') {
       this.prefixLocale.user = SearchConst.USER;
       this.prefixLocale.place = SearchConst.PLACE;
@@ -37,7 +38,7 @@ export default class Search {
     }
   }
 
-  public setQuery(query: string, secondaryQuery: string) {
+  public setQuery(query: string, secondaryQuery: string = null) {
     let secondaryResult = {
       places: [],
       users: [],
@@ -60,7 +61,7 @@ export default class Search {
 
     if (locale === 'en-US') {
       query = this.transformLocale(query);
-      if (secondaryQuery !== null && secondaryQuery !== undefined) {
+      if (secondaryQuery !== null) {
         secondaryQuery = this.transformLocale(secondaryQuery);
       }
     }
@@ -94,7 +95,7 @@ export default class Search {
     this.date = result.date;
     this.app = result.app;
 
-    if (secondaryQuery !== null && secondaryQuery !== undefined) {
+    if (secondaryQuery !== null) {
       secondaryResult.keywords.forEach((item) => {
         this.addOtherKeyword(item.id, item.order);
       });
@@ -172,7 +173,7 @@ export default class Search {
     const decodedQuery = decodeURIComponent(query);
 
     const words = [];
-    const queryRegEx = /(\S([^[:|\s]+):\"([^"]+)")|(\"([^"]+)")|(\S+)/g;
+    const queryRegEx = SearchRegex;
 
     let match;
     do {
@@ -599,5 +600,59 @@ export default class Search {
 
   private checkValidity(text) {
     return (text !== undefined && text !== null && text.length !== 0);
+  }
+
+  public static getLastItem(query) {
+    const queryRegEx = SearchRegex;
+
+    let placePrefix;
+    let userPrefix;
+    let labelPrefix;
+    let toPrefix;
+    let appPrefix;
+
+    if (locale === 'en-US') {
+      placePrefix = SearchConst.PLACE;
+      userPrefix = SearchConst.USER;
+      labelPrefix = SearchConst.LABEL;
+      toPrefix = SearchConst.TO;
+      appPrefix = SearchConst.APP;
+    } else {
+      placePrefix = SearchConst.PLACE_FA;
+      userPrefix = SearchConst.USER_FA;
+      labelPrefix = SearchConst.LABEL_FA;
+      toPrefix = SearchConst.TO_FA;
+      appPrefix = SearchConst.APP_FA;
+    }
+
+    let word = query;
+    let type = 'other';
+    let match;
+    do {
+      match = queryRegEx.exec(query);
+      if (match) {
+        if (_.startsWith(match[0], placePrefix)) {
+          word = _.replace(match[0], placePrefix, '');
+          type = 'place';
+        } else if (_.startsWith(match[0], userPrefix)) {
+          word = _.replace(match[0], userPrefix, '');
+          type = 'user';
+        } else if (_.startsWith(match[0], labelPrefix)) {
+          word = _.replace(match[0], labelPrefix, '');
+          type = 'label';
+        } else if (_.startsWith(match[0], toPrefix)) {
+          word = _.replace(match[0], toPrefix, '');
+          type = 'to';
+        } else if (_.startsWith(match[0], appPrefix)) {
+          word = _.replace(match[0], appPrefix, '');
+          type = 'app';
+        }
+      }
+    } while (match);
+
+    return {
+      word,
+      type,
+    };
   }
 }
