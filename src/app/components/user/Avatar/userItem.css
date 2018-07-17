@@ -1,11 +1,13 @@
 .UserAvatar {
   display: inline-block;
+  flex: none;
   color: white;
 }
 
 .UserAvatarInner {
   box-sizing: border-box;
   white-space: nowrap;
+  flex: none;
   overflow: hidden;
   text-overflow: ellipsis;
 }

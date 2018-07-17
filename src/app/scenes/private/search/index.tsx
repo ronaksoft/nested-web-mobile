@@ -2,7 +2,7 @@ import * as React from 'react';
 import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
-import {ISuggestion, IPost} from 'api/interfaces/';
+import {ISuggestion, IPost, ITask} from 'api/interfaces/';
 import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
@@ -13,6 +13,7 @@ import {Input} from 'antd';
 import ISearchPostRequest from '../../../api/search/interfaces/ISearchPostRequest';
 import ISearchTaskRequest from '../../../api/search/interfaces/ISearchTaskRequest';
 import Post from '../posts/components/post/index';
+import TaskUpcomingView from '../tasks/components/list/upcomingItem/index';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
@@ -136,6 +137,7 @@ class Search extends React.Component<IProps, IState> {
       if (this.state.isAdvanced) {
         params.has_attachment = searchParams.hasAttachment;
       }
+      console.log(params);
       this.searchApi.searchTask(params).then((taskResults) => {
         this.setState({
           taskResults,
@@ -159,6 +161,7 @@ class Search extends React.Component<IProps, IState> {
           params.after = searchParams.after;
         }
       }
+      console.log(params);
       this.searchApi.searchPost(params).then((postResults) => {
         console.log(postResults);
         this.setState({
@@ -461,6 +464,10 @@ class Search extends React.Component<IProps, IState> {
     hashHistory.push(`/message/${post._id}`);
   }
 
+  private gotoTask(task: ITask) {
+    hashHistory.push(`/task/edit/${task._id}`);
+  }
+
   private removeChip = (type, name) => {
     const prefix = this.searchService.getSearchPrefix();
     switch (type) {
@@ -562,7 +569,7 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>Latest:</div>
                       <ul>
-                        {this.defaultSuggestion.history.map((history) => (
+                        {this.defaultSuggestion.history.slice(0, 4).map((history) => (
                           <li onClick={this.addChip.bind(this, history, 'his')}>
                             {history}
                           </li>
@@ -574,7 +581,7 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>Posts from:</div>
                       <ul>
-                        {this.defaultSuggestion.accounts.map((account) => (
+                        {this.defaultSuggestion.accounts.slice(0, 4).map((account) => (
                           <li onClick={this.addChip.bind(this, account._id, 'account')}>
                             <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                             <FullName user_id={account}/>
@@ -587,7 +594,7 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>Posts from:</div>
                       <ul>
-                        {this.defaultSuggestion.places.map((place) => (
+                        {this.defaultSuggestion.places.slice(0, 4).map((place) => (
                           <li onClick={this.addChip.bind(this, place._id, 'place')}>
                             <PlaceItem place_id={place._id} size={32} borderRadius="3px"/>
                             <span>{place.name}</span>
@@ -600,10 +607,10 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>Has label:</div>
                       <ul>
-                        {this.defaultSuggestion.labels.map((label) => (
+                        {this.defaultSuggestion.labels.slice(0, 4).map((label) => (
                           <li className={style[label.code]} onClick={this.addChip.bind(this, label.title, 'label')}>
                             <IcoN size={24} name={'tag24'}/>
-                            {label.title}
+                            <span>{label.title}</span>
                           </li>
                         ))}
                       </ul>
@@ -658,10 +665,17 @@ class Search extends React.Component<IProps, IState> {
                   <div className={privateStyle.bottomSpace}/>
                 </div>
               )}
-              {!this.state.showSuggest && this.state.postResults.map((post) => {
+              {!this.state.showSuggest && !this.isTask && this.state.postResults.map((post) => {
                 return (
                   <div className={style.post} key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
                     <Post post={post}/>
+                  </div>
+                );
+              })}
+              {!this.state.showSuggest && this.isTask && this.state.taskResults.map((task) => {
+                return (
+                  <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
+                    <TaskUpcomingView task={task} />
                   </div>
                 );
               })}
