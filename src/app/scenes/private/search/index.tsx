@@ -205,7 +205,7 @@ class Search extends React.Component<IProps, IState> {
               limit: 6,
             };
             this.searchApi.searchForUsers(settings).then((result) => {
-              this.suggestion = {accounts: result};
+              this.suggestion = {tos: result};
               // Resolve
               resolve({
                 suggestion: this.suggestion,
