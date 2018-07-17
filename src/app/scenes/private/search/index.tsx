@@ -106,6 +106,13 @@ class Search extends React.Component<IProps, IState> {
   private initSearch() {
     this.searchService.setQuery(this.state.params.query);
     this.initChips(this.searchService.getSortedParams());
+    console.log(this.suggestion);
+    this.suggestion = this.getUniqueItems(this.suggestion);
+    if (this.suggestion) {
+      this.setState({
+        result: this.suggestion,
+      });
+    }
   }
 
   public getAdvancedSearchParams() {
@@ -175,7 +182,7 @@ class Search extends React.Component<IProps, IState> {
           // Place
           case 'place':
             this.searchApi.searchForCompose(result.word).then((result) => {
-              this.suggestion = {places: result.places};
+              this.suggestion = this.getUniqueItems({places: result.places});
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -192,7 +199,7 @@ class Search extends React.Component<IProps, IState> {
               limit: 6,
             };
             this.searchApi.searchForUsers(settings).then((result) => {
-              this.suggestion = {accounts: result};
+              this.suggestion = this.getUniqueItems({accounts: result});
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -207,7 +214,7 @@ class Search extends React.Component<IProps, IState> {
             // To for post
             if (!this.isTask) {
               this.searchApi.searchForCompose(result.word).then((result) => {
-                this.suggestion = {places: result.places};
+                this.suggestion = this.getUniqueItems({places: result.places});
                 // Resolve
                 resolve({
                   suggestion: this.suggestion,
@@ -224,7 +231,7 @@ class Search extends React.Component<IProps, IState> {
               limit: 6,
             };
             this.searchApi.searchForUsers(settings).then((result) => {
-              this.suggestion = {tos: result};
+              this.suggestion = this.getUniqueItems({tos: result});
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -244,7 +251,7 @@ class Search extends React.Component<IProps, IState> {
               limit: 8,
             };
             this.labelApi.search(params).then((result) => {
-              this.suggestion = {labels: result};
+              this.suggestion = this.getUniqueItems({labels: result});
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -257,7 +264,7 @@ class Search extends React.Component<IProps, IState> {
           // App
           case 'app':
             this.appApi.search(result.word, 0, 10).then((result) => {
-              this.suggestion = {apps: result};
+              this.suggestion = this.getUniqueItems({apps: result});
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -271,7 +278,7 @@ class Search extends React.Component<IProps, IState> {
           case 'other':
           default:
             this.searchApi.suggestion(result.word).then((result) => {
-              this.suggestion = result;
+              this.suggestion = this.getUniqueItems(result);
               // Resolve
               resolve({
                 suggestion: this.suggestion,
@@ -284,6 +291,49 @@ class Search extends React.Component<IProps, IState> {
         }
       }
     });
+  }
+
+  private getUniqueItems(data) {
+    if (!data) {
+      return null;
+    }
+    const result = {
+      places: [],
+      accounts: [],
+      labels: [],
+      tos: [],
+      apps: [],
+      history: [],
+    };
+    const params = this.searchService.getSearchParams();
+    if (!this.isTask) {
+      if (data.places !== undefined) {
+        result.places = _.differenceWith(data.places, params.places, (i1, i2) => {
+          return i1._id === i2;
+        });
+      }
+    }
+    if (data.accounts !== undefined) {
+      result.accounts = _.differenceWith(data.accounts, params.users, (i1, i2) => {
+        return i1._id === i2;
+      });
+    }
+    if (this.isTask) {
+      if (data.tos !== undefined) {
+        result.tos = _.differenceWith(data.tos, params.tos, (i1, i2) => {
+          return i1._id === i2;
+        });
+      }
+    }
+    if (data.labels !== undefined) {
+      result.labels = _.differenceWith(data.labels, params.labels, (i1, i2) => {
+        return i1.title === i2;
+      });
+    }
+    if (data.history !== undefined) {
+      result.history = data.history;
+    }
+    return result;
   }
 
   public initChips(params) {
@@ -309,6 +359,7 @@ class Search extends React.Component<IProps, IState> {
         title: item.id,
       };
     });
+    // Resolve
     this.setState({
       chips,
       input: keyword,
