@@ -141,7 +141,7 @@ export default class Search {
       } else if (item.type === 'app') {
         stringList.push(this.prefixes.app + item.id);
       } else {
-        stringList.push(item.id);
+        stringList.push(item.id === '' ? '_' : item.id);
       }
     });
 

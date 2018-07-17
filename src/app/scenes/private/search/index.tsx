@@ -24,6 +24,7 @@ interface IState {
   chips: any[];
   input: string;
   defaultSearch: boolean;
+  params?: any;
 }
 
 /**
@@ -32,6 +33,7 @@ interface IState {
 interface IProps {
   thisApp: string;
   params?: any;
+  location: any;
 }
 
 class Search extends React.Component<IProps, IState> {
@@ -75,6 +77,7 @@ class Search extends React.Component<IProps, IState> {
       chips: [],
       loading: false,
       thisApp: props.thisApp,
+      params: props.params,
     };
     this.searchApi = new SearchApi();
     this.labelApi = new LabelApi();
@@ -84,7 +87,6 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    console.log('here');
     this.searchApi.suggestion('').then((data) => {
       this.defaultSuggestion = data;
       this.suggestion = _.cloneDeep(data);
@@ -95,13 +97,14 @@ class Search extends React.Component<IProps, IState> {
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({
       thisApp: newProps.thisApp,
+      params: newProps.params,
+    }, () => {
+      this.initSearch();
     });
-    this.initSearch();
   }
 
   private initSearch() {
-    this.searchService.setQuery(this.props.params.query);
-    console.log(this.searchService.getSortedParams());
+    this.searchService.setQuery(this.state.params.query);
     this.initChips(this.searchService.getSortedParams());
   }
 
@@ -293,7 +296,11 @@ class Search extends React.Component<IProps, IState> {
       app: prefix.app,
       keyword: prefix.keyword,
     };
+    let keyword = '';
     params = _.filter(params, (item) => {
+      if (item.type === 'keyword' && item.id !== '_') {
+        keyword = item.id;
+      }
       return (item.type !== 'keyword');
     });
     const chips = _.map(params, (item) => {
@@ -304,6 +311,7 @@ class Search extends React.Component<IProps, IState> {
     });
     this.setState({
       chips,
+      input: keyword,
     });
   }
 
@@ -341,13 +349,43 @@ class Search extends React.Component<IProps, IState> {
     }
   }
 
+  private removeChip = (type, name) => {
+    const prefix = this.searchService.getSearchPrefix();
+    switch (type) {
+      case prefix.place:
+        this.searchService.removePlace(name);
+        break;
+      case prefix.user:
+        this.searchService.removeUser(name);
+        break;
+      case prefix.label:
+        this.searchService.removeLabel(name);
+        break;
+      case prefix.to:
+        this.searchService.removeTo(name);
+        break;
+      case prefix.app:
+        this.searchService.removeApp();
+        // closeApp();
+        return;
+      case prefix.keyword:
+      default:
+        this.searchService.removeKeyword(name);
+        break;
+    }
+    if (this.isTask) {
+      hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
+    } else {
+      hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
+    }
+  }
+
   private refHandler = (value) => {
     this.notificationScrollbar = value;
   }
 
   private search(query: string) {
     this.getSuggestions(query).then((result) => {
-      console.log(result);
       this.setState({
         result: result.suggestion,
       });
@@ -371,7 +409,7 @@ class Search extends React.Component<IProps, IState> {
             {this.state.chips.map((chip, index) => (
               <div className={style.queryChips} key={index}>
                 {chip.type}:&nbsp;<b>{chip.title}</b>
-                <div className={style.close}>
+                <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
                   <IcoN name="xcross16White" size={16}/>
                 </div>
               </div>
@@ -390,7 +428,7 @@ class Search extends React.Component<IProps, IState> {
                 <div className={style.head}>Posts from:</div>
                 <ul>
                   {this.state.result.accounts.map((account) => (
-                    <li>
+                    <li onClick={this.addChip.bind(this, account._id, 'account')}>
                       <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                       <FullName user_id={account}/>
                     </li>
