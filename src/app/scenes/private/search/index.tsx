@@ -340,9 +340,9 @@ class Search extends React.Component<IProps, IState> {
       console.log('load app');
     } else {
       if (this.isTask) {
-        hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
-      } else {
         hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
+      } else {
+        hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
       }
       // vm.toggleSearchModal(false);
       this.queryType = 'other';
@@ -374,9 +374,9 @@ class Search extends React.Component<IProps, IState> {
         break;
     }
     if (this.isTask) {
-      hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
-    } else {
       hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
+    } else {
+      hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
     }
   }
 
