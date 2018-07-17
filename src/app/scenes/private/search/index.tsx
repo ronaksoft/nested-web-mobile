@@ -3,7 +3,7 @@ import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
 import {ISuggestion} from 'api/interfaces/';
-import {Scrollable, Loading, IcoN} from 'components';
+import {Scrollable, Loading, IcoN, UserAvatar, FullName} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
 import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
@@ -21,8 +21,9 @@ interface IState {
   loading: boolean;
   result: ISuggestion;
   thisApp: string;
-  queries: any[];
+  chips: any[];
   input: string;
+  defaultSearch: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ interface IState {
  */
 interface IProps {
   thisApp: string;
+  params?: any;
 }
 
 class Search extends React.Component<IProps, IState> {
@@ -44,12 +46,12 @@ class Search extends React.Component<IProps, IState> {
   private advancedSearch: any;
   private query: string = '';
   private newQuery: string = '';
-  private chips: any[] = [];
   private selectedItem: number = -1;
   private excludedQuery: string = '';
   private queryType: string = '';
   private defaultSearch: boolean = true;
   private isTask: boolean = false;
+  private debouncedSearch: (val: string) => void;
 
   constructor(props) {
     super(props);
@@ -68,15 +70,9 @@ class Search extends React.Component<IProps, IState> {
         tos: [],
         apps: [],
       },
+      defaultSearch: true,
       input: '',
-      queries: [{
-        label: 'from',
-        value: 'Bahman',
-        }, {
-          label: 'to',
-          value: 'Lorenzo',
-        },
-      ],
+      chips: [],
       loading: false,
       thisApp: props.thisApp,
     };
@@ -84,20 +80,29 @@ class Search extends React.Component<IProps, IState> {
     this.labelApi = new LabelApi();
     this.appApi = new AppApi();
     this.searchService = new SearchService();
+    this.debouncedSearch = _.debounce(this.search, 372);
   }
 
   public componentDidMount() {
     console.log('here');
-    this.searchApi.sugesstion('').then((data) => {
+    this.searchApi.suggestion('').then((data) => {
       this.defaultSuggestion = data;
       this.suggestion = _.cloneDeep(data);
     });
+    this.initSearch();
   }
 
   public componentWillReceiveProps(newProps: IProps) {
     this.setState({
       thisApp: newProps.thisApp,
     });
+    this.initSearch();
+  }
+
+  private initSearch() {
+    this.searchService.setQuery(this.props.params.query);
+    console.log(this.searchService.getSortedParams());
+    this.initChips(this.searchService.getSortedParams());
   }
 
   public getAdvancedSearchParams() {
@@ -130,7 +135,6 @@ class Search extends React.Component<IProps, IState> {
   public empty() {
     this.query = '';
     this.newQuery = '';
-    this.chips = [];
     this.advancedSearch = {
       keywords: '',
       users: '',
@@ -147,7 +151,7 @@ class Search extends React.Component<IProps, IState> {
     // getSuggestions(vm.newQuery);
   }
 
-  public getSuggestions(query) {
+  public getSuggestions(query): Promise<any> {
     return new Promise((resolve, reject) => {
       if (_.trim(query).length === 0) {
         this.suggestion = _.cloneDeep(this.defaultSuggestion);
@@ -172,7 +176,7 @@ class Search extends React.Component<IProps, IState> {
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -189,7 +193,7 @@ class Search extends React.Component<IProps, IState> {
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -204,7 +208,7 @@ class Search extends React.Component<IProps, IState> {
                 // Resolve
                 resolve({
                   suggestion: this.suggestion,
-                  default: true,
+                  default: false,
                 });
               }).catch((res) => {
                 reject(res);
@@ -221,7 +225,7 @@ class Search extends React.Component<IProps, IState> {
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -241,7 +245,7 @@ class Search extends React.Component<IProps, IState> {
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -254,7 +258,7 @@ class Search extends React.Component<IProps, IState> {
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -263,12 +267,12 @@ class Search extends React.Component<IProps, IState> {
           // Default
           case 'other':
           default:
-            this.searchApi.sugesstion(result.word).then((result) => {
+            this.searchApi.suggestion(result.word).then((result) => {
               this.suggestion = result;
               // Resolve
               resolve({
                 suggestion: this.suggestion,
-                default: true,
+                default: false,
               });
             }).catch((res) => {
               reject(res);
@@ -276,6 +280,30 @@ class Search extends React.Component<IProps, IState> {
             break;
         }
       }
+    });
+  }
+
+  public initChips(params) {
+    const prefix = this.searchService.getSearchPrefix();
+    const types = {
+      place: prefix.place,
+      user: prefix.user,
+      label: prefix.label,
+      to: prefix.to,
+      app: prefix.app,
+      keyword: prefix.keyword,
+    };
+    params = _.filter(params, (item) => {
+      return (item.type !== 'keyword');
+    });
+    const chips = _.map(params, (item) => {
+      return {
+        type: types[item.type],
+        title: item.id,
+      };
+    });
+    this.setState({
+      chips,
     });
   }
 
@@ -317,9 +345,20 @@ class Search extends React.Component<IProps, IState> {
     this.notificationScrollbar = value;
   }
 
-  private handleInputChange(event) {
+  private search(query: string) {
+    this.getSuggestions(query).then((result) => {
+      console.log(result);
+      this.setState({
+        result: result.suggestion,
+      });
+    });
+  }
+
+  private handleInputChange = (event) => {
     this.setState({
       input: event.currentTarget.value,
+    }, () => {
+      this.debouncedSearch(this.state.input);
     });
     // todo search
   }
@@ -329,9 +368,9 @@ class Search extends React.Component<IProps, IState> {
       <div className={style.searchScrollbar} ref={this.refHandler}>
         <div className={style.searchBox}>
           <div className={style.searchBoxInner}>
-            {this.state.queries.map((q, index) => (
+            {this.state.chips.map((chip, index) => (
               <div className={style.queryChips} key={index}>
-                {q.label}:&nbsp;<b>{q.value}</b>
+                {chip.type}:&nbsp;<b>{chip.title}</b>
                 <div className={style.close}>
                   <IcoN name="xcross16White" size={16}/>
                 </div>
@@ -349,14 +388,14 @@ class Search extends React.Component<IProps, IState> {
             <div>
               <div className={style.block}>
                 <div className={style.head}>Posts from:</div>
-                {/*<ul>
-                  {this.state.accounts.map((account) => (
+                <ul>
+                  {this.state.result.accounts.map((account) => (
                     <li>
                       <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                       <FullName user_id={account}/>
                     </li>
                   ))}
-                </ul>*/}
+                </ul>
               </div>
               <Loading active={this.state.loading} position="fixed"/>
               <div className={privateStyle.bottomSpace}/>

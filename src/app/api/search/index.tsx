@@ -49,13 +49,13 @@ export default class SearchApi {
     });
   }
 
-  public sugesstion(keyword: string): Promise<ISuggestion> {
+  public suggestion(keyword: string): Promise<ISuggestion> {
     const params = {
       keyword,
     };
     return this.api.request({
       cmd: 'search/suggestions',
-      params,
+      data: params,
     });
   }
 

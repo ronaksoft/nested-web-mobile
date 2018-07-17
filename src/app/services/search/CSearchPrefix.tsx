@@ -1,4 +1,5 @@
 const CSearchPrefix = {
+  KEYWORD: 'keyword',
   USER: 'from:',
   PLACE: 'in:',
   LABEL: 'label:',

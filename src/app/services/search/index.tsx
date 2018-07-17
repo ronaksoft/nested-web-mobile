@@ -20,7 +20,7 @@ export default class Search {
   private date: string;
   private app: any = null;
   private prefixes: any;
-  private prefixLocale: any;
+  private prefixLocale: any = {};
 
   public constructor() {
     if (locale === 'en-US') {
@@ -36,6 +36,11 @@ export default class Search {
       this.prefixLocale.to = SearchConst.TO_FA;
       this.prefixLocale.app = SearchConst.APP_FA;
     }
+    this.prefixLocale.keyword = SearchConst.KEYWORD;
+  }
+
+  public getSearchPrefix() {
+    return this.prefixes;
   }
 
   public setQuery(query: string, secondaryQuery: string = null) {

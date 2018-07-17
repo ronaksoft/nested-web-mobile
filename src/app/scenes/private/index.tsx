@@ -387,7 +387,7 @@ class Private extends React.Component<IProps, IState> {
       hashHistory.push(this.state.lastPostRoute);
       state.lastTaskRoute = thisPath;
     } else if (thisApp === 'Search') {
-      hashHistory.push('/Search');
+      hashHistory.push('/search/_/false');
     } else if (thisApp === 'notifications') {
       hashHistory.push('/notifications');
     }
