@@ -156,16 +156,15 @@ class Private extends React.Component<IProps, IState> {
    * @memberof Private
    */
   public componentWillReceiveProps(newProps: IProps) {
-    // const path = hashHistory.getCurrentLocation().pathname;
-    // if (this.state.thisApp !== 'Task' && path.indexOf('task') > -1) {
-    //   this.changeApp('Tasks');
-    // }
-    // if (this.state.thisApp !== 'Posts' && path.indexOf('post') > -1) {
-    //   this.changeApp('Posts');
-    // }
-    // if (path.indexOf('notifications') > -1) {
-    //   this.changeApp('Notifications');
-    // }
+    const path = hashHistory.getCurrentLocation().pathname;
+    if (path.match('task') && this.state.thisApp !== 'Tasks') {
+      this.changeApp('Tasks');
+    } else if (this.state.thisApp !== 'Posts' && path.match('post')) {
+      this.changeApp('Posts');
+    } else if (path.match('notifications') && this.state.thisApp !== 'Notifications') {
+      this.changeApp('Notifications');
+    }
+
     this.setState({
       notificationsCount: newProps.notificationsCount.unread_notifications,
     });
