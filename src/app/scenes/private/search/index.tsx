@@ -10,6 +10,8 @@ import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
 import ISearchLabelRequest from '../../../api/label/interfaces/ISearchLabelRequest';
 import {hashHistory} from 'react-router';
 import {Input} from 'antd';
+import ISearchPostRequest from '../../../api/search/interfaces/ISearchPostRequest';
+import ISearchTaskRequest from '../../../api/search/interfaces/ISearchTaskRequest';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
@@ -25,6 +27,7 @@ interface IState {
   input: string;
   defaultSearch: boolean;
   params?: any;
+  isAdvanced: boolean;
 }
 
 /**
@@ -78,6 +81,7 @@ class Search extends React.Component<IProps, IState> {
       loading: false,
       thisApp: props.thisApp,
       params: props.params,
+      isAdvanced: false,
     };
     this.searchApi = new SearchApi();
     this.labelApi = new LabelApi();
@@ -106,11 +110,47 @@ class Search extends React.Component<IProps, IState> {
   private initSearch() {
     this.searchService.setQuery(this.state.params.query);
     this.initChips(this.searchService.getSortedParams());
-    console.log(this.suggestion);
     this.suggestion = this.getUniqueItems(this.suggestion);
     if (this.suggestion) {
       this.setState({
         result: this.suggestion,
+      });
+    }
+    const searchParams = this.searchService.getSearchParams();
+    const keyword = searchParams.keywords.join(' ');
+    if (this.isTask) {
+      const params: ISearchTaskRequest = {
+        assigner_id: searchParams.users.join(','),
+        assignee_id: searchParams.tos.join(','),
+        label_title: searchParams.labels.join(','),
+        keyword: keyword === '_' ? '' : keyword,
+      };
+      if (this.state.isAdvanced) {
+        params.has_attachment = searchParams.hasAttachment;
+      }
+      this.searchApi.searchTask(params).then((result) => {
+        console.log(result);
+      });
+    } else {
+      const params: ISearchPostRequest = {
+        advanced: true,
+        place_id: searchParams.places.join(','),
+        sender_id: searchParams.users.join(','),
+        label_title: searchParams.labels.join(','),
+        keyword: keyword === '_' ? '' : keyword,
+        limit: 8,
+        skip: 0,
+      };
+      if (this.state.isAdvanced) {
+        params.subject = searchParams.subject;
+        params.has_attachment = searchParams.hasAttachment;
+        if (searchParams.before !== null && searchParams.after !== null) {
+          params.before = searchParams.before;
+          params.after = searchParams.after;
+        }
+      }
+      this.searchApi.searchPost(params).then((result) => {
+        console.log(result);
       });
     }
   }

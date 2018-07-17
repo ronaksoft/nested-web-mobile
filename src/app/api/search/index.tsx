@@ -3,6 +3,10 @@ import ISearchForComposeRequest from './interfaces/ISearchForComposeRequest';
 import ISearchForComposeResponse from './interfaces/ISearchForComposeResponse';
 import IUser from 'api/interfaces/IUser';
 import ISuggestion from '../interfaces/ISuggestion';
+import ISearchPostRequest from './interfaces/ISearchPostRequest';
+import IPost from '../post/interfaces/IPost';
+import ISearchTaskRequest from './interfaces/ISearchTaskRequest';
+import ITask from '../task/interfaces/ITask';
 
 export default class SearchApi {
   private api;
@@ -56,6 +60,24 @@ export default class SearchApi {
     return this.api.request({
       cmd: 'search/suggestions',
       data: params,
+    });
+  }
+
+  public searchPost(params: ISearchPostRequest): Promise<IPost[]> {
+    return this.api.request({
+      cmd: 'search/posts',
+      data: params,
+    }).then((res) => {
+      return res.posts;
+    });
+  }
+
+  public searchTask(params: ISearchTaskRequest): Promise<ITask[]> {
+    return this.api.request({
+      cmd: 'search/tasks',
+      data: params,
+    }).then((res) => {
+      return res.tasks;
     });
   }
 
