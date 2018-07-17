@@ -47,4 +47,21 @@ export default class AppApi {
     });
   }
 
+  /**
+   * @func search
+   * @desc Search the apps
+   * @returns {Promise<any>}
+   * @memberof AppApi
+   */
+  public search(keyword: string, limit: number, skip: number) {
+    return this.api.request({
+      cmd: 'search/apps',
+      data: {
+        keyword,
+        limit: limit || 8,
+        skip: skip || 0,
+      },
+    });
+  }
+
 }

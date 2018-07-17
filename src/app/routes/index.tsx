@@ -67,7 +67,8 @@ export default (
         <Route path="/task/custom_filter/:filterId" component={Tasks}/>
         <Route path="/notifications" component={Notifications}/>
         <Route path="/notifications/:app" component={Notifications}/>
-        <Route path="/Search" component={Search}/>
+        <Route path="/search/:params/:advanced" component={Search}/>
+        <Route path="/task/search/:params/:advanced" component={Search}/>
 
         <Route path="/signout" component={Signout}/>
       </Route>

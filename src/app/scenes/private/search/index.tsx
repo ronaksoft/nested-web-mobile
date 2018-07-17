@@ -1,9 +1,14 @@
 import * as React from 'react';
-import SearchApi from '../../../api/search/index';
+import SearchApi from 'api/search/index';
+import AppApi from 'api/app/index';
+import LabelApi from 'api/label/index';
 import {ISuggestion} from 'api/interfaces/';
 import {Scrollable, Loading} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
+import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
+import ISearchLabelRequest from '../../../api/label/interfaces/ISearchLabelRequest';
+import {hashHistory} from 'react-router';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
@@ -28,6 +33,8 @@ class Search extends React.Component<IProps, IState> {
 
   private notificationScrollbar: HTMLDivElement;
   private searchApi: SearchApi;
+  private labelApi: LabelApi;
+  private appApi: AppApi;
   private defaultSuggestion: ISuggestion;
   private suggestion: ISuggestion;
   private searchService: SearchService;
@@ -38,6 +45,8 @@ class Search extends React.Component<IProps, IState> {
   private selectedItem: number = -1;
   private excludedQuery: string = '';
   private queryType: string = '';
+  private defaultSearch: boolean = true;
+  private isTask: boolean = false;
 
   constructor(props) {
     super(props);
@@ -60,6 +69,8 @@ class Search extends React.Component<IProps, IState> {
       thisApp: props.thisApp,
     };
     this.searchApi = new SearchApi();
+    this.labelApi = new LabelApi();
+    this.appApi = new AppApi();
     this.searchService = new SearchService();
   }
 
@@ -125,80 +136,168 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public getSuggestions(query) {
-    if (_.trim(query).length === 0) {
-      // this.defaultSearch = true;
-      this.suggestion = _.cloneDeep(this.defaultSuggestion);
-    } else {
-      // vm.defaultSearch = false;
-      const result = SearchService.getLastItem(query);
-      if (result.word === undefined || result.word === null) {
-        result.word = '';
+    return new Promise((resolve, reject) => {
+      if (_.trim(query).length === 0) {
+        this.suggestion = _.cloneDeep(this.defaultSuggestion);
+        resolve({
+          suggestion: this.suggestion,
+          default: true,
+        });
+      } else {
+        this.defaultSearch = false;
+        const result = SearchService.getLastItem(query);
+        if (result.word === undefined || result.word === null) {
+          result.word = '';
+        }
+        this.excludedQuery = result.word;
+        this.queryType = result.type;
+        let settings;
+        switch (result.type) {
+          // Place
+          case 'place':
+            this.searchApi.searchForCompose(result.word).then((result) => {
+              this.suggestion = {places: result.places};
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+          // User
+          case 'user':
+            settings = {
+              query: result.word,
+              limit: 6,
+            };
+            this.searchApi.searchForUsers(settings).then((result) => {
+              this.suggestion = {accounts: result};
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+          // To
+          case 'to':
+            // To for post
+            if (!this.isTask) {
+              this.searchApi.searchForCompose(result.word).then((result) => {
+                this.suggestion = {places: result.places};
+                // Resolve
+                resolve({
+                  suggestion: this.suggestion,
+                  default: true,
+                });
+              }).catch((res) => {
+                reject(res);
+              });
+              break;
+            }
+            // To for task
+            settings = {
+              query: result.word,
+              limit: 6,
+            };
+            this.searchApi.searchForUsers(settings).then((result) => {
+              this.suggestion = {accounts: result};
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+          // Label
+          case 'label':
+            const params: ISearchLabelRequest = {
+              details: true,
+              keyword: result.word,
+              filter: CLabelFilterTypes.MY_LABELS,
+              skip: 0,
+              limit: 8,
+            };
+            this.labelApi.search(params).then((result) => {
+              this.suggestion = {labels: result};
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+          // App
+          case 'app':
+            this.appApi.search(result.word, 0, 10).then((result) => {
+              this.suggestion = {apps: result};
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+          // Default
+          case 'other':
+          default:
+            this.searchApi.sugesstion(result.word).then((result) => {
+              this.suggestion = result;
+              // Resolve
+              resolve({
+                suggestion: this.suggestion,
+                default: true,
+              });
+            }).catch((res) => {
+              reject(res);
+            });
+            break;
+        }
       }
+    });
+  }
 
-      this.excludedQuery = result.word;
-      this.queryType = result.type;
-      // let settings;
-      switch (result.type) {
-        // case 'place':
-        //   NstSvcPlaceFactory.searchForCompose(result.word).then(function (result) {
-        //     vm.suggestion = getUniqueItems({places: result.places});
-        //     vm.resultCount = countItems();
-        //     this.selectedItem = -1;
-        //   });
-        //   break;
-        // case 'user':
-        //   settings = {
-        //     query: result.word,
-        //     limit: 6,
-        //   };
-        //   NstSvcUserFactory.search(settings, NST_USER_SEARCH_AREA.ACCOUNTS).then(function (result) {
-        //     vm.suggestion = getUniqueItems({accounts: result});
-        //     vm.resultCount = countItems();
-        //     this.selectedItem = -1;
-        //   });
-        //   break;
-        // case 'to':
-        //   if (!vm.isTask()) {
-        //     NstSvcPlaceFactory.searchForCompose(result.word).then(function (result) {
-        //       vm.suggestion = getUniqueItems({places: result.places});
-        //       vm.resultCount = countItems();
-        //       this.selectedItem = -1;
-        //     });
-        //     break;
-        //   }
-        //   settings = {
-        //     query: result.word,
-        //     limit: 6,
-        //   };
-        //   NstSvcUserFactory.search(settings, NST_USER_SEARCH_AREA.ACCOUNTS).then(function (result) {
-        //     vm.suggestion = getUniqueItems({tos: result});
-        //     vm.resultCount = countItems();
-        //     this.selectedItem = -1;
-        //   });
-        //   break;
-        // case 'label':
-        //   NstSvcLabelFactory.search(result.word).then(function (result) {
-        //     vm.suggestion = getUniqueItems({labels: result});
-        //     vm.resultCount = countItems();
-        //     this.selectedItem = -1;
-        //   });
-        //   break;
-        // case 'app':
-        //   NstSvcAppFactory.search(result.word, 0, 10).then((result) => {
-        //     this.suggestion.apps = result;
-        //     // vm.resultCount = countItems();
-        //     this.selectedItem = -1;
-        //   });
-        //   break;
-        case 'other':
-        default:
-          this.searchApi.sugesstion(result.word).then((result) => {
-            this.suggestion = result;
-            // this.resultCount = countItems();
-            this.selectedItem = -1;
-          });
-          break;
+  public addChip = (id, type) => {
+    switch (type) {
+      case 'account':
+        this.searchService.addUser(id);
+        break;
+      case 'place':
+        this.searchService.addPlace(id);
+        break;
+      case 'label':
+        this.searchService.addLabel(id);
+        break;
+      case 'to':
+        this.searchService.addTo(id);
+        break;
+      case 'app':
+        this.searchService.setApp(id);
+        break;
+      default:
+        break;
+    }
+    if (type === 'app') {
+      // loadApp(id);
+      console.log('load app');
+    } else {
+      if (this.isTask) {
+        hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
+      } else {
+        hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
       }
+      // vm.toggleSearchModal(false);
+      this.queryType = 'other';
     }
   }
 
