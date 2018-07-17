@@ -3,12 +3,13 @@ import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
 import {ISuggestion} from 'api/interfaces/';
-import {Scrollable, Loading} from 'components';
+import {Scrollable, Loading, IcoN} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
 import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
 import ISearchLabelRequest from '../../../api/label/interfaces/ISearchLabelRequest';
 import {hashHistory} from 'react-router';
+import {Input} from 'antd';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
@@ -20,6 +21,8 @@ interface IState {
   loading: boolean;
   result: ISuggestion;
   thisApp: string;
+  queries: any[];
+  input: string;
 }
 
 /**
@@ -65,6 +68,15 @@ class Search extends React.Component<IProps, IState> {
         tos: [],
         apps: [],
       },
+      input: '',
+      queries: [{
+        label: 'from',
+        value: 'Bahman',
+        }, {
+          label: 'to',
+          value: 'Lorenzo',
+        },
+      ],
       loading: false,
       thisApp: props.thisApp,
     };
@@ -305,11 +317,32 @@ class Search extends React.Component<IProps, IState> {
     this.notificationScrollbar = value;
   }
 
+  private handleInputChange(event) {
+    this.setState({
+      input: event.currentTarget.value,
+    });
+    // todo search
+  }
+
   public render() {
     return (
       <div className={style.searchScrollbar} ref={this.refHandler}>
         <div className={style.searchBox}>
-          <input type="text" placeholder="Search everywhere..."/>
+          <div className={style.searchBoxInner}>
+            {this.state.queries.map((q, index) => (
+              <div className={style.queryChips} key={index}>
+                {q.label}:&nbsp;<b>{q.value}</b>
+                <div className={style.close}>
+                  <IcoN name="xcross16White" size={16}/>
+                </div>
+              </div>
+            ))}
+            <Input
+              onChange={this.handleInputChange}
+              value={this.state.input}
+              placeholder="Search everywhere..."
+            />
+          </div>
         </div>
         <div className={style.searchWrp}>
           <Scrollable active={true}>

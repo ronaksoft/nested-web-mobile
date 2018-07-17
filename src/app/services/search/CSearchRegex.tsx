@@ -1,3 +1,3 @@
-const CSearchRegex = /(\S([^[:|\s]+):\"([^"]+)")|(\"([^"]+)")|(\S+)/g
+const CSearchRegex = /(\S([^[:|\s]+):\"([^"]+)")|(\"([^"]+)")|(\S+)/g;
 
 export default CSearchRegex;
