@@ -2,8 +2,8 @@ import * as React from 'react';
 import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
-import {ISuggestion} from 'api/interfaces/';
-import {Scrollable, Loading, IcoN, UserAvatar, FullName} from 'components';
+import {ISuggestion, IPost} from 'api/interfaces/';
+import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
 import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
@@ -12,6 +12,7 @@ import {hashHistory} from 'react-router';
 import {Input} from 'antd';
 import ISearchPostRequest from '../../../api/search/interfaces/ISearchPostRequest';
 import ISearchTaskRequest from '../../../api/search/interfaces/ISearchTaskRequest';
+import Post from '../posts/components/post/index';
 
 const style = require('./search.css');
 const privateStyle = require('../private.css');
@@ -24,7 +25,10 @@ interface IState {
   result: ISuggestion;
   thisApp: string;
   chips: any[];
+  postResults: any[];
+  taskResults: any[];
   input: string;
+  showSuggest: boolean;
   defaultSearch: boolean;
   params?: any;
   isAdvanced: boolean;
@@ -76,8 +80,11 @@ class Search extends React.Component<IProps, IState> {
         apps: [],
       },
       defaultSearch: true,
+      showSuggest: true,
       input: '',
       chips: [],
+      postResults: [],
+      taskResults: [],
       loading: false,
       thisApp: props.thisApp,
       params: props.params,
@@ -94,6 +101,7 @@ class Search extends React.Component<IProps, IState> {
     this.searchApi.suggestion('').then((data) => {
       this.defaultSuggestion = data;
       this.suggestion = _.cloneDeep(data);
+      this.forceUpdate();
     });
     this.initSearch();
   }
@@ -128,8 +136,10 @@ class Search extends React.Component<IProps, IState> {
       if (this.state.isAdvanced) {
         params.has_attachment = searchParams.hasAttachment;
       }
-      this.searchApi.searchTask(params).then((result) => {
-        console.log(result);
+      this.searchApi.searchTask(params).then((taskResults) => {
+        this.setState({
+          taskResults,
+        });
       });
     } else {
       const params: ISearchPostRequest = {
@@ -149,8 +159,11 @@ class Search extends React.Component<IProps, IState> {
           params.after = searchParams.after;
         }
       }
-      this.searchApi.searchPost(params).then((result) => {
-        console.log(result);
+      this.searchApi.searchPost(params).then((postResults) => {
+        console.log(postResults);
+        this.setState({
+          postResults,
+        });
       });
     }
   }
@@ -402,11 +415,15 @@ class Search extends React.Component<IProps, IState> {
     // Resolve
     this.setState({
       chips,
+      showSuggest: chips.length === 0,
       input: keyword,
     });
   }
 
   public addChip = (id, type) => {
+    this.setState({
+      showSuggest: false,
+    });
     switch (type) {
       case 'account':
         this.searchService.addUser(id);
@@ -438,6 +455,10 @@ class Search extends React.Component<IProps, IState> {
       // vm.toggleSearchModal(false);
       this.queryType = 'other';
     }
+  }
+
+  private gotoPost(post: IPost) {
+    hashHistory.push(`/message/${post._id}`);
   }
 
   private removeChip = (type, name) => {
@@ -489,7 +510,25 @@ class Search extends React.Component<IProps, IState> {
     }, () => {
       this.debouncedSearch(this.state.input);
     });
-    // todo search
+  }
+
+  private focusInput = () => {
+    this.setState({
+      showSuggest: true,
+    });
+  }
+
+  private keyDownInput = (event) => {
+    if (event.key === 'Backspace' && this.state.input.length === 0) {
+      const item = this.state.chips[this.state.chips.length - 1];
+      this.removeChip.bind(this, item.type, item.title);
+    }
+
+    if ((event.key === 'Escape' || event.key === 'Enter' || event.keyCode === 13 || event.keyCode === 27)) {
+      this.setState({
+        showSuggest: false,
+      });
+    }
   }
 
   public render() {
@@ -499,7 +538,7 @@ class Search extends React.Component<IProps, IState> {
           <div className={style.searchBoxInner}>
             {this.state.chips.map((chip, index) => (
               <div className={style.queryChips} key={index}>
-                {chip.type}:&nbsp;<b>{chip.title}</b>
+                {chip.type}&nbsp;<b>{chip.title}</b>
                 <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
                   <IcoN name="xcross16White" size={16}/>
                 </div>
@@ -508,26 +547,128 @@ class Search extends React.Component<IProps, IState> {
             <Input
               onChange={this.handleInputChange}
               value={this.state.input}
+              onFocus={this.focusInput}
+              onKeyDown={this.keyDownInput}
               placeholder="Search everywhere..."
             />
           </div>
         </div>
         <div className={style.searchWrp}>
           <Scrollable active={true}>
-            <div>
-              <div className={style.block}>
-                <div className={style.head}>Posts from:</div>
-                <ul>
-                  {this.state.result.accounts.map((account) => (
-                    <li onClick={this.addChip.bind(this, account._id, 'account')}>
-                      <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
-                      <FullName user_id={account}/>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+              {this.state.input === '' && this.defaultSuggestion && this.state.showSuggest && (
+                <div className={style.options}>
+                  {this.defaultSuggestion.history && this.defaultSuggestion.history.length && (
+                    <div className={style.block}>
+                      <div className={style.head}>Latest:</div>
+                      <ul>
+                        {this.defaultSuggestion.history.map((history) => (
+                          <li onClick={this.addChip.bind(this, history, 'his')}>
+                            {history}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {this.defaultSuggestion.accounts.length && (
+                    <div className={style.block}>
+                      <div className={style.head}>Posts from:</div>
+                      <ul>
+                        {this.defaultSuggestion.accounts.map((account) => (
+                          <li onClick={this.addChip.bind(this, account._id, 'account')}>
+                            <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
+                            <FullName user_id={account}/>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {this.defaultSuggestion.places.length && (
+                    <div className={style.block}>
+                      <div className={style.head}>Posts from:</div>
+                      <ul>
+                        {this.defaultSuggestion.places.map((place) => (
+                          <li onClick={this.addChip.bind(this, place._id, 'place')}>
+                            <PlaceItem place_id={place._id} size={32} borderRadius="3px"/>
+                            <span>{place.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {this.defaultSuggestion.labels.length && (
+                    <div className={style.block}>
+                      <div className={style.head}>Has label:</div>
+                      <ul>
+                        {this.defaultSuggestion.labels.map((label) => (
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label.title, 'label')}>
+                            <IcoN size={24} name={'tag24'}/>
+                            {label.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <div className={privateStyle.bottomSpace}/>
+                </div>
+              )}
+              {this.state.input !== '' && this.state.showSuggest  && (
+                <div className={style.options}>
+                  {this.state.result.accounts.length > 0 && (
+                    <div className={style.block}>
+                      <div className={style.head}>from:</div>
+                      <ul className={style.column}>
+                        {this.state.result.accounts.map((account) => (
+                          <li onClick={this.addChip.bind(this, account._id, 'account')}>
+                            <UserAvatar user_id={account} size={24} borderRadius={'16px'}/>
+                            <FullName user_id={account}/>
+                            <small>{account._id}</small>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {this.state.result.places.length > 0 && (
+                    <div className={style.block}>
+                      <div className={style.head}>to:</div>
+                      <ul className={style.column}>
+                        {this.state.result.places.map((place) => (
+                          <li onClick={this.addChip.bind(this, place._id, 'place')}>
+                            <PlaceItem place_id={place._id} size={24} borderRadius="3px"/>
+                            <span>{place.name}</span>
+                            <small>{place._id}</small>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {this.state.result.labels.length > 0 && (
+                    <div className={style.block}>
+                      <div className={style.head}>Has label:</div>
+                      <ul className={style.column}>
+                        {this.state.result.labels.map((label) => (
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label.title, 'label')}>
+                            <IcoN size={24} name={'tag24'}/>
+                            {label.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <div className={privateStyle.bottomSpace}/>
+                </div>
+              )}
+              {!this.state.showSuggest && this.state.postResults.map((post) => {
+                return (
+                  <div className={style.post} key={post._id} id={post._id} onClick={this.gotoPost.bind(this, post)}>
+                    <Post post={post}/>
+                  </div>
+                );
+              })}
+              {!this.state.showSuggest && this.state.postResults.length === 0 && (
+                <div className={privateStyle.emptyMessage}>No results found!!</div>
+              )}
               <Loading active={this.state.loading} position="fixed"/>
-              <div className={privateStyle.bottomSpace}/>
             </div>
           </Scrollable>
         </div>

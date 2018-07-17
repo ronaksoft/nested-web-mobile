@@ -1,10 +1,3 @@
-.scrollLoading {
-  width: 100%;
-  max-height: 0;
-  height: 80px;
-  background-color: rebeccapurple;
-  transition: max-height 1s;
-}
 .searchWrp {
   opacity: 1;
   width: 100%;
@@ -21,7 +14,14 @@
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
+}
+.options {
+  /* padding: 8px 0; */
+  display: flex;
   background: #323D47;
+  padding-bottom: 8px;
+  flex: 1;
+  flex-direction: column;
 }
 .searchWrp .block {
   margin: 8px 8px 0;
@@ -48,12 +48,70 @@
   display: flex;
   width: 100%;
 }
+.searchWrp .block ul.column{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 .searchWrp .block ul li{
   display: flex;
   flex: 1;
   margin: 0 2px;
   flex-direction: column;
   align-items: center;
+  max-width: 72px;
+  height: 64px;
+}
+.searchWrp .block ul.column li{
+  flex-direction: row;
+  max-width: 100%;
+  color: #757B81;
+  height: 36px;
+}
+.searchWrp .block ul.column li span{
+  text-align: left;
+}
+.searchWrp .block ul li > div:first-child{
+  overflow: hidden;
+  margin: 6px;
+}
+.searchWrp .block ul li > i:first-child{
+  margin: 8px 0;
+}
+.searchWrp .block ul li span{
+  white-space: nowrap;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 100%;
+}
+.searchWrp .block ul li small{
+  display: flex;
+  flex: none;
+  font-size: 10px;
+  margin: 0 6px;
+}
+.A path{
+  fill: #8895A1!important;
+}
+.B path{
+  fill: #60BF70!important;
+}
+.C path{
+  fill: #EBC246!important;
+}
+.D path{
+  fill: #F26161!important;
+}
+.E path{
+  fill: #8669BF!important;
+}
+.F path{
+  fill: #508EE6!important;
+}
+.G path{
+  fill: #6CD9D9!important;
 }
 /*  */
 .searchBox {
@@ -63,7 +121,7 @@
   background: #F6F6F7;
 }
 .searchBoxInner {
-  min-height: 64px;
+  min-height: 40px;
   padding: 0 8px 4px;
   width: 100%;
   background: #FFFFFF;
@@ -117,3 +175,7 @@
   align-items: center;
 }
 /*  */
+
+.post {
+  background-color: white;
+}

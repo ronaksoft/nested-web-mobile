@@ -13,7 +13,6 @@ import {IPlace} from 'api/interfaces';
 import {placeAdd} from '../../redux/places/actions/index';
 import PlaceApi from '../../api/place/index';
 import {connect} from 'react-redux';
-import {IcoN} from 'components';
 import AAA from '../../services/aaa/index';
 import CONFIG from '../../config';
 
@@ -148,7 +147,7 @@ class PlaceItem extends React.Component<IProps, IState> {
       margin: '0!important',
       width: sizePX,
       height: sizePX,
-      oveflow: 'hidden',
+      flex: 'none',
     };
 
     /**
@@ -160,12 +159,13 @@ class PlaceItem extends React.Component<IProps, IState> {
     let img;
     if (place.picture.x32.length > 0) {
       img = (
-        <img className={style.picture}
+        <img className={style.picture} width={sizePX} height={sizePX}
              src={`${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture[picDim]}`}/>
       );
     } else {
       img = (
-        <IcoN size={24} name={'absentPlace24'}/>
+        <img className={style.picture} width={sizePX} height={sizePX}
+          src={`/public/assets/icons/absents_place.svg`}/>
       );
     }
 
