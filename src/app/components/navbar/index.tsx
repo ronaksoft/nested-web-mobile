@@ -127,7 +127,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         <h2>{this.state.thisApp}</h2>
         <div className={style.filler}/>
         {/* notification scene toggler */}
-        <a className={this.state.thisApp === 'Search' ? style.active : null}
+        <a className={this.state.thisApp === 'Search' || this.state.thisApp === 'TasksSearch' ? style.active : null}
           onClick={this.goToSearch.bind(this, '')}>
           <IcoN size={24} name="search24"/>
         </a>

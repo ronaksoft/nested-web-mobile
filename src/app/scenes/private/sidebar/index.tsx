@@ -634,10 +634,14 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
         <div className={style.appSwitcher}>
-          <button className={this.state.thisApp === 'Posts' ? style.active : ''}
-            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts</button>
-          <button className={this.state.thisApp === 'Tasks' ? style.active : ''}
-            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks</button>
+          <button className={this.state.thisApp === 'Posts' || this.state.thisApp === 'Search'
+            ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts
+          </button>
+          <button className={this.state.thisApp === 'Tasks' || this.state.thisApp === 'TasksSearch'
+            ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks
+          </button>
         </div>
         <div className={style.scrollContainer}>
           <InfiniteScroll
