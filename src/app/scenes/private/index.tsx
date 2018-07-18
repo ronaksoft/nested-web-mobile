@@ -157,14 +157,27 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillReceiveProps(newProps: IProps) {
     const path = hashHistory.getCurrentLocation().pathname;
-    if (path.match('task') && this.state.thisApp !== 'Tasks') {
-      this.changeApp('Tasks');
-    } else if (this.state.thisApp !== 'Posts' && path.match('post')) {
-      this.changeApp('Posts');
-    } else if (path.match('notifications') && this.state.thisApp !== 'Notifications') {
-      this.changeApp('Notifications');
+    if (path.substring(0, 12) === '/task/search') {
+      if (this.state.thisApp !== 'TasksSearch') {
+        this.changeApp('TasksSearch');
+      }
+    } else if (path.match('search')) {
+      if (this.state.thisApp !== 'Search' && this.state.thisApp !== 'TasksSearch') {
+        this.changeApp('Search');
+      }
+    } else if (path.match('task')) {
+      if (this.state.thisApp !== 'Tasks') {
+        this.changeApp('Tasks');
+      }
+    } else if (path.match('feed')) {
+      if (this.state.thisApp !== 'Posts') {
+        this.changeApp('Posts');
+      }
+    } else if (path.match('notifications')) {
+      if (this.state.thisApp !== 'Notifications') {
+        this.changeApp('Notifications');
+      }
     }
-
     this.setState({
       notificationsCount: newProps.notificationsCount.unread_notifications,
     });
@@ -376,6 +389,7 @@ class Private extends React.Component<IProps, IState> {
   }
 
   public changeApp = (thisApp) => {
+    console.log('changeApp', thisApp);
     const thisPath = hashHistory.getCurrentLocation().pathname;
     const state: any = {};
     state.thisApp = thisApp;
@@ -385,9 +399,11 @@ class Private extends React.Component<IProps, IState> {
     } else if (thisApp === 'Posts' && this.state.thisApp === 'Tasks') {
       hashHistory.push(this.state.lastPostRoute);
       state.lastTaskRoute = thisPath;
+    } else if (thisApp === 'TasksSearch') {
+      hashHistory.push('/task/search/_/false');
     } else if (thisApp === 'Search') {
       hashHistory.push('/search/_/false');
-    } else if (thisApp === 'notifications') {
+    } else if (thisApp === 'Notifications') {
       hashHistory.push('/notifications');
     }
     this.setState({

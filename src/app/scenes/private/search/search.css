@@ -59,7 +59,7 @@
   margin: 0 2px;
   flex-direction: column;
   align-items: center;
-  max-width: 86px;
+  /* max-width: 86px; */
   height: 64px;
 }
 .searchWrp .block ul.column li{

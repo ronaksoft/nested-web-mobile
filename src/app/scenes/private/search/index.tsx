@@ -24,7 +24,6 @@ const privateStyle = require('../private.css');
 interface IState {
   loading: boolean;
   result: ISuggestion;
-  thisApp: string;
   chips: any[];
   postResults: any[];
   taskResults: any[];
@@ -39,7 +38,6 @@ interface IState {
  * @interface IProps
  */
 interface IProps {
-  thisApp: string;
   params?: any;
   location: any;
 }
@@ -87,7 +85,6 @@ class Search extends React.Component<IProps, IState> {
       postResults: [],
       taskResults: [],
       loading: false,
-      thisApp: props.thisApp,
       params: props.params,
       isAdvanced: false,
     };
@@ -99,6 +96,9 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
+    console.log(this.props.location.pathname.substr(0, 5),
+      this.props.location.pathname.substr(0, 5) === '/task');
+    this.isTask = this.props.location.pathname.substr(0, 5) === '/task';
     this.searchApi.suggestion('').then((data) => {
       this.defaultSuggestion = data;
       this.suggestion = _.cloneDeep(data);
@@ -108,8 +108,9 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(newProps: IProps) {
+    console.log(hashHistory);
+    // this.isTask = newProps.thisApp === 'TasksSearch';
     this.setState({
-      thisApp: newProps.thisApp,
       params: newProps.params,
     }, () => {
       this.initSearch();
@@ -163,7 +164,6 @@ class Search extends React.Component<IProps, IState> {
       }
       console.log(params);
       this.searchApi.searchPost(params).then((postResults) => {
-        console.log(postResults);
         this.setState({
           postResults,
         });
@@ -579,7 +579,7 @@ class Search extends React.Component<IProps, IState> {
                   )}
                   {this.defaultSuggestion.accounts.length && (
                     <div className={style.block}>
-                      <div className={style.head}>Posts from:</div>
+                      <div className={style.head}>{this.isTask ? 'Tasks by' : 'Posts from'} :</div>
                       <ul>
                         {this.defaultSuggestion.accounts.slice(0, 4).map((account) => (
                           <li onClick={this.addChip.bind(this, account._id, 'account')}>
@@ -592,7 +592,7 @@ class Search extends React.Component<IProps, IState> {
                   )}
                   {this.defaultSuggestion.places.length && (
                     <div className={style.block}>
-                      <div className={style.head}>Posts from:</div>
+                      <div className={style.head}>{this.isTask ? 'Assigned to' : 'Posts in'} :</div>
                       <ul>
                         {this.defaultSuggestion.places.slice(0, 4).map((place) => (
                           <li onClick={this.addChip.bind(this, place._id, 'place')}>

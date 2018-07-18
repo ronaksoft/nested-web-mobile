@@ -62,7 +62,6 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
    * @memberof Navbar
    */
   public componentWillReceiveProps(newProps: INavbarProps) {
-
     /**
      * Counts of unread notifications from props
      * @type {object}
@@ -90,13 +89,10 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
   }
 
   private goToSearch() {
-    if (this.state.thisApp === 'Search') {
+    if (this.state.thisApp === 'Search' || this.state.thisApp === 'TasksSearch') {
       hashHistory.goBack();
-      this.setState({
-        thisApp: '',
-      });
     } else {
-      this.props.changeApp('Search');
+      this.props.changeApp(this.state.thisApp === 'Tasks' ? 'TasksSearch' : 'Search');
     }
 
   }
