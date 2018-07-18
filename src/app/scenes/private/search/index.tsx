@@ -7,12 +7,12 @@ import {IChipsItem} from 'components/Chips';
 import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem, Suggestion} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
-import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
-import ISearchLabelRequest from '../../../api/label/interfaces/ISearchLabelRequest';
+import CLabelFilterTypes from 'api/label/consts/CLabelFilterTypes';
+import ISearchLabelRequest from 'api/label/interfaces/ISearchLabelRequest';
 import {hashHistory} from 'react-router';
 import {Input, Button} from 'antd';
-import ISearchPostRequest from '../../../api/search/interfaces/ISearchPostRequest';
-import ISearchTaskRequest from '../../../api/search/interfaces/ISearchTaskRequest';
+import ISearchPostRequest from 'api/search/interfaces/ISearchPostRequest';
+import ISearchTaskRequest from 'api/search/interfaces/ISearchTaskRequest';
 import Post from '../posts/components/post/index';
 import TaskUpcomingView from '../tasks/components/list/upcomingItem/index';
 
@@ -40,6 +40,7 @@ interface IState {
   advancedHasAttachment: boolean;
   advancedFrom: any[];
   advancedIn: any[];
+  advancedTo: any[];
   advancedLabel: any[];
 }
 
@@ -100,6 +101,7 @@ class Search extends React.Component<IProps, IState> {
       advancedKeyword: '',
       advancedFrom: [],
       advancedIn: [],
+      advancedTo: [],
       advancedSubject: '',
       advancedDateIn: '',
       advancedDate: '',
@@ -437,25 +439,37 @@ class Search extends React.Component<IProps, IState> {
     });
   }
 
-  public addChip = (id, type) => {
+  public addChip = (data: any, type) => {
     this.setState({
       showSuggest: false,
     });
     switch (type) {
       case 'account':
-        this.searchService.addUser(id);
+        this.searchService.addUser(data._id);
+        this.setState({
+          advancedFrom: [...this.state.advancedFrom, data],
+        });
         break;
       case 'place':
-        this.searchService.addPlace(id);
+        this.searchService.addPlace(data._id);
+        this.setState({
+          advancedIn: [...this.state.advancedIn, data],
+        });
         break;
       case 'label':
-        this.searchService.addLabel(id);
+        this.searchService.addLabel(data.title);
+        this.setState({
+          advancedLabel: [...this.state.advancedLabel, data],
+        });
         break;
       case 'to':
-        this.searchService.addTo(id);
+        this.searchService.addTo(data._id);
+        this.setState({
+          advancedTo: [...this.state.advancedTo, data],
+        });
         break;
       case 'app':
-        this.searchService.setApp(id);
+        this.searchService.setApp(data);
         break;
       default:
         break;
@@ -484,18 +498,52 @@ class Search extends React.Component<IProps, IState> {
 
   private removeChip = (type, name) => {
     const prefix = this.searchService.getSearchPrefix();
+    let index = -1;
+    let advancedFrom = null;
     switch (type) {
       case prefix.place:
         this.searchService.removePlace(name);
+        const advancedIn = this.state.advancedIn;
+        index = _.findIndex(advancedIn, {_id: name});
+        if (index > -1) {
+          advancedIn.splice(index, 1);
+          this.setState({
+            advancedIn,
+          });
+        }
         break;
       case prefix.user:
         this.searchService.removeUser(name);
+        advancedFrom = this.state.advancedFrom;
+        index = _.findIndex(advancedFrom, {_id: name});
+        if (index > -1) {
+          advancedFrom.splice(index, 1);
+          this.setState({
+            advancedFrom,
+          });
+        }
         break;
       case prefix.label:
         this.searchService.removeLabel(name);
+        const advancedLabel = this.state.advancedLabel;
+        index = _.findIndex(advancedLabel, {title: name});
+        if (index > -1) {
+          advancedLabel.splice(index, 1);
+          this.setState({
+            advancedLabel,
+          });
+        }
         break;
       case prefix.to:
         this.searchService.removeTo(name);
+        advancedFrom = this.state.advancedFrom;
+        index = _.findIndex(advancedFrom, {_id: name});
+        if (index > -1) {
+          advancedFrom.splice(index, 1);
+          this.setState({
+            advancedFrom,
+          });
+        }
         break;
       case prefix.app:
         this.searchService.removeApp();
@@ -528,6 +576,7 @@ class Search extends React.Component<IProps, IState> {
   private handleInputChange = (event) => {
     this.setState({
       input: event.currentTarget.value,
+      advancedKeyword: event.currentTarget.value,
     }, () => {
       this.debouncedSearch(this.state.input);
     });
@@ -568,6 +617,9 @@ class Search extends React.Component<IProps, IState> {
   private referenceIn = (value: Suggestion) => {
     this.inRef = value;
   }
+  private referenceTo = (value: Suggestion) => {
+    this.inRef = value;
+  }
   private referenceLabel = (value: Suggestion) => {
     this.labelRef = value;
   }
@@ -575,41 +627,68 @@ class Search extends React.Component<IProps, IState> {
     this.setState({
       advancedFrom,
     });
+    this.searchService.setUsers(advancedFrom);
+    advancedFrom.forEach((user) => {
+      this.addChip(user, 'account');
+    });
   }
   private handleInItemChanged = (advancedIn: IChipsItem[]) => {
     this.setState({
       advancedIn,
+    });
+    this.searchService.setPlaces(advancedIn);
+    advancedIn.forEach((place) => {
+      this.addChip(place, 'place');
+    });
+  }
+  private handleToItemChanged = (advancedTo: IChipsItem[]) => {
+    this.setState({
+      advancedTo,
+    });
+    this.searchService.setTos(advancedTo);
+    advancedTo.forEach((user) => {
+      this.addChip(user, 'to');
     });
   }
   private handleLabelItemChanged = (advancedLabel: IChipsItem[]) => {
     this.setState({
       advancedLabel,
     });
+    this.searchService.setLabels(advancedLabel);
+    advancedLabel.forEach((label) => {
+      this.addChip(label, 'label');
+    });
   }
   private handleAdvancedKeywordChange = (event) => {
     this.setState({
       advancedKeyword: event.currentTarget.value,
+      input: event.currentTarget.value,
     });
+    this.searchService.setAllKeywords(event.currentTarget.value);
   }
   private handleAdvancedDateInChange = (event) => {
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
+    this.searchService.setWithin(event.currentTarget.value);
   }
   private handleAdvancedDateChange = (event) => {
     this.setState({
       advancedDate: event.currentTarget.value,
     });
+    this.searchService.setDate(event.currentTarget.value);
   }
   private handleAdvancedSubjectChange = (event) => {
     this.setState({
       advancedSubject: event.currentTarget.value,
     });
+    this.searchService.setSubject(event.currentTarget.value);
   }
   private handleAdvancedHasAttachment = (event) => {
     this.setState({
       advancedHasAttachment: event.currentTarget.checked,
     });
+    this.searchService.setHasAttachment(event.currentTarget.checked);
   }
   private focusAdvancedKeyword = (event) => {
     console.log(event.currentTarget.value);
@@ -658,31 +737,31 @@ class Search extends React.Component<IProps, IState> {
               </div>
               <div className={style.searchBoxInner}>
                 <Suggestion ref={this.referenceFrom}
-                  mode="user"
-                  placeholder="from:"
-                  editable={true}
-                  selectedItems={this.state.advancedFrom}
-                  onSelectedItemsChanged={this.handleFromItemChanged}
-                  />
+                            mode="user"
+                            placeholder="from:"
+                            editable={true}
+                            selectedItems={this.state.advancedFrom}
+                            onSelectedItemsChanged={this.handleFromItemChanged}
+                />
               </div>
               <div className={style.searchBoxInner}>
                 {this.isTask && (
-                  <Suggestion ref={this.referenceIn}
-                    mode="user"
-                    placeholder="Assigned to:"
-                    editable={true}
-                    selectedItems={this.state.advancedIn}
-                    onSelectedItemsChanged={this.handleInItemChanged}
-                    />
+                  <Suggestion ref={this.referenceTo}
+                              mode="user"
+                              placeholder="Assigned to:"
+                              editable={true}
+                              selectedItems={this.state.advancedTo}
+                              onSelectedItemsChanged={this.handleToItemChanged}
+                  />
                 )}
                 {!this.isTask && (
                   <Suggestion ref={this.referenceIn}
-                    mode="place"
-                    placeholder="in:"
-                    editable={true}
-                    selectedItems={this.state.advancedIn}
-                    onSelectedItemsChanged={this.handleInItemChanged}
-                    />
+                              mode="place"
+                              placeholder="in:"
+                              editable={true}
+                              selectedItems={this.state.advancedIn}
+                              onSelectedItemsChanged={this.handleInItemChanged}
+                  />
                 )}
               </div>
               <div className={style.searchBoxInner}>
@@ -695,12 +774,12 @@ class Search extends React.Component<IProps, IState> {
               </div>
               <div className={style.searchBoxInner}>
                 <Suggestion ref={this.referenceLabel}
-                  mode="label"
-                  editable={true}
-                  placeholder="Add labels..."
-                  selectedItems={this.state.advancedLabel}
-                  onSelectedItemsChanged={this.handleLabelItemChanged}
-                  />
+                            mode="label"
+                            editable={true}
+                            placeholder="Add labels..."
+                            selectedItems={this.state.advancedLabel}
+                            onSelectedItemsChanged={this.handleLabelItemChanged}
+                />
               </div>
               <div className={style.rowInput}>
                 <div className={style.searchBoxInner}>
@@ -713,7 +792,7 @@ class Search extends React.Component<IProps, IState> {
                 <span>of</span>
                 <div className={style.searchBoxInner}>
                   <input type="date" placeholder="Date" value={this.state.advancedDate}
-                    onChange={this.handleAdvancedDateChange}/>
+                         onChange={this.handleAdvancedDateChange}/>
                 </div>
               </div>
               <div className={style.attachmentOption}>
@@ -722,7 +801,7 @@ class Search extends React.Component<IProps, IState> {
                   only results that have attachment
                 </label>
                 <input type="checkbox" id="contains-attachment" checked={this.state.advancedHasAttachment}
-                  onChange={this.handleAdvancedHasAttachment}/>
+                       onChange={this.handleAdvancedHasAttachment}/>
               </div>
               <div className={style.searchSubmit}>
                 <Button type="primary" htmlType="submit">Search</Button>
@@ -736,9 +815,9 @@ class Search extends React.Component<IProps, IState> {
           <Scrollable active={true}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
               {!this.state.isAdvanced && this.state.input === '' &&
-                this.defaultSuggestion && this.state.showSuggest && (
+              this.defaultSuggestion && this.state.showSuggest && (
                 <div className={style.options}>
-                  {this.defaultSuggestion.history && this.defaultSuggestion.history.length && (
+                  {/*{this.defaultSuggestion.history && this.defaultSuggestion.history.length && (
                     <div className={style.block}>
                       <div className={style.head}>Latest:</div>
                       <ul>
@@ -749,13 +828,13 @@ class Search extends React.Component<IProps, IState> {
                         ))}
                       </ul>
                     </div>
-                  )}
+                  )}*/}
                   {this.defaultSuggestion.accounts.length && (
                     <div className={style.block}>
                       <div className={style.head}>{this.isTask ? 'Tasks by' : 'Posts from'} :</div>
                       <ul>
                         {this.defaultSuggestion.accounts.slice(0, 4).map((account) => (
-                          <li onClick={this.addChip.bind(this, account._id, 'account')}>
+                          <li onClick={this.addChip.bind(this, account, 'account')}>
                             <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                             <FullName user_id={account}/>
                           </li>
@@ -768,7 +847,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>{this.isTask ? 'Assigned to' : 'Posts in'} :</div>
                       <ul>
                         {this.defaultSuggestion.places.slice(0, 4).map((place) => (
-                          <li onClick={this.addChip.bind(this, place._id, 'place')}>
+                          <li onClick={this.addChip.bind(this, place, 'place')}>
                             <PlaceItem place_id={place._id} size={32} borderRadius="3px"/>
                             <span>{place.name}</span>
                           </li>
@@ -781,7 +860,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>Has label:</div>
                       <ul>
                         {this.defaultSuggestion.labels.slice(0, 4).map((label) => (
-                          <li className={style[label.code]} onClick={this.addChip.bind(this, label.title, 'label')}>
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}>
                             <IcoN size={24} name={'tag24'}/>
                             <span>{label.title}</span>
                           </li>
@@ -792,14 +871,14 @@ class Search extends React.Component<IProps, IState> {
                   <div className={privateStyle.bottomSpace}/>
                 </div>
               )}
-              {this.state.input !== '' && this.state.showSuggest  && (
+              {this.state.input !== '' && this.state.showSuggest && (
                 <div className={style.options}>
                   {this.state.result.accounts.length > 0 && (
                     <div className={style.block}>
                       <div className={style.head}>from:</div>
                       <ul className={style.column}>
                         {this.state.result.accounts.map((account) => (
-                          <li onClick={this.addChip.bind(this, account._id, 'account')}>
+                          <li onClick={this.addChip.bind(this, account, 'account')}>
                             <UserAvatar user_id={account} size={24} borderRadius={'16px'}/>
                             <FullName user_id={account}/>
                             <small>{account._id}</small>
@@ -813,7 +892,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>to:</div>
                       <ul className={style.column}>
                         {this.state.result.places.map((place) => (
-                          <li onClick={this.addChip.bind(this, place._id, 'place')}>
+                          <li onClick={this.addChip.bind(this, place, 'place')}>
                             <PlaceItem place_id={place._id} size={24} borderRadius="3px"/>
                             <span>{place.name}</span>
                             <small>{place._id}</small>
@@ -827,7 +906,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>Has label:</div>
                       <ul className={style.column}>
                         {this.state.result.labels.map((label) => (
-                          <li className={style[label.code]} onClick={this.addChip.bind(this, label.title, 'label')}>
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}>
                             <IcoN size={24} name={'tag24'}/>
                             {label.title}
                           </li>
@@ -848,7 +927,7 @@ class Search extends React.Component<IProps, IState> {
               {!this.state.showSuggest && this.isTask && this.state.taskResults.map((task) => {
                 return (
                   <div key={task._id} onClick={this.gotoTask.bind(this, task)}>
-                    <TaskUpcomingView task={task} />
+                    <TaskUpcomingView task={task}/>
                   </div>
                 );
               })}

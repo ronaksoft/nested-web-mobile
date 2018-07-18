@@ -274,10 +274,8 @@ export default class Search {
   }
 
   public setPlaces(places) {
-    places = places.replace(/, /g, ',');
-    places = places.split(',');
     places.forEach((place) => {
-      this.addPlace(place);
+      this.addPlace(place._id);
     });
   }
 
@@ -309,10 +307,8 @@ export default class Search {
   }
 
   public setUsers(users) {
-    users = users.replace(/, /g, ',');
-    users = users.split(',');
     users.forEach((user) => {
-      this.addUser(user);
+      this.addUser(user._id);
     });
   }
 
@@ -344,10 +340,8 @@ export default class Search {
   }
 
   public setLabels(labels) {
-    labels = labels.replace(/, /g, ',');
-    labels = labels.split(',');
     labels.forEach((label) => {
-      this.addLabel(label);
+      this.addLabel(label.title);
     });
   }
 
@@ -379,10 +373,8 @@ export default class Search {
   }
 
   public setTos(users) {
-    users = users.replace(/, /g, ',');
-    users = users.split(',');
     users.forEach((user) => {
-      this.addTo(user);
+      this.addTo(user._id);
     });
   }
 
