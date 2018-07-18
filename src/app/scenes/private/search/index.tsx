@@ -4,7 +4,7 @@ import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
 import {ISuggestion, IPost, ITask} from 'api/interfaces/';
 import {IChipsItem} from 'components/Chips';
-import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem, Suggestion} from 'components';
+import {InfiniteScroll, Loading, IcoN, UserAvatar, FullName, PlaceItem, Suggestion} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
 import CLabelFilterTypes from 'api/label/consts/CLabelFilterTypes';
@@ -37,6 +37,7 @@ interface IState {
   advancedSubject: string;
   advancedDateIn: string;
   advancedDate: string;
+  reachedTheEnd: boolean;
   advancedHasAttachment: boolean;
   advancedFrom: any[];
   advancedIn: any[];
@@ -98,6 +99,7 @@ class Search extends React.Component<IProps, IState> {
       params: props.params,
       isAdvanced: false,
       advancedHasAttachment: false,
+      reachedTheEnd: false,
       advancedKeyword: '',
       advancedFrom: [],
       advancedIn: [],
@@ -117,6 +119,11 @@ class Search extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.isTask = this.props.location.pathname.substr(0, 5) === '/task';
     this.searchApi.suggestion('').then((data) => {
+      Object.keys(data).forEach((key) => {
+        if (data[key]) {
+          data[key] = data[key].concat([{}, {}, {}, {}]).slice(0, 4);
+        }
+      });
       this.defaultSuggestion = data;
       this.suggestion = _.cloneDeep(data);
       this.forceUpdate();
@@ -133,15 +140,7 @@ class Search extends React.Component<IProps, IState> {
     });
   }
 
-  private initSearch() {
-    this.searchService.setQuery(this.state.params.query);
-    this.initChips(this.searchService.getSortedParams());
-    this.suggestion = this.getUniqueItems(this.suggestion);
-    if (this.suggestion) {
-      this.setState({
-        result: this.suggestion,
-      });
-    }
+  public callApiSearch = () => {
     const searchParams = this.searchService.getSearchParams();
     const keyword = searchParams.keywords.join(' ');
     if (this.isTask) {
@@ -150,6 +149,8 @@ class Search extends React.Component<IProps, IState> {
         assignee_id: searchParams.tos.join(','),
         label_title: searchParams.labels.join(','),
         keyword: keyword === '_' ? '' : keyword,
+        limit: 8,
+        skip: 0,
       };
       if (this.state.isAdvanced) {
         params.has_attachment = searchParams.hasAttachment;
@@ -182,6 +183,66 @@ class Search extends React.Component<IProps, IState> {
       this.searchApi.searchPost(params).then((postResults) => {
         this.setState({
           postResults,
+        });
+      });
+    }
+  }
+
+  private initSearch() {
+    this.searchService.setQuery(this.state.params.query);
+    this.initChips(this.searchService.getSortedParams());
+    this.suggestion = this.getUniqueItems(this.suggestion);
+    if (this.suggestion) {
+      this.setState({
+        result: this.suggestion,
+      });
+    }
+    this.callApiSearch();
+  }
+
+  private loadMore = () => {
+    const searchParams = this.searchService.getSearchParams();
+    const keyword = searchParams.keywords.join(' ');
+    if (this.isTask) {
+      const params: ISearchTaskRequest = {
+        assigner_id: searchParams.users.join(','),
+        assignee_id: searchParams.tos.join(','),
+        label_title: searchParams.labels.join(','),
+        keyword: keyword === '_' ? '' : keyword,
+        limit: 8,
+        skip: this.state.taskResults.length,
+      };
+      if (this.state.isAdvanced) {
+        params.has_attachment = searchParams.hasAttachment;
+      }
+      this.searchApi.searchTask(params).then((taskResults) => {
+        this.setState({
+          taskResults: [...this.state.taskResults, ...taskResults],
+          reachedTheEnd: taskResults.length < 8,
+        });
+      });
+    } else {
+      const params: ISearchPostRequest = {
+        advanced: true,
+        place_id: searchParams.places.join(','),
+        sender_id: searchParams.users.join(','),
+        label_title: searchParams.labels.join(','),
+        keyword: keyword === '_' ? '' : keyword,
+        limit: 8,
+        skip: this.state.postResults.length,
+      };
+      if (this.state.isAdvanced) {
+        params.subject = searchParams.subject;
+        params.has_attachment = searchParams.hasAttachment;
+        if (searchParams.before !== null && searchParams.after !== null) {
+          params.before = searchParams.before;
+          params.after = searchParams.after;
+        }
+      }
+      this.searchApi.searchPost(params).then((postResults) => {
+        this.setState({
+          postResults: [...this.state.postResults, ...postResults],
+          reachedTheEnd: postResults.length < 8,
         });
       });
     }
@@ -812,7 +873,14 @@ class Search extends React.Component<IProps, IState> {
           {this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>Less options...</a>}
         </div>
         <div className={style.searchWrp}>
-          <Scrollable active={true}>
+          <InfiniteScroll
+              pullDownToRefresh={true}
+              pullLoading={this.state.loading}
+              refreshFunction={this.callApiSearch}
+              next={this.loadMore}
+              route="search"
+              hasMore={!this.state.reachedTheEnd && !this.state.showSuggest}
+              loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
               {!this.state.isAdvanced && this.state.input === '' &&
               this.defaultSuggestion && this.state.showSuggest && (
@@ -833,12 +901,12 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>{this.isTask ? 'Tasks by' : 'Posts from'} :</div>
                       <ul>
-                        {this.defaultSuggestion.accounts.slice(0, 4).map((account) => (
-                          <li onClick={this.addChip.bind(this, account, 'account')}>
+                        {this.defaultSuggestion.accounts.map((account, index) => account._id ? (
+                          <li onClick={this.addChip.bind(this, account, 'account')} key={account._id}>
                             <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
                             <FullName user_id={account}/>
                           </li>
-                        ))}
+                        ) : <li key={index}/>)}
                       </ul>
                     </div>
                   )}
@@ -846,12 +914,12 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>{this.isTask ? 'Assigned to' : 'Posts in'} :</div>
                       <ul>
-                        {this.defaultSuggestion.places.slice(0, 4).map((place) => (
-                          <li onClick={this.addChip.bind(this, place, 'place')}>
+                        {this.defaultSuggestion.places.map((place, index) => place._id ? (
+                          <li onClick={this.addChip.bind(this, place, 'place')} key={place._id}>
                             <PlaceItem place_id={place._id} size={32} borderRadius="3px"/>
                             <span>{place.name}</span>
                           </li>
-                        ))}
+                        ) : <li key={index}/>)}
                       </ul>
                     </div>
                   )}
@@ -859,12 +927,13 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>Has label:</div>
                       <ul>
-                        {this.defaultSuggestion.labels.slice(0, 4).map((label) => (
-                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}>
+                        {this.defaultSuggestion.labels.map((label, index) => label._id ? (
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}
+                            key={label._id}>
                             <IcoN size={24} name={'tag24'}/>
                             <span>{label.title}</span>
                           </li>
-                        ))}
+                        ) : <li key={index}/>)}
                       </ul>
                     </div>
                   )}
@@ -936,7 +1005,7 @@ class Search extends React.Component<IProps, IState> {
               )}
               <Loading active={this.state.loading} position="fixed"/>
             </div>
-          </Scrollable>
+          </InfiniteScroll>
         </div>
       </div>
     );
