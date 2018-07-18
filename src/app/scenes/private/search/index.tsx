@@ -33,6 +33,14 @@ interface IState {
   defaultSearch: boolean;
   params?: any;
   isAdvanced: boolean;
+  advancedKeyword: string;
+  advancedSubject: string;
+  advancedDateIn: string;
+  advancedDate: string;
+  advancedHasAttachment: boolean;
+  advancedFrom: any[];
+  advancedIn: any[];
+  advancedLabel: any[];
 }
 
 /**
@@ -88,6 +96,14 @@ class Search extends React.Component<IProps, IState> {
       loading: false,
       params: props.params,
       isAdvanced: false,
+      advancedHasAttachment: false,
+      advancedKeyword: '',
+      advancedFrom: [],
+      advancedIn: [],
+      advancedSubject: '',
+      advancedDateIn: '',
+      advancedDate: '',
+      advancedLabel: [],
     };
     this.searchApi = new SearchApi();
     this.labelApi = new LabelApi();
@@ -97,8 +113,6 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    console.log(this.props.location.pathname.substr(0, 5),
-      this.props.location.pathname.substr(0, 5) === '/task');
     this.isTask = this.props.location.pathname.substr(0, 5) === '/task';
     this.searchApi.suggestion('').then((data) => {
       this.defaultSuggestion = data;
@@ -109,7 +123,6 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(newProps: IProps) {
-    console.log(hashHistory);
     // this.isTask = newProps.thisApp === 'TasksSearch';
     this.setState({
       params: newProps.params,
@@ -544,26 +557,70 @@ class Search extends React.Component<IProps, IState> {
       });
     }
   }
+
+  // Advanced Search related methods
   private fromRef;
   private inRef;
   private labelRef;
   private referenceFrom = (value: Suggestion) => {
     this.fromRef = value;
   }
-  private handleFromItemChanged = (items: IChipsItem[]) => {
-    console.log(items);
-  }
   private referenceIn = (value: Suggestion) => {
     this.inRef = value;
-  }
-  private handleInItemChanged = (items: IChipsItem[]) => {
-    console.log(items);
   }
   private referenceLabel = (value: Suggestion) => {
     this.labelRef = value;
   }
-  private handleLabelItemChanged = (items: IChipsItem[]) => {
-    console.log(items);
+  private handleFromItemChanged = (advancedFrom: IChipsItem[]) => {
+    this.setState({
+      advancedFrom,
+    });
+  }
+  private handleInItemChanged = (advancedIn: IChipsItem[]) => {
+    this.setState({
+      advancedIn,
+    });
+  }
+  private handleLabelItemChanged = (advancedLabel: IChipsItem[]) => {
+    this.setState({
+      advancedLabel,
+    });
+  }
+  private handleAdvancedKeywordChange = (event) => {
+    this.setState({
+      advancedKeyword: event.currentTarget.value,
+    });
+  }
+  private handleAdvancedDateInChange = (event) => {
+    this.setState({
+      advancedDateIn: event.currentTarget.value,
+    });
+  }
+  private handleAdvancedDateChange = (event) => {
+    this.setState({
+      advancedDate: event.currentTarget.value,
+    });
+  }
+  private handleAdvancedSubjectChange = (event) => {
+    this.setState({
+      advancedSubject: event.currentTarget.value,
+    });
+  }
+  private handleAdvancedHasAttachment = (event) => {
+    this.setState({
+      advancedHasAttachment: event.currentTarget.checked,
+    });
+  }
+  private focusAdvancedKeyword = (event) => {
+    console.log(event.currentTarget.value);
+    this.fromRef.clearSuggests();
+    this.inRef.clearSuggests();
+    this.labelRef.clearSuggests();
+  }
+  private submitAdvanced = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log(event.nativeEvent);
   }
 
   public render() {
@@ -590,13 +647,12 @@ class Search extends React.Component<IProps, IState> {
             </div>
           )}
           {this.state.isAdvanced && (
-            <form className={style.advancedSearch}>
+            <form className={style.advancedSearch} onSubmit={this.submitAdvanced}>
               <div className={style.searchBoxInner}>
                 <Input
-                  onChange={this.handleInputChange}
-                  value={this.state.input}
-                  onFocus={this.focusInput}
-                  onKeyDown={this.keyDownInput}
+                  onFocus={this.focusAdvancedKeyword}
+                  onChange={this.handleAdvancedKeywordChange}
+                  value={this.state.advancedKeyword}
                   placeholder="Keyword"
                 />
               </div>
@@ -605,7 +661,7 @@ class Search extends React.Component<IProps, IState> {
                   mode="user"
                   placeholder="from:"
                   editable={true}
-                  selectedItems={[]}
+                  selectedItems={this.state.advancedFrom}
                   onSelectedItemsChanged={this.handleFromItemChanged}
                   />
               </div>
@@ -615,7 +671,7 @@ class Search extends React.Component<IProps, IState> {
                     mode="user"
                     placeholder="Assigned to:"
                     editable={true}
-                    selectedItems={[]}
+                    selectedItems={this.state.advancedIn}
                     onSelectedItemsChanged={this.handleInItemChanged}
                     />
                 )}
@@ -624,17 +680,16 @@ class Search extends React.Component<IProps, IState> {
                     mode="place"
                     placeholder="in:"
                     editable={true}
-                    selectedItems={[]}
+                    selectedItems={this.state.advancedIn}
                     onSelectedItemsChanged={this.handleInItemChanged}
                     />
                 )}
               </div>
               <div className={style.searchBoxInner}>
                 <Input
-                  onChange={this.handleInputChange}
-                  value={this.state.input}
+                  onChange={this.handleAdvancedSubjectChange}
+                  value={this.state.advancedSubject}
                   onFocus={this.focusInput}
-                  onKeyDown={this.keyDownInput}
                   placeholder="Subject"
                 />
               </div>
@@ -643,13 +698,13 @@ class Search extends React.Component<IProps, IState> {
                   mode="label"
                   editable={true}
                   placeholder="Add labels..."
-                  selectedItems={[]}
+                  selectedItems={this.state.advancedLabel}
                   onSelectedItemsChanged={this.handleLabelItemChanged}
                   />
               </div>
               <div className={style.rowInput}>
                 <div className={style.searchBoxInner}>
-                  <select>
+                  <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
                     <option>1 weeks</option>
                     <option>2 weeks</option>
                     <option>3 weeks</option>
@@ -657,7 +712,8 @@ class Search extends React.Component<IProps, IState> {
                 </div>
                 <span>of</span>
                 <div className={style.searchBoxInner}>
-                  <input type="date" placeholder="Date"/>
+                  <input type="date" placeholder="Date" value={this.state.advancedDate}
+                    onChange={this.handleAdvancedDateChange}/>
                 </div>
               </div>
               <div className={style.attachmentOption}>
@@ -665,7 +721,8 @@ class Search extends React.Component<IProps, IState> {
                   <IcoN size={16} name={'attach16'}/>
                   only results that have attachment
                 </label>
-                <input type="checkbox" id="contains-attachment"/>
+                <input type="checkbox" id="contains-attachment" checked={this.state.advancedHasAttachment}
+                  onChange={this.handleAdvancedHasAttachment}/>
               </div>
               <div className={style.searchSubmit}>
                 <Button type="primary" htmlType="submit">Search</Button>
