@@ -11,7 +11,7 @@ import * as React from 'react';
 import {debounce} from 'lodash';
 // import {findIndex} from 'lodash/array';
 import {Input, Button, message} from 'antd';
-import {PlaceChips, UserChips} from 'components';
+import {PlaceChips, UserChips, IcoN} from 'components';
 import {LabelChips} from 'components/Chips/label';
 import {IChipsItem} from 'components/Chips';
 import {IPlace} from 'api/interfaces';
@@ -506,7 +506,12 @@ class Suggestion extends React.Component<ISuggestProps, ISuggestState> {
       return (
         <li key={item._id}
             onClick={this.insertChip.bind(this, item)}>
-          <img src={this.getPicture(item)} alt=""/>
+          {this.props.mode !== 'label' && <img src={this.getPicture(item)} alt=""/>}
+          {this.props.mode === 'label' && (
+            <div className={style[item.code]}>
+              <IcoN size={24} name={'tag24'}/>
+            </div>
+          )}
           <div>
             <p dangerouslySetInnerHTML={{__html: this.mark(name, this.state.input)}}/>
           </div>

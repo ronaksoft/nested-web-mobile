@@ -44,7 +44,8 @@
   color: rgba(50,61,71,.64);
   /*padding: 0 16px;*/
 }
-.suggests li img{
+
+.suggests li > *:first-child{
   width: 32px;
   height: 32px;
   border-radius: 3px;
@@ -77,4 +78,26 @@
 .selectItemControl span{
   display: flex;
   width: 100%;
+}
+
+.A path{
+  fill: #8895A1!important;
+}
+.B path{
+  fill: #60BF70!important;
+}
+.C path{
+  fill: #EBC246!important;
+}
+.D path{
+  fill: #F26161!important;
+}
+.E path{
+  fill: #8669BF!important;
+}
+.F path{
+  fill: #508EE6!important;
+}
+.G path{
+  fill: #6CD9D9!important;
 }

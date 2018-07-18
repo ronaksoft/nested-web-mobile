@@ -3,13 +3,14 @@ import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
 import {ISuggestion, IPost, ITask} from 'api/interfaces/';
-import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem} from 'components';
+import {IChipsItem} from 'components/Chips';
+import {Scrollable, Loading, IcoN, UserAvatar, FullName, PlaceItem, Suggestion} from 'components';
 import * as _ from 'lodash';
 import SearchService from 'services/search';
 import CLabelFilterTypes from '../../../api/label/consts/CLabelFilterTypes';
 import ISearchLabelRequest from '../../../api/label/interfaces/ISearchLabelRequest';
 import {hashHistory} from 'react-router';
-import {Input} from 'antd';
+import {Input, Button} from 'antd';
 import ISearchPostRequest from '../../../api/search/interfaces/ISearchPostRequest';
 import ISearchTaskRequest from '../../../api/search/interfaces/ISearchTaskRequest';
 import Post from '../posts/components/post/index';
@@ -525,6 +526,12 @@ class Search extends React.Component<IProps, IState> {
     });
   }
 
+  private toggleAdvancedSearch = () => {
+    this.setState({
+      isAdvanced: !this.state.isAdvanced,
+    });
+  }
+
   private keyDownInput = (event) => {
     if (event.key === 'Backspace' && this.state.input.length === 0) {
       const item = this.state.chips[this.state.chips.length - 1];
@@ -537,33 +544,142 @@ class Search extends React.Component<IProps, IState> {
       });
     }
   }
+  private fromRef;
+  private inRef;
+  private labelRef;
+  private referenceFrom = (value: Suggestion) => {
+    this.fromRef = value;
+  }
+  private handleFromItemChanged = (items: IChipsItem[]) => {
+    console.log(items);
+  }
+  private referenceIn = (value: Suggestion) => {
+    this.inRef = value;
+  }
+  private handleInItemChanged = (items: IChipsItem[]) => {
+    console.log(items);
+  }
+  private referenceLabel = (value: Suggestion) => {
+    this.labelRef = value;
+  }
+  private handleLabelItemChanged = (items: IChipsItem[]) => {
+    console.log(items);
+  }
 
   public render() {
     return (
       <div className={style.searchScrollbar} ref={this.refHandler}>
         <div className={style.searchBox}>
-          <div className={style.searchBoxInner}>
-            {this.state.chips.map((chip, index) => (
-              <div className={style.queryChips} key={index}>
-                {chip.type}&nbsp;<b>{chip.title}</b>
-                <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
-                  <IcoN name="xcross16White" size={16}/>
+          {!this.state.isAdvanced && (
+            <div className={style.searchBoxInner}>
+              {this.state.chips.map((chip, index) => (
+                <div className={style.queryChips} key={index}>
+                  {chip.type}&nbsp;<b>{chip.title}</b>
+                  <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
+                    <IcoN name="xcross16White" size={16}/>
+                  </div>
+                </div>
+              ))}
+              <Input
+                onChange={this.handleInputChange}
+                value={this.state.input}
+                onFocus={this.focusInput}
+                onKeyDown={this.keyDownInput}
+                placeholder="Search everywhere..."
+              />
+            </div>
+          )}
+          {this.state.isAdvanced && (
+            <form className={style.advancedSearch}>
+              <div className={style.searchBoxInner}>
+                <Input
+                  onChange={this.handleInputChange}
+                  value={this.state.input}
+                  onFocus={this.focusInput}
+                  onKeyDown={this.keyDownInput}
+                  placeholder="Keyword"
+                />
+              </div>
+              <div className={style.searchBoxInner}>
+                <Suggestion ref={this.referenceFrom}
+                  mode="user"
+                  placeholder="from:"
+                  editable={true}
+                  selectedItems={[]}
+                  onSelectedItemsChanged={this.handleFromItemChanged}
+                  />
+              </div>
+              <div className={style.searchBoxInner}>
+                {this.isTask && (
+                  <Suggestion ref={this.referenceIn}
+                    mode="user"
+                    placeholder="Assigned to:"
+                    editable={true}
+                    selectedItems={[]}
+                    onSelectedItemsChanged={this.handleInItemChanged}
+                    />
+                )}
+                {!this.isTask && (
+                  <Suggestion ref={this.referenceIn}
+                    mode="place"
+                    placeholder="in:"
+                    editable={true}
+                    selectedItems={[]}
+                    onSelectedItemsChanged={this.handleInItemChanged}
+                    />
+                )}
+              </div>
+              <div className={style.searchBoxInner}>
+                <Input
+                  onChange={this.handleInputChange}
+                  value={this.state.input}
+                  onFocus={this.focusInput}
+                  onKeyDown={this.keyDownInput}
+                  placeholder="Subject"
+                />
+              </div>
+              <div className={style.searchBoxInner}>
+                <Suggestion ref={this.referenceLabel}
+                  mode="label"
+                  editable={true}
+                  placeholder="Add labels..."
+                  selectedItems={[]}
+                  onSelectedItemsChanged={this.handleLabelItemChanged}
+                  />
+              </div>
+              <div className={style.rowInput}>
+                <div className={style.searchBoxInner}>
+                  <select>
+                    <option>1 weeks</option>
+                    <option>2 weeks</option>
+                    <option>3 weeks</option>
+                  </select>
+                </div>
+                <span>of</span>
+                <div className={style.searchBoxInner}>
+                  <input type="date" placeholder="Date"/>
                 </div>
               </div>
-            ))}
-            <Input
-              onChange={this.handleInputChange}
-              value={this.state.input}
-              onFocus={this.focusInput}
-              onKeyDown={this.keyDownInput}
-              placeholder="Search everywhere..."
-            />
-          </div>
+              <div className={style.attachmentOption}>
+                <label htmlFor="contains-attachment">
+                  <IcoN size={16} name={'attach16'}/>
+                  only results that have attachment
+                </label>
+                <input type="checkbox" id="contains-attachment"/>
+              </div>
+              <div className={style.searchSubmit}>
+                <Button type="primary" htmlType="submit">Search</Button>
+              </div>
+            </form>
+          )}
+          {!this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>More options...</a>}
+          {this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>Less options...</a>}
         </div>
         <div className={style.searchWrp}>
           <Scrollable active={true}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
-              {this.state.input === '' && this.defaultSuggestion && this.state.showSuggest && (
+              {!this.state.isAdvanced && this.state.input === '' &&
+                this.defaultSuggestion && this.state.showSuggest && (
                 <div className={style.options}>
                   {this.defaultSuggestion.history && this.defaultSuggestion.history.length && (
                     <div className={style.block}>

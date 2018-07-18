@@ -3,6 +3,7 @@
   width: 100%;
   display: flex;
   flex: 1;
+  background: #323D47;
 }
 .searchWrp > div {
   width: 100%;
@@ -18,7 +19,6 @@
 .options {
   /* padding: 8px 0; */
   display: flex;
-  background: #323D47;
   padding-bottom: 8px;
   flex: 1;
   flex-direction: column;
@@ -120,6 +120,12 @@
   width: 100%;
   background: #F6F6F7;
 }
+.searchBox > a{
+  margin-top: 8px;
+  display: flex;
+  padding: 0 8px;
+  color: #0079F2;
+}
 .searchBoxInner {
   min-height: 40px;
   padding: 0 8px 4px;
@@ -178,4 +184,63 @@
 
 .post {
   background-color: white;
+}
+
+.advancedSearch .searchBoxInner {
+  margin-bottom: 6px;
+  padding: 4px 8px;
+}
+.advancedSearch .searchBoxInner > div[class^="suggestionWrpper"] {
+  min-height: 32px;
+}
+.advancedSearch .searchBoxInner > div > div[class^="input"] {
+  padding: 0;
+  min-height: 32px;
+}
+.advancedSearch .searchBoxInner > div > div[class^="input"] > span:first-child {
+  display: none;
+}
+.advancedSearch .searchBoxInner input{
+  margin: 0;
+  padding: 0;
+  background: none;
+  align-self: flex-start;
+}
+.advancedSearch .searchBoxInner select{
+  background: none;
+  border: none;
+  width: 100%;
+  outline: none;
+}
+.rowInput {
+  display: flex;
+}
+.rowInput > span {
+  align-items: center;
+  display: flex;
+  margin: 0 8px;
+}
+.attachmentOption {
+  padding: 0 16px;
+  display: flex;
+  margin: 12px 0;
+}
+.attachmentOption label{
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.attachmentOption label i{
+  margin-right: 16px;
+}
+.attachmentOption input{
+  width: 16px;
+  min-width: 0;
+  flex: none;
+  height: 16px;
+}
+.searchSubmit {
+  display: flex;
+  margin-top: 16px;
+  justify-content: flex-end;
 }
