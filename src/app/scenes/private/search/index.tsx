@@ -70,7 +70,7 @@ class Search extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-
+    console.log(props.params, props.location);
     /**
      * @default
      * @type {object}
@@ -190,6 +190,7 @@ class Search extends React.Component<IProps, IState> {
   }
 
   private initSearch() {
+    console.log(this.state.params.query);
     this.searchService.setQuery(this.state.params.query);
     this.initChips(this.searchService.getSortedParams());
     this.initAdvancedSearch(this.searchService.getSearchParams());
@@ -928,7 +929,13 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.block}>
                       <div className={style.head}>{this.isTask ? 'Assigned to' : 'Posts in'} :</div>
                       <ul>
-                        {this.defaultSuggestion.places.map((place, index) => place._id ? (
+                        {this.isTask && this.defaultSuggestion.tos.map((account, index) => account._id ? (
+                          <li onClick={this.addChip.bind(this, account, 'account')} key={account._id}>
+                            <UserAvatar user_id={account} size={32} borderRadius={'16px'}/>
+                            <FullName user_id={account}/>
+                          </li>
+                        ) : <li key={index}/>)}
+                        {!this.isTask && this.defaultSuggestion.places.map((place, index) => place._id ? (
                           <li onClick={this.addChip.bind(this, place, 'place')} key={place._id}>
                             <PlaceItem place_id={place._id} size={32} borderRadius="3px"/>
                             <span>{place.name}</span>

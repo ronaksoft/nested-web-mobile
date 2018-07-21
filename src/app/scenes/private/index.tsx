@@ -391,6 +391,7 @@ class Private extends React.Component<IProps, IState> {
   public changeApp = (thisApp) => {
     // console.log('changeApp', thisApp);
     const thisPath = hashHistory.getCurrentLocation().pathname;
+    console.log(thisPath);
     const state: any = {};
     state.thisApp = thisApp;
     if (thisApp === 'Tasks') {
@@ -399,8 +400,17 @@ class Private extends React.Component<IProps, IState> {
       hashHistory.push(this.state.lastPostRoute);
     } else if (thisApp === 'TasksSearch') {
       hashHistory.push('/task/search/_/false');
+      if (thisPath.match('/task/search')) {
+        hashHistory.push(thisPath);
+      } else {
+        hashHistory.push('/task/search/_/false');
+      }
     } else if (thisApp === 'Search') {
-      hashHistory.push('/search/_/false');
+      if (thisPath.match('/search')) {
+        hashHistory.push(thisPath);
+      } else {
+        hashHistory.push('/search/_/false');
+      }
     } else if (thisApp === 'Notifications') {
       hashHistory.push('/notifications');
     }
