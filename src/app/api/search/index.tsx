@@ -62,6 +62,11 @@ export default class SearchApi {
     return this.api.request({
       cmd: 'search/suggestions',
       data: params,
+    }).then((res) => {
+      _.merge(res, {
+        tos: res.accounts,
+      });
+      return res;
     });
   }
 
