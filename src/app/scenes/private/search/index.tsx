@@ -2,6 +2,7 @@ import * as React from 'react';
 import SearchApi from 'api/search/index';
 import AppApi from 'api/app/index';
 import LabelApi from 'api/label/index';
+import TimeUtiles from 'services/utils/time';
 import {ISuggestion, IPost, ITask} from 'api/interfaces/';
 import {IChipsItem} from 'components/Chips';
 import {InfiniteScroll, Loading, IcoN, UserAvatar, FullName, PlaceItem, Suggestion} from 'components';
@@ -36,7 +37,7 @@ interface IState {
   advancedKeyword: string;
   advancedSubject: string;
   advancedDateIn: string;
-  advancedDate: string;
+  advancedDate: number;
   reachedTheEnd: boolean;
   advancedHasAttachment: boolean;
   advancedFrom: any[];
@@ -101,7 +102,7 @@ class Search extends React.Component<IProps, IState> {
       advancedTo: [],
       advancedSubject: '',
       advancedDateIn: '',
-      advancedDate: '',
+      advancedDate: null,
       advancedLabel: [],
     };
     this.searchApi = new SearchApi();
@@ -720,14 +721,14 @@ class Search extends React.Component<IProps, IState> {
     });
   }
   private handleAdvancedDateInChange = (event) => {
-    console.log(event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
   }
   private handleAdvancedDateChange = (event) => {
+    console.log(event, event.currentTarget.value);
     this.setState({
-      advancedDate: event.currentTarget.value,
+      advancedDate: TimeUtiles.DateGet(event.currentTarget.value),
     });
   }
   private handleAdvancedSubjectChange = (event) => {
@@ -874,8 +875,9 @@ class Search extends React.Component<IProps, IState> {
                       </div>
                       <span>of</span>
                       <div className={style.searchBoxInner}>
-                        <input type="date" placeholder="Date" value={this.state.advancedDate}
-                               onChange={this.handleAdvancedDateChange}/>
+                        <input value={this.state.advancedDate ? TimeUtiles.Date(this.state.advancedDate) : ''}
+                              pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" type="date"
+                              onChange={this.handleAdvancedDateChange} placeholder="Date"/>
                       </div>
                     </div>
                     <div className={style.attachmentOption}>
