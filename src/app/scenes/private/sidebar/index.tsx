@@ -15,13 +15,13 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
 import {sortBy} from 'lodash';
-import {SidebarItem, IcoN, Loading, InfiniteScroll} from 'components';
+import {SidebarItem, IcoN, Loading, InfiniteScroll, UserAvatar, FullName} from 'components';
 
 import PlaceApi from '../../../api/place/index';
 import ClientApi from '../../../api/client/index';
 import IGetUnreadsRequest from '../../../api/place/interfaces/IGetUnreadsRequest';
 import ISidebarPlace from '../../../api/place/interfaces/ISidebarPlace';
-import {IPlace} from 'api/interfaces';
+import {IPlace, IUser} from 'api/interfaces';
 import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 
 const style = require('./sidebar.css');
@@ -59,6 +59,7 @@ interface ISidebarProps {
   places: IPlace[];
   openPlace: any;
   thisApp: string;
+  user: IUser;
 }
 
 /**
@@ -633,6 +634,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
+        <div className={style.profile}>
+          <UserAvatar user_id={this.props.user} size={40} borderRadius={'24px'}/>
+          <FullName user_id={this.props.user}/>
+        </div>
         <div className={style.appSwitcher}>
           <button className={this.state.thisApp === 'Posts' || this.state.thisApp === 'Search'
             ? style.active : ''}
@@ -723,6 +728,7 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => {
     changeApp: ownPlops.changeApp,
     openPlace: ownPlops.openPlace,
     thisApp: ownPlops.thisApp,
+    user: store.app.user,
   };
 };
 

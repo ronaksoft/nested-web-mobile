@@ -5,7 +5,8 @@ import TaskApi from '../../../api/task/index';
 import ICustomFilter from '../../../api/task/interfaces/ICustomFilter';
 
 // import {sortBy} from 'lodash';
-import {IcoN, Scrollable} from 'components';
+import {IcoN, Scrollable, UserAvatar, FullName} from 'components';
+import {IUser} from 'api/interfaces';
 
 const style = require('./sidebar.css');
 
@@ -35,6 +36,7 @@ interface ISidebarProps {
   customFilters: ICustomFilter[];
   changeApp: (sts: string) => void;
   thisApp: string;
+  user: IUser;
 }
 
 /**
@@ -115,11 +117,19 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
+        <div className={style.profile}>
+          <UserAvatar user_id={this.props.user} size={40} borderRadius={'24px'}/>
+          <FullName user_id={this.props.user}/>
+        </div>
         <div className={style.appSwitcher}>
-          <button className={this.state.thisApp === 'Posts' ? style.active : ''}
-            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts</button>
-          <button className={this.state.thisApp === 'Tasks' ? style.active : ''}
-            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks</button>
+          <button className={this.state.thisApp === 'Posts' || this.state.thisApp === 'Search'
+            ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Posts')}>Posts
+          </button>
+          <button className={this.state.thisApp === 'Tasks' || this.state.thisApp === 'TasksSearch'
+            ? style.active : ''}
+            onClick={this.props.changeApp.bind(this, 'Tasks')}>Tasks
+          </button>
         </div>
         <div className={style.scrollContainer}>
           <Scrollable active={true}>
@@ -204,6 +214,7 @@ const mapStateToProps = (store, ownPlops: IOwnProps) => {
     closeSidebar: ownPlops.closeSidebar,
     changeApp: ownPlops.changeApp,
     thisApp: ownPlops.thisApp,
+    user: store.app.user,
   };
 };
 
