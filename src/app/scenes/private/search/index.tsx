@@ -861,7 +861,7 @@ class Search extends React.Component<IProps, IState> {
                         placeholder="Subject"
                       />
                     </div>
-                    <div className={style.searchBoxInner}>
+                    <div className={[style.searchBoxInner, style.labelSuggests].join(' ')}>
                       <Suggestion ref={this.referenceLabel}
                                   mode="label"
                                   editable={true}
@@ -971,7 +971,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>from:</div>
                       <ul className={style.column}>
                         {this.state.result.accounts.map((account) => (
-                          <li onClick={this.addChip.bind(this, account, 'account')}>
+                          <li onClick={this.addChip.bind(this, account, 'account')} key={account._id}>
                             <UserAvatar user_id={account} size={24} borderRadius={'16px'}/>
                             <FullName user_id={account}/>
                             <small>{account._id}</small>
@@ -985,7 +985,7 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>to:</div>
                       <ul className={style.column}>
                         {this.state.result.places.map((place) => (
-                          <li onClick={this.addChip.bind(this, place, 'place')}>
+                          <li onClick={this.addChip.bind(this, place, 'place')} key={place._id}>
                             <PlaceItem place_id={place._id} size={24} borderRadius="3px"/>
                             <span>{place.name}</span>
                             <small>{place._id}</small>
@@ -999,7 +999,8 @@ class Search extends React.Component<IProps, IState> {
                       <div className={style.head}>Has label:</div>
                       <ul className={style.column}>
                         {this.state.result.labels.map((label) => (
-                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}>
+                          <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}
+                            key={label._id}>
                             <IcoN size={24} name={'tag24'}/>
                             {label.title}
                           </li>
