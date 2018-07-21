@@ -141,6 +141,9 @@ class Search extends React.Component<IProps, IState> {
   }
 
   public callApiSearch = () => {
+    this.setState({
+      loading: true,
+    });
     const searchParams = this.searchService.getSearchParams();
     const keyword = searchParams.keywords.join(' ');
     if (this.isTask) {
@@ -745,8 +748,6 @@ class Search extends React.Component<IProps, IState> {
   private submitAdvanced = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log(event.nativeEvent);
-
     this.searchService.setUsers(this.state.advancedFrom);
     this.state.advancedFrom.forEach((user) => {
       this.addChip(user, 'account');
@@ -776,6 +777,9 @@ class Search extends React.Component<IProps, IState> {
     this.searchService.setSubject(this.state.advancedSubject);
 
     this.searchService.setHasAttachment(this.state.advancedHasAttachment);
+    this.setState({
+      isAdvanced: false,
+    });
   }
 
   public render() {
@@ -890,7 +894,7 @@ class Search extends React.Component<IProps, IState> {
         <div className={style.searchWrp}>
           <InfiniteScroll
               pullDownToRefresh={true}
-              pullLoading={this.state.loading}
+              pullLoading={false}
               refreshFunction={this.callApiSearch}
               next={this.loadMore}
               route="search"
