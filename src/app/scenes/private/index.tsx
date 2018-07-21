@@ -248,7 +248,6 @@ class Private extends React.Component<IProps, IState> {
       const fcm = FCM.getInstance();
       fcm.configFCM()
         .then((deviceToken: string) => {
-          console.log(deviceToken);
           recall(deviceToken);
         })
         .catch(() => {
@@ -394,14 +393,12 @@ class Private extends React.Component<IProps, IState> {
     const thisPath = hashHistory.getCurrentLocation().pathname;
     const state: any = {};
     state.thisApp = thisApp;
-    console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
     if ((this.state.thisApp === 'Posts' ||
       this.state.thisApp === 'Tasks') && thisPath.indexOf('search') === -1) {
       this.lastRoute = thisPath;
     }
 
     if (thisApp === 'goBack') {
-      console.log('goback', this.lastRoute);
       hashHistory.push(this.lastRoute);
     }
     if (thisApp === 'Tasks') {

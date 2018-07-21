@@ -70,7 +70,6 @@ class Search extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-    console.log(props.params, props.location);
     /**
      * @default
      * @type {object}
@@ -190,7 +189,6 @@ class Search extends React.Component<IProps, IState> {
   }
 
   private initSearch() {
-    console.log(this.state.params.query);
     this.searchService.setQuery(this.state.params.query);
     this.initAdvancedSearch(this.searchService.getSearchParams());
     this.initChips(this.searchService.getSortedParams());
@@ -729,13 +727,11 @@ class Search extends React.Component<IProps, IState> {
     });
   }
   private handleAdvancedDateInChange = (event) => {
-    console.log(event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
   }
   private handleAdvancedDateChange = (event) => {
-    console.log(event, event.currentTarget.value);
     this.setState({
       advancedDate: TimeUtiles.DateGet(event.currentTarget.value),
     });
