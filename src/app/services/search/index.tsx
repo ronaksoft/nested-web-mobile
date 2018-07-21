@@ -482,7 +482,10 @@ export default class Search {
   public getSearchParams() {
     if (this.date.length > 0 && this.within.length > 0) {
       this.before = parseInt(this.date, 10);
-      this.after = parseInt(this.date, 19) - (parseInt(this.within, 10) * 36288000); // 7 * 24 * 60 * 60 * 60
+      this.after = parseInt(this.date, 10) - (parseInt(this.within, 10) * 5184000); // 24 * 60 * 60 * 60
+    } else {
+      this.before = null;
+      this.after = null;
     }
     return {
       places: _.map(this.places, (item) => {

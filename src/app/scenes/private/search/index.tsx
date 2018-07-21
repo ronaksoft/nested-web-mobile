@@ -62,12 +62,7 @@ class Search extends React.Component<IProps, IState> {
   private defaultSuggestion: ISuggestion;
   private suggestion: ISuggestion;
   private searchService: SearchService;
-  private advancedSearch: any;
-  private query: string = '';
-  private newQuery: string = '';
-  private selectedItem: number = -1;
   private excludedQuery: string = '';
-  private queryType: string = '';
   private defaultSearch: boolean = true;
   private isTask: boolean = false;
   private debouncedSearch: (val: string) => void;
@@ -140,7 +135,7 @@ class Search extends React.Component<IProps, IState> {
     });
   }
 
-  public callApiSearch = () => {
+  public callSearchApi = () => {
     this.setState({
       loading: true,
     });
@@ -196,13 +191,19 @@ class Search extends React.Component<IProps, IState> {
   private initSearch() {
     this.searchService.setQuery(this.state.params.query);
     this.initChips(this.searchService.getSortedParams());
+    this.initAdvancedSearch(this.searchService.getSearchParams());
     this.suggestion = this.getUniqueItems(this.suggestion);
     if (this.suggestion) {
       this.setState({
         result: this.suggestion,
+        isAdvanced: this.state.params.advanced === 'true',
+      });
+    } else {
+      this.setState({
+        isAdvanced: this.state.params.advanced === 'true',
       });
     }
-    this.callApiSearch();
+    this.callSearchApi();
   }
 
   private loadMore = () => {
@@ -255,52 +256,6 @@ class Search extends React.Component<IProps, IState> {
     }
   }
 
-  public getAdvancedSearchParams() {
-    this.advancedSearch.keywords = this.searchService.getAllKeywords();
-    this.advancedSearch.users = this.searchService.getUsers();
-    this.advancedSearch.places = this.searchService.getPlaces();
-    this.advancedSearch.subject = this.searchService.getSubject();
-    this.advancedSearch.labels = this.searchService.getLabels();
-    this.advancedSearch.tos = this.searchService.getTos();
-    this.advancedSearch.hasAttachment = this.searchService.getHasAttachment();
-    this.advancedSearch.within = this.searchService.getWithin();
-    if (this.advancedSearch.users.length > 0) {
-      this.advancedSearch.users = this.advancedSearch.users + ', ';
-    }
-    if (this.advancedSearch.places.length > 0) {
-      this.advancedSearch.places = this.advancedSearch.places + ', ';
-    }
-    if (this.advancedSearch.labels.length > 0) {
-      this.advancedSearch.labels = this.advancedSearch.labels + ', ';
-    }
-    try {
-      if (this.searchService.getDate() !== '') {
-        this.advancedSearch.date = parseInt(this.searchService.getDate(), 10) / 1000;
-      }
-    } catch (e) {
-      this.advancedSearch.date = '';
-    }
-  }
-
-  public empty() {
-    this.query = '';
-    this.newQuery = '';
-    this.advancedSearch = {
-      keywords: '',
-      users: '',
-      places: '',
-      subject: '',
-      labels: '',
-      tos: '',
-      hasAttachment: false,
-      within: '1',
-      date: '',
-    };
-    this.selectedItem = -1;
-    this.searchService.setQuery('');
-    // getSuggestions(vm.newQuery);
-  }
-
   public getSuggestions(query): Promise<any> {
     return new Promise((resolve, reject) => {
       if (_.trim(query).length === 0) {
@@ -316,7 +271,6 @@ class Search extends React.Component<IProps, IState> {
           result.word = '';
         }
         this.excludedQuery = result.word;
-        this.queryType = result.type;
         let settings;
         switch (result.type) {
           // Place
@@ -476,6 +430,52 @@ class Search extends React.Component<IProps, IState> {
     return result;
   }
 
+  private initAdvancedSearch(params) {
+    if (this.state.advancedIn.length === 0 && params.places && params.places.length > 0) {
+      this.searchApi.getManyPlace(params.places.join(',')).then((places) => {
+        this.setState({
+          advancedIn: places,
+        });
+      });
+    }
+
+    if (this.state.advancedFrom.length === 0 && params.users && params.users.length > 0) {
+      this.searchApi.getManyUser(params.users.join(',')).then((users) => {
+        this.setState({
+          advancedFrom: users,
+        });
+      });
+    }
+
+    if (this.state.advancedLabel.length === 0 && params.labels && params.labels.length > 0) {
+      this.searchApi.getManyLabel(params.labels.join(',')).then((labels) => {
+        this.setState({
+          advancedLabel: labels,
+        });
+      });
+    }
+
+    if (this.state.advancedTo.length === 0 && params.tos && params.tos.length > 0) {
+      this.searchApi.getManyUser(params.tos.join(',')).then((users) => {
+        this.setState({
+          advancedTo: users,
+        });
+      });
+    }
+
+    if (this.state.advancedSubject.length === 0 && params.subject && params.subject.length > 0) {
+      this.setState({
+        advancedSubject: params.subject,
+      });
+    }
+
+    if (params.hasAttachment !== null) {
+      this.setState({
+        advancedHasAttachment: params.hasAttachment,
+      });
+    }
+  }
+
   public initChips(params) {
     const prefix = this.searchService.getSearchPrefix();
     const types = {
@@ -546,13 +546,7 @@ class Search extends React.Component<IProps, IState> {
       // loadApp(id);
       console.log('load app');
     } else {
-      if (this.isTask) {
-        hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
-      } else {
-        hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
-      }
-      // vm.toggleSearchModal(false);
-      this.queryType = 'other';
+      this.searchIt();
     }
   }
 
@@ -622,10 +616,18 @@ class Search extends React.Component<IProps, IState> {
         this.searchService.removeKeyword(name);
         break;
     }
+    this.searchIt();
+  }
+
+  private searchIt() {
     if (this.isTask) {
-      hashHistory.push(`/task/search/${this.searchService.encode(this.searchService.toString())}/false`);
+      hashHistory.push(`/task/search/${this.searchService.encode(
+        this.state.isAdvanced ? this.searchService.toAdvancedString() : this.searchService.toString())
+        }/${this.state.isAdvanced ? 'true' : 'false'}`);
     } else {
-      hashHistory.push(`/search/${this.searchService.encode(this.searchService.toString())}/false`);
+      hashHistory.push(`/search/${this.searchService.encode(
+        this.state.isAdvanced ? this.searchService.toAdvancedString() : this.searchService.toString())
+        }/${this.state.isAdvanced ? 'true' : 'false'}`);
     }
   }
 
@@ -718,13 +720,12 @@ class Search extends React.Component<IProps, IState> {
     });
   }
   private handleAdvancedDateInChange = (event) => {
-    console.log(event, event.currentTarget.value);
+    console.log(event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
   }
   private handleAdvancedDateChange = (event) => {
-    console.log(event, event.currentTarget.value);
     this.setState({
       advancedDate: event.currentTarget.value,
     });
@@ -739,8 +740,8 @@ class Search extends React.Component<IProps, IState> {
       advancedHasAttachment: event.currentTarget.checked,
     });
   }
-  private focusAdvancedKeyword = (event) => {
-    console.log(event.currentTarget.value);
+  private focusAdvancedKeyword = (/*event*/) => {
+    // console.log(event.currentTarget.value);
     this.fromRef.clearSuggests();
     this.inRef.clearSuggests();
     this.labelRef.clearSuggests();
@@ -748,25 +749,15 @@ class Search extends React.Component<IProps, IState> {
   private submitAdvanced = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    this.searchService.reset();
+
     this.searchService.setUsers(this.state.advancedFrom);
-    this.state.advancedFrom.forEach((user) => {
-      this.addChip(user, 'account');
-    });
 
     this.searchService.setPlaces(this.state.advancedIn);
-    this.state.advancedIn.forEach((place) => {
-      this.addChip(place, 'place');
-    });
 
     this.searchService.setTos(this.state.advancedTo);
-    this.state.advancedTo.forEach((user) => {
-      this.addChip(user, 'to');
-    });
 
     this.searchService.setLabels(this.state.advancedLabel);
-    this.state.advancedLabel.forEach((label) => {
-      this.addChip(label, 'label');
-    });
 
     this.searchService.setAllKeywords(this.state.advancedKeyword);
 
@@ -777,9 +768,10 @@ class Search extends React.Component<IProps, IState> {
     this.searchService.setSubject(this.state.advancedSubject);
 
     this.searchService.setHasAttachment(this.state.advancedHasAttachment);
-    this.setState({
-      isAdvanced: false,
-    });
+
+    this.initChips(this.searchService.getSortedParams());
+
+    this.searchIt();
   }
 
   public render() {
@@ -864,9 +856,9 @@ class Search extends React.Component<IProps, IState> {
               <div className={style.rowInput}>
                 <div className={style.searchBoxInner}>
                   <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
-                    <option value="day">1 day</option>
-                    <option value="week">1 week</option>
-                    <option value="month">1 month</option>
+                    <option value="1">1 day</option>
+                    <option value="7">1 week</option>
+                    <option value="30">1 month</option>
                   </select>
                 </div>
                 <span>of</span>
@@ -893,13 +885,13 @@ class Search extends React.Component<IProps, IState> {
         </div>
         <div className={style.searchWrp}>
           <InfiniteScroll
-              pullDownToRefresh={true}
-              pullLoading={false}
-              refreshFunction={this.callApiSearch}
-              next={this.loadMore}
-              route="search"
-              hasMore={!this.state.reachedTheEnd && !this.state.showSuggest}
-              loader={<Loading active={this.state.loading && !this.state.reachedTheEnd} position="fixed"/>}>
+            pullDownToRefresh={true}
+            pullLoading={false}
+            refreshFunction={this.callSearchApi}
+            next={this.loadMore}
+            route="search"
+            hasMore={!this.state.reachedTheEnd && !this.state.showSuggest}
+            loader={<Loading active={this.state.loading && !this.state.reachedTheEnd} position="fixed"/>}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
               {!this.state.isAdvanced && this.state.input === '' &&
               this.defaultSuggestion && this.state.showSuggest && (
@@ -948,7 +940,7 @@ class Search extends React.Component<IProps, IState> {
                       <ul>
                         {this.defaultSuggestion.labels.map((label, index) => label._id ? (
                           <li className={style[label.code]} onClick={this.addChip.bind(this, label, 'label')}
-                            key={label._id}>
+                              key={label._id}>
                             <IcoN size={24} name={'tag24'}/>
                             <span>{label.title}</span>
                           </li>
