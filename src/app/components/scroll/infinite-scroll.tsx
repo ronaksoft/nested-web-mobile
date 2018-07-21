@@ -428,14 +428,14 @@ class InfiniteScroll extends React.Component<IProps, IState> {
             this.props.loader}
           {this.state.showLoader && this.props.loader}
           {!this.props.hasMore && this.props.endMessage}
-          {this.props.scrollTopHandler && this.infScroll && this.infScroll.scrollTop > 30 && (
-            <div className={style.scrollHandlerContainer}>
-              <div className={style.scrollHandler} onClick={this.scrollTop}>
-                <IcoN name="arrow24" size={24}/>
-              </div>
-            </div>
-          )}
         </div>
+        {this.props.scrollTopHandler && this.infScroll && this.infScroll.scrollTop > 30 && (
+          <div className={style.scrollHandlerContainer}>
+            <div className={style.scrollHandler} onClick={this.scrollTop}>
+              <IcoN name="arrow24" size={24}/>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
