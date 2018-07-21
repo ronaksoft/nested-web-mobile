@@ -35,6 +35,7 @@ interface IOwnProps {
     pullLoading?: boolean;
     hasChildren?: boolean;
     pullDownToRefresh?: boolean;
+    scrollTopHandler?: boolean;
     pullDownToRefreshContent?: any;
     releaseToRefreshContent?: any;
     pullLoadingContent?: any;
@@ -57,6 +58,7 @@ interface IProps {
     scrollableTarget: any;
     hasChildren: boolean;
     pullDownToRefresh: boolean;
+    scrollTopHandler: boolean;
     pullDownToRefreshContent: any;
     releaseToRefreshContent: any;
     pullLoadingContent: any;
@@ -366,8 +368,13 @@ class InfiniteScroll extends React.Component<IProps, IState> {
   private infScrollHandler = (value) => {
     this.infScroll = value;
   }
+
   private pullDownHandler = (value) => {
     this.pullDown = value;
+  }
+
+  public scrollTop = () => {
+    this.infScroll.scrollTop = 1;
   }
 
   public render() {
@@ -378,7 +385,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
           this.infScroll.scrollTop -= 1;
       }
     }
-    const style = {
+    const styleInf = {
       height: this.props.height || (this.el && this.el.parentElement.clientHeight) || '700px',
       overflowY: 'auto',
       overflowX: 'hidden',
@@ -387,7 +394,6 @@ class InfiniteScroll extends React.Component<IProps, IState> {
       ...this.props.style,
     };
     const hasChildren = this.props.hasChildren || !!(this.props.children && this.props.children.length);
-
     // because heighted infiniteScroll visualy breaks
     // on drag down as overflow becomes visible
     return (
@@ -395,7 +401,7 @@ class InfiniteScroll extends React.Component<IProps, IState> {
         <div
           className="infinite-scroll-component"
           ref={this.infScrollHandler}
-          style={style}
+          style={styleInf}
         >
           {this.props.pullDownToRefresh && (
             <div
@@ -422,6 +428,13 @@ class InfiniteScroll extends React.Component<IProps, IState> {
             this.props.loader}
           {this.state.showLoader && this.props.loader}
           {!this.props.hasMore && this.props.endMessage}
+          {this.props.scrollTopHandler && this.infScroll && this.infScroll.scrollTop > 30 && (
+            <div className={style.scrollHandlerContainer}>
+              <div className={style.scrollHandler} onClick={this.scrollTop}>
+                <IcoN name="arrow24" size={24}/>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -447,6 +460,7 @@ const mapStateToProps = (store, ownProps: IOwnProps) => ({
     scrollableTarget: ownProps.scrollableTarget,
     hasChildren: ownProps.hasChildren,
     pullDownToRefresh: ownProps.pullDownToRefresh,
+    scrollTopHandler: ownProps.scrollTopHandler,
     pullDownToRefreshContent: ownProps.pullDownToRefreshContent,
     releaseToRefreshContent: ownProps.releaseToRefreshContent,
     pullDownToRefreshThreshold: ownProps.pullDownToRefreshThreshold,

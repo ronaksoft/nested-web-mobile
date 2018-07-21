@@ -785,114 +785,9 @@ class Search extends React.Component<IProps, IState> {
   public render() {
     return (
       <div className={style.searchScrollbar} ref={this.refHandler}>
-        <div className={style.searchBox}>
-          {!this.state.isAdvanced && (
-            <div className={style.searchBoxInner}>
-              {this.state.chips.map((chip, index) => (
-                <div className={style.queryChips} key={index}>
-                  {chip.type}&nbsp;<b>{chip.title}</b>
-                  <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
-                    <IcoN name="xcross16White" size={16}/>
-                  </div>
-                </div>
-              ))}
-              <Input
-                onChange={this.handleInputChange}
-                value={this.state.input}
-                onFocus={this.focusInput}
-                onKeyDown={this.keyDownInput}
-                placeholder="Search everywhere..."
-              />
-            </div>
-          )}
-          {this.state.isAdvanced && (
-            <form className={style.advancedSearch} onSubmit={this.submitAdvanced}>
-              <div className={style.searchBoxInner}>
-                <Input
-                  onFocus={this.focusAdvancedKeyword}
-                  onChange={this.handleAdvancedKeywordChange}
-                  value={this.state.advancedKeyword}
-                  placeholder="Keyword"
-                />
-              </div>
-              <div className={style.searchBoxInner}>
-                <Suggestion ref={this.referenceFrom}
-                            mode="user"
-                            placeholder="from:"
-                            editable={true}
-                            selectedItems={this.state.advancedFrom}
-                            onSelectedItemsChanged={this.handleFromItemChanged}
-                />
-              </div>
-              <div className={style.searchBoxInner}>
-                {this.isTask && (
-                  <Suggestion ref={this.referenceTo}
-                              mode="user"
-                              placeholder="Assigned to:"
-                              editable={true}
-                              selectedItems={this.state.advancedTo}
-                              onSelectedItemsChanged={this.handleToItemChanged}
-                  />
-                )}
-                {!this.isTask && (
-                  <Suggestion ref={this.referenceIn}
-                              mode="place"
-                              placeholder="in:"
-                              editable={true}
-                              selectedItems={this.state.advancedIn}
-                              onSelectedItemsChanged={this.handleInItemChanged}
-                  />
-                )}
-              </div>
-              <div className={style.searchBoxInner}>
-                <Input
-                  onChange={this.handleAdvancedSubjectChange}
-                  value={this.state.advancedSubject}
-                  onFocus={this.focusInput}
-                  placeholder="Subject"
-                />
-              </div>
-              <div className={style.searchBoxInner}>
-                <Suggestion ref={this.referenceLabel}
-                            mode="label"
-                            editable={true}
-                            placeholder="Add labels..."
-                            selectedItems={this.state.advancedLabel}
-                            onSelectedItemsChanged={this.handleLabelItemChanged}
-                />
-              </div>
-              <div className={style.rowInput}>
-                <div className={style.searchBoxInner}>
-                  <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
-                    <option value="day">1 day</option>
-                    <option value="week">1 week</option>
-                    <option value="month">1 month</option>
-                  </select>
-                </div>
-                <span>of</span>
-                <div className={style.searchBoxInner}>
-                  <input type="date" placeholder="Date" value={this.state.advancedDate}
-                         onChange={this.handleAdvancedDateChange}/>
-                </div>
-              </div>
-              <div className={style.attachmentOption}>
-                <label htmlFor="contains-attachment">
-                  <IcoN size={16} name={'attach16'}/>
-                  only results that have attachment
-                </label>
-                <input type="checkbox" id="contains-attachment" checked={this.state.advancedHasAttachment}
-                       onChange={this.handleAdvancedHasAttachment}/>
-              </div>
-              <div className={style.searchSubmit}>
-                <Button type="primary" htmlType="submit">Search</Button>
-              </div>
-            </form>
-          )}
-          {!this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>More options...</a>}
-          {this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>Less options...</a>}
-        </div>
         <div className={style.searchWrp}>
           <InfiniteScroll
+              scrollTopHandler={true}
               pullDownToRefresh={true}
               pullLoading={false}
               refreshFunction={this.callApiSearch}
@@ -901,6 +796,112 @@ class Search extends React.Component<IProps, IState> {
               hasMore={!this.state.reachedTheEnd && !this.state.showSuggest}
               loader={<Loading active={this.state.loading && !this.state.reachedTheEnd} position="fixed"/>}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
+              <div className={style.searchBox}>
+                {!this.state.isAdvanced && (
+                  <div className={style.searchBoxInner}>
+                    {this.state.chips.map((chip, index) => (
+                      <div className={style.queryChips} key={index}>
+                        {chip.type}&nbsp;<b>{chip.title}</b>
+                        <div className={style.close} onClick={this.removeChip.bind(this, chip.type, chip.title)}>
+                          <IcoN name="xcross16White" size={16}/>
+                        </div>
+                      </div>
+                    ))}
+                    <Input
+                      onChange={this.handleInputChange}
+                      value={this.state.input}
+                      onFocus={this.focusInput}
+                      onKeyDown={this.keyDownInput}
+                      placeholder="Search everywhere..."
+                    />
+                  </div>
+                )}
+                {this.state.isAdvanced && (
+                  <form className={style.advancedSearch} onSubmit={this.submitAdvanced}>
+                    <div className={style.searchBoxInner}>
+                      <Input
+                        onFocus={this.focusAdvancedKeyword}
+                        onChange={this.handleAdvancedKeywordChange}
+                        value={this.state.advancedKeyword}
+                        placeholder="Keyword"
+                      />
+                    </div>
+                    <div className={style.searchBoxInner}>
+                      <Suggestion ref={this.referenceFrom}
+                                  mode="user"
+                                  placeholder="from:"
+                                  editable={true}
+                                  selectedItems={this.state.advancedFrom}
+                                  onSelectedItemsChanged={this.handleFromItemChanged}
+                      />
+                    </div>
+                    <div className={style.searchBoxInner}>
+                      {this.isTask && (
+                        <Suggestion ref={this.referenceTo}
+                                    mode="user"
+                                    placeholder="Assigned to:"
+                                    editable={true}
+                                    selectedItems={this.state.advancedTo}
+                                    onSelectedItemsChanged={this.handleToItemChanged}
+                        />
+                      )}
+                      {!this.isTask && (
+                        <Suggestion ref={this.referenceIn}
+                                    mode="place"
+                                    placeholder="in:"
+                                    editable={true}
+                                    selectedItems={this.state.advancedIn}
+                                    onSelectedItemsChanged={this.handleInItemChanged}
+                        />
+                      )}
+                    </div>
+                    <div className={style.searchBoxInner}>
+                      <Input
+                        onChange={this.handleAdvancedSubjectChange}
+                        value={this.state.advancedSubject}
+                        onFocus={this.focusInput}
+                        placeholder="Subject"
+                      />
+                    </div>
+                    <div className={style.searchBoxInner}>
+                      <Suggestion ref={this.referenceLabel}
+                                  mode="label"
+                                  editable={true}
+                                  placeholder="Add labels..."
+                                  selectedItems={this.state.advancedLabel}
+                                  onSelectedItemsChanged={this.handleLabelItemChanged}
+                      />
+                    </div>
+                    <div className={style.rowInput}>
+                      <div className={style.searchBoxInner}>
+                        <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
+                          <option value="day">1 day</option>
+                          <option value="week">1 week</option>
+                          <option value="month">1 month</option>
+                        </select>
+                      </div>
+                      <span>of</span>
+                      <div className={style.searchBoxInner}>
+                        <input type="date" placeholder="Date" value={this.state.advancedDate}
+                              onChange={this.handleAdvancedDateChange}/>
+                      </div>
+                    </div>
+                    <div className={style.attachmentOption}>
+                      <label htmlFor="contains-attachment">
+                        <IcoN size={16} name={'attach16'}/>
+                        only results that have attachment
+                      </label>
+                      <input type="checkbox" id="contains-attachment" checked={this.state.advancedHasAttachment}
+                            onChange={this.handleAdvancedHasAttachment}/>
+                    </div>
+                    <div className={style.searchSubmit}>
+                      <Button type="primary" htmlType="submit">Search</Button>
+                    </div>
+                  </form>
+                )}
+                {!this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>More options...</a>}
+                {this.state.isAdvanced && <a onClick={this.toggleAdvancedSearch}>Less options...</a>}
+              </div>
               {!this.state.isAdvanced && this.state.input === '' &&
               this.defaultSuggestion && this.state.showSuggest && (
                 <div className={style.options}>
@@ -956,7 +957,6 @@ class Search extends React.Component<IProps, IState> {
                       </ul>
                     </div>
                   )}
-                  <div className={privateStyle.bottomSpace}/>
                 </div>
               )}
               {!this.state.isAdvanced && this.state.input !== '' && this.state.showSuggest && (
@@ -1002,7 +1002,6 @@ class Search extends React.Component<IProps, IState> {
                       </ul>
                     </div>
                   )}
-                  <div className={privateStyle.bottomSpace}/>
                 </div>
               )}
               {!this.state.showSuggest && !this.isTask && this.state.postResults.map((post) => {
@@ -1022,6 +1021,7 @@ class Search extends React.Component<IProps, IState> {
               {!this.state.showSuggest && this.state.postResults.length === 0 && (
                 <div className={privateStyle.emptyMessage}>No results found!!</div>
               )}
+              <div className={privateStyle.bottomSpace}/>
             </div>
           </InfiniteScroll>
         </div>

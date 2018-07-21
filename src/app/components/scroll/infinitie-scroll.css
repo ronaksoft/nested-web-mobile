@@ -24,3 +24,22 @@
   transform: translateY(16px);
   transform-origin: center center;
 }
+
+.scrollHandlerContainer {
+  position: relative;
+  display: flex;
+}
+.scrollHandler {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  background: #14D769;
+  display: flex;
+  opacity: .8;
+  transform: rotateZ(180deg);
+  align-items: center;
+  justify-content: center;
+}
