@@ -191,8 +191,8 @@ class Search extends React.Component<IProps, IState> {
 
   private initSearch() {
     this.searchService.setQuery(this.state.params.query);
-    this.initChips(this.searchService.getSortedParams());
     this.initAdvancedSearch(this.searchService.getSearchParams());
+    this.initChips(this.searchService.getSortedParams());
     this.suggestion = this.getUniqueItems(this.suggestion);
     if (this.suggestion) {
       this.setState({
@@ -475,6 +475,13 @@ class Search extends React.Component<IProps, IState> {
         advancedHasAttachment: params.hasAttachment,
       });
     }
+
+    if (this.searchService.getWithin() !== '' && this.searchService.getDate() !== '') {
+      this.setState({
+        advancedDateIn: this.searchService.getWithin(),
+        advancedDate: parseInt(this.searchService.getDate(), 10),
+      });
+    }
   }
 
   public initChips(params) {
@@ -721,6 +728,7 @@ class Search extends React.Component<IProps, IState> {
     });
   }
   private handleAdvancedDateInChange = (event) => {
+    console.log(event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
@@ -868,9 +876,9 @@ class Search extends React.Component<IProps, IState> {
                     <div className={style.rowInput}>
                       <div className={style.searchBoxInner}>
                         <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
-                          <option value="day">1 day</option>
-                          <option value="week">1 week</option>
-                          <option value="month">1 month</option>
+                          <option value="1">1 day</option>
+                          <option value="7">1 week</option>
+                          <option value="30">1 month</option>
                         </select>
                       </div>
                       <span>of</span>
