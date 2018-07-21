@@ -90,7 +90,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
 
   private goToSearch() {
     if (this.state.thisApp === 'Search' || this.state.thisApp === 'TasksSearch') {
-      hashHistory.goBack();
+      this.props.changeApp('goBack');
     } else {
       this.props.changeApp(this.state.thisApp === 'Tasks' ? 'TasksSearch' : 'Search');
     }

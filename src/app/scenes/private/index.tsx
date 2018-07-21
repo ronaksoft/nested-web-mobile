@@ -126,6 +126,8 @@ class Private extends React.Component<IProps, IState> {
 
   private nestedTime = nstTime.getInstance();
 
+  private lastRoute: string = '/feed';
+
   public constructor(props: IProps) {
     super(props);
 
@@ -389,11 +391,19 @@ class Private extends React.Component<IProps, IState> {
   }
 
   public changeApp = (thisApp) => {
-    // console.log('changeApp', thisApp);
     const thisPath = hashHistory.getCurrentLocation().pathname;
-    console.log(thisPath);
     const state: any = {};
     state.thisApp = thisApp;
+    console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
+    if ((this.state.thisApp === 'Posts' ||
+      this.state.thisApp === 'Tasks') && thisPath.indexOf('search') === -1) {
+      this.lastRoute = thisPath;
+    }
+
+    if (thisApp === 'goBack') {
+      console.log('goback', this.lastRoute);
+      hashHistory.push(this.lastRoute);
+    }
     if (thisApp === 'Tasks') {
       hashHistory.push(this.state.lastTaskRoute);
     } else if (thisApp === 'Posts') {
