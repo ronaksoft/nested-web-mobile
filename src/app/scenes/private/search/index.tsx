@@ -155,10 +155,11 @@ class Search extends React.Component<IProps, IState> {
       if (this.state.isAdvanced) {
         params.has_attachment = searchParams.hasAttachment;
       }
-      console.log(params);
       this.searchApi.searchTask(params).then((taskResults) => {
         this.setState({
           taskResults,
+          reachedTheEnd: taskResults.length < 8,
+          loading: false,
         });
       });
     } else {
@@ -179,10 +180,11 @@ class Search extends React.Component<IProps, IState> {
           params.after = searchParams.after;
         }
       }
-      console.log(params);
       this.searchApi.searchPost(params).then((postResults) => {
         this.setState({
           postResults,
+          reachedTheEnd: postResults.length < 8,
+          loading: false,
         });
       });
     }
@@ -219,6 +221,7 @@ class Search extends React.Component<IProps, IState> {
         this.setState({
           taskResults: [...this.state.taskResults, ...taskResults],
           reachedTheEnd: taskResults.length < 8,
+          loading: false,
         });
       });
     } else {
@@ -243,6 +246,7 @@ class Search extends React.Component<IProps, IState> {
         this.setState({
           postResults: [...this.state.postResults, ...postResults],
           reachedTheEnd: postResults.length < 8,
+          loading: false,
         });
       });
     }
@@ -688,36 +692,20 @@ class Search extends React.Component<IProps, IState> {
     this.setState({
       advancedFrom,
     });
-    this.searchService.setUsers(advancedFrom);
-    advancedFrom.forEach((user) => {
-      this.addChip(user, 'account');
-    });
   }
   private handleInItemChanged = (advancedIn: IChipsItem[]) => {
     this.setState({
       advancedIn,
-    });
-    this.searchService.setPlaces(advancedIn);
-    advancedIn.forEach((place) => {
-      this.addChip(place, 'place');
     });
   }
   private handleToItemChanged = (advancedTo: IChipsItem[]) => {
     this.setState({
       advancedTo,
     });
-    this.searchService.setTos(advancedTo);
-    advancedTo.forEach((user) => {
-      this.addChip(user, 'to');
-    });
   }
   private handleLabelItemChanged = (advancedLabel: IChipsItem[]) => {
     this.setState({
       advancedLabel,
-    });
-    this.searchService.setLabels(advancedLabel);
-    advancedLabel.forEach((label) => {
-      this.addChip(label, 'label');
     });
   }
   private handleAdvancedKeywordChange = (event) => {
@@ -725,31 +713,28 @@ class Search extends React.Component<IProps, IState> {
       advancedKeyword: event.currentTarget.value,
       input: event.currentTarget.value,
     });
-    this.searchService.setAllKeywords(event.currentTarget.value);
   }
   private handleAdvancedDateInChange = (event) => {
+    console.log(event, event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
-    this.searchService.setWithin(event.currentTarget.value);
   }
   private handleAdvancedDateChange = (event) => {
+    console.log(event, event.currentTarget.value);
     this.setState({
       advancedDate: event.currentTarget.value,
     });
-    this.searchService.setDate(event.currentTarget.value);
   }
   private handleAdvancedSubjectChange = (event) => {
     this.setState({
       advancedSubject: event.currentTarget.value,
     });
-    this.searchService.setSubject(event.currentTarget.value);
   }
   private handleAdvancedHasAttachment = (event) => {
     this.setState({
       advancedHasAttachment: event.currentTarget.checked,
     });
-    this.searchService.setHasAttachment(event.currentTarget.checked);
   }
   private focusAdvancedKeyword = (event) => {
     console.log(event.currentTarget.value);
@@ -761,6 +746,36 @@ class Search extends React.Component<IProps, IState> {
     event.preventDefault();
     event.stopPropagation();
     console.log(event.nativeEvent);
+
+    this.searchService.setUsers(this.state.advancedFrom);
+    this.state.advancedFrom.forEach((user) => {
+      this.addChip(user, 'account');
+    });
+
+    this.searchService.setPlaces(this.state.advancedIn);
+    this.state.advancedIn.forEach((place) => {
+      this.addChip(place, 'place');
+    });
+
+    this.searchService.setTos(this.state.advancedTo);
+    this.state.advancedTo.forEach((user) => {
+      this.addChip(user, 'to');
+    });
+
+    this.searchService.setLabels(this.state.advancedLabel);
+    this.state.advancedLabel.forEach((label) => {
+      this.addChip(label, 'label');
+    });
+
+    this.searchService.setAllKeywords(this.state.advancedKeyword);
+
+    this.searchService.setWithin(this.state.advancedDateIn);
+
+    this.searchService.setDate(this.state.advancedDate);
+
+    this.searchService.setSubject(this.state.advancedSubject);
+
+    this.searchService.setHasAttachment(this.state.advancedHasAttachment);
   }
 
   public render() {
@@ -845,9 +860,9 @@ class Search extends React.Component<IProps, IState> {
               <div className={style.rowInput}>
                 <div className={style.searchBoxInner}>
                   <select value={this.state.advancedDateIn} onChange={this.handleAdvancedDateInChange}>
-                    <option>1 weeks</option>
-                    <option>2 weeks</option>
-                    <option>3 weeks</option>
+                    <option value="day">1 day</option>
+                    <option value="week">1 week</option>
+                    <option value="month">1 month</option>
                   </select>
                 </div>
                 <span>of</span>
@@ -880,7 +895,7 @@ class Search extends React.Component<IProps, IState> {
               next={this.loadMore}
               route="search"
               hasMore={!this.state.reachedTheEnd && !this.state.showSuggest}
-              loader={<Loading active={!this.state.reachedTheEnd} position="fixed"/>}>
+              loader={<Loading active={this.state.loading && !this.state.reachedTheEnd} position="fixed"/>}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
               {!this.state.isAdvanced && this.state.input === '' &&
               this.defaultSuggestion && this.state.showSuggest && (
@@ -940,7 +955,7 @@ class Search extends React.Component<IProps, IState> {
                   <div className={privateStyle.bottomSpace}/>
                 </div>
               )}
-              {this.state.input !== '' && this.state.showSuggest && (
+              {!this.state.isAdvanced && this.state.input !== '' && this.state.showSuggest && (
                 <div className={style.options}>
                   {this.state.result.accounts.length > 0 && (
                     <div className={style.block}>
@@ -1003,7 +1018,6 @@ class Search extends React.Component<IProps, IState> {
               {!this.state.showSuggest && this.state.postResults.length === 0 && (
                 <div className={privateStyle.emptyMessage}>No results found!!</div>
               )}
-              <Loading active={this.state.loading} position="fixed"/>
             </div>
           </InfiniteScroll>
         </div>
