@@ -157,6 +157,13 @@ class UserAvatarComponent extends React.Component<IUserItemProps, IState> {
       user: null,
     };
   }
+  public componentWillReceiveProps(nProps) {
+    if (typeof nProps.user_id === 'object' && nProps.user_id !== this.state.user) {
+      this.setState({
+        user: nProps.user_id,
+      });
+    }
+  }
 
   /**
    * Try to Get user from redux store if its not stored before

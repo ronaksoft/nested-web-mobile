@@ -1,0 +1,66 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+}
+.avatarContainer {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imageContainer {
+  position: relative;
+  display: flex;
+  height: 72px;
+  width: 72px;
+}
+.uploadLayer {
+  position: absolute;
+  display: flex;
+  height: 72px;
+  width: 72px;
+  border-radius: 36px;
+  left: 0;
+  top: 0;
+  border: 1px solid rgba(50, 61, 71, 0.16);
+  background: linear-gradient(0deg, rgba(50, 61, 71, 1)  1.6%, transparent 36.11%);
+}
+.uploadLayer i {
+  position: absolute;
+  display: flex;
+  left: 28px;
+  bottom: 6px;
+}
+.userData {
+  display: flex;
+  padding: 8px 8px;
+  background: #F6F6F7;
+  flex-direction: column;
+}
+.userData select{
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.userData aside{
+  color: rgba(50, 61, 71, 0.48);
+  margin: 8px 0;
+}
+.userData > label,
+.userData > .searchable > label{
+  margin-bottom: 6px;
+  color: #323D47;
+  Opacity: 80%;
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.userData .searchable{
+  margin: 0 -8px;
+  padding: 14px 8px;
+  background-color: #fff;
+}
+.userData .searchable > label > span:first-child{
+  display: flex;
+  flex: 1;
+}

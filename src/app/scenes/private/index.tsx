@@ -25,6 +25,11 @@ import Tasks from './tasks';
 import TaskEdit from './tasks/components/editTask/';
 import TaskActivities from './tasks/components/activities/';
 import Notifications from './notifications';
+import Settings from './settings';
+import Profile from './settings/profile';
+import General from './settings/general';
+import Password from './settings/password';
+import Session from './settings/session';
 import Search from './search';
 import AttachmentView from '../../components/AttachmentView/index';
 
@@ -179,6 +184,10 @@ class Private extends React.Component<IProps, IState> {
       if (this.state.thisApp !== 'Notifications') {
         this.changeApp('Notifications');
       }
+    } else if (path.match('settings')) {
+      if (this.state.thisApp !== 'Settings') {
+        this.changeApp('Settings');
+      }
     }
     this.setState({
       notificationsCount: newProps.notificationsCount.unread_notifications,
@@ -294,6 +303,16 @@ class Private extends React.Component<IProps, IState> {
     return false; // or return e, doesn't matter
     // }
   }
+  private touchPreventer = (e) => {
+    e = e || window.event;
+    e.returnValue = false;
+    e.cancelBubble = false;
+    if (e.preventDefault) {
+      e.preventDefault();
+      // e.stopPropagation();
+    }
+    return false;
+  }
   private appHeight = () => {
     const doc = document.documentElement;
     doc.style.setProperty('--app-height', `${window.innerHeight}px`);
@@ -311,8 +330,8 @@ class Private extends React.Component<IProps, IState> {
     // TODO : add this as component
     document.addEventListener('scroll', this.scrollPreventer, false);
     document.body.addEventListener('scroll', this.scrollPreventer, false);
-    document.addEventListener('touchmove', this.scrollPreventer, false);
-    document.body.addEventListener('touchmove', this.scrollPreventer, false);
+    document.addEventListener('touchmove', this.touchPreventer, false);
+    document.body.addEventListener('touchmove', this.touchPreventer, false);
     window.addEventListener('resize', this.appHeight, false);
 
     // document.addEventListener('touchstart', (e) => {
@@ -394,14 +413,14 @@ class Private extends React.Component<IProps, IState> {
     const thisPath = hashHistory.getCurrentLocation().pathname;
     const state: any = {};
     state.thisApp = thisApp;
-    console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
+    // console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
     if ((this.state.thisApp === 'Posts' ||
       this.state.thisApp === 'Tasks') && thisPath.indexOf('search') === -1) {
       this.lastRoute = thisPath;
     }
 
     if (thisApp === 'goBack') {
-      console.log('goback', this.lastRoute);
+      // console.log('goback', this.lastRoute);
       hashHistory.push(this.lastRoute);
     }
     if (thisApp === 'Tasks') {
@@ -447,8 +466,8 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillUnmount() {
     this.unListenChangeRoute();
-    document.removeEventListener('touchmove', this.scrollPreventer);
-    document.body.removeEventListener('touchmove', this.scrollPreventer);
+    document.removeEventListener('touchmove', this.touchPreventer);
+    document.body.removeEventListener('touchmove', this.touchPreventer);
     document.removeEventListener('scroll', this.scrollPreventer);
     document.body.removeEventListener('scroll', this.scrollPreventer);
     document.removeEventListener('resize', this.appHeight);
@@ -481,6 +500,7 @@ class Private extends React.Component<IProps, IState> {
               <div ref={this.refHandler} className={style.container}>
                 <Navbar sidebarOpen={this.openSidebar} composeOpen={this.FeedPage}
                         changeApp={this.changeApp} thisApp={this.state.thisApp}
+                        user={this.props.user}
                         notifCount={this.state.notificationsCount}/>
                 {this.props.children}
               </div>
@@ -543,4 +563,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Private);
 export {
   Posts, Activities, Files, Notifications, Compose, Search,
   Signout, Tasks, TaskEdit, PostsContainer, TaskActivities,
+  Settings, Profile, General, Password, Session,
 };

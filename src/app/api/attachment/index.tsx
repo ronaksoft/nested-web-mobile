@@ -36,6 +36,16 @@ class AttachmentApi {
    * @returns {Promise<string>}
    * @memberof AttachmentApi
    */
+  public getUploadToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      Api.getInstance().request({
+        cmd: 'file/get_upload_token',
+        data: {},
+      }).then((response: IGetUploadTokenResponse) => {
+        resolve(response.token);
+      }, reject);
+    });
+  }
   private static getUploadToken(): Promise<string> {
     return new Promise((resolve, reject) => {
       Api.getInstance().request({

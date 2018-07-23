@@ -153,7 +153,7 @@ input::-ms-input-placeholder {
 div[contenteditable] {
   outline: none;
 }
-div[contenteditable]:before{
+div[contenteditable]:empty:before{
   content: 'Write some thing';
   display: block;
   pointer-events: none;

@@ -23,6 +23,8 @@ import {
   ISendTextRequest,
   ICallPhoneRequest,
   IUsernameAvailable,
+  IChangePhoneRequest,
+  IProfile,
 } from './interfaces';
 import {IPlace} from '../interfaces/';
 
@@ -166,6 +168,29 @@ export default class AccountApi {
     });
   }
 
+  public getActiveSessions(): Promise<any> {
+    return this.api.request({
+      cmd: 'session/get_actives',
+      data: {},
+    });
+  }
+
+  public closeSession(sk: string): Promise<any> {
+    return this.api.request({
+      cmd: 'session/close_active',
+      data: {
+        _sk: sk,
+      },
+    });
+  }
+
+  public closeAllSessions(): Promise<any> {
+    return this.api.request({
+      cmd: 'session/close_all_actives',
+      data: {},
+    });
+  }
+
   /**
    * @desc Creates an account using a verification Id (vid) which should be verified before
    * @func register
@@ -272,4 +297,38 @@ export default class AccountApi {
       data,
     });
   }
+
+  public update(data: IProfile): Promise<any> {
+    return this.api.request({
+      cmd: 'account/update',
+      data,
+    });
+  }
+
+  public updatePhone(data: IChangePhoneRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'account/change_phone',
+      data,
+    });
+  }
+
+  public setPassword(oldPass: string, newPass: string): Promise<any> {
+    return this.api.request({
+      cmd: 'account/set_password',
+      data: {
+        old_pass: oldPass,
+        new_pass: newPass,
+      },
+    });
+  }
+
+  public setPicture(uid: string): Promise<any> {
+    return this.api.request({
+      cmd: 'account/set_picture',
+      data: {
+        universal_id: uid,
+      },
+    });
+  }
+
 }

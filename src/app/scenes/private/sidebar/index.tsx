@@ -26,7 +26,7 @@ import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 
 const style = require('./sidebar.css');
 
-// import {hashHistory} from 'react-router';
+import {hashHistory} from 'react-router';
 
 interface IOwnProps {
   changeApp: (sts: string) => void;
@@ -601,6 +601,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     });
   }
 
+  private gotoProfile() {
+    hashHistory.push('/settings/profile');
+  }
+
   /**
    * renders the component
    * @returns {ReactElement} markup
@@ -634,7 +638,7 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
-        <div className={style.profile}>
+        <div className={style.profile} onClick={this.gotoProfile}>
           <UserAvatar user_id={this.props.user} size={40} borderRadius={'24px'}/>
           <FullName user_id={this.props.user}/>
         </div>

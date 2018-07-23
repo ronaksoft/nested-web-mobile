@@ -124,3 +124,16 @@ svg {
   flex: none;
   height: 180px;
 }
+
+select {
+  height: 40px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0, 0, 0, .16);
+  /* box-shadow: inset 0px 0px 1px transparent; */
+  box-shadow: none;
+  color: #323D47;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: all .2s;
+}

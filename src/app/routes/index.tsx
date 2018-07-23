@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
-  Posts, PostsContainer,
+  Posts, PostsContainer, Settings, Profile, General, Password,
   Notifications, Activities, Files, Compose, Signout, Search,
-  Tasks, TaskEdit, TaskActivities,
+  Tasks, TaskEdit, TaskActivities, Session,
 } from 'scenes/private';
 import Post from './../scenes/private/posts/components/post';
 import Private from 'scenes/private';
@@ -43,6 +43,14 @@ export default (
           <Route path="/places/:placeId/files/:filter" component={Files}/>
           <Route path="/places/:placeId/files/" component={Files}/>
           <Route path="/places/:placeId/members" component={Members}/>
+        </Route>
+
+        <Route component={Settings}>
+          <Route path="/settings/profile" component={Profile}/>
+          <Route path="/settings/general" component={General}/>
+          <Route path="/settings/password" component={Password}/>
+          <Route path="/settings/session" component={Session}/>
+          <Redirect from="/settings" to="/settings/profile"/>
         </Route>
 
         <Route path="/message/:postId" component={Post}/>

@@ -11,8 +11,9 @@
 import * as React from 'react';
 
 const style = require('./navbar.css');
-import {IcoN} from 'components';
+import {IcoN, FullName} from 'components';
 import {hashHistory, Link} from 'react-router';
+import {IUser} from 'api/interfaces';
 
 interface INavbarProps {
   changeApp: (sts: string) => void;
@@ -20,6 +21,7 @@ interface INavbarProps {
   composeOpen: () => void;
   notifCount: number;
   thisApp: string;
+  user?: IUser;
 }
 
 interface INavbarState {
@@ -124,7 +126,9 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
             <a>Tasks</a>
           </small>
         </div> */}
-        <h2>{this.state.thisApp}</h2>
+        {this.state.thisApp === 'TasksSearch' && <h2>Tasks Search</h2>}
+        {this.state.thisApp === 'Settings' && <h2><FullName user_id={this.props.user}/></h2>}
+        {this.state.thisApp !== 'TasksSearch' && this.state.thisApp !== 'Settings' && <h2>{this.state.thisApp}</h2>}
         <div className={style.filler}/>
         {/* notification scene toggler */}
         <a className={this.state.thisApp === 'Search' || this.state.thisApp === 'TasksSearch' ? style.active : null}

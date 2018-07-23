@@ -1,0 +1,8 @@
+.password {
+  padding: 8px;
+}
+.password button {
+  margin-left: auto;
+  margin-top: 8px;
+  display: block;
+}

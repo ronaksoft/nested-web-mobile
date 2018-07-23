@@ -84,6 +84,14 @@ class FullName extends React.Component<IUserItemProps, IState> {
     };
   }
 
+  public componentWillReceiveProps(nProps) {
+    if (typeof nProps.user_id === 'object' && nProps.user_id !== this.state.user) {
+      this.setState({
+        user: nProps.user_id,
+      });
+    }
+  }
+
   /**
    * Get post from redux store
    * Calls the Api and store it in redux store

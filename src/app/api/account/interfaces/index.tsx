@@ -12,6 +12,8 @@ import IGetVerificationResponse from './IGetVerificationResponse';
 import ISendTextRequest from './ISendTextRequest';
 import ICallPhoneRequest from './ICallPhoneRequest';
 import IUsernameAvailable from './IUsernameAvailable';
+import IChangePhoneRequest from './IChangePhoneRequest';
+import IProfile from './IProfile';
 
 export {
   IGender,
@@ -28,4 +30,6 @@ export {
   ISendTextRequest,
   ICallPhoneRequest,
   IUsernameAvailable,
+  IChangePhoneRequest,
+  IProfile,
 };

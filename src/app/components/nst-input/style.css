@@ -24,6 +24,8 @@
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"],
+input[type="password"].nstInput, .nstInput input[type="password"],
+input[type="date"].nstInput, .nstInput input[type="date"],
 input[type="password"].nstInput, .nstInput input[type="password"] {
   height: 40px;
   padding: 0 8px;
@@ -38,54 +40,74 @@ input[type="password"].nstInput, .nstInput input[type="password"] {
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"]:hover,
+input[type="password"].nstInput, .nstInput input[type="password"]:hover,
+input[type="date"].nstInput, .nstInput input[type="date"]:hover,
 input[type="password"].nstInput, .nstInput input[type="password"]:hover {
   border: 1px solid rgba(50, 60, 71, 0.72);
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"]:focus,
+input[type="password"].nstInput, .nstInput input[type="password"]:focus,
+input[type="date"].nstInput, .nstInput input[type="date"]:focus,
 input[type="password"].nstInput, .nstInput input[type="password"]:focus {
   border: 1px solid #323D47;
   /* box-shadow: inset 0px 0px 1px #323D47; */
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error,
+input[type="password"].nstInput, .nstInput input[type="password"].error,
+input[type="date"].nstInput, .nstInput input[type="date"].error,
 input[type="password"].nstInput, .nstInput input[type="password"].error {
   color: rgb(255, 51, 68);
   border: 1px solid rgb(255, 51, 68);
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error:hover,
+input[type="password"].nstInput, .nstInput input[type="password"].error:hover,
+input[type="date"].nstInput, .nstInput input[type="date"].error:hover,
 input[type="password"].nstInput, .nstInput input[type="password"].error:hover {
   border: 1px solid rgb(255, 51, 68);
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error:focus,
+input[type="password"].nstInput, .nstInput input[type="password"].error:focus,
+input[type="date"].nstInput, .nstInput input[type="date"].error:focus,
 input[type="password"].nstInput, .nstInput input[type="password"].error:focus {
   border: 1px solid #323D47;
   /* box-shadow: inset 0px 0px 1px #323D47; */
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].error+p,
+input[type="password"].nstInput, .nstInput input[type="password"].error+p,
+input[type="date"].nstInput, .nstInput input[type="date"].error+p,
 input[type="password"].nstInput, .nstInput input[type="password"].error+p {
   color: #323D47;
   background-color: fade(#323D47, 10%);
 }
 
 input[type="text"].nstInput, .nstInput input[type="text"].success,
+input[type="password"].nstInput, .nstInput input[type="password"].success,
+input[type="date"].nstInput, .nstInput input[type="date"].success,
 input[type="password"].nstInput, .nstInput input[type="password"].success {
   color: #323D47;
   border: 1px solid rgba(20, 215, 105, 1);
 }
 input[type="text"].nstInput, .nstInput input[type="text"].success:hover,
+input[type="password"].nstInput, .nstInput input[type="password"].success:hover,
+input[type="date"].nstInput, .nstInput input[type="date"].success:hover,
 input[type="password"].nstInput, .nstInput input[type="password"].success:hover {
   border: 1px solid rgba(20, 215, 105, 1);
 }
 input[type="text"].nstInput, .nstInput input[type="text"].success:focus,
+input[type="password"].nstInput, .nstInput input[type="password"].success:focus,
+input[type="date"].nstInput, .nstInput input[type="date"].success:focus,
 input[type="password"].nstInput, .nstInput input[type="password"].success:focus {
   border: 1px solid rgba(20, 215, 105, 1);
   /* box-shadow: inset 0px 0px 1px rgba(20, 215, 105, 1); */
 }
 input[type="text"].nstInput, .nstInput input[type="text"].success + p,
+input[type="password"].nstInput, .nstInput input[type="password"].success + p,
+input[type="date"].nstInput, .nstInput input[type="date"].success + p,
 input[type="password"].nstInput, .nstInput input[type="password"].success + p {
   color: rgba(20, 215, 105, 1);
   background-color: rgba(20, 215, 105, .1);
