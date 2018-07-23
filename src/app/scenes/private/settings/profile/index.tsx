@@ -150,7 +150,7 @@ class Profile extends React.Component<IProps, IState> {
       window.clearTimeout(this.timeout);
     }
     this.timeout = window.setTimeout(() => {
-      this.accountApi.update(this.updateObj).then(console.log).catch(console.log);
+      this.accountApi.update(this.updateObj);
       this.updateObj = {};
       const user = Object.assign({}, this.state.user, this.state.profile);
       this.props.userUpdate(user);

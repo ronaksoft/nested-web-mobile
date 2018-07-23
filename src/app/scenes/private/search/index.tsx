@@ -729,13 +729,11 @@ class Search extends React.Component<IProps, IState> {
     });
   }
   private handleAdvancedDateInChange = (event) => {
-    console.log(event.currentTarget.value);
     this.setState({
       advancedDateIn: event.currentTarget.value,
     });
   }
   private handleAdvancedDateChange = (event) => {
-    console.log(event, event.currentTarget.value);
     this.setState({
       advancedDate: TimeUtiles.DateGet(event.currentTarget.value),
     });

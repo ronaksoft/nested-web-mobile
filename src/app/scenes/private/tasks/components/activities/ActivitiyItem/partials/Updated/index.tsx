@@ -12,7 +12,7 @@ interface IProps {
 export default class Updated extends React.Component <IProps, any> {
   public render() {
     const activity = this.props.activity;
-    console.log(activity);
+    // console.log(activity);
     return (
       <a className={[style.notifWrapper].join(' ')}>
         <UserAvatar user_id={activity.actor} size={32} borderRadius={'16px'}/>
