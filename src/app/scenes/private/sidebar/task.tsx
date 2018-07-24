@@ -117,10 +117,10 @@ class TaskSidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
-        <div className={style.profile}>
+        <Link className={style.profile} to="/settings/profile">
           <UserAvatar user_id={this.props.user} size={40} borderRadius={'24px'}/>
           <FullName user_id={this.props.user}/>
-        </div>
+        </Link>
         <div className={style.appSwitcher}>
           <button className={this.state.thisApp === 'Posts' || this.state.thisApp === 'Search'
             ? style.active : ''}
