@@ -37,6 +37,9 @@
   background: #F6F6F7;
   flex-direction: column;
 }
+.userData > * {
+  flex: none;
+}
 .userData select{
   margin-bottom: 8px;
   font-size: 16px;

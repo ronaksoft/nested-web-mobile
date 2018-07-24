@@ -6,13 +6,14 @@ import {IUser} from 'api/interfaces';
 import {IProfile} from 'api/account/interfaces';
 import Configuration from 'config';
 import AAA from 'services/aaa';
-// import TimeUtiles from 'services/utils/time';
+import TimeUtiles from 'services/utils/time';
 import {Scrollable, IcoN, UserAvatar, NstCrop, NstInput} from 'components';
 import {userUpdate} from 'redux/app/actions';
 import {Switch} from 'antd';
 import {cloneDeep} from 'lodash';
 
 const style = require('./style.css');
+const privateStyle = require('../../private.css');
 
 /**
  * @interface IState
@@ -137,7 +138,11 @@ class Profile extends React.Component<IProps, IState> {
 
   private update = (field, value) => {
     const {profile} = this.state;
-    profile[field] = value;
+    if (field === 'dob') {
+      profile.dob = TimeUtiles.DateGet(value);
+    } else {
+      profile[field] = value;
+    }
     this.setState({
       profile,
     });
@@ -169,7 +174,7 @@ class Profile extends React.Component<IProps, IState> {
     const {user, profile} = this.state;
     return (
       <Scrollable active={true}>
-        <div className={style.profile}>
+        <div className={style.profile}>l
           <div className={style.avatarContainer}>
             <div className={style.imageContainer}>
               {user && <UserAvatar user_id={user} size={72} borderRadius={'36px'}/>}
@@ -190,8 +195,8 @@ class Profile extends React.Component<IProps, IState> {
               <NstInput value={user.phone} label="Phone number" placeholder="Phone number" disabled={true}/>
               <NstInput value={profile.email} label="Email address" placeholder="Email address"
                 onChange={this.update.bind(this, 'email')}/>
-              <NstInput type="date" value={profile.dob} label="Date of birth" placeholder="Date of birth"
-                onChange={this.update.bind(this, 'dob')}/>
+              <NstInput type="date" value={TimeUtiles.Date(profile.dob)} label="Date of birth"
+                onChange={this.update.bind(this, 'dob')} placeholder="Date of birth"/>
               <label>Gender</label>
               <select value={profile.gender} onChange={this.handleGenderChange}>
                 <option value="f">Female</option>
@@ -210,6 +215,7 @@ class Profile extends React.Component<IProps, IState> {
               </div>
             </div>
           )}
+          <div className={privateStyle.bottomSpace}/>
           <NstCrop avatar={this.state.pickedImage}
             onCropped={this.onCropped}/>
         </div>

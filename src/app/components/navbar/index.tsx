@@ -129,7 +129,7 @@ class Navbar extends React.Component<INavbarProps, INavbarState> {
         {this.state.thisApp === 'TasksSearch' && <h2>Tasks Search</h2>}
         {this.state.thisApp === 'Settings' && <h2><FullName user_id={this.props.user}/></h2>}
         {this.state.thisApp !== 'TasksSearch' && this.state.thisApp !== 'Settings' && <h2>{this.state.thisApp}</h2>}
-        <div className={style.filler}/>
+        {/* <div className={style.filler}/> */}
         {/* notification scene toggler */}
         <a className={this.state.thisApp === 'Search' || this.state.thisApp === 'TasksSearch' ? style.active : null}
           onClick={this.goToSearch.bind(this, '')}>

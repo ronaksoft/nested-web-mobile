@@ -4,7 +4,7 @@ interface IProfile {
   fname?: string;
   lname?: string;
   gender?: string;
-  dob?: string;
+  dob?: number;
   email?: string;
   searchable?: boolean;
 }
