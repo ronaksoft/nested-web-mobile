@@ -9,6 +9,7 @@ import TimeUtiles from 'services/utils/time';
 import {message} from 'antd';
 
 const style = require('./style.css');
+const privateStyle = require('../../private.css');
 
 /**
  * @interface IState
@@ -110,6 +111,7 @@ class Session extends React.Component<IProps, IState> {
               </p>
             </li>
           ))}
+          <li className={privateStyle.bottomSpace}/>
         </ul>
       </Scrollable>
     );

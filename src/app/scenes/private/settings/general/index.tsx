@@ -47,10 +47,8 @@ class General extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     this.clientApi.read('general.setting.signature').then((v: string) => {
-      console.log(v);
       if (v.length > 0) {
         const res = JSON.parse(v);
-        console.log(res);
         this.setState({
           signatureActive: res.active,
           savedModel: res.data,
@@ -90,7 +88,7 @@ class General extends React.Component<IProps, IState> {
           <div className={style.signature}>
             <label htmlFor="searchable">
               <span>Signature:</span>
-              <Switch defaultChecked={this.state.signatureActive}
+              <Switch checked={this.state.signatureActive}
                       onChange={this.signatureActiveChange}/>
             </label>
             <div contentEditable={true} dangerouslySetInnerHTML={{__html: this.state.model}}

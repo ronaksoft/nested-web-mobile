@@ -6,6 +6,7 @@
   height: 88px;
   display: flex;
   align-items: center;
+  flex: none;
   justify-content: center;
 }
 .imageContainer {

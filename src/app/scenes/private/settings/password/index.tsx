@@ -131,7 +131,13 @@ class Profile extends React.Component<IProps, IState> {
             new: '',
             renew: '',
           });
-        }).catch(() => message.error('Some problems happened'));
+        }).catch((e) => {
+          if (e.code === 3) {
+            message.error('Your have entered wrong old password');
+          } else {
+            message.error('Some problems happened');
+          }
+      });
     }
   }
 

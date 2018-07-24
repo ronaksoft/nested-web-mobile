@@ -174,7 +174,7 @@ class Profile extends React.Component<IProps, IState> {
     const {user, profile} = this.state;
     return (
       <Scrollable active={true}>
-        <div className={style.profile}>l
+        <div className={style.profile}>
           <div className={style.avatarContainer}>
             <div className={style.imageContainer}>
               {user && <UserAvatar user_id={user} size={72} borderRadius={'36px'}/>}
