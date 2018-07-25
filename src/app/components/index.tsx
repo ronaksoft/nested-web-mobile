@@ -21,6 +21,7 @@ import RTLDetector from './RTLDetector';
 import PlaceItem from './placeItem/index';
 import CommentsBoard from './comment/index';
 import AttachmentUploader from './AttachmentUploader/index';
+import NstCrop from './Crop/index';
 
 export {UserAvatar, FullName, PlaceName, Scrollable, AttachmentUploader,
-    PlaceItem, RTLDetector, InfiniteScroll, CommentsBoard};
+    PlaceItem, RTLDetector, InfiniteScroll, CommentsBoard, NstCrop};

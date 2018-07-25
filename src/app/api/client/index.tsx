@@ -34,7 +34,7 @@ export default class ClientApi {
 
   public save(name: string, value: string) {
     return this.api.request({
-      cmd: 'client/read_key',
+      cmd: 'client/save_key',
       data: {
         key_name: name,
         key_value: value,

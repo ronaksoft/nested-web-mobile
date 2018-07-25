@@ -26,8 +26,6 @@ import IUnreadPlace from '../../../api/place/interfaces/IUnreadPlace';
 
 const style = require('./sidebar.css');
 
-// import {hashHistory} from 'react-router';
-
 interface IOwnProps {
   changeApp: (sts: string) => void;
   closeSidebar: () => void;
@@ -634,10 +632,10 @@ class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         <div className={style.sidebarHead} onClick={this.props.closeSidebar}>
           <IcoN size={24} name={'xcrossWhite24'}/>
         </div>
-        <div className={style.profile}>
+        <Link className={style.profile} to="/settings/profile">
           <UserAvatar user_id={this.props.user} size={40} borderRadius={'24px'}/>
           <FullName user_id={this.props.user}/>
-        </div>
+        </Link>
         <div className={style.appSwitcher}>
           <button className={this.state.thisApp === 'Posts' || this.state.thisApp === 'Search'
             ? style.active : ''}
