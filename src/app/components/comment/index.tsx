@@ -185,7 +185,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
     if (!this.state.task_mode) {
       this.Api = new PostApi();
       this.Api.getComments({
-        before: Date.now(),
+        before: this.nestedTime.now(),
         limit: 3,
         post_id: this.props.post._id,
       })

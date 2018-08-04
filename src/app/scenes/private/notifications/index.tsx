@@ -18,6 +18,7 @@ import {connect} from 'react-redux';
 import {setNotification, setNotificationCount} from '../../../redux/app/actions/index';
 import {IcoN, InfiniteScroll, Loading} from 'components';
 import INotificationCountResponse from '../../../api/notification/interfaces/INotificationCountResponse';
+import nstTime from '../../../services/time';
 
 const style = require('./notifications.css');
 const tabStyle = require('../../../components/Tab/tab.css');
@@ -25,7 +26,6 @@ const privateStyle = require('../private.css');
 
 /**
  *
- * @implements
  * @interface IState
  */
 interface IState {
@@ -37,7 +37,6 @@ interface IState {
 
 /**
  *
- * @implements
  * @interface IProps
  */
 interface IProps {
@@ -59,6 +58,7 @@ class Notifications extends React.Component<IProps, IState> {
   private requestLimit: number = 20;
   // private startTouchPoint: number = 0;
   // private isInTop: boolean = true;
+  private nestedTime = nstTime.getInstance();
 
   /**
    * @prop notificationScrollbar
@@ -150,8 +150,8 @@ class Notifications extends React.Component<IProps, IState> {
     // the latest notification item in state, otherwise the current timestamp.
     notificationApi.get({
       limit: this.requestLimit,
-      before: getFromNow === true ? Date.now() : (thisNotifs.length > 0) ?
-        thisNotifs[thisNotifs.length - 1].timestamp : Date.now(),
+      before: getFromNow === true ? this.nestedTime.now() : (thisNotifs.length > 0) ?
+        thisNotifs[thisNotifs.length - 1].timestamp : this.nestedTime.now(),
       details: true,
       subject: activeTab === 0 ? 'post' : 'task',
     }).then((notificationsResponse: INotificationData) => {
