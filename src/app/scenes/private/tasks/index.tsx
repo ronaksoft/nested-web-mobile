@@ -21,6 +21,7 @@ import {hashHistory} from 'react-router';
 import {Loading} from '  ../../../components/Loading/index';
 // import TaskCandidateView from './components/list/candidateItem/index';
 import TaskUpcomingView from './components/list/upcomingItem/index';
+import nstTime from 'services/time';
 
 const style = require('./task.css');
 const privateStyle = require('../private.css');
@@ -59,6 +60,7 @@ interface IState {
 class Tasks extends React.Component<IProps, IState> {
   private taskApi: TaskApi;
   private ClientApi: ClientApi;
+  private nestedTime = nstTime.getInstance();
 
   constructor(props: IProps) {
 
@@ -311,7 +313,7 @@ class Tasks extends React.Component<IProps, IState> {
     const completedResult = this.state.route.indexOf('completed') > -1;
     const statusFilter = [];
     if (fromNow === true) {
-      params.before = Date.now();
+      params.before = this.nestedTime.now();
       // show bottom loading
       this.setState({
         loadingBefore: true,
@@ -331,7 +333,7 @@ class Tasks extends React.Component<IProps, IState> {
        * check state posts length for state `before` timestamp
        */
       if (this.state.tasks.length === 0) {
-        params.before = Date.now();
+        params.before = this.nestedTime.now();
       } else {
         params.before = this.state.tasks[this.state.tasks.length - 1].timestamp;
       }
@@ -413,7 +415,7 @@ class Tasks extends React.Component<IProps, IState> {
     const filterData: ICustomFilter = this.state.customFilters.find((fi) => parseInt(fi.id, 10) === filterId);
     const filter: IGetTaskCustomFilterRequest = this.getCustomFilterParams(filterData.filters);
     if (fromNow === true) {
-      filter.before = Date.now();
+      filter.before = this.nestedTime.now();
       // show bottom loading
       this.setState({
         loadingBefore: true,
@@ -433,7 +435,7 @@ class Tasks extends React.Component<IProps, IState> {
        * check state posts length for state `before` timestamp
        */
       if (this.state.tasks.length === 0) {
-        filter.before = Date.now();
+        filter.before = this.nestedTime.now();
       } else {
         filter.before = this.state.tasks[this.state.tasks.length - 1].timestamp;
       }

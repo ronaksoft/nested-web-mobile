@@ -729,25 +729,6 @@ class Post extends React.Component<IProps, IState> {
     const {post} = this.state;
     const bookmarkClick = this.toggleBookmark.bind(this);
 
-    const getIframeUrl = (url: any) => {
-      const userId = this.props.user._id;
-      const msgId = this.state.post ? this.state.post._id : '';
-      const app = CONFIG().DOMAIN;
-      let urlPostFix = '';
-      if (url.indexOf('#') > -1) {
-        url = url.split('#');
-        urlPostFix = '#' + url[1];
-        url = url[0];
-      }
-      if (url.indexOf('?') > -1) {
-        url += '&';
-      } else {
-        url += '?';
-      }
-      url += 'nst_user=' + userId + '&nst_mid=' + msgId + '&nst_app=' + app + '&nst_locale=en-US';
-      return url + urlPostFix;
-    };
-
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
     return (
@@ -832,7 +813,7 @@ class Post extends React.Component<IProps, IState> {
               <div className={style.postBody}>
                 <h3 className={this.subjectRtl ? style.Rtl : null}>{post.subject}</h3>
                 {post.iframe_url && (
-                  <iframe src={getIframeUrl(post.iframe_url)} scrolling="auto"
+                  <iframe src={post.iframe_url} scrolling="auto"
                           ref={this.iframeObjHandler}/>
                 )}
                 <div dangerouslySetInnerHTML={{__html: post.body || post.preview}}

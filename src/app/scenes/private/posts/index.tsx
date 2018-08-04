@@ -30,6 +30,7 @@ import AccountApi from 'api/account/index';
 import {NewBadge} from 'components/NewBadge';
 import IErrorResponseData from 'services/server/interfaces/IErrorResponseData';
 import Failure from 'services/server/failure';
+import nstTime from 'services/time';
 
 const style = require('./posts.css');
 const privateStyle = require('../private.css');
@@ -168,6 +169,7 @@ class Posts extends React.Component<IProps, IState> {
   private syncActivityListeners = [];
   private favoritePlacesId = [];
   private newPostsIds = [];
+  private nestedTime = nstTime.getInstance();
 
   /**
    * Creates an instance of Feed.
@@ -394,7 +396,7 @@ class Posts extends React.Component<IProps, IState> {
     let requirePinnedMessages: boolean = false;
     if (fromNow === true) {
       params = {
-        before: Date.now(),
+        before: this.nestedTime.now(),
       };
       // show bottom loading
       this.setState({
@@ -418,7 +420,7 @@ class Posts extends React.Component<IProps, IState> {
        */
       if (this.state.posts.length === 0) {
         params = {
-          before: Date.now(),
+          before: this.nestedTime.now(),
         };
       } else {
         params = {

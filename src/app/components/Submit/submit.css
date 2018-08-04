@@ -1,0 +1,26 @@
+.submit {
+  display: inline-block;
+  flex: none;
+  color: white;
+  height: 32px;
+  width: 32px;
+  background-color: #14D769;
+  border-radius: 50%;
+  margin-left: 12px;
+  transition: .5s background-color;
+}
+
+.submit.disabled {
+  background-color: #ccc;
+}
+
+.submit svg {
+  fill: #fff;
+  width: 24px;
+  height: 24px;
+  margin: 4px;
+}
+
+.submit svg path {
+  stroke: #fff !important;
+}
