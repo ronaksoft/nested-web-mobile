@@ -164,34 +164,77 @@ class Private extends React.Component<IProps, IState> {
    */
   public componentWillReceiveProps(newProps: IProps) {
     const path = hashHistory.getCurrentLocation().pathname;
-    if (path.substring(0, 12) === '/task/search') {
-      if (this.state.thisApp !== 'TasksSearch') {
-        this.changeApp('TasksSearch');
-      }
-    } else if (path.match('search')) {
-      if (this.state.thisApp !== 'Search' && this.state.thisApp !== 'TasksSearch') {
-        this.changeApp('Search');
-      }
-    } else if (path.match('task')) {
-      if (this.state.thisApp !== 'Tasks') {
-        this.changeApp('Tasks');
-      }
-    } else if (path.match('feed')) {
-      if (this.state.thisApp !== 'Posts') {
-        this.changeApp('Posts');
-      }
-    } else if (path.match('notifications')) {
-      if (this.state.thisApp !== 'Notifications') {
-        this.changeApp('Notifications');
-      }
-    } else if (path.match('settings')) {
-      if (this.state.thisApp !== 'Settings') {
-        this.changeApp('Settings');
-      }
-    }
+    const newApp = this.getPathApp(path);
+    console.log(newApp);
     this.setState({
+      thisApp: newApp || this.state.thisApp,
       notificationsCount: newProps.notificationsCount.unread_notifications,
     });
+  }
+
+  public changeApp = (thisApp) => {
+    const thisPath = hashHistory.getCurrentLocation().pathname;
+    const state: any = {};
+    state.thisApp = thisApp;
+    // console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
+    if ((this.state.thisApp === 'Posts' ||
+      this.state.thisApp === 'Tasks') && thisPath.indexOf('search') === -1) {
+      this.lastRoute = thisPath;
+    }
+
+    if (thisApp === 'goBack') {
+      // console.log('goback', this.lastRoute);
+      hashHistory.push(this.lastRoute);
+    }
+    if (thisApp === 'Tasks') {
+      hashHistory.push(this.state.lastTaskRoute);
+    } else if (thisApp === 'Posts') {
+      hashHistory.push(this.state.lastPostRoute);
+    } else if (thisApp === 'TasksSearch') {
+      hashHistory.push('/task/search/_/false');
+      if (thisPath.match('/task/search')) {
+        hashHistory.push(thisPath);
+      } else {
+        hashHistory.push('/task/search/_/false');
+      }
+    } else if (thisApp === 'Search') {
+      if (thisPath.match('/search')) {
+        hashHistory.push(thisPath);
+      } else {
+        hashHistory.push('/search/_/false');
+      }
+    } else if (thisApp === 'Notifications') {
+      hashHistory.push('/notifications');
+    }
+
+    if (this.state.thisApp === 'Posts') {
+      state.lastPostRoute = thisPath;
+    }
+    if (this.state.thisApp === 'Tasks') {
+      state.lastTaskRoute = thisPath;
+    }
+
+    this.setState({
+      thisApp,
+    });
+  }
+
+  public getPathApp = (path) => {
+    if (path.substring(0, 12) === '/task/search') {
+      return 'TasksSearch';
+    } else if (path.match('search')) {
+      return 'Search';
+    } else if (path.match('task')) {
+      return 'Tasks';
+    } else if (path.match('feed') || path.match('places') || path.match('shared') || path.match('bookmarks')) {
+      return 'Posts';
+    } else if (path.match('notifications')) {
+      return 'Notifications';
+    } else if (path.match('settings')) {
+      return 'Settings';
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -406,53 +449,6 @@ class Private extends React.Component<IProps, IState> {
   public openSidebar = () => {
     this.setState({
       sidebarOpen: true,
-    });
-  }
-
-  public changeApp = (thisApp) => {
-    const thisPath = hashHistory.getCurrentLocation().pathname;
-    const state: any = {};
-    state.thisApp = thisApp;
-    // console.log(hashHistory.getCurrentLocation().pathname, this.state.thisApp);
-    if ((this.state.thisApp === 'Posts' ||
-      this.state.thisApp === 'Tasks') && thisPath.indexOf('search') === -1) {
-      this.lastRoute = thisPath;
-    }
-
-    if (thisApp === 'goBack') {
-      // console.log('goback', this.lastRoute);
-      hashHistory.push(this.lastRoute);
-    }
-    if (thisApp === 'Tasks') {
-      hashHistory.push(this.state.lastTaskRoute);
-    } else if (thisApp === 'Posts') {
-      hashHistory.push(this.state.lastPostRoute);
-    } else if (thisApp === 'TasksSearch') {
-      hashHistory.push('/task/search/_/false');
-      if (thisPath.match('/task/search')) {
-        hashHistory.push(thisPath);
-      } else {
-        hashHistory.push('/task/search/_/false');
-      }
-    } else if (thisApp === 'Search') {
-      if (thisPath.match('/search')) {
-        hashHistory.push(thisPath);
-      } else {
-        hashHistory.push('/search/_/false');
-      }
-    } else if (thisApp === 'Notifications') {
-      hashHistory.push('/notifications');
-    }
-
-    if (this.state.thisApp === 'Posts') {
-      state.lastPostRoute = thisPath;
-    }
-    if (this.state.thisApp === 'Tasks') {
-      state.lastTaskRoute = thisPath;
-    }
-
-    this.setState({
-      thisApp,
     });
   }
 
