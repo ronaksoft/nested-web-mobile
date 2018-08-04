@@ -1,4 +1,4 @@
-.Submit {
+.submit {
   display: inline-block;
   flex: none;
   color: white;
@@ -7,20 +7,20 @@
   background-color: #14D769;
   border-radius: 50%;
   margin-left: 12px;
-  transition: .2s background-color;
+  transition: .5s background-color;
 }
 
-.Submit.Disabled {
+.submit.disabled {
   background-color: #ccc;
 }
 
-.Submit svg {
+.submit svg {
   fill: #fff;
   width: 24px;
   height: 24px;
   margin: 4px;
 }
 
-.Submit svg path {
+.submit svg path {
   stroke: #fff !important;
 }

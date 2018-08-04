@@ -54,18 +54,10 @@ class Submit extends React.Component<IProps, IState> {
     });
   }
 
-  /**
-   * Get post from redux store
-   * Calls the Api and store it in redux store
-   * @func componentDidMount
-   * @memberof FullName
-   * @override
-   */
-  public componentDidMount() {
-    console.log('');
-  }
-
   private onClick = (e) => {
+    if (this.state.disabled) {
+      return;
+    }
     this.props.onClick(e);
   }
 
@@ -77,9 +69,9 @@ class Submit extends React.Component<IProps, IState> {
    * @generator
    */
   public render() {
-    const classNames = [style.Submit];
+    const classNames = [style.submit];
     if (this.state.disabled) {
-      classNames.push(style.Disabled);
+      classNames.push(style.disabled);
     }
     return (
       <span className={classNames.join(' ')} onClick={this.onClick}>
