@@ -345,15 +345,14 @@ class Private extends React.Component<IProps, IState> {
     /** call the `handleAAA` to ensuring user is logged in */
     this.handleAAA();
 
-    /** get unread notifications */
-    this.getNotificationCounts();
-
     setTimeout(() => {
       Api.getInstance().getServer().onConnectionStateChange((data: any) => {
         if (data === 1) {
           this.internalRecall();
         }
       });
+      /** get unread notifications */
+      this.getNotificationCounts();
     }, 1000);
 
     this.appHeight();
@@ -362,7 +361,7 @@ class Private extends React.Component<IProps, IState> {
      * and gets unread notifications count also
      * scrolls view to the top
      * @function
-     * @event
+     * @event unListenChangeRoute
      */
     this.unListenChangeRoute = hashHistory.listen(() => {
       this.closeSidebar();

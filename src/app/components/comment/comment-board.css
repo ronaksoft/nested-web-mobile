@@ -66,7 +66,7 @@
   word-break: break-word;
 }
 .commentInput {
-  height: 64px;
+  height: 44px;
   border-top: 1px solid rgba(50, 61, 71, 0.08);
   background-color: #F6F6F7;
   /* box-shadow: 0 0 16px rgba(50,61,71,.32); */
@@ -77,7 +77,7 @@
   z-index: 8;
   bottom: 0;
   right: 0;
-  padding: 12px;
+  padding: 4px 12px;
 }
 .commentInput > div:first-child {
   width: 28px;
@@ -87,9 +87,9 @@
   flex: none;
 }
 .commentInput input{
-  height: 40;
+  height: 32px;
   line-height: 40px;
-  padding: 0 8px;
+  padding: 0 12px;
   z-index: 9;
   color: rgba(50,61,71,1);
   width: 100%;
@@ -97,13 +97,13 @@
   font-weight: 300;
   background: #FFFFFF;
   border: 1px solid #DDDFE0;
-  border-radius: 4px;
   display: flex;
   flex: 1;
+  border-radius: 17px;
 }
 .commentInput input:hover ,
 .commentInput input:focus {
-  border: none;
+  border-color: transparent;
   outline: none;
   box-shadow: none;
 }

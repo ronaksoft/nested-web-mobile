@@ -28,6 +28,7 @@ import {message} from 'antd';
 import VoiceComment from '../VoiceComment';
 import MiniPlayer from 'services/miniplayer';
 import nstTime from 'services/time';
+import Submit from '../Submit';
 
 const style = require('./comment-board.css');
 
@@ -89,6 +90,8 @@ interface IState {
    * @memberof IState
    */
   newCommentTxt: string;
+  rtl: boolean;
+  disabled: boolean;
 }
 
 /**
@@ -140,6 +143,8 @@ class CommentsBoard extends React.Component<IProps, IState> {
 
   private notifyNewComment: () => void = () => console.log('no notify registered!');
 
+  private inputRef: any;
+
   /**
    * @constructor
    * Creates an instance of CommentsBoard.
@@ -154,6 +159,8 @@ class CommentsBoard extends React.Component<IProps, IState> {
       sendingComment: false,
       task_mode: this.props.task && this.props.task._id.length > 0,
       newCommentTxt: '',
+      rtl: false,
+      disabled: true,
     };
     // binds handleChangeComment by `this`.
     this.handleChangeComment = this.handleChangeComment.bind(this);
@@ -428,10 +435,34 @@ class CommentsBoard extends React.Component<IProps, IState> {
    */
   private handleChangeComment(event: any) {
     const text = event.target.value;
+    const rtl = RTLDetector.getInstance().direction(text);
+    this.setState({
+      rtl,
+      disabled: text.length === 0,
+    });
     if (text.length === 0 || event.key !== 'Enter') {
       return;
     }
 
+    this.submitComment(text);
+  }
+
+  private addCommentCallback(comment, commentModel) {
+    const comments = this.state.comments;
+    const index = findIndex(comments, {_id: commentModel._id});
+    if (some(comments, {
+        _id: comment._id,
+      })) {
+      comments.splice(index, 1);
+    } else {
+      comments[index] = comment;
+    }
+    this.setState({comments}, () => {
+      this.getAfterComments(true);
+    });
+  }
+
+  private submitComment(text) {
     const commentModel: IComment = {
       attachment_id: '',
       text,
@@ -451,26 +482,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
     }, () => {
       this.notifyNewComment();
     });
-    event.target.value = '';
+    this.inputRef.value = '';
+    this.inputRef.blur();
     // event.target.focus();
     this.addComment(text).then((comment) => {
       this.addCommentCallback(comment, commentModel);
     }).catch(() => this.addCommentFailedCallback(commentModel));
-  }
-
-  private addCommentCallback(comment, commentModel) {
-    const comments = this.state.comments;
-    const index = findIndex(comments, {_id: commentModel._id});
-    if (some(comments, {
-        _id: comment._id,
-      })) {
-      comments.splice(index, 1);
-    } else {
-      comments[index] = comment;
-    }
-    this.setState({comments}, () => {
-      this.getAfterComments(true);
-    });
   }
 
   private addCommentFailedCallback(commentModel) {
@@ -490,6 +507,14 @@ class CommentsBoard extends React.Component<IProps, IState> {
     }).catch(() => {
       this.addCommentFailedCallback(commentModel);
     });
+  }
+
+  private submitButton = () => {
+    this.submitComment(this.inputRef.value);
+  }
+
+  private inputReference = (value: HTMLInputElement) => {
+    this.inputRef = value;
   }
 
   /**
@@ -539,9 +564,12 @@ class CommentsBoard extends React.Component<IProps, IState> {
         ))}
         {!this.props.no_comment && (
           <div className={style.commentInput}>
-            <UserAvatar user_id={this.props.user} size={24} borderRadius={'16px'}/>
+            <UserAvatar user_id={this.props.user} size={32} borderRadius={'16px'}/>
             <input type="text" placeholder={'write your comment...'} defaultValue={this.state.newCommentTxt}
-                   onKeyDown={this.handleChangeComment}/>
+                   onKeyUp={this.handleChangeComment} ref={this.inputReference}
+                   style={this.state.rtl ? {direction: 'rtl'} : {direction: 'ltr'}}
+            />
+            <Submit onClick={this.submitButton} disabled={this.state.disabled}/>
           </div>
         )}
       </div>

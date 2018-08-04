@@ -73,7 +73,6 @@ class Server {
    */
   constructor() {
     console.log('Start Server instance');
-
     /**
      * Assign socket and default values
      */
