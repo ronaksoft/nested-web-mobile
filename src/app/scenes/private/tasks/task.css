@@ -198,6 +198,8 @@
 .todoList li label{
   font-size: 14px;
   padding: 6px 0;
+  word-break: break-word;
+  word-wrap: break-word;
   color: #323D47;
 }
 .todoList li i{
