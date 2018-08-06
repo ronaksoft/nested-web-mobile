@@ -13,7 +13,7 @@ import ITask from '../../../../../api/task/interfaces/ITask';
 import ITaskRequest from '../../../../../api/task/interfaces/ITaskRequest';
 import {
   IcoN, Loading, Scrollable, RTLDetector, TaskIcon, AttachmentUploader,
-  UserAvatar, FullName, Suggestion, CommentsBoard
+  UserAvatar, FullName, Suggestion, CommentsBoard,
 } from 'components';
 import {Modal} from 'antd';
 import TaskApi from '../../../../../api/task/index';
