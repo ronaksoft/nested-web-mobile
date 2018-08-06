@@ -265,3 +265,7 @@
   line-height: 1.4;
   min-height: 96px;
 }
+
+.rowIconPadding {
+  padding-left: 56px;
+}

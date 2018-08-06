@@ -1300,39 +1300,42 @@ class EditTask extends React.Component<IProps, IState> {
               </div>
               <div className={[style.taskRow, style.rowWithSuggest].join(' ')}>
                 <div className={style.taskRowIcon}>
-                  {(task.assignee || (task.candidates && task.candidates.length === 1)) &&
+                  {(
+                    (task.assignee && (!task.candidates || task.candidates.length === 0)) ||
+                    (task.candidates && task.candidates.length === 1)) &&
                     <UserAvatar user_id={selectedItemsForAssigne[0]} borderRadius="24px" size={24}/>}
                   {!task.assignee && (!task.candidates || task.candidates.length === 0) &&
                     <IcoN name="askWire24" size={24}/>
                   }
                   {task.candidates && task.candidates.length > 1 && <IcoN name="candidate32" size={32}/>}
                 </div>
-                {this.viewMode && task.assignee && (
-                  <div className={style.taskRowItem}>
-                    Assigned to <b> <FullName user_id={task.assignee} /></b>
-                  </div>
-                )}
-                {this.viewMode && !task.assignee && (
-                  <div className={style.taskRowItem}>
-                    Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
-                  </div>
-                )}
                 {(this.createMode || (this.editMode && selectedItemsForAssigne.length > 0)) && (
                   <div className={style.taskRowItem}>
-                    <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
-                                mode="user"
-                                editable={
-                                  (
-                                    this.startedEditing &&
-                                    (this.access.CHANGE_ASSIGNEE || this.access.ADD_CANDIDATE)
-                                  )
-                                  || this.createMode}
-                                placeholder={task.candidates && task.candidates.length > 0
-                                  ? 'Add Candidate'
-                                  : 'Add Assignee'}
-                                selectedItems={selectedItemsForAssigne}
-                                onSelectedItemsChanged={this.handleAssigneChanged}
-                    />
+                    {task.assignee && !this.startedEditing && (
+                      <div className={style.rowIconPadding}>
+                        Assigned to <b> <FullName user_id={task.assignee} /></b>
+                      </div>
+                    )}
+                    {!this.startedEditing && !task.assignee && (
+                      <div>
+                        Candidates: {task.candidates.map((user) => <b>{user.fullName}</b>)}
+                      </div>
+                    )}
+                    {this.startedEditing && (
+                      <Suggestion ref={this.referenceTargets.bind(this, 'assignes')}
+                                  mode="user"
+                                  editable={
+                                    (
+                                      this.startedEditing &&
+                                      (this.access.CHANGE_ASSIGNEE || this.access.ADD_CANDIDATE)
+                                    )
+                                    || this.createMode}
+                                  placeholder={task.candidates && task.candidates.length > 0
+                                    ? 'Add Candidate'
+                                    : 'Add Assignee'}
+                                  selectedItems={selectedItemsForAssigne}
+                                  onSelectedItemsChanged={this.handleAssigneChanged}/>
+                    )}
                   </div>
                 )}
               </div>
