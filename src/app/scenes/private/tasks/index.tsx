@@ -22,6 +22,7 @@ import {Loading} from '  ../../../components/Loading/index';
 // import TaskCandidateView from './components/list/candidateItem/index';
 import TaskUpcomingView from './components/list/upcomingItem/index';
 import nstTime from 'services/time';
+import * as _ from 'lodash';
 
 const style = require('./task.css');
 const privateStyle = require('../private.css');
@@ -187,14 +188,16 @@ class Tasks extends React.Component<IProps, IState> {
         switch (filters[i].con) {
           case C_TASK_CUSTOM_FILTER.CONDITION_STATUS:
             statusFilter = [];
-            if (filters[i].val === C_TASK_CUSTOM_FILTER.STATUS_OVERDUE) {
-              statusFilter.push(C_TASK_STATUS.OVERDUE);
-            } else if (filters[i].val === C_TASK_CUSTOM_FILTER.STATUS_HOLD) {
-              statusFilter.push(C_TASK_STATUS.HOLD);
-            } else {
-              statusFilter.push(C_TASK_STATUS.NO_ASSIGNED);
-              statusFilter.push(C_TASK_STATUS.ASSIGNED);
-            }
+            filters[i].val.split(',').forEach((status) => {
+              if (status === C_TASK_CUSTOM_FILTER.STATUS_OVERDUE) {
+                statusFilter.push(C_TASK_STATUS.OVERDUE);
+              } else if (status === C_TASK_CUSTOM_FILTER.STATUS_HOLD) {
+                statusFilter.push(C_TASK_STATUS.HOLD);
+              } else {
+                statusFilter.push(C_TASK_STATUS.NO_ASSIGNED);
+                statusFilter.push(C_TASK_STATUS.ASSIGNED);
+              }
+            });
             params.status_filter = statusFilter.join(',');
             break;
           case C_TASK_CUSTOM_FILTER.CONDITION_ASSIGNOR:
@@ -222,7 +225,7 @@ class Tasks extends React.Component<IProps, IState> {
   }
 
   private getNormCommaSeparated(str) {
-    return str.split(',').map((item) => item.replace(/ /g, '')).filter((item) => item.length > 1).join(',');
+    return str.split(',').map((item) => _.trim(item)).filter((item) => item.length > 1).join(',');
   }
 
   private getFilterForApi() {

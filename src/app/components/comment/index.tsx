@@ -564,7 +564,7 @@ class CommentsBoard extends React.Component<IProps, IState> {
         ))}
         {!this.props.no_comment && (
           <div className={style.commentInput}>
-            <UserAvatar user_id={this.props.user} size={32} borderRadius={'16px'}/>
+            <UserAvatar user_id={this.props.user} size={30} borderRadius={'16px'}/>
             <input type="text" placeholder={'write your comment...'} defaultValue={this.state.newCommentTxt}
                    onKeyUp={this.handleChangeComment} ref={this.inputReference}
                    style={this.state.rtl ? {direction: 'rtl'} : {direction: 'ltr'}}
