@@ -12,7 +12,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {
   IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  LabelChips, Scrollable,
+  AttachPlace, MovePlace, LabelChips, Scrollable,
 } from 'components';
 import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
@@ -25,6 +25,9 @@ import PostAttachment from '../../../../../components/PostAttachment/index';
 import {hashHistory, Link} from 'react-router';
 import IAddLabelRequest from 'api/post/interfaces/IAddLabelRequest';
 import IRemoveLabelRequest from 'api/post/interfaces/IRemoveLabelRequest';
+import IRemovePlaceRequest from 'api/post/interfaces/IRemovePlaceRequest';
+import IMovePlaceRequest from 'api/post/interfaces/IMovePlaceRequest';
+import IAttachPlaceRequest from 'api/post/interfaces/IAttachPlaceRequest';
 import {difference, cloneDeep} from 'lodash';
 import {message} from 'antd';
 import * as md5 from 'md5';
@@ -128,6 +131,8 @@ interface IState {
    * @memberof IState
    */
   showAddLabel: boolean;
+  showAttachPlace: boolean;
+  showMovePlace: boolean;
 }
 
 /**
@@ -192,6 +197,8 @@ class Post extends React.Component<IProps, IState> {
       post: this.props.post,
       showMoreOptions: false,
       showAddLabel: false,
+      showAttachPlace: false,
+      showMovePlace: false,
     };
   }
 
@@ -288,6 +295,15 @@ class Post extends React.Component<IProps, IState> {
 
   }
 
+  private updatePost() {
+    this.PostApi.getPost(this.state.post._id, true)
+    .then((post: IPost) => {
+      this.setState({
+        post,
+      });
+    });
+  }
+
   private syncAddLabel(activity: IPostActivity) {
     const post = this.state.post;
     const index =  _.findIndex(post.post_labels, {_id: activity.label._id});
@@ -366,6 +382,22 @@ class Post extends React.Component<IProps, IState> {
       label_id: id,
     };
     this.PostApi.addLabel(params);
+  }
+
+  private removePlace(id: string) {
+    const params: IRemovePlaceRequest = {
+      post_id: this.state.post._id,
+      place_id: id,
+    };
+    this.PostApi.remove(params);
+  }
+
+  private addPlace(id: string) {
+    const params: IAttachPlaceRequest = {
+      post_id: this.state.post._id,
+      place_id: id,
+    };
+    this.PostApi.addPlace(params);
   }
 
   /**
@@ -517,6 +549,47 @@ class Post extends React.Component<IProps, IState> {
     });
   }
 
+  private toggleAttachPlace = () => {
+    this.setState({
+      showMoreOptions: false,
+      showAttachPlace: !this.state.showAttachPlace,
+    });
+  }
+
+  private doneAttachPlace = (places) => {
+    const removeItems = difference(this.state.post.post_places, places);
+    const addItems = difference(places, this.state.post.post_places);
+    this.toggleAttachPlace();
+    removeItems.forEach((element) => {
+      this.removePlace(element._id);
+    });
+    addItems.forEach((element) => {
+      this.addPlace(element._id);
+    });
+    const post = this.state.post;
+    post.post_places = places;
+    this.setState({
+      post,
+    });
+  }
+
+  private toggleMovePlace = () => {
+    this.setState({
+      showMoreOptions: false,
+      showMovePlace: !this.state.showMovePlace,
+    });
+  }
+
+  private doneMovePlace = (oldPlace, newPlace) => {
+    const params: IMovePlaceRequest = {
+      post_id: this.state.post._id,
+      old_place_id: oldPlace,
+      new_place_id: newPlace,
+    };
+    this.toggleMovePlace();
+    this.PostApi.move(params).then(() => this.updatePost());
+  }
+
   /**
    * @func refHandler
    * @desc handler for html emails
@@ -580,6 +653,25 @@ class Post extends React.Component<IProps, IState> {
         });
     }
     return false;
+  }
+
+  private toggleNotifiction = (event) => {
+
+    const post: IPost = cloneDeep(this.state.post);
+    post.watched = event.currentTarget.checked;
+    this.setState({post});
+
+    // create an PostApi and make api call based on post.pinned
+    const postApi = new PostApi();
+    postApi.setNotification(this.state.post._id, event.currentTarget.checked)
+    .then(() => {
+      // Update posts in store
+      this.updatePostsInStore('pinned', true);
+    })
+    .catch(() => {
+      post.watched = !post.watched;
+      this.setState({post});
+    });
   }
 
   public componentDidUpdate() {
@@ -725,9 +817,9 @@ class Post extends React.Component<IProps, IState> {
     if (!this.state.post) {
       return <Loading active={true} position="absolute"/>;
     }
-
     const {post} = this.state;
     const bookmarkClick = this.toggleBookmark.bind(this);
+    const currentUserIsSender = post.sender._id === this.props.user._id;
 
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
@@ -755,6 +847,16 @@ class Post extends React.Component<IProps, IState> {
           <div className={[style.postOptions, style.opened].join(' ')}>
             <ul>
               <li>
+                <IcoN size={16} name={'bell16'}/>
+                <a>
+                  <label htmlFor="notifRecPost">Recieve notifications</label>
+                </a>
+                <p>
+                  <input type="checkbox" id="notifRecPost" name="notifRecPost"
+                    onChange={this.toggleNotifiction} checked={post.watched} />
+                </p>
+              </li>
+              <li>
                 <IcoN size={16} name={'label16'}/>
                 <a onClick={this.toggleAddLAbel}>Labels</a>
                 <p>{this.state.post.post_labels.length}</p>
@@ -763,6 +865,12 @@ class Post extends React.Component<IProps, IState> {
                 <li>
                   <IcoN size={16} name={'pencil16'}/>
                   <Link to={`/compose/edit/${post._id}`}>Edit</Link>
+                </li>
+              )}
+              {post.wipe_access && (
+                <li>
+                  <IcoN size={16} name={'retract16'}/>
+                  <Link to={`/compose/edit/${post._id}`}>Retract</Link>
                 </li>
               )}
               <li className={style.hr}/>
@@ -780,6 +888,24 @@ class Post extends React.Component<IProps, IState> {
                 <IcoN size={16} name={'forward16'}/>
                 <Link to={`/forward/${post._id}`}>Forward</Link>
               </li>
+              {currentUserIsSender && (
+                <li onClick={this.toggleAttachPlace}>
+                  <IcoN size={16} name={'places16'}/>
+                  <a>Attach a Place</a>
+                </li>
+              )}
+              {currentUserIsSender && (
+                <li onClick={this.toggleMovePlace}>
+                  <IcoN size={16} name={'places16'}/>
+                  <a>Move from ...</a>
+                </li>
+              )}
+              {/* {currentUserIsSender && (
+                <li>
+                  <IcoN size={16} name={'eyeOpen16'}/>
+                  <a>Seen by...</a>
+                </li>
+              )} */}
             </ul>
           </div>
         )}
@@ -895,6 +1021,12 @@ class Post extends React.Component<IProps, IState> {
         </Scrollable>
         {this.state.showAddLabel && (
           <AddLabel labels={post.post_labels} onDone={this.doneAddLabel} onClose={this.toggleAddLAbel}/>
+        )}
+        {this.state.showAttachPlace && (
+          <AttachPlace places={post.post_places} onDone={this.doneAttachPlace} onClose={this.toggleAttachPlace}/>
+        )}
+        {this.state.showMovePlace && (
+          <MovePlace places={post.post_places} onDone={this.doneMovePlace} onClose={this.toggleMovePlace}/>
         )}
       </div>
     );

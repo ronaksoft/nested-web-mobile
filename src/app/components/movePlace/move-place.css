@@ -1,0 +1,144 @@
+.AddLabel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #F0F0F0;
+  z-index: 10;
+  overflow: auto;
+  padding-top: 56px;
+}
+.AddLabel .main {
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(50, 61, 71, .32)
+}
+.AddLabel .main h2 {
+  font-size: 15px;
+  padding: 0 12px;
+  margin-bottom: 12px;
+  color: #323D47;
+  font-weight: bold;
+}
+.AddLabel .main label {
+  font-size: 15px;
+  padding: 12px;
+  font-weight: bold;
+  display: flex;
+  flex: 1;
+}
+.AddLabel .main select {
+  height: 40px;
+  margin: 0 12px;
+  display: flex;
+  width: calc(100% - 24px);
+}
+.AddLabelHead {
+  height: 56px;
+  display: flex;
+  position: fixed;
+  background-color: #F0F0F0;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  align-items: center;
+  padding: 0 8px;
+  border-bottom: 1px solid rgba(50,61,71,.16);
+}
+.AddLabelHead div{
+  padding: 0 12px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none
+}
+.AddLabelHead h3{
+  width: 100%;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 20px;
+  font-weight: bold;
+  color: #323D47;
+}
+.AddLabelHead span{
+  color: #00B45A;
+  font-size: 14px;
+  font-weight: bold;
+}
+.AddLabel li{
+  height: 56px;
+  display: flex;
+}
+.AddLabel li .icon{
+  height: 100%;
+  padding: 12px 16px;
+  width: 64px;
+  display: flex;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+}
+.AddLabel li .detail{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  border-bottom: 1px solid rgba(50, 60, 71, 0.16);
+}
+.AddLabel li .detail span{
+  width: 100%;
+  flex: 1;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 17px;
+  color: rgba(50, 61, 71, 1);
+}
+.AddLabel li .detail span span{
+  opacity: 0.64; 
+  font-size: 12px;
+  font-weight: normal;
+}
+.AddLabel li .detail div{
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.input{
+  padding: 12px;
+  display: flex;
+}
+.input input{
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  color: rgba(50, 61, 71, 1);
+  border: none;
+}
+.input input:hover,
+.input input:focus{
+  border: none;
+  box-shadow: none;
+}
+.suggests {
+  padding-bottom: 48px;
+}
+.suggests li .detail i{
+  transform: rotateZ(45deg);
+  transform-origin: center center; 
+}
+.suggests .more{
+  opacity: .64;
+  line-height: 48px;
+  font-size: 14px;
+}
+.suggests .more svg{
+  display: flex;
+}

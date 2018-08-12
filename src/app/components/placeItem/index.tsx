@@ -76,6 +76,13 @@ class PlaceItem extends React.Component<IProps, IState> {
       this.setState({
         place: place[0],
       });
+    } if (this.props.place_id.indexOf('@') > -1) {
+      this.setState({
+        place: {
+          _id: this.props.place_id,
+          name: this.props.place_id,
+        },
+      });
     } else {
       // Define the place Api
       const placeApi = new PlaceApi();
@@ -157,7 +164,7 @@ class PlaceItem extends React.Component<IProps, IState> {
      * @type {jsxElement}
      */
     let img;
-    if (place.picture.x32.length > 0) {
+    if (place.picture && place.picture.x32.length > 0) {
       img = (
         <img className={style.picture} width={sizePX} height={sizePX}
              src={`${CONFIG().STORE.URL}/view/${AAA.getInstance().getCredentials().sk}/${place.picture[picDim]}`}/>

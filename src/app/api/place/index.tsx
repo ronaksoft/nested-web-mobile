@@ -50,10 +50,7 @@ export default class PlaceApi {
     return this.api.server.request({
       cmd: 'account/get_all_places',
       data: getAllPlacesRequest,
-    }).then( (res) => {
-      const places = res.data.places as IPlace[];
-      return places;
-    });
+    }).then((res) => res.data.places as IPlace[]);
   }
 
   public getActivities(data: IGetPlaceActivitiesRequest): Promise<IPlaceActivity[]> {

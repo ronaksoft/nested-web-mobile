@@ -17,7 +17,10 @@ import IEditRequest from './interfaces/IEditRequest';
 import ISendResponse from './interfaces/ISendResponse';
 import ICommentListRequest from './interfaces/ICommentListRequest';
 import IAddLabelRequest from './interfaces/IAddLabelRequest';
+import IAttachPlaceRequest from './interfaces/IAttachPlaceRequest';
+import IRemovePlaceRequest from './interfaces/IRemovePlaceRequest';
 import IRemoveLabelRequest from './interfaces/IRemoveLabelRequest';
+import IMovePlaceRequest from './interfaces/IMovePlaceRequest';
 import {IGetActivitiesRequest, IGetActivitiesResponse} from './interfaces/IPostActivities';
 import {IPlaceActivity} from '../interfaces';
 
@@ -237,6 +240,27 @@ export default class PostApi {
     });
   }
 
+  public addPlace(params: IAttachPlaceRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/attach_place',
+      data: params,
+    });
+  }
+
+  public remove(params: IRemovePlaceRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/remove',
+      data: params,
+    });
+  }
+
+  public setNotification(postId: string, state: boolean): Promise<any> {
+    return this.api.request({
+      cmd: 'post/set_notification',
+      data: {post_id: postId, state},
+    });
+  }
+
   /**
    * @func addLabel
    * @desc Adds label to a post (comma separated supported)
@@ -261,6 +285,13 @@ export default class PostApi {
   public removeLabel(params: IRemoveLabelRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/remove_label',
+      data: params,
+    });
+  }
+
+  public move(params: IMovePlaceRequest): Promise<any> {
+    return this.api.request({
+      cmd: 'post/move',
       data: params,
     });
   }

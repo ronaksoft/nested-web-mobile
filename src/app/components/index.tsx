@@ -7,6 +7,8 @@ export {SidebarItem} from './SidebarItem/';
 export {NewBadge} from './NewBadge/';
 export {Loading} from './Loading/';
 export {AddLabel} from './labels/';
+export {AttachPlace} from './AttachPlace/';
+export {MovePlace} from './movePlace/';
 export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
 export {LabelChips} from './Chips/label';
