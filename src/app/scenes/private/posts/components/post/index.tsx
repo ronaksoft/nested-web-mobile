@@ -12,7 +12,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {
   IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  AttachPlace, MovePlace, RemovePlace, LabelChips, Scrollable,
+  AttachPlace, MovePlace, RemovePlace, LabelChips, Scrollable, SeenBy,
 } from 'components';
 import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
@@ -29,7 +29,7 @@ import IRemovePlaceRequest from 'api/post/interfaces/IRemovePlaceRequest';
 import IMovePlaceRequest from 'api/post/interfaces/IMovePlaceRequest';
 import IAttachPlaceRequest from 'api/post/interfaces/IAttachPlaceRequest';
 import {difference, cloneDeep} from 'lodash';
-import {message} from 'antd';
+import {message, Modal} from 'antd';
 import * as md5 from 'md5';
 
 const style = require('./post.css');
@@ -134,6 +134,8 @@ interface IState {
   showAttachPlace: boolean;
   showMovePlace: boolean;
   showRemovePlace: boolean;
+  showSeenBy: boolean;
+  user: IUser;
 }
 
 /**
@@ -201,6 +203,8 @@ class Post extends React.Component<IProps, IState> {
       showAttachPlace: false,
       showMovePlace: false,
       showRemovePlace: false,
+      showSeenBy: false,
+      user: this.props.user,
     };
   }
 
@@ -424,13 +428,13 @@ class Post extends React.Component<IProps, IState> {
    * @memberof Post
    * @override
    */
-  // public componentWillReceiveProps(newProps: IProps) {
-  //   if (this.props.post) {
-  //     this.setState({
-  //       post: newProps.post ? newProps.post : null,
-  //     });
-  //   }
-  // }
+  public componentWillReceiveProps(newProps: IProps) {
+    if (this.props.user) {
+      this.setState({
+        user: newProps.user,
+      });
+    }
+  }
 
   /**
    * @func updatePostsInStore
@@ -582,6 +586,13 @@ class Post extends React.Component<IProps, IState> {
     this.setState({
       showMoreOptions: false,
       showRemovePlace: !this.state.showRemovePlace,
+    });
+  }
+
+  private toggleSeenBy = () => {
+    this.setState({
+      showMoreOptions: false,
+      showSeenBy: !this.state.showSeenBy,
     });
   }
 
@@ -820,6 +831,20 @@ class Post extends React.Component<IProps, IState> {
     return (hash === packetHash);
   }
 
+  private retract = () => {
+    Modal.confirm({
+      title: 'Retract',
+      content: 'are you sure for retracting this post?',
+      cancelText: 'No keep the post',
+      okText: 'Yes',
+      onCancel: () => {
+          // this.props.onClose();
+      },
+      onOk: () => {
+        this.PostApi.retract(this.state.post._id).then(() => hashHistory.goBack());
+      },
+    });
+  }
   /**
    * @func render
    * @desc Renders the component
@@ -834,7 +859,7 @@ class Post extends React.Component<IProps, IState> {
     }
     const {post} = this.state;
     const bookmarkClick = this.toggleBookmark.bind(this);
-    const currentUserIsSender = post.sender._id === this.props.user._id;
+    const currentUserIsSender = post.sender && this.state.user && post.sender._id === this.state.user._id;
 
     // Checks the sender is external mail or not
     const sender = post.email_sender ? post.email_sender : post.sender;
@@ -883,9 +908,9 @@ class Post extends React.Component<IProps, IState> {
                 </li>
               )}
               {post.wipe_access && (
-                <li>
+                <li onClick={this.retract}>
                   <IcoN size={16} name={'retract16'}/>
-                  <Link to={`/compose/edit/${post._id}`}>Retract</Link>
+                  <a>Retract</a>
                 </li>
               )}
               <li className={style.hr}/>
@@ -917,12 +942,12 @@ class Post extends React.Component<IProps, IState> {
                 <IcoN size={16} name={'binRed16'}/>
                 <a>Remove from ...</a>
               </li>
-              {/* {currentUserIsSender && (
-                <li>
+              {currentUserIsSender && (
+                <li onClick={this.toggleSeenBy}>
                   <IcoN size={16} name={'eyeOpen16'}/>
                   <a>Seen by...</a>
                 </li>
-              )} */}
+              )}
             </ul>
           </div>
         )}
@@ -1047,6 +1072,9 @@ class Post extends React.Component<IProps, IState> {
         )}
         {this.state.showRemovePlace && (
           <RemovePlace places={post.post_places} onDone={this.doneRemovePlace} onClose={this.toggleRemovePlace}/>
+        )}
+        {this.state.showSeenBy && (
+          <SeenBy postId={post._id} onClose={this.toggleSeenBy}/>
         )}
       </div>
     );

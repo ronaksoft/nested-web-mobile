@@ -240,6 +240,17 @@ export default class PostApi {
     });
   }
 
+  public whoRead(postId: string, skip: number, limit: number): Promise<any> {
+    return this.api.request({
+      cmd: 'post/who_read',
+      data: {
+        post_id: postId,
+        skip,
+        limit,
+      },
+    });
+  }
+
   public addPlace(params: IAttachPlaceRequest): Promise<any> {
     return this.api.request({
       cmd: 'post/attach_place',
@@ -251,6 +262,15 @@ export default class PostApi {
     return this.api.request({
       cmd: 'post/remove',
       data: params,
+    });
+  }
+
+  public retract(postId: string): Promise<any> {
+    return this.api.request({
+      cmd: 'post/retract',
+      data: {
+        post_id: postId,
+      },
     });
   }
 
