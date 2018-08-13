@@ -86,7 +86,6 @@ class AttachPlace extends React.Component<IProps, IState> {
     }, () => {
       this.removeSelectedsFromResults();
     });
-    this.searchApi();
   }
 
   private remove(place: IPlace) {
@@ -98,9 +97,8 @@ class AttachPlace extends React.Component<IProps, IState> {
         newPlaces,
         priestine: true,
       }, () => {
-        this.removeSelectedsFromResults();
+          this.searchApi();
       });
-      this.searchApi();
     }
   }
 
@@ -164,7 +162,7 @@ class AttachPlace extends React.Component<IProps, IState> {
                     <IcoN size={24} name="xcross24"/>
                 </div>
                 <h3>Attach a Place</h3>
-                <div onClick={this.props.onDone.bind(this, this.state.places)}>
+                <div onClick={this.props.onDone.bind(this, this.state.newPlaces)}>
                     <span>Save</span>
                 </div>
             </div>

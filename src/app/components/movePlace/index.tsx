@@ -54,7 +54,7 @@ class MovePlace extends React.Component<IProps, IState> {
       input: '',
       haveMore: true,
       searchResult: [],
-      priestine: false,
+      priestine: true,
     };
     this.remove = this.remove.bind(this);
   }
@@ -90,10 +90,9 @@ class MovePlace extends React.Component<IProps, IState> {
     if (find(this.props.places, {_id: place._id})) {
       return;
     }
-    console.log(place);
     this.setState({
         movePlace: place,
-        priestine: true,
+        priestine: false,
     }, () => {
       this.removeSelectedsFromResults();
     });
@@ -109,7 +108,7 @@ class MovePlace extends React.Component<IProps, IState> {
   }
 
   private close = () => {
-      if (this.state.priestine) {
+      if (!this.state.priestine) {
         Modal.confirm({
             title: 'Unsaved changes',
             content: 'are you sure for discarding changes here?',
@@ -141,6 +140,7 @@ class MovePlace extends React.Component<IProps, IState> {
   private remove = () => {
       this.setState({
           movePlace: null,
+          priestine: true,
       });
   }
 

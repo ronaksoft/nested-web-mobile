@@ -12,7 +12,7 @@ import * as React from 'react';
 import IPost from '../../../../../api/post/interfaces/IPost';
 import {
   IcoN, UserAvatar, FullName, Loading, RTLDetector, AddLabel,
-  AttachPlace, MovePlace, LabelChips, Scrollable,
+  AttachPlace, MovePlace, RemovePlace, LabelChips, Scrollable,
 } from 'components';
 import {IPlace, ILabel, IUser} from 'api/interfaces/';
 import TimeUntiles from '../../../../../services/utils/time';
@@ -133,6 +133,7 @@ interface IState {
   showAddLabel: boolean;
   showAttachPlace: boolean;
   showMovePlace: boolean;
+  showRemovePlace: boolean;
 }
 
 /**
@@ -199,6 +200,7 @@ class Post extends React.Component<IProps, IState> {
       showAddLabel: false,
       showAttachPlace: false,
       showMovePlace: false,
+      showRemovePlace: false,
     };
   }
 
@@ -557,26 +559,29 @@ class Post extends React.Component<IProps, IState> {
   }
 
   private doneAttachPlace = (places) => {
-    const removeItems = difference(this.state.post.post_places, places);
-    const addItems = difference(places, this.state.post.post_places);
     this.toggleAttachPlace();
-    removeItems.forEach((element) => {
-      this.removePlace(element._id);
-    });
-    addItems.forEach((element) => {
-      this.addPlace(element._id);
-    });
-    const post = this.state.post;
-    post.post_places = places;
-    this.setState({
-      post,
-    });
+    this.addPlace(places.map((place) => place._id).join(','));
+    // places.forEach((element) => {
+    //   this.addPlace(element._id);
+    // });
+    // const post = this.state.post;
+    // post.post_places = places;
+    // this.setState({
+    //   post,
+    // });
   }
 
   private toggleMovePlace = () => {
     this.setState({
       showMoreOptions: false,
       showMovePlace: !this.state.showMovePlace,
+    });
+  }
+
+  private toggleRemovePlace = () => {
+    this.setState({
+      showMoreOptions: false,
+      showRemovePlace: !this.state.showRemovePlace,
     });
   }
 
@@ -588,6 +593,16 @@ class Post extends React.Component<IProps, IState> {
     };
     this.toggleMovePlace();
     this.PostApi.move(params).then(() => this.updatePost());
+  }
+
+  private doneRemovePlace = (RPlaces) => {
+    RPlaces.forEach((place) => this.removePlace(place._id));
+    this.toggleRemovePlace();
+    const post = this.state.post;
+    post.post_places = post.post_places.filter((place) => !RPlaces.find((rplace) => rplace._id === place._id));
+    this.setState({
+      post,
+    });
   }
 
   /**
@@ -894,12 +909,14 @@ class Post extends React.Component<IProps, IState> {
                   <a>Attach a Place</a>
                 </li>
               )}
-              {currentUserIsSender && (
-                <li onClick={this.toggleMovePlace}>
-                  <IcoN size={16} name={'places16'}/>
-                  <a>Move from ...</a>
-                </li>
-              )}
+              <li onClick={this.toggleMovePlace}>
+                <IcoN size={16} name={'places16'}/>
+                <a>Move from ...</a>
+              </li>
+              <li onClick={this.toggleRemovePlace}>
+                <IcoN size={16} name={'binRed16'}/>
+                <a>Remove from ...</a>
+              </li>
               {/* {currentUserIsSender && (
                 <li>
                   <IcoN size={16} name={'eyeOpen16'}/>
@@ -1027,6 +1044,9 @@ class Post extends React.Component<IProps, IState> {
         )}
         {this.state.showMovePlace && (
           <MovePlace places={post.post_places} onDone={this.doneMovePlace} onClose={this.toggleMovePlace}/>
+        )}
+        {this.state.showRemovePlace && (
+          <RemovePlace places={post.post_places} onDone={this.doneRemovePlace} onClose={this.toggleRemovePlace}/>
         )}
       </div>
     );

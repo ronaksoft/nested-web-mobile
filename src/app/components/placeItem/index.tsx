@@ -67,16 +67,13 @@ class PlaceItem extends React.Component<IProps, IState> {
    */
   public componentDidMount() {
     // search resdux store for any place have the same same id with props id
-    const place = this.props.places.filter((place: IPlace) => {
-      return place._id === this.props.place_id;
-    });
-
+    const place = this.props.places.find((place: IPlace) => place._id === this.props.place_id);
     // determine place is stored in redux already
-    if (place.length > 0) {
+    if (place) {
       this.setState({
-        place: place[0],
+        place,
       });
-    } if (this.props.place_id.indexOf('@') > -1) {
+    } else if (this.props.place_id.indexOf('@') > -1) {
       this.setState({
         place: {
           _id: this.props.place_id,

@@ -9,6 +9,7 @@ export {Loading} from './Loading/';
 export {AddLabel} from './labels/';
 export {AttachPlace} from './AttachPlace/';
 export {MovePlace} from './movePlace/';
+export {RemovePlace} from './RemovePlace/';
 export {Navbar} from './navbar/';
 export {TaskIcon} from './taskIcon/';
 export {LabelChips} from './Chips/label';
