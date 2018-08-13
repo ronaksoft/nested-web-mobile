@@ -128,6 +128,9 @@ class SeenBy extends React.Component<IProps, IState> {
                                 </div>
                             </li>
                         ))}
+                        {this.state.reads.length === 0 &&
+                            <li className={style.placeholder}>Nobody else seen this Post yet.</li>
+                        }
                     </ul>
             </InfiniteScroll>
         </div>

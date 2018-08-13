@@ -901,18 +901,6 @@ class Post extends React.Component<IProps, IState> {
                 <a onClick={this.toggleAddLAbel}>Labels</a>
                 <p>{this.state.post.post_labels.length}</p>
               </li>
-              {post.wipe_access && (
-                <li>
-                  <IcoN size={16} name={'pencil16'}/>
-                  <Link to={`/compose/edit/${post._id}`}>Edit</Link>
-                </li>
-              )}
-              {post.wipe_access && (
-                <li onClick={this.retract}>
-                  <IcoN size={16} name={'retract16'}/>
-                  <a>Retract</a>
-                </li>
-              )}
               <li className={style.hr}/>
               <li>
                 <IcoN size={16} name={'reply16'}/>
@@ -928,12 +916,32 @@ class Post extends React.Component<IProps, IState> {
                 <IcoN size={16} name={'forward16'}/>
                 <Link to={`/forward/${post._id}`}>Forward</Link>
               </li>
+              <li className={style.hr}/>
               {currentUserIsSender && (
                 <li onClick={this.toggleAttachPlace}>
                   <IcoN size={16} name={'places16'}/>
                   <a>Attach a Place</a>
                 </li>
               )}
+              {post.wipe_access && (
+                <li>
+                  <IcoN size={16} name={'pencil16'}/>
+                  <Link to={`/compose/edit/${post._id}`}>Edit</Link>
+                </li>
+              )}
+              {currentUserIsSender && (
+                <li onClick={this.toggleSeenBy}>
+                  <IcoN size={16} name={'eyeOpen16'}/>
+                  <a>Seen by...</a>
+                </li>
+              )}
+              {post.wipe_access && (
+                <li onClick={this.retract}>
+                  <IcoN size={16} name={'retract16'}/>
+                  <a>Retract</a>
+                </li>
+              )}
+              {post.wipe_access && <li className={style.hr}/>}
               <li onClick={this.toggleMovePlace}>
                 <IcoN size={16} name={'places16'}/>
                 <a>Move from ...</a>
@@ -942,12 +950,6 @@ class Post extends React.Component<IProps, IState> {
                 <IcoN size={16} name={'binRed16'}/>
                 <a>Remove from ...</a>
               </li>
-              {currentUserIsSender && (
-                <li onClick={this.toggleSeenBy}>
-                  <IcoN size={16} name={'eyeOpen16'}/>
-                  <a>Seen by...</a>
-                </li>
-              )}
             </ul>
           </div>
         )}

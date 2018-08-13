@@ -145,3 +145,7 @@
 .suggests .more svg{
   display: flex;
 }
+.placeholder {
+  justify-content: center;
+  margin: 24px 0;
+}
