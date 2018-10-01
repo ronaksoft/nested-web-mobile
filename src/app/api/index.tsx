@@ -12,7 +12,7 @@ import {forEach, startsWith} from 'lodash';
 import {Server, IRequest, IResponse} from 'services/server';
 import IRequestKeyList from './cache/interface/IRequestKeyList';
 import Unique from './../services/utils/unique';
-import {setNewConfig} from './../config';
+import CONFIG, {setNewConfig} from './../config';
 
 /**
  * @class Api
@@ -33,6 +33,7 @@ class Api {
     this.syncPlaceActivityListeners = {};
     this.syncPostActivityListeners = {};
     this.syncTaskActivityListeners = {};
+    CONFIG();
   }
 
   /**
