@@ -83,7 +83,9 @@ export default (
       <Route component={Public}>
         <Route path="/404" component={NotFound}/>
         <Route path="/workspace" component={Workspace}/>
-        <Route path="/signin" component={Signin}/>
+        <Route path="/workspace/force" component={Workspace}/>
+        <Route path="/signin" component={Workspace}/>
+        <Route path="/signin/:domain" component={Signin}/>
         <Route path="/signup" component={Signup}>
           <IndexRoute component={SubmitPhone}/>
           <Route path="/signup/phone(/:country)(/:code)(/:phone)" component={SubmitPhone}/>

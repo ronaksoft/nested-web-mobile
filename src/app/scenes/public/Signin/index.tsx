@@ -41,6 +41,7 @@ interface IProps {
   isLogin: boolean;
   setLogin: (user: IUser) => {};
   setLogout: () => {};
+  location: any;
 }
 
 /**
@@ -54,6 +55,7 @@ class Signin extends React.Component<IProps, IState> {
   // ( document on assigns and defines )
   private accountApi: AccountApi = new AccountApi();
   private nestedTime = nstTime.getInstance();
+  private api: Api;
 
   /**
    * Creates an instance of Signin.
@@ -85,10 +87,40 @@ class Signin extends React.Component<IProps, IState> {
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
 
-    // clear storage
-    if (process.env.BROWSER) {
-      localStorage.removeItem('nested.server.domain');
-    }
+    // // clear storage
+    // if (process.env.BROWSER) {
+    //   localStorage.removeItem('nested.server.domain');
+    // }
+
+    this.api = Api.getInstance();
+  }
+
+  public componentDidMount() {
+    this.changeWorkspace(this.props.location.pathname);
+  }
+
+  public componentWillReceiveProps(newProps: IProps) {
+    this.changeWorkspace(newProps.location.pathname);
+  }
+
+  private changeWorkspace(path: string) {
+    this.setState({
+      inProgress: true,
+    });
+    const domain = path.split('/')[2];
+    this.api.reconfigEndPoints(domain)
+      .then(() => {
+        this.setState({
+          message: '',
+          inProgress: false,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          message: 'Your provider is not valid!',
+          inProgress: false,
+        });
+      });
   }
 
   /**
@@ -117,8 +149,7 @@ class Signin extends React.Component<IProps, IState> {
 
     if (this.state.username.value.indexOf('@') > -1) {
       const usernameSplits = this.state.username.value.split('@');
-      const api = Api.getInstance();
-      api.reconfigEndPoints(usernameSplits[1])
+      this.api.reconfigEndPoints(usernameSplits[1])
         .then(() => {
           this.login();
         })
@@ -147,7 +178,7 @@ class Signin extends React.Component<IProps, IState> {
       _dt: dt,
     })
       .then((response: ILoginResponse) => {
-        // console.log(response);
+          // console.log(response);
           // Replaces the previous credentials that have been stored inside `AAA` service
           AAA.getInstance().setCredentials(response);
 

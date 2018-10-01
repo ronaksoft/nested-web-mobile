@@ -30,6 +30,7 @@ interface IState {
 
 interface IProps {
   isLogin: boolean;
+  location: any;
 }
 
 /**
@@ -40,6 +41,8 @@ interface IProps {
  * @extends {React.Component<IProps, IState>}\
  */
 class Workspace extends React.Component<IProps, IState> {
+  private api: Api;
+
   /**
    * Creates an instance of Signin.
    * @param {*} props
@@ -63,10 +66,63 @@ class Workspace extends React.Component<IProps, IState> {
     // Binds `this` (the component context) as these functions context
     this.submit = this.submit.bind(this);
 
-    // clear storage
-    if (process.env.BROWSER) {
-      localStorage.removeItem('nested.server.domain');
+    this.api = Api.getInstance();
+
+    // // clear storage
+    // if (process.env.BROWSER) {
+    //   localStorage.removeItem('nested.server.domain');
+    // }
+  }
+
+  public componentDidMount() {
+    if (this.props.location.pathname !== '/workspace/force') {
+      const domain = localStorage.getItem('nested.server.domain');
+      if (domain && domain.length > 3) {
+        this.gotoWorkspace(domain);
+      } else {
+        const host = window.location.host;
+        this.getConfig(host).then((domainName) => {
+          this.gotoWorkspace(domainName);
+        }).catch(() => {
+          this.setState({
+            message: 'Your provider is not valid!',
+            inProgress: false,
+          });
+        });
+      }
     }
+  }
+
+  private getConfig(host) {
+    return new Promise((resolve, reject) => {
+      if (['web.nested.me', 'webapp.nested.me'].indexOf(host) > -1) {
+        host = 'nested.me';
+      }
+      this.api.reconfigEndPoints(host).then(() => {
+        resolve(host);
+      }).catch(() => {
+        if (typeof host !== 'string') {
+          reject();
+          return;
+        }
+        let parts = host.split('.');
+        if (parts.length > 2) {
+          parts = parts.reverse();
+          const d = parts[1] + '.' + parts[0];
+          if (d !== 'nested.me') {
+            this.api.reconfigEndPoints(d).then(() => {
+              resolve(host);
+            }).catch((reason) => {
+              reject(reason);
+            });
+          } else {
+            reject();
+          }
+        } else {
+          reject();
+        }
+      });
+    });
   }
 
   /**
@@ -93,8 +149,7 @@ class Workspace extends React.Component<IProps, IState> {
       inProgress: true,
     });
 
-    const api = Api.getInstance();
-    api.reconfigEndPoints(this.state.workspace.value)
+    this.api.reconfigEndPoints(this.state.workspace.value)
       .then(() => {
         hashHistory.push('/signin');
       })
@@ -105,6 +160,10 @@ class Workspace extends React.Component<IProps, IState> {
           inProgress: false,
         });
       });
+  }
+
+  private gotoWorkspace(domain) {
+    hashHistory.push(`/signin/${domain}`);
   }
 
   /**
