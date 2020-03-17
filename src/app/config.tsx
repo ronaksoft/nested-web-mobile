@@ -27,16 +27,16 @@ function generateConfig(): any {
     };
   }
   if (windowObj.__NESTED_CONFIG__.DOMAIN === '_DOMAIN_') {
-    windowObj.__NESTED_CONFIG__.DOMAIN = 'ronaksoftware.com';
+    windowObj.__NESTED_CONFIG__.DOMAIN = 'demo.nested.me';
   }
   if (windowObj.__NESTED_CONFIG__.WEBSOCKET.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.WEBSOCKET.URL = 'wss://c-webapp.ronaksoftware.com';
+    windowObj.__NESTED_CONFIG__.WEBSOCKET.URL = 'wss://20180800001.nested.me';
   }
   if (windowObj.__NESTED_CONFIG__.STORE.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.STORE.URL = 'https://c-webapp.ronaksoftware.com/file';
+    windowObj.__NESTED_CONFIG__.STORE.URL = 'https://20180800001.nested.me/file';
   }
   if (windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL.indexOf('://') === -1) {
-    windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL = 'https://c-webapp.ronaksoftware.com';
+    windowObj.__NESTED_CONFIG__.REGISTER.AJAX.URL = 'https://20180800001.nested.me';
   }
   return {
     APP_CLIENT_ID: 'WEBAPP_DEVELOPMENT',
