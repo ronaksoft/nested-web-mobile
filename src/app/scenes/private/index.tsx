@@ -40,7 +40,7 @@ import AAA from 'services/aaa';
 import Api from 'api';
 import NotificationApi from '../../api/notification/index';
 import INotificationCountResponse from '../../api/notification/interfaces/INotificationCountResponse';
-import FCM from '../../services/fcm/index';
+// import FCM from '../../services/fcm/index';
 import Client from 'services/utils/client';
 import nstTime from 'services/time';
 
@@ -294,18 +294,18 @@ class Private extends React.Component<IProps, IState> {
     }
 
     // Config Firebase notification
-    try {
-      const fcm = FCM.getInstance();
-      fcm.configFCM()
-        .then((deviceToken: string) => {
-          recall(deviceToken);
-        })
-        .catch(() => {
-          recall();
-        });
-    } catch (e) {
-      recall();
-    }
+    // try {
+    //   const fcm = FCM.getInstance();
+    //   fcm.configFCM()
+    //     .then((deviceToken: string) => {
+    //       recall(deviceToken);
+    //     })
+    //     .catch(() => {
+    //       recall();
+    //     });
+    // } catch (e) {
+    //   recall();
+    // }
 
     /** determine use login state */
     if (this.props.isLogin && this.props.user) {
