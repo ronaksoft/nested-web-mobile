@@ -13,7 +13,7 @@ import * as React from 'react';
 import {Input, Button, Form} from 'antd';
 import {Link, hashHistory} from 'react-router';
 import {connect} from 'react-redux';
-import {login, logout} from 'redux/app/actions';
+import {login} from 'redux/app/actions';
 import * as md5 from 'md5';
 import Api from 'api';
 import AccountApi from 'api/account';
@@ -40,8 +40,11 @@ interface IState {
 interface IProps {
   isLogin: boolean;
   setLogin: (user: IUser) => {};
+<<<<<<< HEAD
   setLogout: () => {};
   location: any;
+=======
+>>>>>>> 9c478f0be78103c9a8251af059d6a2c7e8722e60
 }
 
 /**
@@ -354,7 +357,7 @@ const mapStateToProps = (store) => ({
 
 /**
  * @function mapDispatchToProps
- * @description Provides `login` and `logout` actions through `props`
+ * @description Provides `login` actions through `props`
  *
  * @param {any} dispatch
  * @returns
@@ -363,9 +366,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setLogin: (user: IUser) => {
       dispatch(login(user));
-    },
-    setLogout: () => {
-      dispatch(logout());
     },
   };
 };

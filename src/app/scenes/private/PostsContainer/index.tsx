@@ -39,7 +39,6 @@ interface IState {
  * @property {IUser} user - current user object
  * @property {function} setNotificationCount - set Counts of unread notifications
  * @property {function} setLogin - athenticate user
- * @property {function} setLogout - close session of user
  * @property {INotificationCountResponse} notificationsCount - notifications unreads @link{}
  */
 interface IProps {

@@ -10,7 +10,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {hashHistory} from 'react-router';
-import {login, logout, setNotificationCount} from 'redux/app/actions';
+import {login, setNotificationCount} from 'redux/app/actions';
 
 import Files from './place/files';
 import Compose from './compose';
@@ -72,7 +72,6 @@ interface IState {
  * @property {IUser} user - current user object
  * @property {function} setNotificationCount - set Counts of unread notifications
  * @property {function} setLogin - athenticate user
- * @property {function} setLogout - close session of user
  * @property {INotificationCountResponse} notificationsCount - notifications unreads @link{}
  */
 interface IProps {
@@ -81,7 +80,6 @@ interface IProps {
   params: string;
   setNotificationCount: (counts: INotificationCountResponse) => {};
   setLogin: (user: IUser) => {};
-  setLogout: () => {};
   notificationsCount: INotificationCountResponse;
 }
 
@@ -542,9 +540,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setLogin: (user: IUser) => {
       dispatch(login(user));
-    },
-    setLogout: () => {
-      dispatch(logout());
     },
     setNotificationCount: (counts: INotificationCountResponse) => {
       dispatch(setNotificationCount(counts));
