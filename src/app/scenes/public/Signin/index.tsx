@@ -40,11 +40,8 @@ interface IState {
 interface IProps {
   isLogin: boolean;
   setLogin: (user: IUser) => {};
-<<<<<<< HEAD
   setLogout: () => {};
   location: any;
-=======
->>>>>>> 9c478f0be78103c9a8251af059d6a2c7e8722e60
 }
 
 /**
