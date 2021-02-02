@@ -175,9 +175,9 @@ class AttachmentItem extends React.Component<IProps, IState> {
   private getThumbnail = (item, size?) => {
     if (!item) {
       if (size) {
-        return '/public/assets/icons/ph_small_attachment_other@2x.png';
+        return '/m/assets/icons/ph_small_attachment_other@2x.png';
       } else {
-        return '/public/assets/icons/ph_small_attachment_other.png';
+        return '/m/assets/icons/ph_small_attachment_other.png';
       }
     }
     if (item.thumbs && item.thumbs.x32 && item.thumbs.x64) {
@@ -185,33 +185,33 @@ class AttachmentItem extends React.Component<IProps, IState> {
     } else {
       if (item.type === AttachmentType.AUDIO || item.type === AttachmentType.VIDEO) {
         if (size) {
-          return '/public/assets/icons/ph_small_attachment_media@2x.png';
+          return '/m/assets/icons/ph_small_attachment_media@2x.png';
         } else {
-          return '/public/assets/icons/ph_small_attachment_media.png';
+          return '/m/assets/icons/ph_small_attachment_media.png';
         }
       } else if (item.type === AttachmentType.ARCHIVE) {
         if (size) {
-          return '/public/assets/icons/ph_small_attachment_zip@2x.png';
+          return '/m/assets/icons/ph_small_attachment_zip@2x.png';
         } else {
-          return '/public/assets/icons/ph_small_attachment_zip.png';
+          return '/m/assets/icons/ph_small_attachment_zip.png';
         }
       } else if (item.type === AttachmentType.DOCUMENT) {
         if (size) {
-          return '/public/assets/icons/ph_small_attachment_document@2x.png';
+          return '/m/assets/icons/ph_small_attachment_document@2x.png';
         } else {
-          return '/public/assets/icons/ph_small_attachment_document.png';
+          return '/m/assets/icons/ph_small_attachment_document.png';
         }
       } else if (item.type === AttachmentType.PDF) {
         if (size) {
-          return '/public/assets/icons/ph_small_attachment_pdf@2x.png';
+          return '/m/assets/icons/ph_small_attachment_pdf@2x.png';
         } else {
-          return '/public/assets/icons/ph_small_attachment_pdf.png';
+          return '/m/assets/icons/ph_small_attachment_pdf.png';
         }
       } else {
         if (size) {
-          return '/public/assets/icons/ph_small_attachment_other@2x.png';
+          return '/m/assets/icons/ph_small_attachment_other@2x.png';
         } else {
-          return '/public/assets/icons/ph_small_attachment_other.png';
+          return '/m/assets/icons/ph_small_attachment_other.png';
         }
       }
     }

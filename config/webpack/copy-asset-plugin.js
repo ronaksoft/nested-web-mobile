@@ -9,11 +9,10 @@ CopyAssetsPlugin.prototype.apply = function(compiler) {
 };
 function init() {
   createIfDoesntExist('./build');
-  createIfDoesntExist('./build/public');
-  createIfDoesntExist('./build/public/images');
-  copySync('./src/favicon.ico', './build/public/favicon.ico', true);
-  copySync('./src/manifest.json', './build/public/manifest.json', true);
-  copyFolderRecursiveSync('./src/app/assets/', './build/public/');
+  createIfDoesntExist('./build/m');
+  copySync('./src/favicon.ico', './build/m/favicon.ico', true);
+  copySync('./src/manifest.json', './build/m/manifest.json', true);
+  copyFolderRecursiveSync('./src/app/assets/', './build/m/');
 }
 function copySync(src, dest, overwrite) {
   if (overwrite && fs.existsSync(dest)) {
