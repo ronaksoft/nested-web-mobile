@@ -12,7 +12,7 @@ import IRequest from './interfaces/IRequest';
 import IResponse from './interfaces/IResponse';
 import IErrorResponseData from './interfaces/IErrorResponseData';
 import AAA from './../aaa/index';
-import CONFIG from 'config';
+import CONFIG from '../../config';
 import {Socket, SocketState} from 'services/socket';
 import Unique from './../utils/unique';
 import Client from 'services/utils/client';

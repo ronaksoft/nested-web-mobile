@@ -10,7 +10,7 @@
  */
 
 import AAA from 'services/aaa';
-import Configurations from 'config';
+import Configurations from '../../config';
 
 /**
  * @enum {number}

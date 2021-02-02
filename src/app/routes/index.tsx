@@ -20,10 +20,10 @@ export default (
     <Router history={hashHistory}>
       <Route component={Private}>
         <IndexRoute component={Posts}/>
-        <Redirect from="/" to="/feed" />
-        {/*<Route path="/" component={Feed} />*/}
 
         <Route component={PostsContainer}>
+          {/* <Redirect from="/" to="/feed" /> */}
+          <Route path="/" component={Posts}/>
           <Route path="/feed" component={Posts}/>
           <Route path="/feed/latest-activity" component={Posts}/>
           <Route path="/shared" component={Posts}/>

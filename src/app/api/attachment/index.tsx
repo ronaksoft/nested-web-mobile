@@ -13,7 +13,7 @@ import UploadType from './constants/UploadType';
 import IGetUploadTokenResponse from './interfaces/IGetUploadTokenResponse';
 // import IGetFileResponse from './interfaces/IGetFileResponse';
 import Api from 'api';
-import Configuration from 'config';
+import Configuration from '../../config';
 import AAA from 'services/aaa';
 import {
   IUploadMission,

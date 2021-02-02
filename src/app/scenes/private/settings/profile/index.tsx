@@ -4,7 +4,7 @@ import AttachmentApi from 'api/attachment/index';
 import {connect} from 'react-redux';
 import {IUser} from 'api/interfaces';
 import {IProfile} from 'api/account/interfaces';
-import Configuration from 'config';
+import Configuration from '../../../../config';
 import AAA from 'services/aaa';
 import TimeUtiles from 'services/utils/time';
 import {Scrollable, IcoN, UserAvatar, NstCrop, NstInput} from 'components';
