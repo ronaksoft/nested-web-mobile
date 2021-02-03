@@ -251,6 +251,7 @@ class Posts extends React.Component<IProps, IState> {
 
   public findRouteFromPath(newProps) {
     switch (newProps.location.pathname) {
+      case '/':
       case '/feed':
         return 'feed';
       case '/feed/latest-activity':

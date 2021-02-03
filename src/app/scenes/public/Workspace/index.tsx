@@ -151,7 +151,7 @@ class Workspace extends React.Component<IProps, IState> {
 
     this.api.reconfigEndPoints(this.state.workspace.value)
       .then(() => {
-        hashHistory.push('/signin');
+        hashHistory.push(`/signin/${this.state.workspace.value}`);
       })
       .catch((r) => {
         console.log(r);
